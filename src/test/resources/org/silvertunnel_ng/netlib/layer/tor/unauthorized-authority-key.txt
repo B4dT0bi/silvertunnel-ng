@@ -1,0 +1,49 @@
+# silvertunnel.org test file
+#
+# This file contains an unauthorized identity generated with Tor's C implementation calling:
+#   cd tor-xxx/
+#   ./src/tools/tor-gencert --create-identity-key
+#   less authority_certificate
+# See also: http://wiki.noreply.org/noreply/TheOnionRouter/TorFAQ#HowdoIsetupmyownprivateTornetwork.3F
+#
+# This certificate is valid but the fingerprint is not authorized, i.e. the fingerprint is not in the official list
+
+dir-key-certificate-version 3
+fingerprint C14378EB4ED0B8D6F449F3982298279A44D4D2A0
+dir-key-published 2009-08-10 15:18:23
+dir-key-expires 2010-08-10 15:18:23
+dir-identity-key
+-----BEGIN RSA PUBLIC KEY-----
+MIIBigKCAYEAsi/jGqtdU5pYkDTrqqhhGfQDHcuiebvIUd6Yr/FSoDeOKU2Q0t38
+tiZHu4+E4rBgu9E+9UntYtEUHhxo43AN2bfRzJh9yvnboW8R0oW2BBb8rrLuhGY1
+NLKKx8HBe8nWT9gkfDBErGwtzYJUUYPiiuVbCdPV0NIERGTP0MpX6ylcQdb3qGxT
+Rqs71oaGha4ACsaxqz0a06vc5pmdOqH7iKtVZqjHDVaj1s6B/jZmJYReHkXDfbgX
+V6YnBWbW/dPBwPUxAtxGk8NkaD1VEyNKECrMBS9r5p9g3wu+FQat832n4Ah/odZH
+NxrqrharzRBAg7irfDcOx5thLenUaR4E7aEvZLaaBYld/P3vlMNRhzv6g9/nCpHZ
+dftKFvE7c5tiKpSzS1pE8PBKwVZ0Dj6o6EF0naf3yL0A8EboQfiYcT4GAq4+erpe
+/5Sq30iOJocYiGD1Orbt1wGLhHCEZsm+eOqY2uFMXhBziIc8TVn5XnNRvurLRMZ+
+s6dttvqGW8mbAgMBAAE=
+-----END RSA PUBLIC KEY-----
+dir-signing-key
+-----BEGIN RSA PUBLIC KEY-----
+MIGJAoGBAL3ep+jiA5a9i+GByXQAmSTrlcZzgqtoweULFyC1DOjhVzU0JTpg2zWZ
+u79WIeUcg2ayEPjxI3y9IgoZ8Ar6ow7x7iH7EfiXcv28vqEyOQsJaoKyebeqjFEa
+JtlIMlMMOicgDN8ZC6RfOKtLWwNrwiE/sa8wR63D77kD1RJapvD9AgMBAAE=
+-----END RSA PUBLIC KEY-----
+dir-key-crosscert
+-----BEGIN ID SIGNATURE-----
+sfRaIwL5yqisOz6PlNy/kiX5bp7JbS1afE/7gtMpIvLPsJBTD0VQ6YQKIaRAICiU
+HkDlCBcThH06+LUS52fAYF4n9rhEShg4Y0YEOF8kZaJmMtRwEdqQe7V6VmkbVjWn
+Acq7KsSU7EXXbSZ1jOpU4e1C1TNIEveNgW7RDFZrMZI=
+-----END ID SIGNATURE-----
+dir-key-certification
+-----BEGIN SIGNATURE-----
+K/jBpP9oP+DvlRKo2ciXHdxFSTbA4qNpayaWnerdQe+dyvc1d2Z8EERQ3TLuKPFX
+56eaKnlXxVDJu0OTm6e10K/yr1qYIkhx+2hGIIq+nSsWKFQu/eVl7DDD3M6f8m/A
+f+wcgqyUi8flW1f4neU9RQ4poYb88YacEhWkb4CWkK+4hMpza2IfN2botEjjlHRR
+ZO0NFDDIr/w6MReK8e2gqu+bo2qnaVnFlraUYK/E43UZd8VGlwNj45L0oo6Pnm7y
+qNvxGVQ3tFap9wK0KWtFmdw5GxNAEknAPYPV5+rn2X/lj11bPNLMBKjjtEVz0kJA
+Iv9DM1L6Q4c41VuH7lEgR9R9yIUAiUatBHAex2cFLA5k8Y3jqxZHWUjylsxVVB0B
+mbzSzl/QnSqCY6mkHsRPTfmqzX2IkgpQvqHk14F47IB768oaVkD94LxOYn16YDVm
+0XZF12QBD7iKwaITgn/p4pidAnI14CaF6TT0Zh/pCF3MTHhApuwC5csNiCpqemIp
+-----END SIGNATURE-----

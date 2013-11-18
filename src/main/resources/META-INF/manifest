@@ -1,0 +1,4 @@
+Manifest-Version: 1.2
+Created-By: Christian Hapke
+Class-Path: lib/main/GeoIP-1.1.8.jar lib/main/bcprov-jdk14-133.jar lib/main/bcpg-jdk14-133.jar bcprov-jdk14-133.jar bcpg-jdk14-133.jar lib/ext/systray4j.jar systray4j.jar GeoIP-1.1.8.jar
+Main-Class: tjava.proxy.Main

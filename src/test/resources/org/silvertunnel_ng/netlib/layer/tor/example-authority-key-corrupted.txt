@@ -1,0 +1,44 @@
+# silvertunnel.org test file
+#
+# Single key, equals to the first cert in example-authority-keys.txt,
+# but with manipulated dir-key-expires value
+
+dir-key-certificate-version 3
+fingerprint E2A2AF570166665D738736D0DD58169CC61D8A8B
+dir-key-published 2009-04-12 10:28:44
+dir-key-expires 2090-04-12 10:28:44
+dir-identity-key
+-----BEGIN RSA PUBLIC KEY-----
+MIIBigKCAYEAzKCVVdz+P3skRyiRjPHLYiCFzWxgAKzGkI6AQPOjqsfDrdwsPUn3
+s4BAj/BJjIhVrCxyrcfW8pQYHLMqXWtmJ0ZcP9TjqtpxLkPdLjqqWkUxAfRygX51
+LYb2Kez7XG2Wcm/dkTxlFD1DREtq5nivUExuy3FCxvd1xrEWspDJ8+nQl851Oyns
+4wMGUA/QFkmvmCW6ndgIlgGjhFBs3vswW8YvTBTnYK6fl2FiqbZfsd0m1l4MbBrO
+vQlTjvnLPBZK5kePNuMQ2O2o20PjlIKKvLZwBO68KEh79qilXyQ5mD4EyHdrvfIY
+tG+otDn5kuzCJ1hkxWBXRzr6mY7stKRK9tSK4MxCvAU7FI6aTYk470ZkKi4S4n5h
+mS9PgozhXHbkeVlCppodA3xq6oIHOd7DRgs0REKoRGYOjXEesqx3EzX/2BuKL2Pm
+hMUPDZoMqRhBey/UCbcNWhPYDsdxV0WuC9evvfzmnt6uDoA/r9HqKkRuOlbpwouw
+Olen2GGTq+bpAgMBAAE=
+-----END RSA PUBLIC KEY-----
+dir-signing-key
+-----BEGIN RSA PUBLIC KEY-----
+MIGJAoGBAPsGBUxw5exWnGL6MNniTR5iLdnJ/D+68zohhGqp9YfqobjR+HJrtIvM
+j40sn+RtVxtutYNXPOYPqf1DM7M+I/MTnH99ggFUSEOTPl1WF6rbEn8rEYeot0Cx
+Tgp2Rk9PCL8nMGTxVD0++tXFUDHT8hwg+h9EzSD0dNG68560ggNjAgMBAAE=
+-----END RSA PUBLIC KEY-----
+dir-key-crosscert
+-----BEGIN ID SIGNATURE-----
+w2SnW/OF3BQ9gQMTF2CugCFLua9JwjlCViut2sCHZMj7CnVFX9DlblcgOwz9dXWh
+wZau7HNQ7tI1tQpNybdjFX4tJUZvPsw12B8CteLOv2a5SRMvtWA7jBEeqalGnDWy
+o30LqpKF+n6mjAIJVtwTm8/J/Qa0MDaDlB3rxqTTqYg=
+-----END ID SIGNATURE-----
+dir-key-certification
+-----BEGIN SIGNATURE-----
+COZnDYbQDdfN7vxD5+pVoDcsouWjgtfyPJ3rOOa+/FkdJa1LpRUs6aXgmx5rPIxt
+7kI4nlm17oE3x0C37F5lRt+BLGGOrA3UkhaPaReRANcZx6Ju0j+yClcoYI69KzrS
+fpExGGGlYs6w2rpGy80xdG2cYIOgjQYaK0jOnkGwyw9ytr/mZ557+A+8YAZQZoGX
+4cZJIITYMgezOM77LnyVqBwNZ1TjrIvp4vZyETey2xDKYpKxROdPgUddT134e9rp
+EnAJh9DvJFYTj+BqFMW4yYltWnjvYN6ew/aEvAQZED0G59ULeXkM4af5mpAbHnGa
+eJ7ZM9DgARGYASX26jkG53sHrQ86T0+tbj+Jjv+/q7ifimnXqVwIl7gq+Vax8682
+0rF+vXQbNSIQZkWYmHwEJAtrYNs007nU+8lWJZkrYNgvk69lZI2G/OxP7ffacB7l
+rj40Yoyc2cJ3RtDydZ0Wy07MKQRE2i+HvGD5ImVLANfqAq1TL1ZUDBySYI4q5VCM
+-----END SIGNATURE-----
