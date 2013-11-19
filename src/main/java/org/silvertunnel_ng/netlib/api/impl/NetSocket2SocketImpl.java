@@ -79,7 +79,7 @@ public class NetSocket2SocketImpl extends SocketImpl
 	}
 
 	/**
-	 * @param netSocket
+	 * @param netLayer
 	 *            connect using a new NetSocket created by this NetLayer
 	 */
 	public NetSocket2SocketImpl(final NetLayer netLayer)

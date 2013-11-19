@@ -205,10 +205,13 @@ public class Circuit
 	 * @exception TorException
 	 * @exception IOException
 	 */
-	public Circuit(final TLSConnectionAdmin fnh, final Directory dir, final TCPStreamProperties sp, final TorEventService torEventService)
-																																			throws IOException,
-																																			TorException,
-																																			InterruptedException
+	public Circuit(final TLSConnectionAdmin fnh, 
+	               final Directory dir, 
+	               final TCPStreamProperties sp, 
+	               final TorEventService torEventService)
+															throws IOException,
+															TorException,
+															InterruptedException
 	{
 		numberOfCircuitsInConstructor++;
 		boolean successful = false;

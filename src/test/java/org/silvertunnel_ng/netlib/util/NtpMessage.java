@@ -266,8 +266,9 @@ public final class NtpMessage
 	}
 
 	/**
-	 * Returns a string representation of a NtpMessage
+	 * Returns a string representation of a NtpMessage.
 	 */
+	@Override
 	public String toString()
 	{
 		String precisionStr = new DecimalFormat("0.#E0").format(Math.pow(2,

@@ -73,7 +73,8 @@ public class AtomicTime
 		final double roundTripDelay = (destinationTimestamp - msg.getOriginateTimestamp())
 				- (msg.getTransmitTimestamp() - msg.getReceiveTimestamp());
 
-		final double localClockOffset = ((msg.getReceiveTimestamp() - msg.getOriginateTimestamp()) + (msg.getTransmitTimestamp() - destinationTimestamp)) / 2;
+		final double localClockOffset = ((msg.getReceiveTimestamp() - msg.getOriginateTimestamp()) 
+				 					   + (msg.getTransmitTimestamp() - destinationTimestamp)) / 2;
 
 		// Display response
 		LOG.info("NTP server: " + ATOMIC_TIME_SERVER);

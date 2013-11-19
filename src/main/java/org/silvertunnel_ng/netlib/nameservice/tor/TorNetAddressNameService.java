@@ -62,9 +62,9 @@ public class TorNetAddressNameService implements NetAddressNameService
 		this.tor = tor;
 	}
 
-	/** @see NetAddressNameService#getAddresses */
+	/** @see NetAddressNameService#getAddressesByName(String) */
 	@Override
-	public NetAddress[] getAddressesByName(String hostname)
+	public NetAddress[] getAddressesByName(final String hostname)
 			throws UnknownHostException
 	{
 		try
@@ -90,9 +90,9 @@ public class TorNetAddressNameService implements NetAddressNameService
 		}
 	}
 
-	/** @see NetAddressNameService#getNames */
+	/** @see NetAddressNameService#getNamesByAddress(NetAddress) */
 	@Override
-	public String[] getNamesByAddress(NetAddress netAddress)
+	public String[] getNamesByAddress(final NetAddress netAddress)
 			throws UnknownHostException
 	{
 		try

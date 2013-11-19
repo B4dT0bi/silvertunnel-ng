@@ -161,19 +161,6 @@ public final class RouterImpl implements Router, Cloneable
 	private static final float punishmentFactor = 0.75f;
 
 	// patterns used to parse a router descriptor
-	private static Pattern ROUTER_PATTERN;
-	private static Pattern PLATFORM_PATTERN;
-	private static Pattern PUBLISHED_PATTERN;
-	private static Pattern UPTIME_PATTERN;
-	private static Pattern FINGERPRINT_PATTERN;
-	private static Pattern CONTACT_PATTERN;
-	private static Pattern ROUTER_PATTERN2;
-	private static Pattern ONIONKEY_PATTERN;
-	private static Pattern SIGNINGKEY_PATTERN;
-	private static Pattern STRINGFAMILY_PATTERN;
-	private static Pattern STRINGOPTFAMILY_PATTERN_PATTERN;
-	private static Pattern PFAMILY_PATTERN;
-	private static Pattern ROUTERSIGNATURE_PATTERN;
 	/** router signature. */
 	private static Pattern SHA1INPUT_PATTERN;
 
@@ -182,30 +169,7 @@ public final class RouterImpl implements Router, Cloneable
 		// do it here to be able to log exceptions
 		try
 		{
-			ROUTER_PATTERN = Parsing
-					.compileRegexPattern("^router (\\w+) (\\S+) (\\d+) (\\d+) (\\d+)");
-			PLATFORM_PATTERN = Parsing.compileRegexPattern("^platform (.*?)$");
-			PUBLISHED_PATTERN = Parsing
-					.compileRegexPattern("^published (.*?)$");
-			UPTIME_PATTERN = Parsing.compileRegexPattern("^uptime (\\d+)");
-			FINGERPRINT_PATTERN = Parsing
-					.compileRegexPattern("^(?:opt )?fingerprint (.*?)$");
-			CONTACT_PATTERN = Parsing.compileRegexPattern("^contact (.*?)$");
-			ROUTER_PATTERN2 = Parsing
-					.compileRegexPattern("^bandwidth (\\d+) (\\d+) (\\d+)?");
-			ONIONKEY_PATTERN = Parsing
-					.compileRegexPattern("^onion-key\n(.*?END RSA PUBLIC KEY......)");
-			SIGNINGKEY_PATTERN = Parsing
-					.compileRegexPattern("^signing-key\n(.*?END RSA PUBLIC KEY-----\n)");
-			STRINGFAMILY_PATTERN = Parsing
-					.compileRegexPattern("^family (.*?)$");
-			STRINGOPTFAMILY_PATTERN_PATTERN = Parsing
-					.compileRegexPattern("^opt family (.*?)$");
-			PFAMILY_PATTERN = Pattern.compile("(\\S+)");
-			ROUTERSIGNATURE_PATTERN = Parsing
-					.compileRegexPattern("^router-signature\n-----BEGIN SIGNATURE-----(.*?)-----END SIGNATURE-----");
-			SHA1INPUT_PATTERN = Parsing
-					.compileRegexPattern("^(router .*?router-signature\n)");
+			SHA1INPUT_PATTERN = Parsing.compileRegexPattern("^(router .*?router-signature\n)");
 		}
 		catch (final Exception e)
 		{
@@ -265,8 +229,14 @@ public final class RouterImpl implements Router, Cloneable
 	 * takes input data and initializes the server object with it. A router
 	 * descriptor and a signature will be automatically generated.
 	 */
-	RouterImpl(TorConfig torConfig, String nickname, InetAddress address, int orPort, int dirPort, Fingerprint v3ident, Fingerprint fingerprint)
-																																				throws TorException
+	RouterImpl(final TorConfig torConfig, 
+	           final String nickname, 
+	           final InetAddress address, 
+	           final int orPort, 
+	           final int dirPort, 
+	           final Fingerprint v3ident, 
+	           final Fingerprint fingerprint)
+				throws TorException
 	{
 		if (torConfig == null)
 		{
@@ -288,11 +258,24 @@ public final class RouterImpl implements Router, Cloneable
 	 * takes input data and initializes the server object with it. A router
 	 * descriptor and a signature will be automatically generated.
 	 */
-	RouterImpl(final TorConfig torConfig, final String varNickname, final InetAddress varAddress, final int varOrPort, final int varSocksPort,
-				final int varDirPort, final int varBandwidthAvg, final int varBandwidthBurst, final int varBandwidthObserved,
-				final Fingerprint varfingerprint, final int varInitialUptime, final RSAPublicKey varOnionKey, final RSAPrivateKey varOnionKeyPrivate,
-				final RSAPublicKey varSigningKey, final RSAPrivateKey varSigningKeyPrivate, final RouterExitPolicy[] varExitpolicy,
-				final String varContact, final HashSet<String> varFamily) throws TorException
+	RouterImpl(final TorConfig torConfig, 
+	           final String varNickname, 
+	           final InetAddress varAddress, 
+	           final int varOrPort, 
+	           final int varSocksPort,
+	           final int varDirPort, 
+	           final int varBandwidthAvg, 
+	           final int varBandwidthBurst, 
+	           final int varBandwidthObserved,
+	           final Fingerprint varfingerprint, 
+	           final int varInitialUptime, 
+	           final RSAPublicKey varOnionKey, 
+	           final RSAPrivateKey varOnionKeyPrivate,
+	           final RSAPublicKey varSigningKey, 
+	           final RSAPrivateKey varSigningKeyPrivate, 
+	           final RouterExitPolicy[] varExitpolicy,
+	           final String varContact, 
+	           final HashSet<String> varFamily) throws TorException
 	{
 		if (torConfig == null)
 		{
@@ -343,9 +326,9 @@ public final class RouterImpl implements Router, Cloneable
 	}
 
 	/**
-	 * wrapper from server-flags of dir-spec v1 to dir-spec v2
+	 * wrapper from server-flags of dir-spec v1 to dir-spec v2.
 	 */
-	void updateServerStatus(boolean alive, boolean trusted)
+	void updateServerStatus(final boolean alive, final boolean trusted)
 	{
 		dirv2Running = alive;
 		dirv2Exit = trusted;
@@ -354,12 +337,12 @@ public final class RouterImpl implements Router, Cloneable
 	}
 
 	/**
-	 * Update this server's status
+	 * Update this server's status.
 	 * 
 	 * @param flags
 	 *            string containing flags
 	 */
-	void updateServerStatus(String flags)
+	void updateServerStatus(final String flags)
 	{
 		if (flags.contains("Running"))
 		{
@@ -515,7 +498,7 @@ public final class RouterImpl implements Router, Cloneable
 	 * @return the result; if multiple entries with the same fingerprint are in
 	 *         routerDescriptors, the last be be considered
 	 */
-	public static Map<Fingerprint, RouterImpl> parseRouterDescriptors(TorConfig torConfig, String routerDescriptors)
+	public static Map<Fingerprint, RouterImpl> parseRouterDescriptors(final TorConfig torConfig, final String routerDescriptors)
 	{
 		final long timeStart = System.currentTimeMillis();
 		final Map<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>();
@@ -553,159 +536,6 @@ public final class RouterImpl implements Router, Cloneable
 		}
 		return result;
 	}
-	/**
-	 * extracts all relevant information from the router descriptor and saves it
-	 * in the member variables.
-	 * 
-	 * @param routerDescriptor
-	 *            string encoded router descriptor
-	 */
-	private void parseRouterDescriptorOld(final String routerDescriptor)
-			throws TorException
-	{
-		final long timeStart = System.currentTimeMillis();
-		this.routerDescriptor = routerDescriptor;
-
-		// Router item: nickname, hostname, onion-router-port, socks-port,
-		// dir-port
-		Matcher m = ROUTER_PATTERN.matcher(routerDescriptor);
-		m.find();
-
-		this.nickname = m.group(1);
-
-		this.hostname = m.group(2);
-		this.orPort = Integer.parseInt(m.group(3));
-		this.socksPort = Integer.parseInt(m.group(4));
-		this.dirPort = Integer.parseInt(m.group(5));
-
-		// secondary information
-		platform = Parsing.parseStringByRE(routerDescriptor, PLATFORM_PATTERN,
-				"unknown");
-		published = Util.parseUtcTimestamp(Parsing.parseStringByRE(
-				routerDescriptor, PUBLISHED_PATTERN, ""));
-		validUntil = new Date(published.getTime()
-				+ TorConfig.ROUTER_DESCRIPTION_VALID_PERIOD_MS);
-		uptime = Integer.parseInt(Parsing.parseStringByRE(routerDescriptor,
-				UPTIME_PATTERN, "0"));
-		try
-		{
-			fingerprint = new FingerprintImpl(
-					DatatypeConverter.parseHexBinary(Parsing.parseStringByRE(
-							routerDescriptor, FINGERPRINT_PATTERN, "")
-							.replaceAll(" ", "")));
-		}
-		catch (final Exception e)
-		{
-			LOG.debug("got Exception : {}", e, e);
-			throw new TorException("Server " + nickname + " skipped as router");
-		}
-		contact = Parsing
-				.parseStringByRE(routerDescriptor, CONTACT_PATTERN, "");
-
-		// make that IF description is from a trusted server, that fingerprint
-		// is correct
-		/*
-		 * not needed: if (tor.config.trustedServers.containsKey(nickname)) {
-		 * String fingerprintFromConfig = (String)
-		 * (tor.config.trustedServers.get(nickname)).get("fingerprint"); if
-		 * (!fingerprint.getHex().equalsIgnoreCase(fingerprintFromConfig)) throw
-		 * new TorException("Server " + nickname +
-		 * " is trusted, but fingerprint check failed"); }
-		 */
-
-		// bandwidth
-		m = ROUTER_PATTERN2.matcher(routerDescriptor);
-		if (m.find())
-		{
-			bandwidthAvg = Integer.parseInt(m.group(1));
-			bandwidthBurst = Integer.parseInt(m.group(2));
-			bandwidthObserved = Integer.parseInt(m.group(3));
-		}
-
-		// onion key
-		final String stringOnionKey = Parsing.parseStringByRE(routerDescriptor,
-				ONIONKEY_PATTERN, "");
-		onionKey = Encryption.extractPublicRSAKey(stringOnionKey);
-
-		// signing key
-		final String stringSigningKey = Parsing.parseStringByRE(
-				routerDescriptor, SIGNINGKEY_PATTERN, "");
-		signingKey = Encryption.extractPublicRSAKey(stringSigningKey);
-
-		// verify signing-key against fingerprint
-		try
-		{
-			final byte[] pkcs = Encryption
-					.getPKCS1EncodingFromRSAPublicKey(signingKey);
-			final byte[] keyHash = Encryption.getDigest(pkcs);
-			if (!new FingerprintImpl(keyHash).equals(fingerprint))
-			{
-				throw new TorException("Server " + nickname
-						+ " doesn't verify signature vs fingerprint");
-			}
-		}
-		catch (final TorException e)
-		{
-			throw e;
-		}
-		catch (final Exception e)
-		{
-			throw new TorException("Server " + nickname
-					+ " doesn't verify signature vs fingerprint");
-		}
-
-		// parse family
-		String stringFamily = Parsing.parseStringByRE(routerDescriptor,
-				STRINGFAMILY_PATTERN, "");
-		if (stringFamily.length() == 0)
-		{
-			stringFamily = Parsing.parseStringByRE(routerDescriptor,
-					STRINGOPTFAMILY_PATTERN_PATTERN, "");
-		}
-		final Matcher mFamily = PFAMILY_PATTERN.matcher(stringFamily);
-		while (mFamily.find())
-		{
-			final String host = mFamily.group(1);
-			family.add(host);
-		}
-
-		// check the validity of the signature
-		String sigBase64 = Parsing.parseStringByRE(routerDescriptor,
-				ROUTERSIGNATURE_PATTERN, "");
-		while (sigBase64.length() % 4 != 0)
-		{
-			sigBase64 += "="; // add missing padding
-		}
-		routerSignature = DatatypeConverter.parseBase64Binary(sigBase64);
-		final byte[] sha1Input = (Parsing.parseStringByRE(routerDescriptor,
-				SHA1INPUT_PATTERN, "")).getBytes();
-		if (!Encryption.verifySignature(routerSignature, signingKey, sha1Input))
-		{
-			LOG.info("Server -> router-signature check failed for " + nickname);
-			throw new TorException("Server " + nickname
-					+ ": description signature verification failed");
-		}
-
-		// exit policy
-		exitpolicy = parseExitPolicy(routerDescriptor);
-		// usually in directory the hostname is already set to the IP
-		// so, following resolve just converts it to the InetAddress
-		try
-		{
-			address = InetAddress.getByName(hostname);
-		}
-		catch (final UnknownHostException e)
-		{
-			throw new TorException(
-					"Server.ParseRouterDescriptor: Unresolvable hostname "
-							+ hostname);
-		}
-		if (LOG.isDebugEnabled())
-		{
-			LOG.debug("RouterImpl.parseRouterDescriptor took "
-				+ (System.currentTimeMillis() - timeStart) + " ms");
-		}
-	}
 
 	/**
 	 * extracts all relevant information from the router descriptor and saves it
@@ -727,7 +557,8 @@ public final class RouterImpl implements Router, Cloneable
 		StringBuffer exitPolicyString = new StringBuffer();
 		for (int i = 0; i < tmpLine.length; i++)
 		{
-			if (tmpLine[i].startsWith("opt")) // remove the opt as we dont need it here
+			if (tmpLine[i].startsWith("opt")) // remove the opt as we dont need
+												// it here
 			{
 				tmpLine[i] = tmpLine[i].substring(4);
 			}
@@ -740,7 +571,8 @@ public final class RouterImpl implements Router, Cloneable
 				{
 					if (entry.getValue() == 1)
 					{
-						it.remove(); // remove the key to make the next searches faster
+						it.remove(); // remove the key to make the next searches
+										// faster
 					}
 					else
 					{
@@ -1547,7 +1379,10 @@ public final class RouterImpl implements Router, Cloneable
 	{
 		return routerDescriptor;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -1595,7 +1430,10 @@ public final class RouterImpl implements Router, Cloneable
 		result = prime * result + ((validUntil == null) ? 0 : validUntil.hashCode());
 		return result;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

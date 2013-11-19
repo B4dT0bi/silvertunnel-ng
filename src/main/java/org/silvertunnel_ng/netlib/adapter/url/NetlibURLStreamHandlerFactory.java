@@ -58,8 +58,6 @@ public class NetlibURLStreamHandlerFactory implements URLStreamHandlerFactory
 	 * protocols.
 	 * 
 	 * Call setNetLayerForXXX() later to initialize handlers.
-	 * 
-	 * @param prohibitAccessForOtherProtocols
 	 */
 	public NetlibURLStreamHandlerFactory()
 	{

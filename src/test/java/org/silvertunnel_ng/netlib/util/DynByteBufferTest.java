@@ -46,7 +46,7 @@ public final class DynByteBufferTest
 		buffer = new DynByteBuffer();
 	}
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#DynByteBuffer()}.
+	 * Test method for {@link DynByteBuffer#DynByteBuffer()}.
 	 */
 	@Test
 	public void testDynByteBuffer()
@@ -56,7 +56,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#DynByteBuffer(int)}.
+	 * Test method for {@link DynByteBuffer#DynByteBuffer(int)}.
 	 */
 	@Test
 	public void testDynByteBufferInt()
@@ -67,7 +67,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#append(byte)}.
+	 * Test method for {@link DynByteBuffer#append(byte)}.
 	 */
 	@Test
 	public void testAppendByte()
@@ -83,7 +83,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#append(byte[])}.
+	 * Test method for {@link DynByteBuffer#append(byte[])}.
 	 */
 	@Test
 	public void testAppendByteArray()
@@ -99,7 +99,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#append(byte[])}.
+	 * Test method for {@link DynByteBuffer#append(byte[])}.
 	 */
 	@Test
 	public void testAppendByteArrayBig()
@@ -117,7 +117,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#append(byte[], int)}.
+	 * Test method for {@link DynByteBuffer#append(byte[], int)}.
 	 */
 	@Test
 	public void testAppendByteArrayInt()
@@ -141,7 +141,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#append(byte[], int, int)}.
+	 * Test method for {@link DynByteBuffer#append(byte[], int, int)}.
 	 */
 	@Test
 	public void testAppendByteArrayIntInt()
@@ -165,7 +165,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#toArray()}.
+	 * Test method for {@link DynByteBuffer#toArray()}.
 	 */
 	@Test
 	public void testToArray()
@@ -188,7 +188,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#init()}.
+	 * Test method for {@link DynByteBuffer#init()}.
 	 */
 	@Test
 	public void testInit()
@@ -208,7 +208,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#append(long)}.
+	 * Test method for {@link DynByteBuffer#append(long)}.
 	 */
 	@Test
 	public void testAppendLong()
@@ -221,7 +221,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#append(java.lang.String)}.
+	 * Test method for {@link DynByteBuffer#append(java.lang.String)}.
 	 */
 	@Test
 	public void testAppendString()
@@ -234,7 +234,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#getSize()}.
+	 * Test method for {@link DynByteBuffer#getSize()}.
 	 */
 	@Test
 	public void testGetSize()
@@ -249,7 +249,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link de.badtobi.secureim.helper.DynByteBuffer#getLength()}.
+	 * Test method for {@link DynByteBuffer#getLength()}.
 	 */
 	@Test
 	public void testGetLength()

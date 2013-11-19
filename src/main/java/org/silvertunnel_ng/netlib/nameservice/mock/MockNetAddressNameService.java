@@ -119,7 +119,7 @@ public class MockNetAddressNameService implements NetAddressNameService
 		this.address2NamesMapping = address2NamesMapping;
 	}
 
-	/** @see NetAddressNameService#getAddresses */
+	/** @see NetAddressNameService#getAddressesByName(String) */
 	@Override
 	public NetAddress[] getAddressesByName(String name)
 			throws UnknownHostException
@@ -136,7 +136,7 @@ public class MockNetAddressNameService implements NetAddressNameService
 		}
 	}
 
-	/** @see NetAddressNameService#getNames */
+	/** @see NetAddressNameService#getNamesByAddress(NetAddress) */
 	@Override
 	public String[] getNamesByAddress(NetAddress address)
 			throws UnknownHostException

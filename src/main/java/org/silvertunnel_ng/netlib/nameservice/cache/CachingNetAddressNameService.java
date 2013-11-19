@@ -113,7 +113,7 @@ public class CachingNetAddressNameService implements NetAddressNameService
 				maxElementsInCache, cacheNegativeTtlSeconds);
 	}
 
-	/** @see NetAddressNameService#getAddresses */
+	/** @see NetAddressNameService#getAddressesByName(String) */
 	@Override
 	public NetAddress[] getAddressesByName(String name)
 			throws UnknownHostException

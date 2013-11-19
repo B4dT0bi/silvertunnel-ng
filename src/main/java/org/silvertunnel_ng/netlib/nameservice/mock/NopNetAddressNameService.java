@@ -40,7 +40,7 @@ public class NopNetAddressNameService implements NetAddressNameService
 	/** a singleton instance of this class. */
 	private static NopNetAddressNameService instance;
 
-	/** @see NetAddressNameService#getAddresses */
+	/** @see NetAddressNameService#getAddressesByName(String) */
 	@Override
 	public NetAddress[] getAddressesByName(String name)
 			throws UnknownHostException

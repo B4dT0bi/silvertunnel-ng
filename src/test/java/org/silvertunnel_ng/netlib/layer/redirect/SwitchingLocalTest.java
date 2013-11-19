@@ -48,7 +48,6 @@ import org.silvertunnel_ng.netlib.layer.mock.MockNetLayer;
 import org.silvertunnel_ng.netlib.util.ByteArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

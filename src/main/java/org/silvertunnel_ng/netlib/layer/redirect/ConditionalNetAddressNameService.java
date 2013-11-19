@@ -32,14 +32,13 @@ public class ConditionalNetAddressNameService implements NetAddressNameService
 {
 	private final ConditionalNetLayer conditionalNetLayer;
 
-	protected ConditionalNetAddressNameService(
-			ConditionalNetLayer conditionalNetLayer)
+	protected ConditionalNetAddressNameService(final ConditionalNetLayer conditionalNetLayer)
 	{
 		this.conditionalNetLayer = conditionalNetLayer;
 	}
 
 	/**
-	 * @see NetAddressNameService#getAddresses
+	 * @see NetAddressNameService#getAddressesByName(String)
 	 * 
 	 * @param name
 	 *            host name to lookup
@@ -52,17 +51,16 @@ public class ConditionalNetAddressNameService implements NetAddressNameService
 	 *             errors)
 	 */
 	@Override
-	public NetAddress[] getAddressesByName(String name)
+	public NetAddress[] getAddressesByName(final String name)
 			throws UnknownHostException
 	{
-		return conditionalNetLayer.getMatchingNetLayer(name)
-				.getNetAddressNameService().getAddressesByName(name);
+		return conditionalNetLayer.getMatchingNetLayer(name).getNetAddressNameService().getAddressesByName(name);
 	}
 
 	/**
 	 * @see NetAddressNameService#getNames
 	 * 
-	 * @param NAME
+	 * @param address
 	 *            IP address to lookup
 	 * @return the host name that matches (array is always of size 1)
 	 * @throws UnknownHostException
@@ -72,10 +70,9 @@ public class ConditionalNetAddressNameService implements NetAddressNameService
 	 *             errors)
 	 */
 	@Override
-	public String[] getNamesByAddress(NetAddress address)
+	public String[] getNamesByAddress(final NetAddress address)
 			throws UnknownHostException
 	{
-		return conditionalNetLayer.getMatchingNetLayer(address)
-				.getNetAddressNameService().getNamesByAddress(address);
+		return conditionalNetLayer.getMatchingNetLayer(address).getNetAddressNameService().getNamesByAddress(address);
 	}
 }

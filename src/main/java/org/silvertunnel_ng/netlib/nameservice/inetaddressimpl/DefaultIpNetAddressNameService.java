@@ -164,7 +164,7 @@ public class DefaultIpNetAddressNameService implements NetAddressNameService
 	}
 
 	/**
-	 * @see NetAddressNameService#getAddresses
+	 * @see NetAddressNameService#getAddressesByName(String)
 	 * 
 	 * @param hostname
 	 *            host name to lookup

@@ -496,7 +496,7 @@ public class Encryption
 	 * Create a key based on the parameters.
 	 * 
 	 * @param modulus
-	 * @param publicExponent
+	 * @param privateExponent
 	 * @return the key
 	 */
 	public static RSAPrivateKey getRSAPrivateKey(final BigInteger modulus, final BigInteger privateExponent)
@@ -552,7 +552,7 @@ public class Encryption
 	/**
 	 * converts a RSAPublicKey into PKCS1-encoding (ASN.1).
 	 * 
-	 * @param rsaPublicKey
+	 * @param pubKeyStruct
 	 * @see JCERSAPublicKey
 	 * @return PKCS1-encoded RSA PUBLIC KEY
 	 */

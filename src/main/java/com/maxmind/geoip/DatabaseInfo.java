@@ -20,8 +20,6 @@
 
 package com.maxmind.geoip;
 
-import java.text.SimpleDateFormat;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 // TODO : implement GeoIP2 from MaxMind via maven

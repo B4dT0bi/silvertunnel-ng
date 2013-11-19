@@ -47,7 +47,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#RouterImpl(org.silvertunnel_ng.netlib.layer.tor.common.TorConfig, java.lang.String)}
+	 * {@link RouterImpl#RouterImpl(TorConfig, String)}
 	 * .
 	 * 
 	 * @throws IOException
@@ -63,7 +63,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#RouterImpl(org.silvertunnel_ng.netlib.layer.tor.common.TorConfig, java.lang.String, java.net.InetAddress, int, int, org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint, org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint)}
+	 * {@link RouterImpl#RouterImpl(TorConfig, String, InetAddress, int, int, org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint, org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -74,7 +74,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#updateServerStatus(boolean, boolean)}
+	 * {@link RouterImpl#updateServerStatus(boolean, boolean)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -85,7 +85,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#updateServerStatus(java.lang.String)}
+	 * {@link RouterImpl#updateServerStatus(java.lang.String)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -96,7 +96,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#regularExpression()}
+	 * {@link RouterImpl#regularExpression()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -107,7 +107,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#cloneReliable()}
+	 * {@link RouterImpl#cloneReliable()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -118,7 +118,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#parseRouterDescriptors(org.silvertunnel_ng.netlib.layer.tor.common.TorConfig, java.lang.String)}
+	 * {@link RouterImpl#parseRouterDescriptors(TorConfig, String)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -129,7 +129,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#renderRouterDescriptor()}
+	 * {@link RouterImpl#renderRouterDescriptor()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -140,7 +140,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getRefinedRankingIndex(float)}
+	 * {@link RouterImpl#getRefinedRankingIndex(float)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -151,7 +151,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#punishRanking()}
+	 * {@link RouterImpl#punishRanking()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -162,7 +162,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#exitPolicyAccepts(java.net.InetAddress, int)}
+	 * {@link RouterImpl#exitPolicyAccepts(java.net.InetAddress, int)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -173,7 +173,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isDirServer()}
+	 * {@link RouterImpl#isDirServer()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -184,7 +184,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isExitNode()}
+	 * {@link RouterImpl#isExitNode()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -195,7 +195,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#toString()}
+	 * {@link RouterImpl#toString()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -206,7 +206,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#toLongString()}
+	 * {@link RouterImpl#toLongString()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -217,7 +217,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isValid()}
+	 * {@link RouterImpl#isValid()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -228,7 +228,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getDirAddress()}
+	 * {@link RouterImpl#getDirAddress()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -239,7 +239,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getOrAddress()}
+	 * {@link RouterImpl#getOrAddress()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -250,7 +250,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getNickname()}
+	 * {@link RouterImpl#getNickname()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -261,7 +261,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getHostname()}
+	 * {@link RouterImpl#getHostname()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -272,7 +272,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getAddress()}
+	 * {@link RouterImpl#getAddress()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -283,7 +283,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getCountryCode()}
+	 * {@link RouterImpl#getCountryCode()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -294,7 +294,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getOrPort()}
+	 * {@link RouterImpl#getOrPort()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -305,7 +305,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getSocksPort()}
+	 * {@link RouterImpl#getSocksPort()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -316,7 +316,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getDirPort()}
+	 * {@link RouterImpl#getDirPort()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -327,7 +327,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getBandwidthAvg()}
+	 * {@link RouterImpl#getBandwidthAvg()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -338,7 +338,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getBandwidthBurst()}
+	 * {@link RouterImpl#getBandwidthBurst()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -349,7 +349,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getBandwidthObserved()}
+	 * {@link RouterImpl#getBandwidthObserved()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -360,7 +360,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getPlatform()}
+	 * {@link RouterImpl#getPlatform()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -371,7 +371,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getPublished()}
+	 * {@link RouterImpl#getPublished()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -382,7 +382,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getFingerprint()}
+	 * {@link RouterImpl#getFingerprint()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -393,7 +393,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getV3Ident()}
+	 * {@link RouterImpl#getV3Ident()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -404,7 +404,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getUptime()}
+	 * {@link RouterImpl#getUptime()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -415,7 +415,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getOnionKey()}
+	 * {@link RouterImpl#getOnionKey()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -426,7 +426,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getSigningKey()}
+	 * {@link RouterImpl#getSigningKey()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -437,7 +437,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getExitpolicy()}
+	 * {@link RouterImpl#getExitpolicy()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -448,7 +448,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getContact()}
+	 * {@link RouterImpl#getContact()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -459,7 +459,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getFamily()}
+	 * {@link RouterImpl#getFamily()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -470,7 +470,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getValidUntil()}
+	 * {@link RouterImpl#getValidUntil()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -481,7 +481,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getLastUpdate()}
+	 * {@link RouterImpl#getLastUpdate()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -492,7 +492,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isDirv2Authority()}
+	 * {@link RouterImpl#isDirv2Authority()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -503,7 +503,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#setDirv2Authority(boolean)}
+	 * {@link RouterImpl#setDirv2Authority(boolean)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -514,7 +514,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isDirv2Exit()}
+	 * {@link RouterImpl#isDirv2Exit()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -525,7 +525,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#setDirv2Exit(boolean)}
+	 * {@link RouterImpl#setDirv2Exit(boolean)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -536,7 +536,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isDirv2Fast()}
+	 * {@link RouterImpl#isDirv2Fast()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -547,7 +547,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#setDirv2Fast(boolean)}
+	 * {@link RouterImpl#setDirv2Fast(boolean)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -558,7 +558,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isDirv2Guard()}
+	 * {@link RouterImpl#isDirv2Guard()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -569,7 +569,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#setDirv2Guard(boolean)}
+	 * {@link RouterImpl#setDirv2Guard(boolean)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -580,7 +580,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isDirv2Named()}
+	 * {@link RouterImpl#isDirv2Named()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -591,7 +591,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#setDirv2Named(boolean)}
+	 * {@link RouterImpl#setDirv2Named(boolean)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -602,7 +602,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isDirv2Stable()}
+	 * {@link RouterImpl#isDirv2Stable()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -613,7 +613,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#setDirv2Stable(boolean)}
+	 * {@link RouterImpl#setDirv2Stable(boolean)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -624,7 +624,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isDirv2Running()}
+	 * {@link RouterImpl#isDirv2Running()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -635,7 +635,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#setDirv2Running(boolean)}
+	 * {@link RouterImpl#setDirv2Running(boolean)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -646,7 +646,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isDirv2Valid()}
+	 * {@link RouterImpl#isDirv2Valid()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -657,7 +657,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#setDirv2Valid(boolean)}
+	 * {@link RouterImpl#setDirv2Valid(boolean)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -668,7 +668,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isDirv2V2dir()}
+	 * {@link RouterImpl#isDirv2V2dir()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -679,7 +679,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#setDirv2V2dir(boolean)}
+	 * {@link RouterImpl#setDirv2V2dir(boolean)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -690,7 +690,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#isDirv2HSDir()}
+	 * {@link RouterImpl#isDirv2HSDir()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -701,7 +701,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getRankingIndex()}
+	 * {@link RouterImpl#getRankingIndex()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -712,7 +712,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#setRankingIndex(float)}
+	 * {@link RouterImpl#setRankingIndex(float)}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -723,7 +723,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getHighBandwidth()}
+	 * {@link RouterImpl#getHighBandwidth()}
 	 * .
 	 */
 	@Test(enabled = false)
@@ -734,7 +734,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl#getRouterDescriptor()}
+	 * {@link RouterImpl#getRouterDescriptor()}
 	 * .
 	 */
 	@Test(enabled = false)

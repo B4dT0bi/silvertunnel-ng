@@ -378,9 +378,11 @@ public class HiddenServiceClient
 	 * @throws TorException
 	 * @throws IOException
 	 */
-	private static void doRendezvous(final Circuit myRendezvousCircuit, final Node introPointServicePublicKeyNode, final String z)
-																																	throws TorException,
-																																	IOException
+	private static void doRendezvous(final Circuit myRendezvousCircuit, 
+	                                 final Node introPointServicePublicKeyNode, 
+	                                 final String z)
+														throws TorException,
+														       IOException
 	{
 		// wait for answer from the hidden service (RENDEZVOUS2)
 		// TODO : check if it still works!!! (tobi)

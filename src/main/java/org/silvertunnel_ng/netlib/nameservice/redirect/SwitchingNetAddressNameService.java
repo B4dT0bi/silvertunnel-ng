@@ -79,7 +79,7 @@ public class SwitchingNetAddressNameService implements NetAddressNameService
 		this.lowerNetAddressNameService = lowerNetAddressNameService;
 	}
 
-	/** @see NetAddressNameService#getAddresses */
+	/** @see NetAddressNameService#getAddressesByName(String) */
 	@Override
 	public NetAddress[] getAddressesByName(final String name)
 			throws UnknownHostException
@@ -88,7 +88,7 @@ public class SwitchingNetAddressNameService implements NetAddressNameService
 		return lowerNetAddressNameService.getAddressesByName(name);
 	}
 
-	/** @see NetAddressNameService#getNames */
+	/** @see NetAddressNameService#getNamesByAddress(NetAddress) */
 	@Override
 	public String[] getNamesByAddress(final NetAddress address)
 			throws UnknownHostException

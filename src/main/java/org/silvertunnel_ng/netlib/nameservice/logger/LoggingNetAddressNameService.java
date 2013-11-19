@@ -93,7 +93,7 @@ public class LoggingNetAddressNameService implements NetAddressNameService
 				: ("");
 	}
 
-	/** @see NetAddressNameService#getAddresses */
+	/** @see NetAddressNameService#getAddressesByName(String) */
 	@Override
 	public NetAddress[] getAddressesByName(String name)
 			throws UnknownHostException

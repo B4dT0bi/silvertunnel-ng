@@ -456,8 +456,9 @@ public final class Directory
 					final RouterImpl dirRouter = dirRouters.get(index);
 					if (LOG.isDebugEnabled())
 					{
-						LOG.debug("Directory.updateNetworkStatusNew: Randomly chosen dirRouter to fetch consensus document: " + dirRouter.getFingerprint()
-							+ " (" + dirRouter.getNickname() + ")");
+						LOG.debug("Directory.updateNetworkStatusNew: Randomly chosen dirRouter to fetch consensus document: " 
+								+ dirRouter.getFingerprint()
+								+ " (" + dirRouter.getNickname() + ")");
 					}
 					try
 					{
@@ -693,8 +694,9 @@ public final class Directory
 	 * @param directoryConsensus
 	 *            will be read
 	 */
-	private void fetchDescriptors(final Map<Fingerprint, RouterImpl> fingerprintsRouters, final DirectoryConsensus directoryConsensus)
-																																		throws TorException
+	private void fetchDescriptors(final Map<Fingerprint, RouterImpl> fingerprintsRouters, 
+	                              final DirectoryConsensus directoryConsensus)
+																				throws TorException
 	{
 		final Set<Fingerprint> fingerprintsOfRoutersToLoad = new HashSet<Fingerprint>();
 
@@ -787,8 +789,10 @@ public final class Directory
 					}
 					if (LOG.isDebugEnabled())
 					{
-						LOG.debug("loaded " + successes + " of " + attempts + " missing routers from directory server \"" + directoryServer.getNickname()
-							+ "\" with single request");
+						LOG.debug("loaded " + successes + " of " 
+								+ attempts + " missing routers from directory server \"" 
+								+ directoryServer.getNickname()
+								+ "\" with single request");
 					}
 					break;
 				}

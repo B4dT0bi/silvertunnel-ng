@@ -45,7 +45,7 @@ public class StreamReceiver extends Thread
 	 * Initialize.
 	 * 
 	 * @param name
-	 * @param out
+	 * @param in
 	 */
 	public StreamReceiver(final String name, final InputStream in)
 	{
