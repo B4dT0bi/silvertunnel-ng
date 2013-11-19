@@ -6,8 +6,32 @@
 	<artifactId>netlib</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>SilverTunnel-NG Netlib</name>
+	<packaging>jar</packaging>
+	<url>https://silvertunnel-ng.org</url>
 	<description>SilverTunnel-NG Netlib is a free library for the Java programming language that implements and encapsulates all the complex network protocol stuff needed for anonymous communication over the Tor anonymity network. Netlib can be easily integrated in almost every existing and new Java application. The library requires Java 1.6/Java SE 6 or a newer version.
 The original silvertunnel Netlib can be found here : silvertunnel.org	</description>
+	<licenses>
+		<license>
+			<url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+		</license>
+	</licenses>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+	<scm>
+		<url>https://sourceforge.net/p/silvertunnel-ng/code/ci/master/tree/</url>
+		<connection>scm:git:git://git.code.sf.net/p/silvertunnel-ng/code silvertunnel-ng-code</connection>
+		<developerConnection>scm:git:ssh://b4dt0bi@git.code.sf.net/p/silvertunnel-ng/code silvertunnel-ng-code</developerConnection>
+	</scm>
+	<developers>
+		<developer>
+			<id>b4dt0bi</id>
+			<name>Tobias Boese</name>
+			<email>tobias.boese@gmail.com</email>
+		</developer>
+	</developers>
 	<build>
 		<plugins>
 			<plugin>
@@ -27,14 +51,8 @@ The original silvertunnel Netlib can be found here : silvertunnel.org	</descript
 					<forkCount>1</forkCount>
 					<reuseForks>false</reuseForks>
 					<argLine>-Dsun.net.spi.nameservice.provider.1=dns,NetlibNameService</argLine>
-					<!-- 
-					<systemProperties>
-						<property>
-							<name>java.util.logging.config.file</name>
-							<value>file:target/test-classes/logging.properties</value>
-						</property>
-					</systemProperties>
-					 -->
+					<!-- <systemProperties> <property> <name>java.util.logging.config.file</name> 
+						<value>file:target/test-classes/logging.properties</value> </property> </systemProperties> -->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -46,6 +64,20 @@ The original silvertunnel Netlib can be found here : silvertunnel.org	</descript
 						<id>attach-sources</id>
 						<goals>
 							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
 						</goals>
 					</execution>
 				</executions>
