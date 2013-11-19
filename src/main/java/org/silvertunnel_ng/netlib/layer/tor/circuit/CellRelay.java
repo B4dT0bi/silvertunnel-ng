@@ -153,6 +153,14 @@ public class CellRelay extends Cell
 		super(c, Cell.CELL_RELAY);
 		this.relayCommand = (byte) relayCommand;
 	}
+	/**
+	 * constructor. used for EXTEND-cells and SENDME-cells
+	 */
+	CellRelay(final Circuit c, final int cellType, final int relayCommand)
+	{
+		super(c, cellType);
+		this.relayCommand = (byte) relayCommand;
+	}
 
 	/**
 	 * initialize cell. used by RELAY_BEGIN-cells
@@ -160,6 +168,16 @@ public class CellRelay extends Cell
 	CellRelay(final Stream s, final int relayCommand)
 	{
 		super(s.getCircuit(), Cell.CELL_RELAY);
+		this.streamId = s.getId();
+		this.relayCommand = (byte) relayCommand;
+	}
+
+	/**
+	 * initialize cell. used by RELAY_BEGIN-cells
+	 */
+	CellRelay(final Stream s, final int cellType, final int relayCommand)
+	{
+		super(s.getCircuit(), cellType);
 		this.streamId = s.getId();
 		this.relayCommand = (byte) relayCommand;
 	}

@@ -53,13 +53,12 @@ class CellRelayExtend extends CellRelayEarly
 			throws IOException, TorException
 	{
 		// initialize a new RELAY-cell
-		super(cell, CellRelayEarly.RELAY_EXTEND);
+		super(cell, CellRelay.RELAY_EXTEND);
 
 		// Address [4 bytes] next.server.address
 		final byte[] address = nextNode.getRouter().getAddress().getAddress();
 		// Port [2 bytes] next.server.port
-		final byte[] orPort = Encoding.intTo2ByteArray(nextNode.getRouter()
-				.getOrPort());
+		final byte[] orPort = Encoding.intTo2ByteArray(nextNode.getRouter().getOrPort());
 		// Onion skin [186 bytes]
 		final byte[] onionSkin = nextNode.asymEncrypt(nextNode.getDhXBytes());
 		// Public key hash [20 bytes]
