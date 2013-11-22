@@ -22,8 +22,8 @@ The original silvertunnel Netlib can be found here : silvertunnel.org	</descript
 	</parent>
 	<scm>
 		<url>https://sourceforge.net/p/silvertunnel-ng/code/ci/master/tree/</url>
-		<connection>scm:git:git://git.code.sf.net/p/silvertunnel-ng/code silvertunnel-ng-code</connection>
-		<developerConnection>scm:git:ssh://git.code.sf.net/p/silvertunnel-ng/code silvertunnel-ng-code</developerConnection>
+		<connection>scm:git:git://git.code.sf.net/p/silvertunnel-ng/code.git silvertunnel-ng-code</connection>
+		<developerConnection>scm:git:ssh://git.code.sf.net/p/silvertunnel-ng/code.git silvertunnel-ng-code</developerConnection>
 	</scm>
 	<developers>
 		<developer>
