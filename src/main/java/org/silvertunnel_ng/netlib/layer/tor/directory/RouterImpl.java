@@ -921,7 +921,7 @@ public final class RouterImpl implements Router, Cloneable
 	}
 
 	/**
-	 * can be used to query the exit policies wether this server would allow
+	 * can be used to query the exit policies whether this server would allow
 	 * outgoing connections to the host and port as given in the parameters.
 	 * <b>IMPORTANT:</b> this routing must be able to work, even if <i>addr</i>
 	 * is not given!
@@ -930,7 +930,7 @@ public final class RouterImpl implements Router, Cloneable
 	 *            the host that someone wants to connect to
 	 * @param port
 	 *            the port that is to be connected to
-	 * @return a boolean value wether the conenction would be allowed
+	 * @return a boolean value whether the connection would be allowed
 	 */
 	public boolean exitPolicyAccepts(InetAddress addr, int port)
 	{
