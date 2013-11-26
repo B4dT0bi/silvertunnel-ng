@@ -76,28 +76,15 @@ public class DynByteBuffer
 		if (length == 0)
 		{
 			buffer = new byte[size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size];
-			initBuffer(0);
 		}
 		else
 		{
 			final byte[] newBuffer = new byte[size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size];
 			System.arraycopy(buffer, 0, newBuffer, 0, length);
 			buffer = newBuffer;
-			initBuffer(length);
 		}
 	}
 
-	/**
-	 * @param from
-	 *            initializes the buffer from the given position on.
-	 */
-	private void initBuffer(final int from)
-	{
-		for (int i = from; i < buffer.length; i++)
-		{
-			buffer[i] = 0;
-		}
-	}
 
 	/**
 	 * increase the size of the buffer by the DEFAULT size.
@@ -208,8 +195,7 @@ public class DynByteBuffer
 	{
 		if (offset + length > array.length)
 		{
-			// TODO : throw exception?
-			return;
+			throw new ArrayIndexOutOfBoundsException(length + offset);
 		}
 		if (this.length + length >= buffer.length)
 		{
@@ -223,10 +209,7 @@ public class DynByteBuffer
 				increaseSize();
 			}
 		}
-		for (int i = 0; i < length; i++)
-		{
-			buffer[this.length + i] = array[offset + i];
-		}
+		System.arraycopy(array, offset, buffer, this.length, length);
 		this.length += length;
 	}
 
@@ -235,8 +218,18 @@ public class DynByteBuffer
 	 */
 	public final byte[] toArray()
 	{
-		final byte[] tmp = new byte[length];
-		System.arraycopy(buffer, 0, tmp, 0, length);
+		return toArray(0);
+	}
+	/**
+	 * Get the byte array (copy) from a specific position on.
+	 * 
+	 * @param offset the position where to start
+	 * @return returns the buffer as an byte array.
+	 */
+	public final byte[] toArray(final int offset)
+	{
+		byte[] tmp = new byte[length - offset];
+		System.arraycopy(buffer, offset, tmp, 0, length - offset);
 		return tmp;
 	}
 
@@ -245,7 +238,6 @@ public class DynByteBuffer
 	 */
 	public final void init()
 	{
-		initBuffer(0);
 		length = 0;
 	}
 
@@ -339,7 +331,11 @@ public class DynByteBuffer
 	 */
 	public final int getNextInt()
 	{
-		final int tmp = ByteUtils.bytesToInt(buffer, crrPosRead);
+		if (crrPosRead >= length)
+		{
+			throw new ArrayIndexOutOfBoundsException(crrPosRead);
+		}
+		int tmp = ByteUtils.bytesToInt(buffer, crrPosRead);
 		crrPosRead += 4;
 		return tmp;
 	}
@@ -349,7 +345,11 @@ public class DynByteBuffer
 	 */
 	public final long getNextLong()
 	{
-		final long tmp = ByteUtils.bytesToLong(buffer, crrPosRead);
+		if (crrPosRead >= length)
+		{
+			throw new ArrayIndexOutOfBoundsException(crrPosRead);
+		}
+		long tmp = ByteUtils.bytesToLong(buffer, crrPosRead);
 		crrPosRead += 8;
 		return tmp;
 	}
@@ -359,7 +359,11 @@ public class DynByteBuffer
 	 */
 	public final byte getNextByte()
 	{
-		final byte tmp = buffer[crrPosRead];
+		if (crrPosRead >= length)
+		{
+			throw new ArrayIndexOutOfBoundsException(crrPosRead);
+		}
+		byte tmp = buffer[crrPosRead];
 		crrPosRead++;
 		return tmp;
 	}
@@ -369,7 +373,11 @@ public class DynByteBuffer
 	 */
 	public final boolean getNextBoolean()
 	{
-		final byte tmp = getNextByte();
+		if (crrPosRead >= length)
+		{
+			throw new ArrayIndexOutOfBoundsException(crrPosRead);
+		}
+		byte tmp = getNextByte();
 		return tmp == (byte) 1;
 	}
 
@@ -379,7 +387,11 @@ public class DynByteBuffer
 	 */
 	public final byte[] getNextByteArray()
 	{
-		final int len = getNextInt();
+		if (crrPosRead >= length)
+		{
+			throw new ArrayIndexOutOfBoundsException(crrPosRead);
+		}
+		int len = getNextInt();
 		return getNextByteArray(len);
 	}
 
@@ -388,7 +400,11 @@ public class DynByteBuffer
 	 */
 	public final String getNextString()
 	{
-		final byte[] tmp = getNextByteArray();
+		if (crrPosRead >= length)
+		{
+			throw new ArrayIndexOutOfBoundsException(crrPosRead);
+		}
+		byte[] tmp = getNextByteArray();
 		if (tmp == null || tmp.length == 0)
 		{
 			return null;
@@ -405,7 +421,15 @@ public class DynByteBuffer
 	 */
 	public final byte[] getNextByteArray(final int length)
 	{
-		final byte[] tmp = new byte[length];
+		if (length == 0)
+		{
+			return null;
+		}
+		if (crrPosRead >= this.length)
+		{
+			throw new ArrayIndexOutOfBoundsException(crrPosRead);
+		}
+		byte[] tmp = new byte[length];
 		System.arraycopy(buffer, crrPosRead, tmp, 0, length);
 		crrPosRead += length;
 		return tmp;
@@ -417,7 +441,7 @@ public class DynByteBuffer
 	 */
 	public final void setBuffer(final byte[] data)
 	{
-		buffer = new byte[data.length];
+		buffer = new byte [data.length];
 		System.arraycopy(data, 0, buffer, 0, data.length);
 		length = data.length;
 		crrPosRead = 0;
