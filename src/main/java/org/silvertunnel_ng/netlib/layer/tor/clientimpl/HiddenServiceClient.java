@@ -37,7 +37,6 @@ package org.silvertunnel_ng.netlib.layer.tor.clientimpl;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Date;
 
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
@@ -64,15 +63,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Implementation of Hidden Service Client.
+ * Used for connecting to a Tor Hidden Service through Tor network.
+ * 
  * @author hapke
  * @author Tobias Boese
  *
  */
-public class HiddenServiceClient
+public final class HiddenServiceClient
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(HiddenServiceClient.class);
 
+	/** a {@link RendezvousServiceDescriptorService} instance. */
 	private static RendezvousServiceDescriptorService rendezvousServiceDescriptorService = RendezvousServiceDescriptorService.getInstance();
 
 	/**
@@ -107,7 +110,7 @@ public class HiddenServiceClient
 		// get a copy from the rendezvous service descriptor
 		//
 		RendezvousServiceDescriptor sd = HiddenServiceDescriptorCache.getInstance().get(z);
-		if (sd == null || (!sd.isPublicationTimeValid(new Date())))
+		if (sd == null || (!sd.isPublicationTimeValid()))
 		{
 			// no valid entry in cache: retrieve a fresh one
 			sd = rendezvousServiceDescriptorService.loadRendezvousServiceDescriptorFromDirectory(z, torConfig, directory, torNetLayer);
@@ -243,8 +246,7 @@ public class HiddenServiceClient
 		Circuit myRendezvousCirc = null;
 		try
 		{
-			myRendezvousCirc = CircuitAdmin
-					.provideSuitableExclusiveCircuit(tlsConnectionAdmin, directory, new TCPStreamProperties(), torEventService);
+			myRendezvousCirc = CircuitAdmin.provideSuitableExclusiveCircuit(tlsConnectionAdmin, directory, new TCPStreamProperties(), torEventService);
 			if (myRendezvousCirc == null || !myRendezvousCirc.isEstablished())
 			{
 				throw new TorException("getNewRendezvousPoint(): couldnt establish rendezvous point for " + z + " - at the moment");

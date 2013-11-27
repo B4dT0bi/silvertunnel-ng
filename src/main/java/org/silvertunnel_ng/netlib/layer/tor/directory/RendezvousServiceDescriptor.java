@@ -42,7 +42,6 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,8 +66,9 @@ import org.slf4j.LoggerFactory;
  * @author Andriy
  * @author Lexi
  * @author hapke
+ * @author Tobias Boese
  */
-public class RendezvousServiceDescriptor
+public final class RendezvousServiceDescriptor
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(RendezvousServiceDescriptor.class);
@@ -77,19 +77,19 @@ public class RendezvousServiceDescriptor
 	private static Pattern serviceDescriptorStringPattern;
 
 	/** two days in milliseconds */
-	private static final long MAX_SERVICE_DESCRIPTOR_AGE_IN_MS = 2L * 24L * 60L
-			* 60L * 1000L;
+	private static final long MAX_SERVICE_DESCRIPTOR_AGE_IN_MS = 2L * 24L * 60L * 60L * 1000L;
 
-	/** descriptor-id */
+	/** descriptor-id. */
 	private byte[] descriptorId;
-	/** version of this descriptor - usually 2 */
+	/** version of this descriptor - usually 2. */
 	private String version = "2";
 	private RSAPublicKey permanentPublicKey;
-	/** highest 80 bits of the hash of the permanentPublicKey in base32 */
+	/** highest 80 bits of the hash of the permanentPublicKey in base32. */
 	private String z;
-	/** secret-id */
+	/** secret-id. */
 	private byte[] secretIdPart;
-	private Date publicationTime;
+	/** publication time of this service descriptor. */
+	private Long publicationTime;
 	/**
 	 * recognized and permitted version numbers for use in INTRODUCE cells
 	 * (currently, we do not support version 3)
@@ -112,19 +112,12 @@ public class RendezvousServiceDescriptor
 	{
 		try
 		{
-			serviceDescriptorStringPattern = Pattern
-					.compile(
-							"^(rendezvous-service-descriptor ([a-z2-7]+)\n"
-									+ "version (\\d+)\n"
-									+ "permanent-key\n(-----BEGIN RSA PUBLIC KEY-----\n.*?-----END RSA PUBLIC KEY-----)\n"
-									+ "secret-id-part ([a-z2-7]+)\n"
-									+ "publication-time (\\S+ \\S+)\n"
-									+ "protocol-versions (\\d+(?:,\\d+)?(?:,\\d+)?(?:,\\d+)?(?:,\\d+)?)\n"
-									+ "introduction-points\n-----BEGIN MESSAGE-----\n(.*?)-----END MESSAGE-----\n"
-									+ "signature\n)-----BEGIN SIGNATURE-----\n(.*?)-----END SIGNATURE-----",
-							Pattern.DOTALL + Pattern.MULTILINE
-									+ Pattern.CASE_INSENSITIVE
-									+ Pattern.UNIX_LINES);
+			serviceDescriptorStringPattern = Pattern.compile("^(rendezvous-service-descriptor ([a-z2-7]+)\n" + "version (\\d+)\n"
+					+ "permanent-key\n(-----BEGIN RSA PUBLIC KEY-----\n.*?-----END RSA PUBLIC KEY-----)\n" + "secret-id-part ([a-z2-7]+)\n"
+					+ "publication-time (\\S+ \\S+)\n" + "protocol-versions (\\d+(?:,\\d+)?(?:,\\d+)?(?:,\\d+)?(?:,\\d+)?)\n"
+					+ "introduction-points\n-----BEGIN MESSAGE-----\n(.*?)-----END MESSAGE-----\n"
+					+ "signature\n)-----BEGIN SIGNATURE-----\n(.*?)-----END SIGNATURE-----", Pattern.DOTALL + Pattern.MULTILINE
+					+ Pattern.CASE_INSENSITIVE + Pattern.UNIX_LINES);
 		}
 		catch (final Exception e)
 		{
@@ -149,8 +142,7 @@ public class RendezvousServiceDescriptor
 		final String protocolVersionsStr = protocolVersionsStrBuf.toString();
 
 		// introductionPointsBase64: create String
-		final String introductionPointsStr = SDIntroductionPoint
-				.formatMultipleIntroductionPoints(introductionPoints) + "\n";
+		final String introductionPointsStr = SDIntroductionPoint.formatMultipleIntroductionPoints(introductionPoints) + "\n";
 		byte[] introductionPointsBytes = null;
 		try
 		{
@@ -161,21 +153,14 @@ public class RendezvousServiceDescriptor
 			LOG.debug("got UnsupportedEncodingException : {}", e.getMessage(), e);
 		}
 		final int BASE64_COLUMN_WITH = 64;
-		final String introductionPointsBase64 = Encoding.toBase64(
-				introductionPointsBytes, BASE64_COLUMN_WITH);
+		final String introductionPointsBase64 = Encoding.toBase64(introductionPointsBytes, BASE64_COLUMN_WITH);
 
 		// build the complete result
-		final String dataToSignStr = "rendezvous-service-descriptor "
-				+ Encoding.toBase32(descriptorId) + "\n" + "version " + version
-				+ "\n" + "permanent-key\n"
-				+ Encryption.getPEMStringFromRSAPublicKey(permanentPublicKey)
-				+ "secret-id-part " + Encoding.toBase32(secretIdPart) + "\n"
-				+ "publication-time "
-				+ Util.formatUtcTimestamp(publicationTime) + "\n"
-				+ "protocol-versions " + protocolVersionsStr + "\n"
-				+ "introduction-points\n" + "-----BEGIN MESSAGE-----\n"
-				+ introductionPointsBase64 + "-----END MESSAGE-----\n"
-				+ "signature\n";
+		final String dataToSignStr = "rendezvous-service-descriptor " + Encoding.toBase32(descriptorId) + "\n" + "version " + version + "\n"
+				+ "permanent-key\n" + Encryption.getPEMStringFromRSAPublicKey(permanentPublicKey) + "secret-id-part "
+				+ Encoding.toBase32(secretIdPart) + "\n" + "publication-time " + Util.formatUtcTimestamp(publicationTime) + "\n"
+				+ "protocol-versions " + protocolVersionsStr + "\n" + "introduction-points\n" + "-----BEGIN MESSAGE-----\n"
+				+ introductionPointsBase64 + "-----END MESSAGE-----\n" + "signature\n";
 
 		// sign the signatureStr
 		String signatureStr = "";
@@ -191,54 +176,50 @@ public class RendezvousServiceDescriptor
 			{
 				LOG.warn("unexpected", e);
 			}
-			final byte[] signature = Encryption
-					.signData(dataToSign, privateKey);
+			final byte[] signature = Encryption.signData(dataToSign, privateKey);
 			signatureStr = Encoding.toBase64(signature, BASE64_COLUMN_WITH);
 		}
 
 		// create full descriptor
-		return dataToSignStr + "-----BEGIN SIGNATURE-----\n" + signatureStr
-				+ "-----END SIGNATURE-----\n";
+		return dataToSignStr + "-----BEGIN SIGNATURE-----\n" + signatureStr + "-----END SIGNATURE-----\n";
 	}
 
 	/**
 	 * Constructor for creating a service descriptor of the newest support
 	 * version.
 	 */
-	public RendezvousServiceDescriptor(String hiddenServicePermanentIdBase32,
-			int replica, Date now, RSAPublicKey publicKey,
-			RSAPrivateKey privateKey,
-			Collection<SDIntroductionPoint> givenIntroPoints)
-			throws TorException
+	public RendezvousServiceDescriptor(final String hiddenServicePermanentIdBase32, 
+	                                   final int replica, 
+	                                   final long now, 
+	                                   final RSAPublicKey publicKey,
+	                                   final RSAPrivateKey privateKey, 
+	                                   final Collection<SDIntroductionPoint> givenIntroPoints) throws TorException
 	{
-		this(DEFAULT_SERVICE_DESCRIPTOR_VERSION,
-				hiddenServicePermanentIdBase32, replica, now, publicKey,
-				privateKey, givenIntroPoints);
+		this(DEFAULT_SERVICE_DESCRIPTOR_VERSION, hiddenServicePermanentIdBase32, replica, now, publicKey, privateKey, givenIntroPoints);
 	}
 
 	/**
 	 * Constructor for creating a service descriptor
 	 */
-	public RendezvousServiceDescriptor(String version,
-			String hiddenServicePermanentIdBase32, int replica,
-			Date publicationTime, RSAPublicKey publicKey,
-			RSAPrivateKey privateKey,
-			Collection<SDIntroductionPoint> givenIntroPoints)
-			throws TorException
+	public RendezvousServiceDescriptor(final String version, 
+	                                   final String hiddenServicePermanentIdBase32, 
+	                                   final int replica, 
+	                                   final Long publicationTime,
+	                                   final RSAPublicKey publicKey, 
+	                                   final RSAPrivateKey privateKey, 
+	                                   final Collection<SDIntroductionPoint> givenIntroPoints)
+																																			throws TorException
 	{
 
 		if (!DEFAULT_SERVICE_DESCRIPTOR_VERSION.equals(version))
 		{
 			// FIXME: service descriptors of version != 0 are not supported, yet
-			throw new TorException(
-					"not implemented: service descriptors of version != "
-							+ DEFAULT_SERVICE_DESCRIPTOR_VERSION
-							+ " are not supported, yet");
+			throw new TorException("not implemented: service descriptors of version != " + DEFAULT_SERVICE_DESCRIPTOR_VERSION
+					+ " are not supported, yet");
 		}
 		this.version = version;
 		final RendezvousServiceDescriptorKeyValues calculatedValues = RendezvousServiceDescriptorUtil
-				.getRendezvousDescriptorId(hiddenServicePermanentIdBase32,
-						replica, publicationTime);
+				.getRendezvousDescriptorId(hiddenServicePermanentIdBase32, replica, publicationTime);
 		this.descriptorId = calculatedValues.getDescriptorId();
 
 		this.publicationTime = publicationTime;
@@ -273,8 +254,7 @@ public class RendezvousServiceDescriptor
 	 * @param currentDate
 	 *            is used to check whether the service descriptor is still valid
 	 */
-	protected RendezvousServiceDescriptor(String serviceDescriptorStr,
-			Date currentDate) throws TorException
+	protected RendezvousServiceDescriptor(final String serviceDescriptorStr, final Long currentDate) throws TorException
 	{
 		this(serviceDescriptorStr, currentDate, true);
 	}
@@ -283,19 +263,20 @@ public class RendezvousServiceDescriptor
 	 * Constructor for parsing a service descriptor
 	 * 
 	 * @param serviceDescriptorStr
-	 * @param currentDate
+	 * @param currentTime
 	 *            is used to check whether the service descriptor is still valid
 	 * @param checkSignature
 	 *            true=check signature; false(only for testing)=ignore signature
 	 */
-	protected RendezvousServiceDescriptor(String serviceDescriptorStr,
-			Date currentDate, boolean checkSignature) throws TorException
+	protected RendezvousServiceDescriptor(final String serviceDescriptorStr, 
+	                                      final Long currentTime, 
+	                                      final boolean checkSignature)
+	                                    		  throws TorException
 	{
 		try
 		{
 			// parse the authorityKeyCertificateStr
-			final Matcher m = serviceDescriptorStringPattern
-					.matcher(serviceDescriptorStr);
+			final Matcher m = serviceDescriptorStringPattern.matcher(serviceDescriptorStr);
 			m.find();
 
 			// read several fields
@@ -306,20 +287,17 @@ public class RendezvousServiceDescriptor
 
 			// read and check public key
 			final String permanentKeyStr = m.group(4);
-			permanentPublicKey = Encryption
-					.extractPublicRSAKey(permanentKeyStr);
-			z = RendezvousServiceDescriptorUtil
-					.calculateZFromPublicKey(permanentPublicKey);
+			permanentPublicKey = Encryption.extractPublicRSAKey(permanentKeyStr);
+			z = RendezvousServiceDescriptorUtil.calculateZFromPublicKey(permanentPublicKey);
 
 			final String secretIdPartBase32 = m.group(5);
 			secretIdPart = Encoding.parseBase32(secretIdPartBase32);
 
 			// parse and check publication time
-			publicationTime = Util.parseUtcTimestamp(m.group(6));
-			if (!isPublicationTimeValid(currentDate))
+			publicationTime = Util.parseUtcTimestampAsLong(m.group(6));
+			if (!isPublicationTimeValid(currentTime))
 			{
-				throw new TorException("invalid publication-time="
-						+ publicationTime);
+				throw new TorException("invalid publication-time=" + publicationTime);
 			}
 
 			// parse: a comma-separated list of recognized and permitted version
@@ -333,12 +311,9 @@ public class RendezvousServiceDescriptor
 			{
 				introductionPointsBase64 += "="; // add missing padding
 			}
-			final byte[] introductionPointsBytes = DatatypeConverter
-					.parseBase64Binary(introductionPointsBase64);
-			final String introductionPointsStr = new String(
-					introductionPointsBytes, Util.UTF8);
-			introductionPoints = SDIntroductionPoint
-					.parseMultipleIntroductionPoints(introductionPointsStr);
+			final byte[] introductionPointsBytes = DatatypeConverter.parseBase64Binary(introductionPointsBase64);
+			final String introductionPointsStr = new String(introductionPointsBytes, Util.UTF8);
+			introductionPoints = SDIntroductionPoint.parseMultipleIntroductionPoints(introductionPointsStr);
 			if (LOG.isDebugEnabled())
 			{
 				LOG.debug("ips = " + introductionPoints);
@@ -350,8 +325,7 @@ public class RendezvousServiceDescriptor
 			{
 				signatureStr += "="; // add missing padding
 			}
-			final byte[] signature = DatatypeConverter
-					.parseBase64Binary(signatureStr);
+			final byte[] signature = DatatypeConverter.parseBase64Binary(signatureStr);
 			final String signedDataStr = m.group(1);
 			byte[] signedData = null;
 			try
@@ -362,9 +336,7 @@ public class RendezvousServiceDescriptor
 			{
 				LOG.warn("unexpected", e);
 			}
-			if (checkSignature
-					&& !Encryption.verifySignature(signature,
-							permanentPublicKey, signedData))
+			if (checkSignature && !Encryption.verifySignature(signature, permanentPublicKey, signedData))
 			{
 				throw new TorException("dirKeyCertification check failed");
 			}
@@ -416,8 +388,7 @@ public class RendezvousServiceDescriptor
 		try
 		{
 			// create hash of public key
-			final byte[] hash = Encryption.getDigest(Encryption
-					.getPKCS1EncodingFromRSAPublicKey(permanentPublicKey));
+			final byte[] hash = Encryption.getDigest(Encryption.getPKCS1EncodingFromRSAPublicKey(permanentPublicKey));
 			// take top 80-bits and convert to biginteger
 			final byte[] h1 = new byte[10];
 			System.arraycopy(hash, 0, h1, 0, 10);
@@ -435,29 +406,38 @@ public class RendezvousServiceDescriptor
 	/**
 	 * checks whether the timestamp is no older than 24h.
 	 * 
-	 * @param currentDate
+	 * @param currentTime
+	 *            current time in ms
+	 * @return true if the publication time is still valid
 	 */
-	public boolean isPublicationTimeValid(Date currentDate) // TODO : remove Date
+	public boolean isPublicationTimeValid(final Long currentTime)
 	{
 		if (publicationTime == null)
 		{
 			return false;
 		}
-		if (publicationTime.after(currentDate)
-				|| (currentDate.getTime() - publicationTime.getTime() > MAX_SERVICE_DESCRIPTOR_AGE_IN_MS))
+		if (publicationTime > currentTime || (currentTime - publicationTime > MAX_SERVICE_DESCRIPTOR_AGE_IN_MS))
 		{
 			return false;
 		}
 		return true;
 	}
 
+	/**
+	 * checks whether the timestamp is no older than 24h.
+	 * 
+	 * @return true if the publication time is still valid
+	 */
+	public boolean isPublicationTimeValid()
+	{
+		return isPublicationTimeValid(System.currentTimeMillis());
+	}
+
 	@Override
 	public String toString()
 	{
-		return "RendezvousServiceDescriptor=(descriptorIdBase32="
-				+ Encoding.toBase32(descriptorId) + ",publicationTime="
-				+ publicationTime + ",introductionPoints=" + introductionPoints
-				+ ")";
+		return "RendezvousServiceDescriptor=(descriptorIdBase32=" + Encoding.toBase32(descriptorId) + ",publicationTime=" + publicationTime
+				+ ",introductionPoints=" + introductionPoints + ")";
 	}
 
 	// /////////////////////////////////////////////////////
@@ -502,7 +482,12 @@ public class RendezvousServiceDescriptor
 		return secretIdPart;
 	}
 
-	public Date getPublicationTime()
+	/**
+	 * Get the publication time of this {@link RendezvousServiceDescriptor}.
+	 * 
+	 * @return the publication time in ms
+	 */
+	public Long getPublicationTime()
 	{
 		return publicationTime;
 	}

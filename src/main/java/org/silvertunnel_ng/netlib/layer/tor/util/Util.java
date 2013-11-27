@@ -30,8 +30,9 @@ import org.slf4j.LoggerFactory;
  * Helper method for Tor.
  * 
  * @author hapke
+ * @author Tobias Boese
  */
-public class Util
+public final class Util
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(Util.class);
@@ -87,12 +88,66 @@ public class Util
 	}
 
 	/**
+	 * Parse with format "yyyy-MM-dd HH:mm:ss".
+	 * 
+	 * @param timestampStr
+	 *            interpret the time as UTC
+	 * @return the time stamp as long; null in the case of an error
+	 */
+	public static Long parseUtcTimestampAsLong(final String timestampStr)
+	{
+		try
+		{
+			// synchronized because SimpleDateFormat is not thread safe
+			synchronized (Util.class)
+			{
+				initUtcTimestampIfNeeded();
+
+				// parse
+				return utcTimestampDateFormat.parse(timestampStr).getTime();
+			}
+
+		}
+		catch (final Exception e)
+		{
+			LOG.debug("Exception while parsing timestampStr={}", timestampStr, e);
+			return null;
+		}
+	}
+
+	/**
 	 * Format with format "yyyy-MM-dd HH:mm:ss".
 	 * 
 	 * @param timestamp
 	 * @return the timestamp as UTC; null in the case of an error
 	 */
 	public static String formatUtcTimestamp(final Date timestamp)
+	{
+		try
+		{
+			// synchronized because SimpleDateFormat is not thread safe
+			synchronized (Util.class)
+			{
+				initUtcTimestampIfNeeded();
+
+				// parse
+				return utcTimestampDateFormat.format(timestamp);
+			}
+		}
+		catch (final Exception e)
+		{
+			LOG.debug("Exception while formatting timestamp={}", timestamp, e);
+			return null;
+		}
+	}
+	
+	/**
+	 * Format with format "yyyy-MM-dd HH:mm:ss".
+	 * 
+	 * @param timestamp as long
+	 * @return the timestamp as UTC; null in the case of an error
+	 */
+	public static String formatUtcTimestamp(final Long timestamp)
 	{
 		try
 		{

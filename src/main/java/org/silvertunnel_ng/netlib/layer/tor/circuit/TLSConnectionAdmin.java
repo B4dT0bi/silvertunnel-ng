@@ -60,13 +60,14 @@ import org.slf4j.LoggerFactory;
  * @author Lexi Pimenidis
  * @author Andriy Panchenko
  * @author hapke
+ * @author Tobias Boese
  */
 public class TLSConnectionAdmin
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TLSConnectionAdmin.class);
 
-	static SecureRandom rnd = new SecureRandom();
+	final static SecureRandom rnd = new SecureRandom();
 
 	/** key=fingerprint, value=connection to this router */
 	private final Map<Fingerprint, WeakReference<TLSConnection>> connectionMap = Collections
@@ -87,10 +88,9 @@ public class TLSConnectionAdmin
 	private final PrivateKeyHandler privateKeyHandler;
 
 	/**
-	 * initialize Handler of TLSConnections
+	 * initialize Handler of TLSConnections.
 	 */
-	public TLSConnectionAdmin(NetLayer lowerTlsConnectionNetLayer,
-			PrivateKeyHandler privateKeyHandler) throws IOException
+	public TLSConnectionAdmin(final NetLayer lowerTlsConnectionNetLayer, final PrivateKeyHandler privateKeyHandler) throws IOException
 	{
 		this.lowerTlsConnectionNetLayer = lowerTlsConnectionNetLayer;
 		this.privateKeyHandler = privateKeyHandler;
@@ -112,8 +112,7 @@ public class TLSConnectionAdmin
 			throw new TorException("TLSConnectionAdmin: server is NULL");
 		}
 		// check if TLS-connections to node established
-		WeakReference<TLSConnection> weakConn = connectionMap.get(router
-				.getFingerprint());
+		WeakReference<TLSConnection> weakConn = connectionMap.get(router.getFingerprint());
 		TLSConnection conn = null;
 		if (weakConn != null)
 		{
@@ -123,8 +122,7 @@ public class TLSConnectionAdmin
 		{
 			// not in cache: build new TLS connection
 			LOG.debug("TLSConnectionAdmin: TLS connection to {}", router.getNickname());
-			conn = new TLSConnection(router, lowerTlsConnectionNetLayer,
-					privateKeyHandler);
+			conn = new TLSConnection(router, lowerTlsConnectionNetLayer, privateKeyHandler);
 			weakConn = new WeakReference<TLSConnection>(conn);
 			connectionMap.put(router.getFingerprint(), weakConn);
 			connectionMapAll.put(router.getFingerprint(), weakConn);

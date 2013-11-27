@@ -35,7 +35,6 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.hiddenservice;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,7 +120,7 @@ public final class HiddenServiceDescriptorCache
 		{
 			return null; // nothing found
 		}
-		if (result.isPublicationTimeValid(new Date()))
+		if (result.isPublicationTimeValid())
 		{
 			return result; // valid so return it
 		}
