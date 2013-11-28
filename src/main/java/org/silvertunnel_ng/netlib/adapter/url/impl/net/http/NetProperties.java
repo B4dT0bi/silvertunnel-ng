@@ -143,7 +143,7 @@ public class NetProperties
 	 * @return the <code>Integer</code> value for the property, or
 	 *         <code>null</code>
 	 */
-	public static Integer getInteger(String key, int defval)
+	public static Integer getInteger(final String key, final int defval)
 	{
 		String val = null;
 
@@ -171,7 +171,7 @@ public class NetProperties
 				LOG.debug("got NumberFormatException : {}", ex.getMessage(), ex);
 			}
 		}
-		return new Integer(defval);
+		return Integer.valueOf(defval);
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class NetProperties
 	 * @return the <code>Boolean</code> value for the property, or
 	 *         <code>null</code>
 	 */
-	public static Boolean getBoolean(String key)
+	public static Boolean getBoolean(final String key)
 	{
 		String val = null;
 

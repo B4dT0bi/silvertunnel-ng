@@ -67,7 +67,7 @@ public class CellRelayBegin extends CellRelay
 		// set ':'
 		getData()[host.length] = ':';
 		// set port
-		final byte[] port = new Integer(sp.getPort()).toString().getBytes();
+		final byte[] port = Integer.valueOf(sp.getPort()).toString().getBytes();
 		System.arraycopy(port, 0, getData(), host.length + 1, port.length);
 		// set length
 		setLength(host.length + 1 + port.length + 1);

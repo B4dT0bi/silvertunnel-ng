@@ -111,8 +111,7 @@ public class NetlibSocketFactory implements SocketFactory
 
 		// open connection without explicit DNS resolution
 		final Map<String, Object> localProperties = new HashMap<String, Object>();
-		localProperties.put(TcpipNetLayer.TIMEOUT_IN_MS, new Integer(
-				timeoutInMs));
+		localProperties.put(TcpipNetLayer.TIMEOUT_IN_MS, Integer.valueOf(timeoutInMs));
 		final TcpipNetAddress remoteNetAddress = new TcpipNetAddress(host, port);
 
 		try

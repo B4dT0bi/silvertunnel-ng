@@ -267,8 +267,8 @@ public final class LookupService
 			// distributed service only
 			for (i = 0; i < 233; i++)
 			{
-				hashmapcountryCodetoindex.put(countryCode[i], new Integer(i));
-				hashmapcountryNametoindex.put(countryName[i], new Integer(i));
+				hashmapcountryCodetoindex.put(countryCode[i], Integer.valueOf(i));
+				hashmapcountryNametoindex.put(countryName[i], Integer.valueOf(i));
 			}
 			return;
 		}
@@ -449,7 +449,7 @@ public final class LookupService
 				for (int i = 0; i < STRUCTURE_INFO_MAX_SIZE; i++)
 				{
 					file.read(delim);
-					if (delim[0] == 255 && delim[1] == 255 && delim[2] == 255)
+					if ((delim[0] & 0xff) == 255 && (delim[1] & 0xff) == 255 && (delim[2] & 0xff) == 255)
 					{
 						hasStructureInfo = true;
 						break;
