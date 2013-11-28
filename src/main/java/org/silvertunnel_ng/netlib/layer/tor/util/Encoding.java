@@ -118,10 +118,12 @@ public class Encoding
 			.compileRegexPattern("(.*?)\\.");
 
 	/**
-	 * Converts a byte array to hex string
+	 * Converts a byte array to hex string.
 	 */
-	public static String toHexString(byte[] block, int columnWidth, int offset,
-			int length)
+	public static String toHexString(final byte[] block, 
+	                                 final int columnWidth, 
+	                                 final int offset,
+	                                 final int length)
 	{
 		final byte[] temp = new byte[length];
 		System.arraycopy(block, offset, temp, 0, length);
@@ -143,10 +145,10 @@ public class Encoding
 		{
 			if (i > 0)
 			{
-				buf.append(":");
+				buf.append(':');
 				if (i % (columnWidth / 3) == 0)
 				{
-					buf.append("\n");
+					buf.append('\n');
 				}
 			}
 			buf.append(HEX_LOOKUP[block[i] & 0xff]);
@@ -258,7 +260,7 @@ public class Encoding
 	 *            a string containing the dotted notation
 	 * @return the binary format
 	 */
-	public static long dottedNotationToBinary(String s)
+	public static long dottedNotationToBinary(final String s)
 	{
 		long temp = 0;
 
@@ -301,7 +303,7 @@ public class Encoding
 	 * @param ip
 	 *            binary encoded ip-address.
 	 */
-	public static String binaryToDottedNotation(long ip)
+	public static String binaryToDottedNotation(final long ip)
 	{
 		final StringBuffer dottedNotation = new StringBuffer();
 
@@ -504,8 +506,7 @@ public class Encoding
 	 *            hostname of the hidden service
 	 * @return hashmap with keys "x","y","z" and their corresponding values
 	 */
-	public static HashMap<String, String> parseHiddenAddress(
-			final String hostname)
+	public static HashMap<String, String> parseHiddenAddress(final String hostname)
 	{
 		String x, y, z;
 		final HashMap<String, String> result = new HashMap<String, String>(3);

@@ -51,11 +51,14 @@ public final class Util
 	 */
 	private static void initUtcTimestampIfNeeded()
 	{
-		if (utcTimestampDateFormat == null)
+		synchronized (utcTimestampDateFormat)
 		{
-			// initialize date format
-			utcTimestampDateFormat = new SimpleDateFormat(UTC_TIMESTAMP_FORMAT);
-			utcTimestampDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			if (utcTimestampDateFormat == null)
+			{
+				// initialize date format
+				utcTimestampDateFormat = new SimpleDateFormat(UTC_TIMESTAMP_FORMAT);
+				utcTimestampDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			}			
 		}
 	}
 

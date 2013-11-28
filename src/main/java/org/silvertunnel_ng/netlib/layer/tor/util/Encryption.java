@@ -110,6 +110,7 @@ public class Encryption
 
 	/** digest algorithm used. */
 	public static final String DIGEST_ALGORITHM = "SHA-1";
+	/** asymetric algorithm. */
 	private static final String PK_ALGORITHM = "RSA";
 
 	static
@@ -746,8 +747,7 @@ public class Encryption
 			LOG.debug("privateKey={}", privateKey);
 			LOG.debug("publicKey={}", publicKey);
 
-			final RSAKeyPair result = new RSAKeyPair(publicKey, privateKey);
-			return result;
+			return new RSAKeyPair(publicKey, privateKey);
 
 		}
 		catch (final NoSuchAlgorithmException e)

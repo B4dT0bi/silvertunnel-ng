@@ -55,7 +55,7 @@ import org.silvertunnel_ng.netlib.layer.tcpip.TcpipNetLayer;
  * @author Apache HttpClient
  * @author hapke
  */
-public class NetlibSocketFactory implements SocketFactory
+public class NetlibSocketFactory implements SocketFactory // TODO : use SchemeSocketFactory instead
 {
 
 	private final NetLayer lowerNetLayer;

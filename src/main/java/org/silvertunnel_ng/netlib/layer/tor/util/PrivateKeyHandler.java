@@ -73,7 +73,8 @@ public class PrivateKeyHandler implements X509KeyManager
 
 	@Override
 	public String chooseClientAlias(final String[] keyType,
-			final Principal[] issuers, Socket socket)
+	                                final Principal[] issuers, 
+	                                final Socket socket)
 	{
 		return Util.MYNAME;
 	}
@@ -86,7 +87,7 @@ public class PrivateKeyHandler implements X509KeyManager
 
 	@Override
 	public String[] getClientAliases(final String keyType,
-			final Principal[] issuers)
+	                                 final Principal[] issuers)
 	{
 		final String[] s = new String[1];
 		s[0] = "TorJava";
@@ -94,26 +95,20 @@ public class PrivateKeyHandler implements X509KeyManager
 	}
 
 	@Override
-	public java.security.cert.X509Certificate[] getCertificateChain(
-			final String alias)
+	public java.security.cert.X509Certificate[] getCertificateChain(final String alias)
 	{
 		try
 		{
 			final org.bouncycastle.x509.X509V3CertificateGenerator generator = new org.bouncycastle.x509.X509V3CertificateGenerator();
 			generator.reset();
 			generator.setSerialNumber(BigInteger.valueOf(42));
-			generator.setNotBefore(new Date(
-					System.currentTimeMillis() - 24L * 3600 * 1000));
-			generator.setNotAfter(new Date(System.currentTimeMillis() + 365L
-					* 24 * 3600 * 1000));
-			generator.setIssuerDN(new org.bouncycastle.asn1.x509.X509Name("CN="
-					+ Util.MYNAME));
-			generator.setSubjectDN(new org.bouncycastle.asn1.x509.X509Name(
-					"CN=" + Util.MYNAME));
+			generator.setNotBefore(new Date(System.currentTimeMillis() - 24L * 3600 * 1000));
+			generator.setNotAfter(new Date(System.currentTimeMillis() + 365L * 24 * 3600 * 1000));
+			generator.setIssuerDN(new org.bouncycastle.asn1.x509.X509Name("CN="	+ Util.MYNAME));
+			generator.setSubjectDN(new org.bouncycastle.asn1.x509.X509Name("CN=" + Util.MYNAME));
 			generator.setPublicKey(keypair.getPublic());
 			generator.setSignatureAlgorithm("SHA1WITHRSA");
-			final java.security.cert.X509Certificate x509 = generator.generate(
-					keypair.getPrivate(), "BC");
+			final java.security.cert.X509Certificate x509 = generator.generate(keypair.getPrivate(), "BC");
 			final java.security.cert.X509Certificate[] x509s = new java.security.cert.X509Certificate[2];
 
 			// send the same certificate twice works fine with the default
@@ -134,14 +129,15 @@ public class PrivateKeyHandler implements X509KeyManager
 
 	@Override
 	public String chooseServerAlias(final String keyType,
-			final Principal[] issuers, Socket socket)
+	                                final Principal[] issuers, 
+	                                final Socket socket)
 	{
 		return null;
 	}
 
 	@Override
 	public String[] getServerAliases(final String keyType,
-			final Principal[] issuers)
+	                                 final Principal[] issuers)
 	{
 		return null;
 	}
