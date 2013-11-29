@@ -80,8 +80,10 @@ public class CircuitAdmin
 	private static SecureRandom rnd = new SecureRandom();
 
 	static Circuit provideSuitableNewCircuit(
-			TLSConnectionAdmin tlsConnectionAdmin, Directory dir,
-			TCPStreamProperties sp, TorEventService torEventService)
+			final TLSConnectionAdmin tlsConnectionAdmin, 
+			final Directory dir,
+			final TCPStreamProperties sp, 
+			final TorEventService torEventService)
 			throws IOException
 	{
 		for (int retries = 0; retries < TorConfig.getRetriesConnect(); ++retries)
@@ -111,6 +113,7 @@ public class CircuitAdmin
 
 	/**
 	 * Provide a circuit that can exclusively be used by the caller.
+	 * (mainly used for HiddenServices)
 	 * 
 	 * @param tlsConnectionAdmin
 	 * @param dir
@@ -120,8 +123,10 @@ public class CircuitAdmin
 	 * @throws IOException
 	 */
 	public static Circuit provideSuitableExclusiveCircuit(
-			TLSConnectionAdmin tlsConnectionAdmin, Directory dir,
-			TCPStreamProperties sp, TorEventService torEventService)
+			final TLSConnectionAdmin tlsConnectionAdmin, 
+			final Directory dir,
+			final TCPStreamProperties sp, 
+			final TorEventService torEventService)
 			throws IOException
 	{
 		return provideSuitableNewCircuit(tlsConnectionAdmin, dir, sp,
