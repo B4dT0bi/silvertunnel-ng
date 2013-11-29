@@ -83,7 +83,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link DynByteBuffer#append(byte[])}.
+	 * Test method for {@link DynByteBuffer#append(byte[], boolean)}.
 	 */
 	@Test
 	public void testAppendByteArray()
@@ -99,7 +99,7 @@ public final class DynByteBufferTest
 	}
 
 	/**
-	 * Test method for {@link DynByteBuffer#append(byte[])}.
+	 * Test method for {@link DynByteBuffer#append(byte[], boolean)}.
 	 */
 	@Test
 	public void testAppendByteArrayBig()
@@ -114,6 +114,12 @@ public final class DynByteBufferTest
 		byte [] result = buffer.toArray();
 		assertTrue(result.length == testByte.length);
 		assertArrayEquals(testByte, result);
+		
+		buffer.append(testByte, false);
+		byte [] evenBigger = new byte [testByte.length * 2];
+		System.arraycopy(testByte, 0, evenBigger, 0, testByte.length);
+		System.arraycopy(testByte, 0, evenBigger, testByte.length, testByte.length);
+		assertArrayEquals(evenBigger, buffer.toArray());
 	}
 
 	/**

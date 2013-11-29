@@ -21,8 +21,7 @@ public class HybridEncryption
 	private static final int PK_ENC_LEN = 128;
 	private static final int PK_PAD_LEN = 42;
 	private static final int PK_DATA_LEN = PK_ENC_LEN - PK_PAD_LEN; // 86 bytes
-	private static final int PK_DATA_LEN_WITH_KEY = PK_DATA_LEN
-			- TorStreamCipher.KEY_LEN; // 70 bytes
+	private static final int PK_DATA_LEN_WITH_KEY = PK_DATA_LEN - TorStreamCipher.KEY_LEN; // 70 bytes
 	/*
 	 * The "hybrid encryption" of a byte sequence M with a public key PK is
 	 * computed as follows:
@@ -79,10 +78,8 @@ public class HybridEncryption
 		// RSA( K | M1 ) --> C1
 		TorStreamCipher randomKeyCipher = TorStreamCipher.createFromKeyBytes(secretKey);
 		final byte[] kAndM1 = new byte[PK_DATA_LEN];
-		System.arraycopy(randomKeyCipher.getKeyBytes(), 0, kAndM1, 0,
-				TorStreamCipher.KEY_LEN);
-		System.arraycopy(data, 0, kAndM1, TorStreamCipher.KEY_LEN,
-				PK_DATA_LEN_WITH_KEY);
+		System.arraycopy(randomKeyCipher.getKeyBytes(), 0, kAndM1, 0, TorStreamCipher.KEY_LEN);
+		System.arraycopy(data, 0, kAndM1, TorStreamCipher.KEY_LEN, PK_DATA_LEN_WITH_KEY);
 		final byte[] c1 = encryptSimple(kAndM1, publicKey);
 
 		// AES_CTR(M2) --> C2
@@ -160,8 +157,7 @@ public class HybridEncryption
 		System.arraycopy(kAndM1, TorStreamCipher.KEY_LEN, m1, 0, m1Length);
 
 		// AES_CTR( C2 ) --> M2
-		final TorStreamCipher streamCipher = TorStreamCipher
-				.createFromKeyBytes(streamKey);
+		final TorStreamCipher streamCipher = TorStreamCipher.createFromKeyBytes(streamKey);
 		streamCipher.encrypt(c2);
 		final byte[] m2 = c2;
 
@@ -191,5 +187,4 @@ public class HybridEncryption
 			throw new TorException(e);
 		}
 	}
-
 }

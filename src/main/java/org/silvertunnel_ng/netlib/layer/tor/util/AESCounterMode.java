@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Lexi Pimenidis
  */
-public class AESCounterMode
+public final class AESCounterMode
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(AESCounterMode.class);
@@ -123,17 +123,17 @@ public class AESCounterMode
 	 * used as a stream cipher, the cipher is symmetric, i.e. encryption and
 	 * decryption is the same.
 	 * 
-	 * @param in
+	 * @param input
 	 *            input the plain text, or the cipher text
 	 * @return receive the result
 	 */
-	public byte[] processStream(final byte[] in)
+	public byte[] processStream(final byte[] input)
 	{
-		final byte[] out = new byte[in.length];
-		for (int i = 0; i < in.length; ++i)
+		final byte[] out = new byte[input.length];
+		for (int i = 0; i < input.length; ++i)
 		{
 			final byte cipherBytes = nextStreamByte();
-			out[i] = (byte) ((in[i] + 256) ^ (cipherBytes + 256));
+			out[i] = (byte) ((input[i] + 256) ^ (cipherBytes + 256));
 		}
 
 		return out;

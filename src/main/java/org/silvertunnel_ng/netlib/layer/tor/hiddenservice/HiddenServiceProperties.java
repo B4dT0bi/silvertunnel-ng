@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * contains all properties for a hidden service
+ * contains all properties for a hidden service.
  */
 public class HiddenServiceProperties
 {
@@ -45,16 +45,17 @@ public class HiddenServiceProperties
 	private Set<SDIntroductionPoint> introPoints;
 	private int minimumNumberOfIntroPoints;
 
-	/** constructor for first initialization or use-once-services */
-	public HiddenServiceProperties(int port, RSAKeyPair keyPair)
+	/** constructor for first initialization or use-once-services. */
+	public HiddenServiceProperties(final int port, final RSAKeyPair keyPair)
 			throws TorException
 	{
 		init(port, new HashSet<SDIntroductionPoint>(), keyPair);
 	}
 
-	/** constructor for first initialization or use-once-services */
-	public HiddenServiceProperties(int port,
-			Set<SDIntroductionPoint> introPoints, RSAKeyPair keyPair)
+	/** constructor for first initialization or use-once-services. */
+	public HiddenServiceProperties(final int port,
+	                               final Set<SDIntroductionPoint> introPoints, 
+	                               final RSAKeyPair keyPair)
 			throws TorException
 	{
 		init(port, introPoints, keyPair);
@@ -80,8 +81,9 @@ public class HiddenServiceProperties
 	 * e.getMessage()); } }
 	 */
 
-	private void init(int port, Set<SDIntroductionPoint> introPoints,
-			RSAKeyPair keyPair) throws TorException
+	private void init(final int port, 
+	                  final Set<SDIntroductionPoint> introPoints,
+	                  final RSAKeyPair keyPair) throws TorException
 	{
 		this.port = port;
 		this.introPoints = introPoints;
@@ -90,25 +92,24 @@ public class HiddenServiceProperties
 		pub = keyPair.getPublic();
 		priv = keyPair.getPrivate();
 		// precalc-hash of public key
-		pubKeyHash = Encryption.getDigest(Encryption
-				.getPKCS1EncodingFromRSAPublicKey(pub));
+		pubKeyHash = Encryption.getDigest(Encryption.getPKCS1EncodingFromRSAPublicKey(pub));
 	}
 
 	/** constructor for saved configuration of hidden services. */
-	public HiddenServiceProperties(String filename) throws IOException
+	public HiddenServiceProperties(final String filename) throws IOException
 	{
 		// FIXME: implement
 		throw new IOException("not implemented yet");
 	}
 
 	/** writes all informations to a file. */
-	void writeToFile(String filename) throws IOException
+	void writeToFile(final String filename) throws IOException
 	{
 		// FIXME: implement
 		throw new IOException("not implemented yet");
 	}
 
-	public void addIntroPoint(SDIntroductionPoint introPoint)
+	public void addIntroPoint(final SDIntroductionPoint introPoint)
 	{
 		introPoints.add(introPoint);
 	}

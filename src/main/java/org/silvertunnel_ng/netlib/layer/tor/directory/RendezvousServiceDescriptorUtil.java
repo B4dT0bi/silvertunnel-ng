@@ -19,7 +19,6 @@ package org.silvertunnel_ng.netlib.layer.tor.directory;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
-import java.util.Date;
 
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encryption;
@@ -31,6 +30,7 @@ import org.slf4j.LoggerFactory;
  * Simple helper methods to use RendezvousServiceDescriptor.
  * 
  * @author hapke
+ * @author Tobias Boese
  */
 public class RendezvousServiceDescriptorUtil
 {
@@ -52,33 +52,30 @@ public class RendezvousServiceDescriptorUtil
 	 * @return base32 encoded descriptorId of z (length 32 chars) and more; not
 	 *         null
 	 */
-	public static RendezvousServiceDescriptorKeyValues getRendezvousDescriptorId(
-			final String hiddenServicePermanentIdBase32, final int replica, Date now)
+	public static RendezvousServiceDescriptorKeyValues getRendezvousDescriptorId(final String hiddenServicePermanentIdBase32,
+																				 final int replica,
+																				 final Long now)
 	{
 		final RendezvousServiceDescriptorKeyValues result = new RendezvousServiceDescriptorKeyValues();
 
-		// shared secret between hidden service and its client: currently not used
+		// shared secret between hidden service and its client: currently not
+		// used
 		final byte[] descriptorCookie = null;
 
 		// calculate current time-period
 		final byte[] hiddenServicePermanentId = Encoding.parseBase32(hiddenServicePermanentIdBase32);
-		
-		result.setTimePeriod(RendezvousServiceDescriptorUtil
-				.getRendezvousTimePeriod(hiddenServicePermanentId, now));
+
+		result.setTimePeriod(RendezvousServiceDescriptorUtil.getRendezvousTimePeriod(hiddenServicePermanentId, now));
 
 		// calculate secret-id-part = h(time-period + descriptorCookie +
 		// replica)
-		result.setSecretIdPart(RendezvousServiceDescriptorUtil
-				.getRendezvousSecretIdPart(result.getTimePeriod(),
-						descriptorCookie, replica));
+		result.setSecretIdPart(RendezvousServiceDescriptorUtil.getRendezvousSecretIdPart(result.getTimePeriod(), descriptorCookie, replica));
 
 		// calculate descriptor ID
-		final byte[] unhashedDescriptorId = ByteArrayUtil.concatByteArrays(
-				hiddenServicePermanentId, result.getSecretIdPart());
+		final byte[] unhashedDescriptorId = ByteArrayUtil.concatByteArrays(hiddenServicePermanentId, result.getSecretIdPart());
 		if (hiddenServicePermanentId.length != 10)
 		{
-			LOG.warn("wrong length of hiddenServicePermanentId="
-					+ Arrays.toString(hiddenServicePermanentId));
+			LOG.warn("wrong length of hiddenServicePermanentId=" + Arrays.toString(hiddenServicePermanentId));
 		}
 		result.setDescriptorId(Encryption.getDigest(unhashedDescriptorId));
 
@@ -96,13 +93,11 @@ public class RendezvousServiceDescriptorUtil
 	 *            current time
 	 * @return base32 encoded descriptorId of z (length 32 chars)
 	 */
-	public static String getRendezvousDescriptorIdBase32(
-			String hiddenServicePermanentIdBase32, int replica, Date now)
+	public static String getRendezvousDescriptorIdBase32(final String hiddenServicePermanentIdBase32, 
+	                                                     final int replica, 
+	                                                     final Long now)
 	{
-		return Encoding
-				.toBase32(getRendezvousDescriptorId(
-						hiddenServicePermanentIdBase32, replica, now)
-						.getDescriptorId());
+		return Encoding.toBase32(getRendezvousDescriptorId(hiddenServicePermanentIdBase32, replica, now).getDescriptorId());
 	}
 
 	/**
@@ -112,16 +107,16 @@ public class RendezvousServiceDescriptorUtil
 	 * 
 	 * @param hiddenServicePermanentId
 	 *            also known as permanent id
-	 * @param now current time
+	 * @param now
+	 *            current time
 	 * @return timeperiod
 	 */
-	public static int getRendezvousTimePeriod(final byte[] hiddenServicePermanentId, final Date now)
+	public static int getRendezvousTimePeriod(final byte[] hiddenServicePermanentId, final Long now)
 	{
-		final int nowInSeconds = (int) (now.getTime() / 1000L);
+		final int nowInSeconds = (int) (now / 1000L);
 		// get the correct unsigned byte value (Java treats all bytes as signed)
 		final int serviceIdHighestByte = (256 + hiddenServicePermanentId[0]) % 256;
-		final int result = (nowInSeconds + (serviceIdHighestByte
-				* RendezvousServiceDescriptorUtil.TIMEPERIOD_V2_DESC_VALIDITY_SECONDS / 256))
+		final int result = (nowInSeconds + (serviceIdHighestByte * RendezvousServiceDescriptorUtil.TIMEPERIOD_V2_DESC_VALIDITY_SECONDS / 256))
 				/ RendezvousServiceDescriptorUtil.TIMEPERIOD_V2_DESC_VALIDITY_SECONDS;
 		return result;
 	}
@@ -136,8 +131,7 @@ public class RendezvousServiceDescriptorUtil
 	 * @param replica
 	 * @return h(timePeriod + escriptorCookie + replica)
 	 */
-	public static byte[] getRendezvousSecretIdPart(final int timePeriod,
-			byte[] descriptorCookieBytes, final int replica)
+	public static byte[] getRendezvousSecretIdPart(final int timePeriod, byte[] descriptorCookieBytes, final int replica)
 	{
 		// convert input to byte arrays
 		final int BYTES4 = 4;
@@ -150,8 +144,7 @@ public class RendezvousServiceDescriptorUtil
 		final byte[] replicaBytes = Encoding.intToNByteArray(replica, BYTES1);
 
 		// calculate digest
-		final byte[] allBytes = ByteArrayUtil.concatByteArrays(timePeriodBytes,
-				descriptorCookieBytes, replicaBytes);
+		final byte[] allBytes = ByteArrayUtil.concatByteArrays(timePeriodBytes, descriptorCookieBytes, replicaBytes);
 		final byte[] result = Encryption.getDigest(allBytes);
 		return result;
 	}
@@ -166,8 +159,7 @@ public class RendezvousServiceDescriptorUtil
 	 */
 	public static String calculateZFromPublicKey(final RSAPublicKey publicKey)
 	{
-		final byte[] publicKeyHash = Encryption.getDigest(Encryption
-				.getPKCS1EncodingFromRSAPublicKey(publicKey));
+		final byte[] publicKeyHash = Encryption.getDigest(Encryption.getPKCS1EncodingFromRSAPublicKey(publicKey));
 		final byte[] zBytes = new byte[10];
 		System.arraycopy(publicKeyHash, 0, zBytes, 0, 10);
 		final String z = Encoding.toBase32(zBytes);

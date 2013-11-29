@@ -224,14 +224,14 @@ public class TLSConnection
 			// Section 5.1)
 			ID = TLSConnectionAdmin.rnd.nextInt() & 0xffff; // & 0x7fff;
 
-			if (circuitMap.containsKey(new Integer(ID)))
+			if (circuitMap.containsKey(Integer.valueOf(ID)))
 			{
 				ID = 0;
 			}
 		}
 		while (ID == 0);
 		// memorize circuit
-		circuitMap.put(new Integer(ID), circuit);
+		circuitMap.put(Integer.valueOf(ID), circuit);
 		return ID;
 	}
 

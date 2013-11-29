@@ -160,7 +160,7 @@ public class PropertiesUtil
 			try
 			{
 				final String s = (String) obj;
-				return new Long(s);
+				return Long.valueOf(s);
 			}
 			catch (final Exception e)
 			{
@@ -213,7 +213,7 @@ public class PropertiesUtil
 			try
 			{
 				final String s = (String) obj;
-				return new Integer(s);
+				return Integer.valueOf(s);
 			}
 			catch (final Exception e)
 			{

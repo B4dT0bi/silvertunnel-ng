@@ -88,7 +88,8 @@ public class Parsing
 	 * @return either the parsed result or the defaultValue
 	 */
 	public static String parseStringByRE(final String s,
-			final Pattern regexPattern, final String defaultValue)
+	                                     final Pattern regexPattern, 
+	                                     final String defaultValue)
 	{
 		final Matcher m = regexPattern.matcher(s);
 		if (m.find())
@@ -105,8 +106,7 @@ public class Parsing
 	 * @param documentToSearchIn
 	 * @return null in the case of an error
 	 */
-	public static Date parseTimestampLine(final String startKeyWord,
-			final String documentToSearchIn)
+	public static Date parseTimestampLine(final String startKeyWord, final String documentToSearchIn)
 	{
 		final Pattern pValid = compileRegexPattern("^" + startKeyWord
 				+ " (\\S+) (\\S+)");

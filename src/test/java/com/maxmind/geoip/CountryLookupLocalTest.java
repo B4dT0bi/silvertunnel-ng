@@ -51,6 +51,23 @@ import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 public final class CountryLookupLocalTest
 {
 	/**
+	 * Testdata which should be checked against the lookupservice.
+	 * 
+	 * Format : xx.iii.iii.iii.iii
+	 * xx = country code (uppercase)
+	 * iii = octet of ip
+	 * delimiter = .
+	 */
+	private static final String [] TESTDATA = {"IT.151.38.39.114"
+	                                         , "DE.77.186.10.253"
+	                                         , "US.12.25.205.51"
+	                                         , "US.64.81.104.131"
+	                                         , "CO.200.21.225.82"
+	                                         , "RU.37.146.131.149"
+	                                         , "US.173.213.78.126"
+	                                         , "SE.5.34.241.111"
+	                                         , "US.107.10.169.198"};
+	/**
 	 * Test if the DB lookup works for known IP<->Country constellations.
 	 * @throws IOException when GeoIP Database cannot be found
 	 */
@@ -61,16 +78,17 @@ public final class CountryLookupLocalTest
 				.getResourceAsStream(TorConfig.TOR_GEOIPCITY_PATH),
 				TorConfig.TOR_GEOIPCITY_MAX_FILE_SIZE);
 
-		assertEquals("wrong country 1", "IT",
-				ls.getCountry(new byte[] { (byte) 151, 38, 39, 114 }).getCode());
-		assertEquals("wrong country 2", "DE",
-				ls.getCountry(new byte[] { 77, (byte) 186, 10, (byte) 253 }).getCode());
-		assertEquals("wrong country 3", "US",
-				ls.getCountry(new byte[] { 12, 25, (byte) 205, 51 }).getCode());
-		assertEquals("wrong country 4", "US",
-				ls.getCountry(new byte[] { 64, 81, 104, (byte) 131 }).getCode());
-		assertEquals("wrong country 5", "CO",
-				ls.getCountry(new byte[] { (byte) 200, 21, (byte) 225, 82 }).getCode());
+		for (String ipTest : TESTDATA)
+		{
+			final String [] tmp = ipTest.split("\\.");
+			final byte octet1 = (byte) Integer.parseInt(tmp[1]);
+			final byte octet2 = (byte) Integer.parseInt(tmp[2]);
+			final byte octet3 = (byte) Integer.parseInt(tmp[3]);
+			final byte octet4 = (byte) Integer.parseInt(tmp[4]);
+			
+			final String countryFromLs = ls.getCountry(new byte[] {octet1, octet2, octet3, octet4}).getCode();
+			assertEquals("wrong country for ip " + tmp[1] + "." + tmp[2] + "." + tmp[3] + "." + tmp[4], tmp[0], countryFromLs);
+		}
 
 		ls.close();
 	}

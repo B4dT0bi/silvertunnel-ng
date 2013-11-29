@@ -202,8 +202,7 @@ public class NetSocket2SocketImpl extends SocketImpl
 
 		// create NetSocket object
 		final Map<String, Object> localProperties = new HashMap<String, Object>();
-		localProperties.put(TCPIP_NET_LAYER_TIMEOUT_IN_MS, new Integer(
-				timeoutInMs));
+		localProperties.put(TCPIP_NET_LAYER_TIMEOUT_IN_MS, Integer.valueOf(timeoutInMs));
 		final TcpipNetAddress localNetAddress = null;
 		netSocket = netLayer.createNetSocket(localProperties, localNetAddress,
 				remoteNetAddress);

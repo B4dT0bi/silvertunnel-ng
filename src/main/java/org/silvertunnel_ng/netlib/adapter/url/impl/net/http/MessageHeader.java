@@ -345,7 +345,7 @@ public class MessageHeader
 	 * Prints the key-value pairs represented by this header. Also prints the
 	 * RFC required blank line at the end. Omits pairs with a null key.
 	 */
-	public synchronized void print(PrintStream p)
+	public synchronized void print(final PrintStream p)
 	{
 		for (int i = 0; i < nkeys; i++)
 		{
@@ -392,7 +392,7 @@ public class MessageHeader
 	 * the index didn't exist before the key/val is simply tacked onto the end.
 	 */
 
-	public synchronized void set(int i, String k, String v)
+	public synchronized void set(final int i, final String k, final String v)
 	{
 		grow();
 		if (i < 0)
@@ -439,7 +439,7 @@ public class MessageHeader
 	 * @param k
 	 *            the key to remove
 	 */
-	public synchronized void remove(String k)
+	public synchronized void remove(final String k)
 	{
 		if (k == null)
 		{
@@ -507,7 +507,7 @@ public class MessageHeader
 	 * Convert a message-id string to canonical form (strips off leading and
 	 * trailing <>s.)
 	 */
-	public static String canonicalID(String id)
+	public static String canonicalID(final String id)
 	{
 		if (id == null)
 		{
@@ -629,7 +629,7 @@ public class MessageHeader
 			String v;
 			if (keyend >= len)
 			{
-				v = new String();
+				v = "";
 			}
 			else
 			{
@@ -642,11 +642,11 @@ public class MessageHeader
 	@Override
 	public synchronized String toString()
 	{
-		String result = super.toString() + nkeys + " pairs: ";
+		final StringBuffer result = new StringBuffer(super.toString()).append(nkeys).append(" pairs: ");
 		for (int i = 0; i < keys.length && i < nkeys; i++)
 		{
-			result += "{" + keys[i] + ": " + values[i] + "}";
+			result.append('{').append(keys[i]).append(": ").append(values[i]).append('}');
 		}
-		return result;
+		return result.toString();
 	}
 }
