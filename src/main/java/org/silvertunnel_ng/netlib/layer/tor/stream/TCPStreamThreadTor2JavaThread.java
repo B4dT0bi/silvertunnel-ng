@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import org.silvertunnel_ng.netlib.layer.tor.circuit.Cell;
-import org.silvertunnel_ng.netlib.layer.tor.circuit.CellRelay;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.Cell;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

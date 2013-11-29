@@ -40,13 +40,13 @@ import java.security.SecureRandom;
 
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
-import org.silvertunnel_ng.netlib.layer.tor.circuit.CellRelay;
-import org.silvertunnel_ng.netlib.layer.tor.circuit.CellRelayEstablishRendezvous;
-import org.silvertunnel_ng.netlib.layer.tor.circuit.CellRelayIntroduce1;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.CircuitAdmin;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Node;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.TLSConnectionAdmin;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelay;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelayEstablishRendezvous;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelayIntroduce1;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorEventService;

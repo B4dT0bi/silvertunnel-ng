@@ -33,7 +33,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +41,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Stream;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.util.ByteArrayUtil;
@@ -194,7 +196,7 @@ public class CellRelay extends Cell
 	/**
 	 * initialize from main Cell-type.
 	 */
-	CellRelay(final Circuit circ, final Cell cell) throws TorException
+	public CellRelay(final Circuit circ, final Cell cell) throws TorException
 	{
 		super(cell.toByteArray()); // TODO: inefficient at max! - but currently
 									// working
@@ -341,6 +343,7 @@ public class CellRelay extends Cell
 	 * @return the data ready for sending
 	 */
 	@Override
+	public
 	byte[] toByteArray()
 	{
 		if (LOG.isDebugEnabled())
@@ -561,7 +564,7 @@ public class CellRelay extends Cell
 		return relayCommand == RELAY_TRUNCATE;
 	}
 
-	boolean isTypeTruncated()
+	public boolean isTypeTruncated()
 	{
 		return relayCommand == RELAY_TRUNCATED;
 	}
@@ -596,7 +599,7 @@ public class CellRelay extends Cell
 		return relayCommand == RELAY_RENDEZVOUS2;
 	}
 
-	boolean isTypeIntroduce2()
+	public boolean isTypeIntroduce2()
 	{
 		return relayCommand == RELAY_INTRODUCE2;
 	}

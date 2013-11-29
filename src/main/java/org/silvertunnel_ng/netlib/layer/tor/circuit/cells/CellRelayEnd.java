@@ -15,24 +15,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
+
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Stream;
 
 /**
- * this cell is used to transmit data over a tcp stream.
+ * sends an END cell, needed to close a tcp-stream.
  * 
  * @author Lexi Pimenidis
  */
-public class CellRelayData extends CellRelay
+public class CellRelayEnd extends CellRelay
 {
 	/**
-	 * creates an empty DATA-CELL that can later be used to insert and transmit
-	 * data with it.
+	 * constructor to build a ENDCELL.
 	 * 
 	 * @param s
-	 *            the stream where the data is send on
+	 *            the stream that shall be closed
+	 * @param reason
+	 *            a reason
 	 */
-	public CellRelayData(final Stream s)
+	public CellRelayEnd(final Stream s, final byte reason)
 	{
-		super(s, CellRelay.RELAY_DATA);
+		// initialize a new Relay-cell
+		super(s, CellRelay.RELAY_END);
+
+		// set length
+		setLength(1);
+		data[0] = reason;
 	}
 }

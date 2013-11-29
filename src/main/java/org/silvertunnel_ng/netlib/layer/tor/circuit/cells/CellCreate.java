@@ -15,8 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
 
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Lexi Pimenidis
  */
-class CellCreate extends Cell
+public class CellCreate extends Cell
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(CellCreate.class);
@@ -37,7 +38,7 @@ class CellCreate extends Cell
 	 * @param circuit
 	 *            the circuit that is to be build with this cell
 	 */
-	CellCreate(final Circuit circuit) throws TorException
+	public CellCreate(final Circuit circuit) throws TorException
 	{
 		super(circuit, Cell.CELL_CREATE);
 		// create DH-exchange:

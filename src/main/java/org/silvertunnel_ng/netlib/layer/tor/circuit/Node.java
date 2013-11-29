@@ -212,7 +212,7 @@ public class Node
 	 * @return the first half of the key exchange, ready to be send to the other
 	 *         partner
 	 */
-	final byte[] asymEncrypt(final byte[] data) throws TorException
+	public final byte[] asymEncrypt(final byte[] data) throws TorException
 	{
 		return Encryption.asymEncrypt(router.getOnionKey(),
 				getSymmetricKeyForCreate(), data);
@@ -336,7 +336,7 @@ public class Node
 	 * @param data
 	 * @return a four-byte array containing the digest
 	 */
-	byte[] calcForwardDigest(final byte[] data)
+	public byte[] calcForwardDigest(final byte[] data)
 	{
 		if (LOG.isDebugEnabled())
 		{
@@ -360,7 +360,7 @@ public class Node
 	 * @param data
 	 * @return a four-byte array containing the digest
 	 */
-	byte[] calcBackwardDigest(final byte[] data)
+	public byte[] calcBackwardDigest(final byte[] data)
 	{
 		if (LOG.isDebugEnabled())
 		{
@@ -384,7 +384,7 @@ public class Node
 	 * @param data
 	 *            is used for input and output.
 	 */
-	void symEncrypt(final byte[] data)
+	public void symEncrypt(final byte[] data)
 	{
 		if (LOG.isDebugEnabled())
 		{
@@ -420,7 +420,7 @@ public class Node
 	 * @param data
 	 *            is used for input and output.
 	 */
-	void symDecrypt(byte[] data)
+	public void symDecrypt(byte[] data)
 	{
 		if (LOG.isDebugEnabled())
 		{

@@ -77,6 +77,11 @@ public final class TCPStreamProperties
 	private int connectRetries;
 	/** are we connecting to a dir server? */
 	private boolean connectToDirServer = false;
+	/** 
+	 * are we connecting to an internal node of the Tor network?
+	 * (e.g. a Rendezvouspoint or Introduction point) 
+	 */
+	private boolean connectToTorIntern = false;
 	/**
 	 * p = [0..1] 0 -> select hosts completely randomly 1 -> select hosts with
 	 * good uptime/bandwidth with higher prob.
@@ -434,5 +439,24 @@ public final class TCPStreamProperties
 	public void setConnectToDirServer(final boolean connectToDirServer)
 	{
 		this.connectToDirServer = connectToDirServer;
+	}
+	/**
+	 * Is this connection used for internal Tor communication?
+	 * (like Rendezvouspoint/Introductionpoint)
+	 * @return true if it is Tor-internal
+	 */
+	public boolean isConnectToTorIntern()
+	{
+		return connectToTorIntern;
+	}
+	/**
+	 * Is this connection used for internal Tor communication?
+	 * (like Rendezvouspoint/Introductionpoint)
+	 * 
+	 * @param connectToTorIntern true if it is tor internal
+	 */
+	public void setConnectToTorIntern(final boolean connectToTorIntern)
+	{
+		this.connectToTorIntern = connectToTorIntern;
 	}
 }

@@ -20,10 +20,10 @@ package org.silvertunnel_ng.netlib.layer.tor.stream;
 import java.io.IOException;
 
 import org.silvertunnel_ng.netlib.api.util.IpNetAddress;
-import org.silvertunnel_ng.netlib.layer.tor.circuit.CellRelay;
-import org.silvertunnel_ng.netlib.layer.tor.circuit.CellRelayResolve;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Queue;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelay;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelayResolve;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.layer.tor.util.Util;

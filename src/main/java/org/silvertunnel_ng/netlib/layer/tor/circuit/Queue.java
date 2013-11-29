@@ -20,6 +20,8 @@ package org.silvertunnel_ng.netlib.layer.tor.circuit;
 import java.io.IOException;
 import java.util.Vector;
 
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.Cell;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelay;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorNoAnswerException;
 import org.slf4j.Logger;

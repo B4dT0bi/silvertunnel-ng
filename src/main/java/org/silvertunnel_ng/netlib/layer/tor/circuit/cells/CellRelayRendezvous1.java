@@ -33,31 +33,36 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
 
-import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 
 /**
- * used to create a CREATE_FAST cell.
+ * this cell is used to establish introduction point.
  * 
+ * @author Lexi Pimenidis
  * @author Tobias Boese
  */
-class CellCreateFast extends Cell
+public class CellRelayRendezvous1 extends CellRelay
 {
-	/** */
-	private static final Logger LOG = LoggerFactory.getLogger(CellCreateFast.class);
-
 	/**
-	 * creates a CREATE_FAST-CELL.
+	 * Create a new Cell of type Relay_Rendezvous1.
 	 * 
-	 * @param circuit
-	 *            the circuit that is to be build with this cell
+	 * @param circuit the Circuit to be used for sending/receiving the Cell
+	 * @param cookie the rendezvous cookie
+	 * @param dhY the Y part of Diffie-Hellman
+	 * @param keyHandshake the keyHandshake to verify that DH worked
 	 */
-	CellCreateFast(final Circuit circuit) throws TorException
+	public CellRelayRendezvous1(final Circuit circuit, 
+			             final byte[] cookie, 
+			             final byte[] dhY, 
+			             final byte[] keyHandshake)
 	{
-		super(circuit, Cell.CELL_CREATE_FAST);
-		System.arraycopy(circuit.getRouteNodes()[0].getDhXBytes(), 0, payload, 0, 20);
+		super(circuit, RELAY_RENDEZVOUS1);
+		// copy to payload
+		System.arraycopy(cookie, 0, data, 0, cookie.length);
+		System.arraycopy(dhY, 0, data, cookie.length, dhY.length);
+		System.arraycopy(keyHandshake, 0, data, cookie.length + dhY.length, keyHandshake.length);
+		setLength(cookie.length + dhY.length + keyHandshake.length);
 	}
 }

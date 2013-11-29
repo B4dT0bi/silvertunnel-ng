@@ -15,11 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,19 +38,19 @@ public class Cell
 	private static final Logger LOG = LoggerFactory.getLogger(Cell.class);
 
 	/** Padding cell. */
-	static final int CELL_PADDING = 0;
+	public static final int CELL_PADDING = 0;
 	/** Create a circuit. */
-	static final int CELL_CREATE = 1;
+	public static final int CELL_CREATE = 1;
 	/** Acknowledge create. */
-	static final int CELL_CREATED = 2;
+	public static final int CELL_CREATED = 2;
 	/** End-to-end data. */
 	public static final int CELL_RELAY = 3;
 	/** Stop using a circuit. */
-	static final int CELL_DESTROY = 4;
+	public static final int CELL_DESTROY = 4;
 	/** Create a circuit, no PK. */
-	static final int CELL_CREATE_FAST = 5;
+	public static final int CELL_CREATE_FAST = 5;
 	/** Circuit created, no PK. */
-	static final int CELL_CREATED_FAST = 6;
+	public static final int CELL_CREATED_FAST = 6;
 	/** End-to-end data. limited. */
 	public static final int CELL_RELAY_EARLY = 9;
 	static final int CELL_TOTAL_SIZE = 512;
@@ -106,7 +107,7 @@ public class Cell
 	 * @param in
 	 *            the input stream from a TLS-line to read the data from
 	 */
-	Cell(final InputStream in) throws IOException
+	public Cell(final InputStream in) throws IOException
 	{
 		if (in == null)
 		{
@@ -157,7 +158,7 @@ public class Cell
 	 * concat all data to a single byte-array. This function is used to finally
 	 * transmit the cell over a line.
 	 */
-	byte[] toByteArray()
+	public byte[] toByteArray()
 	{
 		final byte[] buff = new byte[Cell.CELL_TOTAL_SIZE];
 
@@ -171,8 +172,7 @@ public class Cell
 				0, buff, Cell.CELL_CIRCID_POS, Cell.CELL_CIRCID_SIZE);
 
 		buff[Cell.CELL_COMMAND_POS] = this.command;
-		System.arraycopy(this.payload, 0, buff, CELL_PAYLOAD_POS,
-				this.payload.length);
+		System.arraycopy(this.payload, 0, buff, CELL_PAYLOAD_POS, this.payload.length);
 
 		return buff;
 	}
@@ -236,7 +236,7 @@ public class Cell
 		return this.command == CELL_DESTROY;
 	}
 
-	int getCircuitId()
+	public int getCircuitId()
 	{
 		return circuitId;
 	}

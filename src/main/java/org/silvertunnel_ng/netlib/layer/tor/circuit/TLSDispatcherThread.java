@@ -56,6 +56,9 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.Cell;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellDestroy;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelay;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

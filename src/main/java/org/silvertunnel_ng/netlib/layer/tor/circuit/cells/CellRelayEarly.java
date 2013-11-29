@@ -33,34 +33,39 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
+
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * this cell is used to establish introduction point.
+ * the general form of a RELAY_EARLY cell in the Tor Protocol. This class also calls
+ * the crypto- functions in Node.java to decode an onion, if encrypted data is
+ * received.
  * 
- * @author Lexi Pimenidis
  * @author Tobias Boese
  */
-class CellRelayRendezvous1 extends CellRelay
+public class CellRelayEarly extends CellRelay
 {
+	/** */
+	private static final Logger LOG = LoggerFactory.getLogger(CellRelayEarly.class);
+
+
 	/**
-	 * Create a new Cell of type Relay_Rendezvous1.
-	 * 
-	 * @param circuit the Circuit to be used for sending/receiving the Cell
-	 * @param cookie the rendezvous cookie
-	 * @param dhY the Y part of Diffie-Hellman
-	 * @param keyHandshake the keyHandshake to verify that DH worked
+	 * constructor. used for EXTEND-cells and SENDME-cells
 	 */
-	CellRelayRendezvous1(final Circuit circuit, 
-			             final byte[] cookie, 
-			             final byte[] dhY, 
-			             final byte[] keyHandshake)
+	CellRelayEarly(final Circuit c, final int relayCommand)
 	{
-		super(circuit, RELAY_RENDEZVOUS1);
-		// copy to payload
-		System.arraycopy(cookie, 0, data, 0, cookie.length);
-		System.arraycopy(dhY, 0, data, cookie.length, dhY.length);
-		System.arraycopy(keyHandshake, 0, data, cookie.length + dhY.length, keyHandshake.length);
-		setLength(cookie.length + dhY.length + keyHandshake.length);
+		super(c, Cell.CELL_RELAY_EARLY, relayCommand);
+	}
+
+	/**
+	 * initialize cell. used by RELAY_BEGIN-cells
+	 */
+	CellRelayEarly(final Stream s, final int relayCommand)
+	{
+		super(s, Cell.CELL_RELAY_EARLY, relayCommand);
 	}
 }

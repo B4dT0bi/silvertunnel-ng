@@ -35,6 +35,7 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.circuit;
 
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.Cell;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 
 /**

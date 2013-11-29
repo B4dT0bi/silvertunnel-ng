@@ -15,14 +15,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
+
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 
 /**
  * used to create a PADDING cell.
  * 
  * @author Lexi Pimenidis
  */
-class CellPadding extends Cell
+public class CellPadding extends Cell
 {
 	/**
 	 * creates a PADDING-CELL.
@@ -30,7 +32,7 @@ class CellPadding extends Cell
 	 * @param c
 	 *            the circuit
 	 */
-	CellPadding(final Circuit c)
+	public CellPadding(final Circuit c)
 	{
 		super(c, Cell.CELL_PADDING);
 	}

@@ -230,6 +230,7 @@ public final class TorConfig
 		getInstance().minimumIdleCircuits = nrOfCircuits;
 	}
 
+	/** prefix for System properties. */
 	public static final String SYSTEMPROPERTY_TOR_PREFIX = "silvertunnel-ng.tor.";
 	/** identifier for System properties. */
 	public static final String SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS = SYSTEMPROPERTY_TOR_PREFIX
@@ -246,7 +247,7 @@ public final class TorConfig
 	/** identifier for System properties. */
 	public static final String SYSTEMPROPERTY_TOR_MAX_ALLOWED_SETUP_DURATION_MS = SYSTEMPROPERTY_TOR_PREFIX
 			+ "maxAllowedSetupDurationMs";
-
+	
 	public static int queueTimeoutCircuit = 20;
 	public static int queueTimeoutResolve = 10;
 	/* TODO was: 11 */
@@ -314,13 +315,13 @@ public final class TorConfig
 	private static final int MAXIMUM_ROUTE_LENGTH = 8;
 
 	/**
-	 * minimum circuit path length. recommended value : 3 minimum value : 2 (see
-	 * https
-	 * ://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop
-	 * -paths.txt) using a value of 2 is only good for a simple IP obfuscation,
-	 * for more security a value of at least 3 is recommended maximum value : 8
-	 * (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-
-	 * avoid-infinite-circuits.txt for details)
+	 * minimum circuit path length. 
+	 * 
+	 * recommended value : 3 
+	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) 
+	 * using a value of 2 is only good for a simple IP obfuscation,
+	 * for more security a value of at least 3 is recommended
+	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
 	 * 
 	 * default value : 3
 	 */
@@ -335,14 +336,11 @@ public final class TorConfig
 	}
 
 	/**
-	 * set the minimum circuit path length. recommended value : 3 minimum value
-	 * : 2 (see
-	 * https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115
-	 * -two-hop-paths.txt) using a value of 2 is only good for a simple IP
+	 * set the minimum circuit path length. 
+	 * recommended value : 3 
+	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a simple IP
 	 * obfuscation, for more security a value of at least 3 is recommended
-	 * maximum value : 8 (see
-	 * https://gitweb.torproject.org/torspec.git/blob/HEAD
-	 * :/proposals/110-avoid-infinite-circuits.txt for details)
+	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
 	 * 
 	 * default value : 3
 	 * 
@@ -375,13 +373,12 @@ public final class TorConfig
 	}
 
 	/**
-	 * maximum circuit path length. recommended value : 5 minimum value : 2 (see
-	 * https
-	 * ://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop
-	 * -paths.txt) using a value of 2 is only good for a simple IP obfuscation,
-	 * for more security a value of at least 3 is recommended maximum value : 8
-	 * (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-
-	 * avoid-infinite-circuits.txt for details)
+	 * maximum circuit path length. 
+	 * 
+	 * recommended value : 5 
+	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a simple IP obfuscation,
+	 * for more security a value of at least 3 is recommended 
+	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
 	 * 
 	 * default value : 5
 	 */
@@ -396,14 +393,12 @@ public final class TorConfig
 	}
 
 	/**
-	 * set the maximum circuit path length. recommended value : 4 minimum value
-	 * : 2 (see
-	 * https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115
-	 * -two-hop-paths.txt) using a value of 2 is only good for a simple IP
+	 * set the maximum circuit path length. 
+	 * 
+	 * recommended value : 4 
+	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a simple IP
 	 * obfuscation, for more security a value of at least 3 is recommended
-	 * maximum value : 8 (see
-	 * https://gitweb.torproject.org/torspec.git/blob/HEAD
-	 * :/proposals/110-avoid-infinite-circuits.txt for details)
+	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
 	 * 
 	 * default value : 4
 	 * 
@@ -415,14 +410,12 @@ public final class TorConfig
 	{
 		if (length < MINIMUM_ROUTE_LENGTH)
 		{
-			LOG.warn("route length has to be at least "
-					+ MINIMUM_ROUTE_LENGTH + "!");
+			LOG.warn("route length has to be at least " + MINIMUM_ROUTE_LENGTH + "!");
 			return;
 		}
 		if (length > MAXIMUM_ROUTE_LENGTH)
 		{
-			LOG.warn("route length should not exceed "
-					+ MAXIMUM_ROUTE_LENGTH);
+			LOG.warn("route length should not exceed " + MAXIMUM_ROUTE_LENGTH);
 			return;
 		}
 		if (length < getInstance().routeMinLength)
@@ -465,8 +458,7 @@ public final class TorConfig
 	{
 		if (percent < 0.0 || percent > 100.0) // check if it is in range
 		{
-			throw new TorException(
-					"invalid value for setMinDescriptorsPercentage");
+			throw new TorException("invalid value for setMinDescriptorsPercentage");
 		}
 		if (percent == 0.0)
 		{

@@ -15,7 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
+
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Stream;
 
 /**
  * this cell is used to make anonymous DNS-lookups

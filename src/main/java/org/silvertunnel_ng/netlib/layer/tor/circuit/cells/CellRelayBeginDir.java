@@ -1,6 +1,6 @@
 /*
  * silvertunnel.org Netlib - Java library to easily access anonymity networks
- * Copyright (c) 2009-2012 silvertunnel.org
+ * Copyright (c) 2013 silvertunnel-ng.org
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -15,27 +15,27 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
+
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Stream;
+
 
 /**
- * Sends an RELAY_CONNECTED.
+ * sends a BEGIN_DIR cell, needed to establish a directory-stream.
  * 
- * @author hapke
+ * @author Tobias Boese
  */
-public class CellRelayConnected extends CellRelay
+public class CellRelayBeginDir extends CellRelay
 {
 	/**
-	 * constructor to build a RELAY_CONNECTED for hidden services.
+	 * constructor to build a BEGIN_DIR-CELL.
 	 * 
-	 * @param s
-	 *            the stream that shall be closed
+	 * @param stream
+	 *            the stream that will carry the cell and the following data
 	 */
-	public CellRelayConnected(final Stream s)
+	public CellRelayBeginDir(final Stream stream)
 	{
-		// initialize a new Relay-cell
-		super(s, CellRelay.RELAY_CONNECTED);
-
-		// set length
-		setLength(0);
+		// init a new Relay-cell
+		super(stream, RELAY_BEGIN_DIR);
 	}
 }

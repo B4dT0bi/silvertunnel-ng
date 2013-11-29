@@ -15,10 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
 
 import java.io.IOException;
 
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Node;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
@@ -29,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Lexi Pimenidis
  */
-class CellRelayExtend extends CellRelayEarly
+public class CellRelayExtend extends CellRelayEarly
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(CellRelayExtend.class);
@@ -49,7 +51,7 @@ class CellRelayExtend extends CellRelayEarly
 	 *            the node to which the circuit shall be extended
 	 * @throws IOException
 	 */
-	CellRelayExtend(final Circuit cell, final Node nextNode)
+	public CellRelayExtend(final Circuit cell, final Node nextNode)
 			throws IOException, TorException
 	{
 		// initialize a new RELAY-cell

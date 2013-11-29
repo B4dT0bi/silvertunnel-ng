@@ -64,6 +64,16 @@ import java.util.Set;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.api.Router;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.Cell;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellCreate;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellCreateFast;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellDestroy;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellPadding;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelay;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelayData;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelayExtend;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelayRendezvous1;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelaySendme;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorEvent;
@@ -429,14 +439,14 @@ public class Circuit
 			throw new TorException("Circuit.handleIntroduce2: cannot parse content, cell is too short");
 		}
 		final byte[] identifier = new byte[20];
-		System.arraycopy(cell.data, 0, identifier, 0, 20);
+		System.arraycopy(cell.getData(), 0, identifier, 0, 20);
 		final HiddenServiceProperties introProps = getHiddenServiceInstanceForIntroduction().getHiddenServiceProperties();
 		if (!Arrays.equals(identifier, introProps.getPubKeyHash()))
 		{
 			throw new TorException("Circuit.handleIntroduce2: onion is for unknown key-pair");
 		}
 		final byte[] onionData = new byte[cell.getLength() - 20];
-		System.arraycopy(cell.data, 20, onionData, 0, cell.getLength() - 20);
+		System.arraycopy(cell.getData(), 20, onionData, 0, cell.getLength() - 20);
 
 		final byte[] plainIntro2 = Encryption.asymDecrypt(introProps.getPrivateKey(), onionData);
 
@@ -759,7 +769,7 @@ public class Circuit
 		// wait for extended-cell
 		final CellRelay relay = queue.receiveRelayCell(CellRelay.RELAY_EXTENDED);
 		// finish DH-exchange
-		routeNodes[i].finishDh(relay.data);
+		routeNodes[i].finishDh(relay.getData());
 	}
 
 	/**

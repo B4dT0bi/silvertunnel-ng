@@ -33,37 +33,32 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
 
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
+import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * the general form of a RELAY_EARLY cell in the Tor Protocol. This class also calls
- * the crypto- functions in Node.java to decode an onion, if encrypted data is
- * received.
+ * used to create a CREATE_FAST cell.
  * 
  * @author Tobias Boese
  */
-public class CellRelayEarly extends CellRelay
+public class CellCreateFast extends Cell
 {
 	/** */
-	private static final Logger LOG = LoggerFactory.getLogger(CellRelayEarly.class);
-
-
-	/**
-	 * constructor. used for EXTEND-cells and SENDME-cells
-	 */
-	CellRelayEarly(final Circuit c, final int relayCommand)
-	{
-		super(c, Cell.CELL_RELAY_EARLY, relayCommand);
-	}
+	private static final Logger LOG = LoggerFactory.getLogger(CellCreateFast.class);
 
 	/**
-	 * initialize cell. used by RELAY_BEGIN-cells
+	 * creates a CREATE_FAST-CELL.
+	 * 
+	 * @param circuit
+	 *            the circuit that is to be build with this cell
 	 */
-	CellRelayEarly(final Stream s, final int relayCommand)
+	public CellCreateFast(final Circuit circuit) throws TorException
 	{
-		super(s, Cell.CELL_RELAY_EARLY, relayCommand);
+		super(circuit, Cell.CELL_CREATE_FAST);
+		System.arraycopy(circuit.getRouteNodes()[0].getDhXBytes(), 0, payload, 0, 20);
 	}
 }

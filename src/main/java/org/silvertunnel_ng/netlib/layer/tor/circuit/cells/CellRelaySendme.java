@@ -33,7 +33,10 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
+
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Stream;
 
 /**
  * 
@@ -61,7 +64,7 @@ public class CellRelaySendme extends CellRelay
 	 *            the router in the row to be addressed (starts with 0, ends
 	 *            with c.routeEstablished - 1)
 	 */
-	CellRelaySendme(final Circuit circuit, final int router)
+	public CellRelaySendme(final Circuit circuit, final int router)
 	{
 		// initialize a new Relay-cell
 		super(circuit, RELAY_SENDME);

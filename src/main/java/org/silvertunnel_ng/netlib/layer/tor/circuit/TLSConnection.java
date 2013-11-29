@@ -53,6 +53,7 @@ import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.NetSocket;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tls.TLSNetLayer;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.Cell;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorX509TrustManager;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 import org.silvertunnel_ng.netlib.layer.tor.util.PrivateKeyHandler;

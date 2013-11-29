@@ -33,7 +33,9 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.silvertunnel_ng.netlib.layer.tor.circuit;
+package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
+
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 
 /**
  * used to create a DESTROY cell.
@@ -41,7 +43,7 @@ package org.silvertunnel_ng.netlib.layer.tor.circuit;
  * @author Lexi Pimenidis
  * @author Tobias Boese
  */
-class CellDestroy extends Cell
+public class CellDestroy extends Cell
 {
 	/** used for a nicer debugging output. */
 	private static final String[] REASON_TO_STRING = { "none", "end-circ tor-protocol",
@@ -69,7 +71,7 @@ class CellDestroy extends Cell
 	 * @param c
 	 *            the circuit that is to be torn down
 	 */
-	CellDestroy(final Circuit c)
+	public CellDestroy(final Circuit c)
 	{
 		super(c, Cell.CELL_DESTROY);
 	}
