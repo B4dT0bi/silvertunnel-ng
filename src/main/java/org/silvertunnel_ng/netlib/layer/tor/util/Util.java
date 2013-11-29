@@ -49,17 +49,14 @@ public final class Util
 	 * 
 	 * After executing utcTimestampDateFormat is initialized.
 	 */
-	private static void initUtcTimestampIfNeeded()
+	private synchronized static void initUtcTimestampIfNeeded()
 	{
-		synchronized (utcTimestampDateFormat)
+		if (utcTimestampDateFormat == null)
 		{
-			if (utcTimestampDateFormat == null)
-			{
-				// initialize date format
-				utcTimestampDateFormat = new SimpleDateFormat(UTC_TIMESTAMP_FORMAT);
-				utcTimestampDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-			}			
-		}
+			// initialize date format
+			utcTimestampDateFormat = new SimpleDateFormat(UTC_TIMESTAMP_FORMAT);
+			utcTimestampDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+		}			
 	}
 
 	/**
