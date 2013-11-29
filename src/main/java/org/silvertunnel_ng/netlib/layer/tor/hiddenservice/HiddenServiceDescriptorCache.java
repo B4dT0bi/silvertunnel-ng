@@ -61,16 +61,14 @@ public final class HiddenServiceDescriptorCache
 	/**
 	 * @return get an instance of {@link HiddenServiceDescriptorCache}.
 	 */
-	public static HiddenServiceDescriptorCache getInstance()
+	public synchronized static HiddenServiceDescriptorCache getInstance()
 	{
-		synchronized (instance)
+		if (instance == null)
 		{
-			if (instance == null)
-			{
-				instance = new HiddenServiceDescriptorCache();
-				instance.init();
-			}			
-		}
+			instance = new HiddenServiceDescriptorCache();
+			instance.init();
+		}			
+		
 		return instance;
 	}
 	/** cached {@link RendezvousServiceDescriptor}. */
