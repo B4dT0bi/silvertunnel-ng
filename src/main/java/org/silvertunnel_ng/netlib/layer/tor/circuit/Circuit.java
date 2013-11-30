@@ -136,6 +136,8 @@ public class Circuit
 	private int routeEstablished;
 	/** used to receive incoming data. */
 	private Queue queue;
+	/** how many relayearly cells do we have ?*/
+	private int relayEarlyCellsRemaining = 8;
 	/**
 	 * list of all TCP-streams relayed through this circuit.
 	 * 
@@ -1511,5 +1513,21 @@ public class Circuit
 			}
 		}
 		return isStable;
+	}
+
+	/**
+	 * @return the relayEarlyCellsRemaining
+	 */
+	public final int getRelayEarlyCellsRemaining() 
+	{
+		return relayEarlyCellsRemaining;
+	}
+
+	/**
+	 * Decrease the amount of relay early cells remaining.
+	 */
+	public final void decrementRelayEarlyCellsRemaining() 
+	{
+		this.relayEarlyCellsRemaining--;
 	}
 }

@@ -36,9 +36,6 @@
 package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
 
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
-import org.silvertunnel_ng.netlib.layer.tor.circuit.Stream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * the general form of a RELAY_EARLY cell in the Tor Protocol. This class also calls
@@ -50,22 +47,15 @@ import org.slf4j.LoggerFactory;
 public class CellRelayEarly extends CellRelay
 {
 	/** */
-	private static final Logger LOG = LoggerFactory.getLogger(CellRelayEarly.class);
+	//private static final Logger LOG = LoggerFactory.getLogger(CellRelayEarly.class);
 
 
 	/**
-	 * constructor. used for EXTEND-cells and SENDME-cells
+	 * constructor. used for EXTEND-cells
 	 */
 	CellRelayEarly(final Circuit c, final int relayCommand)
 	{
 		super(c, Cell.CELL_RELAY_EARLY, relayCommand);
-	}
-
-	/**
-	 * initialize cell. used by RELAY_BEGIN-cells
-	 */
-	CellRelayEarly(final Stream s, final int relayCommand)
-	{
-		super(s, Cell.CELL_RELAY_EARLY, relayCommand);
+		c.decrementRelayEarlyCellsRemaining();
 	}
 }

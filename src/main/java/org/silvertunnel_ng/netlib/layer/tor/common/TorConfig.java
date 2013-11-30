@@ -67,6 +67,7 @@ import java.util.regex.Pattern;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.silvertunnel_ng.netlib.layer.tor.circuit.CircuitHistory;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
@@ -1084,4 +1085,28 @@ public final class TorConfig
 	{
 		TorConfig.cacheHiddenServiceDescriptor = cacheHiddenServiceDescriptor;
 	}
+	/**
+	 * Shall we save the Circuit history?
+	 * @see CircuitHistory
+	 * 
+	 * @return true if we save the history for later use.
+	 */
+	public static boolean isSaveCircuitHistory() 
+	{
+		return getInstance().saveCircuitHistory;
+	}
+	/**
+	 * Shall we save the Circuit history?
+	 * @param saveCircuitHistory true if we save the history
+	 */
+	public void setSaveCircuitHistory(final boolean saveCircuitHistory) 
+	{
+		getInstance().saveCircuitHistory = saveCircuitHistory;
+	}
+
+	/**
+	 * Shall we save the Circuit history?
+	 * @see CircuitHistory
+	 */
+	private boolean saveCircuitHistory = true;
 }
