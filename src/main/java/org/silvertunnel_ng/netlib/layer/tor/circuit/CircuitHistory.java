@@ -18,14 +18,32 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.circuit;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * Capture all Circuit information used for predicting the next needed Circuits.
  * 
  * @author Tobias Boese
  */
-public class CircuitHistory 
+public final class CircuitHistory 
 {
-
+	/** How many Circuits did we have overall which have been used for internal communication ? */
+	private int countInternal = 0;
+	/** How many Circuits did we have overall which have been used for external communication ? */
+	private int countExternal = 0;
+	/** How many internal communications did we have in the last timeframe ? */
+	private Map<Long, Integer> mapCountInternal = new HashMap<Long, Integer>();
+	/** How many external communications did we have in the last timeframe ? */
+	private Map<Long, Integer> mapCountExternal = new HashMap<Long, Integer>();
+	/** What is the maximum time frame used for current historic data? */
+	private static final long MAX_TIMEFRAME = 10 * 60 * 1000; // 10 minutes
+	/** map of Ports and Count which have been used mostly in the past. */
+	private Map<Integer, Integer> mapHistoricPorts = new HashMap<Integer, Integer>();
+	/** map containing the port info for the last timeframe. */ 
+	private Map<Long, Map<Integer, Integer>> mapCurrentHistoricPorts = new HashMap<Long, Map<Integer, Integer>>();
 	/**
 	 * 
 	 */
@@ -33,5 +51,187 @@ public class CircuitHistory
 	{
 		// TODO implement history loading and saving
 	}
-	
+	/** 
+	 * Add the information from a {@link Circuit} object to the history.
+	 * 
+	 * @param circuit the {@link Circuit} object whcih has been used for a specific task.
+	 */
+	public void addCircuit(final Circuit circuit)
+	{
+		checkTimeframe();
+		Long crrTime = System.currentTimeMillis();
+		if (circuit.getTcpStreamProperties() != null)
+		{
+			if (circuit.getTcpStreamProperties().isConnectToTorIntern())
+			{
+				synchronized (mapCountInternal)
+				{
+					countInternal++;
+					Integer count = mapCountInternal.get(crrTime);
+					if (count == null)
+					{
+						count = 0;
+					}
+					count++;
+					mapCountInternal.put(crrTime, count);
+				}
+			}
+			else
+			{
+				synchronized (mapCountExternal)
+				{
+					countExternal++;
+					Integer count = mapCountExternal.get(crrTime);
+					if (count == null)
+					{
+						count = 0;
+					}
+					count++;
+					mapCountExternal.put(crrTime, count);
+				}
+				synchronized (mapCurrentHistoricPorts)
+				{
+					Integer port = circuit.getTcpStreamProperties().getPort();
+					Integer count = mapHistoricPorts.get(port);
+					if (count == null)
+					{
+						count = 0;
+					}
+					count++;
+					mapHistoricPorts.put(port, count);
+					Map<Integer, Integer> ports = mapCurrentHistoricPorts.get(crrTime);
+					if (ports == null)
+					{
+						ports = new HashMap<Integer, Integer>();
+						mapCurrentHistoricPorts.put(crrTime, ports);
+					}
+					count = ports.get(port);
+					if (count == null)
+					{
+						count = 0;
+					}
+					count++;
+					ports.put(port, count);
+				}
+			}
+		}
+	}
+	/**
+	 * @return the countInternal
+	 */
+	public int getCountInternal()
+	{
+		checkTimeframe();
+		return countInternal;
+	}
+	/**
+	 * @return the countExternal
+	 */
+	public int getCountExternal()
+	{
+		checkTimeframe();
+		return countExternal;
+	}
+	/**
+	 * @return the mapCountInternal
+	 */
+	public Map<Long, Integer> getMapCountInternal()
+	{
+		checkTimeframe();
+		return mapCountInternal;
+	}
+	/**
+	 * @return the mapCountExternal
+	 */
+	public Map<Long, Integer> getMapCountExternal()
+	{
+		checkTimeframe();
+		return mapCountExternal;
+	}
+	/**
+	 * @return the mapHistoricPorts
+	 */
+	public Map<Integer, Integer> getMapHistoricPorts()
+	{
+		checkTimeframe();
+		return mapHistoricPorts;
+	}
+	/**
+	 * @return the mapCurrentHistoricPorts
+	 */
+	public Map<Long, Map<Integer, Integer>> getMapCurrentHistoricPorts()
+	{
+		checkTimeframe();
+		return mapCurrentHistoricPorts;
+	}
+	/** minimum timestamp of internal map. */
+	private long minTSInternal = 0;
+	/** minimum timestamp of external map. */
+	private long minTSExternal = 0;
+	/** minimum timestamp of ports map. */
+	private long minTSPorts = 0;
+	private void checkTimeframe()
+	{
+		long crrTime = System.currentTimeMillis();
+		if (minTSInternal + MAX_TIMEFRAME < crrTime)
+		{
+			minTSInternal = crrTime;
+			Iterator<Entry<Long, Integer>> itEntry = mapCountInternal.entrySet().iterator();
+			while (itEntry.hasNext())
+			{
+				Entry<Long, Integer> entry = itEntry.next();
+				if (entry.getKey() + MAX_TIMEFRAME < crrTime)
+				{
+					itEntry.remove();
+				}
+				else
+				{
+					if (entry.getKey() < minTSInternal)
+					{
+						minTSInternal = entry.getKey();
+					}
+				}
+			}
+		}
+		if (minTSExternal + MAX_TIMEFRAME < crrTime)
+		{
+			minTSExternal = crrTime;
+			Iterator<Entry<Long, Integer>> itEntry = mapCountExternal.entrySet().iterator();
+			while (itEntry.hasNext())
+			{
+				Entry<Long, Integer> entry = itEntry.next();
+				if (entry.getKey() + MAX_TIMEFRAME < crrTime)
+				{
+					itEntry.remove();
+				}
+				else
+				{
+					if (entry.getKey() < minTSExternal)
+					{
+						minTSExternal = entry.getKey();
+					}
+				}
+			}
+		}
+		if (minTSPorts + MAX_TIMEFRAME < crrTime)
+		{
+			minTSPorts = crrTime;
+			Iterator<Entry<Long, Map<Integer, Integer>>> itEntryPorts = mapCurrentHistoricPorts.entrySet().iterator();
+			while (itEntryPorts.hasNext())
+			{
+				Entry<Long, Map<Integer, Integer>> entry = itEntryPorts.next();
+				if (entry.getKey() + MAX_TIMEFRAME < crrTime)
+				{
+					itEntryPorts.remove();
+				}
+				else
+				{
+					if (entry.getKey() < minTSPorts)
+					{
+						minTSPorts = entry.getKey();
+					}
+				}
+			}
+		}
+	}
 }

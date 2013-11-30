@@ -199,7 +199,8 @@ public class Circuit
 	 * field saved the corresponding HiddenServiceInstance.
 	 */
 	private HiddenServiceInstance hiddenServiceInstanceForRendezvous;
-
+	/** Saving the {@link TCPStreamProperties} for later usage. */
+	private TCPStreamProperties streamProperties;
 	/**
 	 * initiates a circuit. tries to rebuild the circuit for a limited number of
 	 * times, if first attempt fails.
@@ -233,6 +234,7 @@ public class Circuit
 			this.directory = dir;
 			this.tlsConnectionAdmin = fnh;
 			this.torEventService = torEventService;
+			streamProperties = sp;
 			closed = false;
 			established = false;
 			destruct = false;
@@ -880,7 +882,7 @@ public class Circuit
 	 * registers a stream in the history to allow bundeling streams to the same
 	 * connection in one circuit.
 	 */
-	void registerStream(TCPStreamProperties sp) throws TorException
+	final void registerStream(final TCPStreamProperties sp) throws TorException
 	{
 		++establishedStreams;
 		if (sp.getAddr() != null)
@@ -1277,7 +1279,13 @@ public class Circuit
 		}
 	}
 
-	public Set<Object> getStreamHistory()
+	/**
+	 * Get URLs, InetAddresses or z-part of HS URL of hosts used to make
+	 * contact to (or for DNS query) with this Circuit.
+	 * 
+	 * @return a set of objects
+	 */
+	public final Set<Object> getStreamHistory()
 	{
 		return streamHistory;
 	}
@@ -1529,5 +1537,14 @@ public class Circuit
 	public final void decrementRelayEarlyCellsRemaining() 
 	{
 		this.relayEarlyCellsRemaining--;
+	}
+	/**
+	 * Get the {@link TCPStreamProperties} which have been used for creating this circuit.
+	 * 
+	 * @return the {@link TCPStreamProperties} object.
+	 */
+	public final TCPStreamProperties getTcpStreamProperties()
+	{
+		return streamProperties;
 	}
 }
