@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Create Circuits in background.
  * 
  * @author hapke
  */
@@ -33,13 +34,27 @@ public class NewCircuitThread extends Thread
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(NewCircuitThread.class);
 
+	/** {@link TLSConnectionAdmin}. */
 	private final TLSConnectionAdmin fnh;
+	/** the {@link Directory} used for creating a route. */
 	private final Directory dir;
+	/** the Stream properties. */
 	private final TCPStreamProperties spFinal;
+	/** the {@link TorEventService}. */
 	private final TorEventService torEventService;
 
-	public NewCircuitThread(TLSConnectionAdmin fnh, Directory dir,
-			TCPStreamProperties spFinal, TorEventService torEventService)
+	/**
+	 * Create a new Thread which creates a new Circuit.
+	 * 
+	 * @param fnh the {@link TLSConnectionAdmin} object
+	 * @param dir the tor {@link Directory} object
+	 * @param spFinal the {@link TCPStreamProperties} object
+	 * @param torEventService the {@link TorEventService}
+	 */
+	public NewCircuitThread(final TLSConnectionAdmin fnh, 
+							final Directory dir,
+							final TCPStreamProperties spFinal, 
+							final TorEventService torEventService)
 	{
 		this.fnh = fnh;
 		this.dir = dir;
@@ -48,7 +63,7 @@ public class NewCircuitThread extends Thread
 	}
 
 	@Override
-	public void run()
+	public final void run()
 	{
 		try
 		{
@@ -56,7 +71,7 @@ public class NewCircuitThread extends Thread
 		}
 		catch (final Exception e)
 		{
-			LOG.warn("unexcpected", e);
+			LOG.warn("unexpected", e);
 		}
 	}
 }

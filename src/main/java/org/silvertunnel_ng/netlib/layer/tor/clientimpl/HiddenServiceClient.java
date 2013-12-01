@@ -246,7 +246,11 @@ public final class HiddenServiceClient
 		Circuit myRendezvousCirc = null;
 		try
 		{
-			myRendezvousCirc = CircuitAdmin.provideSuitableExclusiveCircuit(tlsConnectionAdmin, directory, new TCPStreamProperties(), torEventService);
+			TCPStreamProperties streamProperties = new TCPStreamProperties();
+			streamProperties.setFastRoute(true);
+			streamProperties.setStableRoute(true);
+			streamProperties.setConnectToTorIntern(true);
+			myRendezvousCirc = CircuitAdmin.provideSuitableExclusiveCircuit(tlsConnectionAdmin, directory, streamProperties, torEventService);
 			if (myRendezvousCirc == null || !myRendezvousCirc.isEstablished())
 			{
 				throw new TorException("getNewRendezvousPoint(): couldnt establish rendezvous point for " + z + " - at the moment");

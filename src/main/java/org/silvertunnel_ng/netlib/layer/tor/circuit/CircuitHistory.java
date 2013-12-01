@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
+
 /**
  * Capture all Circuit information used for predicting the next needed Circuits.
  * 
@@ -39,7 +41,7 @@ public final class CircuitHistory
 	/** How many external communications did we have in the last timeframe ? */
 	private Map<Long, Integer> mapCountExternal = new HashMap<Long, Integer>();
 	/** What is the maximum time frame used for current historic data? */
-	private static final long MAX_TIMEFRAME = 10 * 60 * 1000; // 10 minutes
+	private static final long MAX_TIMEFRAME_IN_MINUTES = 10; // 10 minutes
 	/** map of Ports and Count which have been used mostly in the past. */
 	private Map<Integer, Integer> mapHistoricPorts = new HashMap<Integer, Integer>();
 	/** map containing the port info for the last timeframe. */ 
@@ -54,15 +56,15 @@ public final class CircuitHistory
 	/** 
 	 * Add the information from a {@link Circuit} object to the history.
 	 * 
-	 * @param circuit the {@link Circuit} object whcih has been used for a specific task.
+	 * @param streamProperties the {@link TCPStreamProperties} object which has been used for a specific task.
 	 */
-	public void addCircuit(final Circuit circuit)
+	public void addCircuit(final TCPStreamProperties streamProperties)
 	{
 		checkTimeframe();
-		Long crrTime = System.currentTimeMillis();
-		if (circuit.getTcpStreamProperties() != null)
+		Long crrTime = System.currentTimeMillis() / 60000;
+		if (streamProperties != null)
 		{
-			if (circuit.getTcpStreamProperties().isConnectToTorIntern())
+			if (streamProperties.isConnectToTorIntern())
 			{
 				synchronized (mapCountInternal)
 				{
@@ -91,7 +93,7 @@ public final class CircuitHistory
 				}
 				synchronized (mapCurrentHistoricPorts)
 				{
-					Integer port = circuit.getTcpStreamProperties().getPort();
+					Integer port = streamProperties.getPort();
 					Integer count = mapHistoricPorts.get(port);
 					if (count == null)
 					{
@@ -172,15 +174,15 @@ public final class CircuitHistory
 	private long minTSPorts = 0;
 	private void checkTimeframe()
 	{
-		long crrTime = System.currentTimeMillis();
-		if (minTSInternal + MAX_TIMEFRAME < crrTime)
+		long crrTime = System.currentTimeMillis() / 60000;
+		if (minTSInternal + MAX_TIMEFRAME_IN_MINUTES < crrTime)
 		{
 			minTSInternal = crrTime;
 			Iterator<Entry<Long, Integer>> itEntry = mapCountInternal.entrySet().iterator();
 			while (itEntry.hasNext())
 			{
 				Entry<Long, Integer> entry = itEntry.next();
-				if (entry.getKey() + MAX_TIMEFRAME < crrTime)
+				if (entry.getKey() + MAX_TIMEFRAME_IN_MINUTES < crrTime)
 				{
 					itEntry.remove();
 				}
@@ -192,15 +194,19 @@ public final class CircuitHistory
 					}
 				}
 			}
+			if (mapCountInternal.isEmpty())
+			{
+				minTSInternal = Long.MAX_VALUE - MAX_TIMEFRAME_IN_MINUTES;
+			}
 		}
-		if (minTSExternal + MAX_TIMEFRAME < crrTime)
+		if (minTSExternal + MAX_TIMEFRAME_IN_MINUTES < crrTime)
 		{
 			minTSExternal = crrTime;
 			Iterator<Entry<Long, Integer>> itEntry = mapCountExternal.entrySet().iterator();
 			while (itEntry.hasNext())
 			{
 				Entry<Long, Integer> entry = itEntry.next();
-				if (entry.getKey() + MAX_TIMEFRAME < crrTime)
+				if (entry.getKey() + MAX_TIMEFRAME_IN_MINUTES < crrTime)
 				{
 					itEntry.remove();
 				}
@@ -212,15 +218,19 @@ public final class CircuitHistory
 					}
 				}
 			}
+			if (mapCountExternal.isEmpty())
+			{
+				minTSExternal = Long.MAX_VALUE - MAX_TIMEFRAME_IN_MINUTES;
+			}
 		}
-		if (minTSPorts + MAX_TIMEFRAME < crrTime)
+		if (minTSPorts + MAX_TIMEFRAME_IN_MINUTES < crrTime)
 		{
 			minTSPorts = crrTime;
 			Iterator<Entry<Long, Map<Integer, Integer>>> itEntryPorts = mapCurrentHistoricPorts.entrySet().iterator();
 			while (itEntryPorts.hasNext())
 			{
 				Entry<Long, Map<Integer, Integer>> entry = itEntryPorts.next();
-				if (entry.getKey() + MAX_TIMEFRAME < crrTime)
+				if (entry.getKey() + MAX_TIMEFRAME_IN_MINUTES < crrTime)
 				{
 					itEntryPorts.remove();
 				}
@@ -231,6 +241,10 @@ public final class CircuitHistory
 						minTSPorts = entry.getKey();
 					}
 				}
+			}
+			if (mapCurrentHistoricPorts.isEmpty())
+			{
+				minTSPorts = Long.MAX_VALUE - MAX_TIMEFRAME_IN_MINUTES;
 			}
 		}
 	}

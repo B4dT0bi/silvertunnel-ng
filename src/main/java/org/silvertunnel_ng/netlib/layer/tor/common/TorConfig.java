@@ -104,6 +104,8 @@ public final class TorConfig
 		return instance;
 	}
 
+	/** Use Create_Fast Cells instead of normal Create Cells? */
+	public static final boolean USE_CREATE_FAST_CELLS = true;
 	/**
 	 * Startup delay in seconds.
 	 * 
@@ -254,7 +256,34 @@ public final class TorConfig
 	/* TODO was: 11 */
 	public static int queueTimeoutStreamBuildup = 5;
 
-	public static int circuitClosesOnFailures = 3;
+	/**
+	 * How many stream failures are allowed till we close the Circuit?
+	 * 
+	 * default : 3
+	 */
+	private int circuitClosesOnFailures = 3;
+	/**
+	 * How many stream failures are allowed till we close the Circuit?
+
+	 * @return the circuitClosesOnFailures
+	 */
+	public static int getCircuitClosesOnFailures()
+	{
+		return getInstance().circuitClosesOnFailures;
+	}
+
+	/**
+	 * How many stream failures are allowed till we close the Circuit?
+	 *
+	 * default : 3
+	 * 
+	 * @param circuitClosesOnFailures the circuitClosesOnFailures to set
+	 */
+	public static void setCircuitClosesOnFailures(final int circuitClosesOnFailures)
+	{
+		getInstance().circuitClosesOnFailures = circuitClosesOnFailures;
+	}
+
 	public static int circuitsMaximumNumber = 30;
 	public static long maxAllowedSetupDurationMs = 10000;
 

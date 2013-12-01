@@ -56,6 +56,7 @@ public final class TCPStreamProperties
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TCPStreamProperties.class);
 
+	/** The host which we want to connect to. */
 	private String hostname;
 	private InetAddress addr;
 	/** set to true, if hostname is resolved into addr. */
@@ -69,6 +70,7 @@ public final class TCPStreamProperties
 	private boolean fastRoute = true;
 	/** use only stable flagged routers? */
 	private boolean stableRoute = false;
+	/** to which port should we connect? */
 	private int port;
 	/** minimum route length. */
 	private int routeMinLength;
@@ -87,6 +89,7 @@ public final class TCPStreamProperties
 	 * good uptime/bandwidth with higher prob.
 	 */
 	private float rankingInfluenceIndex;
+	/** custom/predefined route. */
 	private Fingerprint[] route;
 
 	/**
@@ -328,6 +331,10 @@ public final class TCPStreamProperties
 		this.addrResolved = addrResolved;
 	}
 
+	/**
+	 * Can we use untrusted exit nodes?
+	 * @return true if it is allowed to use untrusted existnodes
+	 */
 	public boolean isUntrustedExitAllowed()
 	{
 		return untrustedExitAllowed;
@@ -357,12 +364,20 @@ public final class TCPStreamProperties
 	{
 		this.exitPolicyRequired = exitPolicyRequired;
 	}
-
+	/**
+	 * Get the port which we should connect to.
+	 * 
+	 * @return the port as integer
+	 */
 	public int getPort()
 	{
 		return port;
 	}
 
+	/**
+	 * Set the port which we should connect to.
+	 * @param port the port as int
+	 */
 	public void setPort(final int port)
 	{
 		this.port = port;

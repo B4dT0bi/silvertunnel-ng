@@ -101,7 +101,7 @@ import org.slf4j.LoggerFactory;
  * @author hapke
  * @author Tobias Boese
  */
-public class Circuit
+public final class Circuit
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(Circuit.class);
@@ -186,6 +186,7 @@ public class Circuit
 	private TLSConnectionAdmin tlsConnectionAdmin;
 	private TorEventService torEventService;
 
+	/** Close the circuit if last used stream has been closed? */
 	private boolean closeCircuitIfLastStreamIsClosed;
 
 	/**
@@ -307,7 +308,14 @@ public class Circuit
 						LOG.debug("Circuit: sending create cell to " + routeServers[0].getNickname());
 					}
 					routeNodes = new Node[routeServers.length];
-					createFast(routeServers[0]);
+					if (TorConfig.USE_CREATE_FAST_CELLS)
+					{
+						createFast(routeServers[0]);
+					}
+					else
+					{
+						create(routeServers[0]);
+					}
 					if (LOG.isDebugEnabled())
 					{
 						LOG.debug("Circuit: connected to entry point " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")"
@@ -797,12 +805,14 @@ public class Circuit
 	/**
 	 * used to report that this stream cause some trouble (either by itself, or
 	 * the remote server, or what ever).
+	 * 
+	 * @param stream the stream which had the failure
 	 */
 	public void reportStreamFailure(final Stream stream)
 	{
 		++streamFails;
 		// if it's just too much, 'soft'-close this circuit
-		if ((streamFails > TorConfig.circuitClosesOnFailures) && (streamFails > streamCounter * 3 / 2))
+		if ((streamFails > TorConfig.getCircuitClosesOnFailures()) && (streamFails > streamCounter * 3 / 2))
 		{
 			if (!closed)
 			{
@@ -836,13 +846,15 @@ public class Circuit
 	/**
 	 * find a free stream-id, set it in the stream s.
 	 * 
-	 * @param s
+	 * @param stream the stream to be assigned to this Circuit
+	 * @return the new stream id
+	 * @throws TorException when stream id could not be set
 	 */
-	public int assignStreamId(final Stream s) throws TorException
+	public int assignStreamId(final Stream stream) throws TorException
 	{
 		// assign stream ID and memorize stream
 		final int streamId = getFreeStreamID();
-		if (!assignStreamId(s, streamId))
+		if (!assignStreamId(stream, streamId))
 		{
 			throw new TorException("streamId=" + streamId + " could not be set");
 		}
@@ -852,19 +864,20 @@ public class Circuit
 	/**
 	 * set the specified stream id to the stream.
 	 * 
-	 * @param s
-	 * @param streamId
+	 * @param stream the {@link Stream} to be assigned
+	 * @param streamId the stream id to be assigned to the given stream
 	 * @return true=success, false=stream id is already in use
+	 * @throws TorException when Circuit is already closed
 	 */
-	public boolean assignStreamId(Stream s, int streamId) throws TorException
+	public boolean assignStreamId(final Stream stream, final int streamId) throws TorException
 	{
 		if (closed)
 		{
-			throw new TorException("Circuit.assignStreamId: " + toString() + "is closed");
+			throw new TorException("Circuit.assignStreamId: " + toString() + " is closed");
 		}
 
-		s.setId(streamId);
-		final Stream oldStream = streams.put(streamId, s);
+		stream.setId(streamId);
+		final Stream oldStream = streams.put(streamId, stream);
 		if (oldStream == null)
 		{
 			// success
@@ -899,7 +912,7 @@ public class Circuit
 	 * registers a stream in the history to allow bundling streams to the same
 	 * connection in one circuit, wrapped for setting stream creation time.
 	 */
-	public void registerStream(TCPStreamProperties sp, long streamSetupDuration) throws TorException
+	public void registerStream(final TCPStreamProperties sp, final long streamSetupDuration) throws TorException
 	{
 
 		sumStreamsSetupDelays += streamSetupDuration;
@@ -1136,7 +1149,7 @@ public class Circuit
 	// getters and setters
 	// /////////////////////////////////////////////////////
 
-	public void setHiddenServiceInstanceForIntroduction(HiddenServiceInstance hiddenServiceInstanceForIntroduction)
+	public void setHiddenServiceInstanceForIntroduction(final HiddenServiceInstance hiddenServiceInstanceForIntroduction)
 	{
 		this.hiddenServiceInstanceForIntroduction = hiddenServiceInstanceForIntroduction;
 	}
@@ -1151,7 +1164,7 @@ public class Circuit
 		return hiddenServiceInstanceForIntroduction != null;
 	}
 
-	private void setHiddenServiceInstanceForRendezvous(HiddenServiceInstance hiddenServiceInstanceForRendezvous)
+	private void setHiddenServiceInstanceForRendezvous(final HiddenServiceInstance hiddenServiceInstanceForRendezvous)
 	{
 		this.hiddenServiceInstanceForRendezvous = hiddenServiceInstanceForRendezvous;
 	}
@@ -1176,7 +1189,7 @@ public class Circuit
 		return routeNodes;
 	}
 
-	public void setRouteNodes(Node[] routeNodes)
+	public void setRouteNodes(final Node[] routeNodes)
 	{
 		this.routeNodes = routeNodes;
 	}
@@ -1191,7 +1204,7 @@ public class Circuit
 		return routeEstablished;
 	}
 
-	public void setRouteEstablished(int routeEstablished)
+	public void setRouteEstablished(final int routeEstablished)
 	{
 		this.routeEstablished = routeEstablished;
 	}
@@ -1295,7 +1308,7 @@ public class Circuit
 		return establishedStreams;
 	}
 
-	public void setEstablishedStreams(int establishedStreams)
+	public void setEstablishedStreams(final int establishedStreams)
 	{
 		this.establishedStreams = establishedStreams;
 	}
@@ -1310,7 +1323,7 @@ public class Circuit
 		return established;
 	}
 
-	public void setEstablished(boolean established)
+	public void setEstablished(final boolean established)
 	{
 		this.established = established;
 	}
@@ -1370,7 +1383,7 @@ public class Circuit
 		return ranking;
 	}
 
-	public void setRanking(int ranking)
+	public void setRanking(final int ranking)
 	{
 		this.ranking = ranking;
 	}
@@ -1380,7 +1393,7 @@ public class Circuit
 		return sumStreamsSetupDelays;
 	}
 
-	public void setSumStreamsSetupDelays(int sumStreamsSetupDelays)
+	public void setSumStreamsSetupDelays(final int sumStreamsSetupDelays)
 	{
 		this.sumStreamsSetupDelays = sumStreamsSetupDelays;
 	}
@@ -1390,7 +1403,7 @@ public class Circuit
 		return streamCounter;
 	}
 
-	public void setStreamCounter(int streamCounter)
+	public void setStreamCounter(final int streamCounter)
 	{
 		this.streamCounter = streamCounter;
 	}
@@ -1400,7 +1413,7 @@ public class Circuit
 		return streamFails;
 	}
 
-	public void setStreamFails(int streamFails)
+	public void setStreamFails(final int streamFails)
 	{
 		this.streamFails = streamFails;
 	}
@@ -1410,7 +1423,7 @@ public class Circuit
 		return directory;
 	}
 
-	public void setDirectory(Directory directory)
+	public void setDirectory(final Directory directory)
 	{
 		this.directory = directory;
 	}
@@ -1420,7 +1433,7 @@ public class Circuit
 		return tlsConnectionAdmin;
 	}
 
-	public void setTlsConnectionAdmin(TLSConnectionAdmin tlsConnectionAdmin)
+	public void setTlsConnectionAdmin(final TLSConnectionAdmin tlsConnectionAdmin)
 	{
 		this.tlsConnectionAdmin = tlsConnectionAdmin;
 	}
@@ -1430,17 +1443,22 @@ public class Circuit
 		return serviceDescriptor;
 	}
 
-	public void setServiceDescriptor(RendezvousServiceDescriptor serviceDescriptor)
+	public void setServiceDescriptor(final RendezvousServiceDescriptor serviceDescriptor)
 	{
 		this.serviceDescriptor = serviceDescriptor;
 	}
-
+	/**
+	 * @return Should we close the circuit if the last used stream has been closed?
+	 */
 	public boolean isCloseCircuitIfLastStreamIsClosed()
 	{
 		return closeCircuitIfLastStreamIsClosed;
 	}
-
-	public void setCloseCircuitIfLastStreamIsClosed(boolean closeCircuitIfLastStreamIsClosed)
+	/**
+	 * Should the circuit be closed when the last used stream has been closed?
+	 * @param closeCircuitIfLastStreamIsClosed true if Circuit should be closed
+	 */
+	public void setCloseCircuitIfLastStreamIsClosed(final boolean closeCircuitIfLastStreamIsClosed)
 	{
 		this.closeCircuitIfLastStreamIsClosed = closeCircuitIfLastStreamIsClosed;
 	}
@@ -1451,7 +1469,7 @@ public class Circuit
 	/**
 	 * @return true if this Circuit only contains Routers with flag fast.
 	 */
-	public final synchronized boolean isFast()
+	public synchronized boolean isFast()
 	{
 		boolean circuitComplete = true;
 		boolean tmpValue = true;
@@ -1490,7 +1508,7 @@ public class Circuit
 	/**
 	 * @return true if this Circuit only contains Routers with flag stable.
 	 */
-	public final synchronized boolean isStable()
+	public synchronized boolean isStable()
 	{
 		boolean circuitComplete = true;
 		boolean tmpValue = true;
@@ -1526,7 +1544,7 @@ public class Circuit
 	/**
 	 * @return the relayEarlyCellsRemaining
 	 */
-	public final int getRelayEarlyCellsRemaining() 
+	public int getRelayEarlyCellsRemaining() 
 	{
 		return relayEarlyCellsRemaining;
 	}
@@ -1534,7 +1552,7 @@ public class Circuit
 	/**
 	 * Decrease the amount of relay early cells remaining.
 	 */
-	public final void decrementRelayEarlyCellsRemaining() 
+	public void decrementRelayEarlyCellsRemaining() 
 	{
 		this.relayEarlyCellsRemaining--;
 	}
@@ -1543,7 +1561,7 @@ public class Circuit
 	 * 
 	 * @return the {@link TCPStreamProperties} object.
 	 */
-	public final TCPStreamProperties getTcpStreamProperties()
+	public TCPStreamProperties getTcpStreamProperties()
 	{
 		return streamProperties;
 	}

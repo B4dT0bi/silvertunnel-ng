@@ -227,12 +227,12 @@ public class HiddenServiceServer
 	 * @param spIntro
 	 * @return
 	 */
-	private Circuit establishIntroductionPoint(	Directory directory,
-												TorEventService torEventService,
-												TLSConnectionAdmin tlsConnectionAdmin,
-												HiddenServiceProperties service,
-												TCPStreamProperties spIntro,
-												HiddenServiceInstance hiddenServiceInstance)
+	private Circuit establishIntroductionPoint(Directory directory,
+											   TorEventService torEventService,
+											   TLSConnectionAdmin tlsConnectionAdmin,
+											   HiddenServiceProperties service,
+											   TCPStreamProperties spIntro,
+											   HiddenServiceInstance hiddenServiceInstance)
 	{
 		Circuit circuit = null;
 		for (int i = 0; i < spIntro.getConnectRetries(); ++i)

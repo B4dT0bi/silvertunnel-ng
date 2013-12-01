@@ -130,7 +130,7 @@ public class TCPStream implements Stream, NetSocket
 	 * creates a stream on top of a existing circuit. users and programmers
 	 * should never call this function, but Tor.connect() instead.
 	 * 
-	 * @param c
+	 * @param circuit
 	 *            the circuit to build the stream through
 	 * @param sp
 	 *            the host etc. to connect to
@@ -138,8 +138,9 @@ public class TCPStream implements Stream, NetSocket
 	 * @see Circuit
 	 * @see TCPStreamProperties
 	 */
-	public TCPStream(Circuit c, TCPStreamProperties sp) throws IOException,
-			TorException, TorNoAnswerException
+	public TCPStream(final Circuit circuit, final TCPStreamProperties sp) throws IOException,
+																		   TorException, 
+																		   TorNoAnswerException
 	{
 		// TODO: this.sp = sp;
 		established = false;
@@ -151,7 +152,7 @@ public class TCPStream implements Stream, NetSocket
 		long startSetupTime;
 
 		// attach stream to circuit
-		this.circuit = c;
+		this.circuit = circuit;
 		circuit.assignStreamId(this);
 		queue = new Queue(queueTimeout);
 		closed = false;
@@ -197,7 +198,7 @@ public class TCPStream implements Stream, NetSocket
 			// Lexi: even better: increase only a counter for this circuit
 			// otherwise circuits will close on an average after 3 or 4
 			// streams. this is nothing we'd like to happen
-			c.reportStreamFailure(this);
+			circuit.reportStreamFailure(this);
 
 			throw e;
 		}
@@ -238,6 +239,9 @@ public class TCPStream implements Stream, NetSocket
 				// IPv6 address
 				// TODO: not yet implemented
 				break;
+			default:
+				LOG.error("this should not happen");
+				break;
 		}
 
 		// create reading threads to relay between user-side and tor-side
@@ -247,8 +251,7 @@ public class TCPStream implements Stream, NetSocket
 		this.queue.addHandler(qhT2J);
 		outputStream = new TCPStreamOutputStream(this);
 
-		LOG.info("TCPStream: build stream " + toString() + " within "
-				+ setupDuration + " ms");
+		LOG.info("TCPStream: build stream " + toString() + " within " + setupDuration + " ms");
 		// attach stream to history
 		circuit.registerStream(sp, setupDuration);
 		established = true;
@@ -266,7 +269,7 @@ public class TCPStream implements Stream, NetSocket
 	 * 
 	 * Called after RELAY_BEGIN was received.
 	 * 
-	 * @param c
+	 * @param circuit
 	 *            the circuit to build the stream through
 	 * @param sp
 	 *            the host etc. to connect to
@@ -274,7 +277,7 @@ public class TCPStream implements Stream, NetSocket
 	 * @see Circuit
 	 * @see TCPStreamProperties
 	 */
-	public TCPStream(Circuit c, int streamId) throws IOException, TorException,
+	public TCPStream(final Circuit circuit, final int streamId) throws IOException, TorException,
 			TorNoAnswerException
 	{
 		// TODO: this.sp = sp;
@@ -287,7 +290,7 @@ public class TCPStream implements Stream, NetSocket
 		long startSetupTime;
 
 		// attach stream to circuit
-		circuit = c;
+		this.circuit = circuit;
 		circuit.assignStreamId(this, streamId);
 		queue = new Queue(QUEUE_TIMEOUNT2);
 		closed = false;
@@ -513,8 +516,7 @@ public class TCPStream implements Stream, NetSocket
 		 */
 		if (closed)
 		{
-			return streamId + " on circuit " + circuit.toString()
-					+ " to ??? (closed)";
+			return streamId + " on circuit " + circuit.toString() + " to ??? (closed)";
 		}
 		else
 		{
@@ -527,7 +529,7 @@ public class TCPStream implements Stream, NetSocket
 	// /////////////////////////////////////////////////////
 
 	@Override
-	public void setId(int id)
+	public void setId(final int id)
 	{
 		if (this.streamId == 0)
 		{
@@ -560,7 +562,7 @@ public class TCPStream implements Stream, NetSocket
 		return closed;
 	}
 
-	void setClosed(boolean closed)
+	void setClosed(final boolean closed)
 	{
 		this.closed = closed;
 	}
