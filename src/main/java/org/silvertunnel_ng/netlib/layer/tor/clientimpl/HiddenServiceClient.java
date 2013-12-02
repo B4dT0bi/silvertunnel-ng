@@ -329,10 +329,12 @@ public final class HiddenServiceClient
 		final TCPStreamProperties spIntro = new TCPStreamProperties();
 		spIntro.setExitPolicyRequired(false);
 		spIntro.setCustomExitpoint(introPointFingerprint);
+		spIntro.setConnectToTorIntern(true);
 		Circuit myIntroCirc = null;
 		try
 		{
-			myIntroCirc = new Circuit(tlsConnectionAdmin, directory, spIntro, torEventService);
+//			myIntroCirc = new Circuit(tlsConnectionAdmin, directory, spIntro, torEventService);
+			myIntroCirc = CircuitAdmin.provideSuitableExclusiveCircuit(tlsConnectionAdmin, directory, spIntro, torEventService);
 
 			if (!myIntroCirc.isEstablished())
 			{

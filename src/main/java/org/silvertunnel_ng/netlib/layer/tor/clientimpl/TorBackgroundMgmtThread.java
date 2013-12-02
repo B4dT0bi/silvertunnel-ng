@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
  * @author Lexi Pimenidis
  * @author Michael Koellejan
  * @author hapke
+ * @author Tobias Boese
  */
 class TorBackgroundMgmtThread extends Thread
 {
@@ -104,8 +105,7 @@ class TorBackgroundMgmtThread extends Thread
 		this.numberOfCircuits = numberOfCircuits;
 		currentTimeMillis = System.currentTimeMillis();
 		spawnIdleCircuits(numberOfCircuits);
-		this.directoryManagerThread = new DirectoryManagerThread(
-				tor.getDirectory());
+		this.directoryManagerThread = new DirectoryManagerThread(tor.getDirectory());
 		setName(getClass().getName());
 		setDaemon(true);
 		start();
@@ -127,8 +127,7 @@ class TorBackgroundMgmtThread extends Thread
 		}
 
 		// Cleanup our background thread list
-		final ListIterator<Thread> brtIterator = backgroundThreads
-				.listIterator();
+		final ListIterator<Thread> brtIterator = backgroundThreads.listIterator();
 		while (brtIterator.hasNext())
 		{
 			final Thread brt = brtIterator.next();
@@ -152,12 +151,13 @@ class TorBackgroundMgmtThread extends Thread
 				{
 					try
 					{
+						// TODO : implement circuit predictor here
 						// idle threads should at least allow using port 80
 						final TCPStreamProperties sp = new TCPStreamProperties();
 						sp.setPort(80);
 						new Circuit(tor.getTlsConnectionAdmin(),
 								tor.getDirectory(), sp,
-								tor.getTorEventService());
+								tor.getTorEventService(), null);
 					}
 					catch (final Exception e)
 					{

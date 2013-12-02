@@ -67,7 +67,7 @@ public class NewCircuitThread extends Thread
 	{
 		try
 		{
-			new Circuit(fnh, dir, spFinal, torEventService);
+			new Circuit(fnh, dir, spFinal, torEventService, null); // TODO : check if this (null) is ok and working correctly with CircuitHistory
 		}
 		catch (final Exception e)
 		{

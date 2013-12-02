@@ -202,6 +202,8 @@ public final class Circuit
 	private HiddenServiceInstance hiddenServiceInstanceForRendezvous;
 	/** Saving the {@link TCPStreamProperties} for later usage. */
 	private TCPStreamProperties streamProperties;
+	/** save own information in {@link CircuitHistory}. */
+	private CircuitHistory circuitHistory;
 	/**
 	 * initiates a circuit. tries to rebuild the circuit for a limited number of
 	 * times, if first attempt fails.
@@ -215,14 +217,17 @@ public final class Circuit
 	 *            some properties for the stream that is the reason for building
 	 *            the circuit (needed if the circuit is needed to ask the
 	 *            directory for a new route)
-	 * 
+	 * @param torEventService
+	 * @param circuitHistory {@link CircuitHistory} object where we will save this Stream information
+	 * 						set to null if saving this info is not needed (eg for idle Circuits)
 	 * @exception TorException
 	 * @exception IOException
 	 */
 	public Circuit(final TLSConnectionAdmin fnh, 
 	               final Directory dir, 
 	               final TCPStreamProperties sp, 
-	               final TorEventService torEventService)
+	               final TorEventService torEventService,
+	               final CircuitHistory circuitHistory)
 															throws IOException,
 															TorException,
 															InterruptedException
@@ -235,6 +240,7 @@ public final class Circuit
 			this.directory = dir;
 			this.tlsConnectionAdmin = fnh;
 			this.torEventService = torEventService;
+			this.circuitHistory = circuitHistory;
 			streamProperties = sp;
 			closed = false;
 			established = false;
@@ -425,6 +431,7 @@ public final class Circuit
 			numberOfCircuitsInConstructor--;
 			if (!successful)
 			{
+				this.circuitHistory = null;
 				close(true);
 			}
 		}

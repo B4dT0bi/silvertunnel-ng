@@ -504,16 +504,20 @@ public class Tor implements NetLayerStatusAdmin
 			// if no circuit could give an answer (possibly there was no
 			// established circuit?)
 			// build a new circuit and ask this one to resolve the query
-			final ResolveStream rs = new ResolveStream(new Circuit(tlsConnectionAdmin, directory, new TCPStreamProperties(), torEventService));
+//			final ResolveStream rs = new ResolveStream(new Circuit(tlsConnectionAdmin, directory, new TCPStreamProperties(), torEventService));
+			final TCPStreamProperties streamProperties = new TCPStreamProperties();
+			streamProperties.setConnectToTorIntern(true);
+			final Circuit [] rsCircuit = CircuitAdmin.provideSuitableCircuits(tlsConnectionAdmin, 
+																			  directory, 
+																			  streamProperties, 
+																			  torEventService, 
+																			  false);
+			final ResolveStream rs = new ResolveStream(rsCircuit[0]);
 			final Object o = rs.resolve(query);
 			rs.close();
 			return o;
 		}
 		catch (final TorException e)
-		{
-			throw new IOException("Error in Tor: " + e.getMessage());
-		}
-		catch (final InterruptedException e)
 		{
 			throw new IOException("Error in Tor: " + e.getMessage());
 		}

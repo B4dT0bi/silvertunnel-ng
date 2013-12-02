@@ -70,6 +70,8 @@ public class CircuitAdmin
 	static Map<String, Circuit[]> suitableCircuitsCache = Collections
 			.synchronizedMap(new HashMap<String, Circuit[]>());
 
+	/** keep track of built Circuits to predict the best new idle Circuits. */
+	private static CircuitHistory circuitHistory = new CircuitHistory();
 	/**
 	 * fingerprint of currently used nodes in circuits as key, # of cirs -
 	 * value.
@@ -90,7 +92,7 @@ public class CircuitAdmin
 		{
 			try
 			{
-				return new Circuit(tlsConnectionAdmin, dir, sp, torEventService);
+				return new Circuit(tlsConnectionAdmin, dir, sp, torEventService, circuitHistory);
 			}
 			catch (final InterruptedException e)
 			{
