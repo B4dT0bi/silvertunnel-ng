@@ -285,7 +285,7 @@ public final class TorConfig
 	}
 
 	public static int circuitsMaximumNumber = 30;
-	public static long maxAllowedSetupDurationMs = 10000;
+	public static long maxAllowedSetupDurationMs = 15000;
 
 	/** 0..1 . */
 	public static float rankingTransferPerServerUpdate = 0.95f;

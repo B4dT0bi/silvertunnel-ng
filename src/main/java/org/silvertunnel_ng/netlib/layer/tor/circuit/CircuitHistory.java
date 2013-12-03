@@ -37,15 +37,15 @@ public final class CircuitHistory
 	/** How many Circuits did we have overall which have been used for external communication ? */
 	private int countExternal = 0;
 	/** How many internal communications did we have in the last timeframe ? */
-	private Map<Long, Integer> mapCountInternal = new HashMap<Long, Integer>();
+	private final Map<Long, Integer> mapCountInternal = new HashMap<Long, Integer>();
 	/** How many external communications did we have in the last timeframe ? */
-	private Map<Long, Integer> mapCountExternal = new HashMap<Long, Integer>();
+	private final Map<Long, Integer> mapCountExternal = new HashMap<Long, Integer>();
 	/** What is the maximum time frame used for current historic data? */
 	private static final long MAX_TIMEFRAME_IN_MINUTES = 10; // 10 minutes
 	/** map of Ports and Count which have been used mostly in the past. */
-	private Map<Integer, Integer> mapHistoricPorts = new HashMap<Integer, Integer>();
+	private final Map<Integer, Integer> mapHistoricPorts = new HashMap<Integer, Integer>();
 	/** map containing the port info for the last timeframe. */ 
-	private Map<Long, Map<Integer, Integer>> mapCurrentHistoricPorts = new HashMap<Long, Map<Integer, Integer>>();
+	private final Map<Long, Map<Integer, Integer>> mapCurrentHistoricPorts = new HashMap<Long, Map<Integer, Integer>>();
 	/**
 	 * 
 	 */
@@ -64,22 +64,8 @@ public final class CircuitHistory
 		Long crrTime = System.currentTimeMillis() / 60000;
 		if (streamProperties != null)
 		{
-			if (streamProperties.isConnectToTorIntern())
-			{
-				synchronized (mapCountInternal)
-				{
-					countInternal++;
-					Integer count = mapCountInternal.get(crrTime);
-					if (count == null)
-					{
-						count = 0;
-					}
-					count++;
-					mapCountInternal.put(crrTime, count);
-				}
-			}
-			else
-			{
+			if (streamProperties.isExitPolicyRequired())
+			{// external
 				synchronized (mapCountExternal)
 				{
 					countExternal++;
@@ -114,6 +100,20 @@ public final class CircuitHistory
 					}
 					count++;
 					ports.put(port, count);
+				}
+			}
+			else
+			{ // internal
+				synchronized (mapCountInternal)
+				{
+					countInternal++;
+					Integer count = mapCountInternal.get(crrTime);
+					if (count == null)
+					{
+						count = 0;
+					}
+					count++;
+					mapCountInternal.put(crrTime, count);
 				}
 			}
 		}

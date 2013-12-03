@@ -249,7 +249,7 @@ public final class HiddenServiceClient
 			TCPStreamProperties streamProperties = new TCPStreamProperties();
 			streamProperties.setFastRoute(true);
 			streamProperties.setStableRoute(true);
-			streamProperties.setConnectToTorIntern(true);
+			streamProperties.setExitPolicyRequired(false);
 			myRendezvousCirc = CircuitAdmin.provideSuitableExclusiveCircuit(tlsConnectionAdmin, directory, streamProperties, torEventService);
 			if (myRendezvousCirc == null || !myRendezvousCirc.isEstablished())
 			{
@@ -329,7 +329,6 @@ public final class HiddenServiceClient
 		final TCPStreamProperties spIntro = new TCPStreamProperties();
 		spIntro.setExitPolicyRequired(false);
 		spIntro.setCustomExitpoint(introPointFingerprint);
-		spIntro.setConnectToTorIntern(true);
 		Circuit myIntroCirc = null;
 		try
 		{

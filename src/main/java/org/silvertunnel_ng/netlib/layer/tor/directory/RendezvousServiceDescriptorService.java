@@ -213,12 +213,12 @@ public class RendezvousServiceDescriptorService
 		{
 			try
 			{
-				final RendezvousServiceDescriptor sd = new RendezvousServiceDescriptor(	hiddenServicePermanentIdBase32,
-																						replica,
-																						now,
-																						hiddenServiceProps.getPublicKey(),
-																						hiddenServiceProps.getPrivateKey(),
-																						hiddenServiceProps.getIntroPoints());
+				final RendezvousServiceDescriptor sd = new RendezvousServiceDescriptor(hiddenServicePermanentIdBase32,
+				                                                                       replica,
+				                                                                       now,
+				                                                                       hiddenServiceProps.getPublicKey(),
+				                                                                       hiddenServiceProps.getPrivateKey(),
+				                                                                       hiddenServiceProps.getIntroPoints());
 				final byte[] descriptorId = sd.getDescriptorId();
 				final String descriptorIdBase32 = Encoding.toBase32(descriptorId);
 				final String descriptorIdHex = Encoding.toHexStringNoColon(descriptorId);
@@ -301,8 +301,10 @@ public class RendezvousServiceDescriptorService
 	 * @return the service descriptor as String
 	 * @throws Exception
 	 */
-	private String retrieveServiceDescriptor(final NetLayer torNetLayer, final TcpipNetAddress dirNetAddress, final String descriptorIdBase32)
-																																				throws Exception
+	private String retrieveServiceDescriptor(final NetLayer torNetLayer, 
+	                                         final TcpipNetAddress dirNetAddress, 
+	                                         final String descriptorIdBase32)
+	                                        		 throws Exception
 	{
 		// download descriptor
 		try
@@ -311,9 +313,7 @@ public class RendezvousServiceDescriptorService
 			LOG.debug("descriptorId : {}", descriptorIdBase32);
 			final String path = "/tor/rendezvous2/" + descriptorIdBase32;
 
-			final String httpResponse = SimpleHttpClient.getInstance().get(torNetLayer, dirNetAddress, path);
-			return httpResponse;
-
+			return SimpleHttpClient.getInstance().get(torNetLayer, dirNetAddress, path);
 		}
 		catch (final Exception e)
 		{
@@ -336,9 +336,11 @@ public class RendezvousServiceDescriptorService
 	 * @throws IOException
 	 * @throws TorException
 	 */
-	private void postServiceDescriptor(NetLayer torNetLayerToConnectToDirectoryService, TcpipNetAddress dirNetAddress, RendezvousServiceDescriptor sd)
-																																						throws IOException,
-																																						TorException
+	private void postServiceDescriptor(final NetLayer torNetLayerToConnectToDirectoryService, 
+	                                   final TcpipNetAddress dirNetAddress, 
+	                                   final RendezvousServiceDescriptor sd)
+	                                		   throws IOException,
+													  TorException
 	{
 		final String pathOnHttpServer = "/tor/rendezvous2/publish";
 		final long timeoutInMs = 60000;

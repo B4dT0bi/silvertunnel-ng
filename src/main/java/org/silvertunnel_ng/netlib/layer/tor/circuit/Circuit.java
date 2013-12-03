@@ -136,6 +136,8 @@ public final class Circuit
 	private int routeEstablished;
 	/** used to receive incoming data. */
 	private Queue queue;
+	/** has this Circuit already been used for something? */
+	private boolean unused = true;
 	/** how many relayearly cells do we have ?*/
 	private int relayEarlyCellsRemaining = 8;
 	/**
@@ -332,17 +334,7 @@ public final class Circuit
 					for (int i = 1; i < routeServers.length; ++i)
 					{
 						lastTarget = routeServers[i];
-						if (LOG.isDebugEnabled())
-						{
-							LOG.debug("Circuit: " + toString() + " extending to " + routeServers[i].getNickname() + " ("
-								+ routeServers[i].getCountryCode() + ")" + " [" + routeServers[i].getPlatform() + "]");
-						}
 						extend(i, routeServers[i]);
-						if (LOG.isDebugEnabled())
-						{
-							LOG.debug("Circuit: " + toString() + " successfully extended to " + routeServers[i].getNickname() + " ("
-								+ routeServers[i].getCountryCode() + ")" + " [" + routeServers[i].getPlatform() + "]");
-						}
 						routeEstablished += 1;
 					}
 					if (LOG.isDebugEnabled())
@@ -781,6 +773,11 @@ public final class Circuit
 	 */
 	private void extend(final int i, final RouterImpl next) throws IOException, TorException
 	{
+		if (LOG.isDebugEnabled())
+		{
+			LOG.debug("Circuit: " + toString() + " extending to " + next.getNickname() + " ("
+				+ next.getCountryCode() + ")" + " [" + next.getPlatform() + "]");
+		}
 		// save next node
 		routeNodes[i] = new Node(next);
 		// send extend cell
@@ -789,8 +786,46 @@ public final class Circuit
 		final CellRelay relay = queue.receiveRelayCell(CellRelay.RELAY_EXTENDED);
 		// finish DH-exchange
 		routeNodes[i].finishDh(relay.getData());
+		if (LOG.isDebugEnabled())
+		{
+			LOG.debug("Circuit: " + toString() + " successfully extended to " + next.getNickname() + " ("
+				+ next.getCountryCode() + ")" + " [" + next.getPlatform() + "]");
+		}
 	}
-
+	/**
+	 * Extends the Circuit by another hop (from outside).
+	 * 
+	 * @param routerFingerprint the {@link Fingerprint} of the router to which the Circuit should be extended
+	 * @throws TorException when Fingerprint is not found in {@link Directory} 
+	 * 			or the Circuit cannot be extended to this router as this router already is in the nodes list
+	 * @throws IOException when there is a problem extending the Circuit
+	 */
+	public void extend(final Fingerprint routerFingerprint) throws TorException, IOException
+	{
+		if (LOG.isDebugEnabled())
+		{
+			LOG.debug("extending Circuit with id {} to {}", new Object[]{getId(), routerFingerprint});
+		}
+		//check if we didnt have this Fingerprint already in our router list.
+		for (Node node : routeNodes)
+		{
+			if (node.getRouter().getFingerprint() == routerFingerprint)
+			{
+				throw new TorException("Circuit cant be extended to given fingerprint as this router is already a node");
+			}
+		}
+		RouterImpl router = directory.getValidRoutersByFingerprint().get(routerFingerprint);
+		if (router == null)
+		{
+			throw new TorException("Router with fingerprint " + routerFingerprint + " not found.");
+		}
+		// create a new array for route that is one entry larger
+		final Node[] newRoute = new Node[routeEstablished + 1];
+		System.arraycopy(routeNodes, 0, newRoute, 0, routeEstablished);
+		// route to set new array
+		routeNodes = newRoute;		
+		extend(routeEstablished, router);
+	}
 	/**
 	 * adds node as the last one in the route.
 	 * 
@@ -1571,5 +1606,24 @@ public final class Circuit
 	public TCPStreamProperties getTcpStreamProperties()
 	{
 		return streamProperties;
+	}
+
+	/**
+	 * @return the unused
+	 */
+	public boolean isUnused()
+	{
+		return unused 
+			&& establishedStreams == 0 
+		    && !isUsedByHiddenServiceToConnectToIntroductionPoint() 
+		    && !isUsedByHiddenServiceToConnectToRendezvousPoint();
+	}
+
+	/**
+	 * @param unused the unused to set
+	 */
+	public void setUnused(final boolean unused)
+	{
+		this.unused = unused;
 	}
 }

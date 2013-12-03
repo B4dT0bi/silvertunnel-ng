@@ -142,14 +142,19 @@ public class HiddenServiceServer
 					{
 						LOG.debug("Callable Started..");
 						final TCPStreamProperties spIntro = new TCPStreamProperties();
+						spIntro.setExitPolicyRequired(false);
 						// spIntro.setCustomExitpoint(new
 						// FingerprintImpl(Encoding.parseHex("F9B29AC7C015DE52419D7754A4A9E2F823A34771")));
 						// // FreedomFries/98.157.178.36:443
 						// spIntro.setCustomExitpoint(new
 						// FingerprintImpl(Encoding.parseHex("F5A78ED829191D76C7399B86E4429F8F663E0C02")));
 						// // bach/212.42.236.140:443
-						final Circuit result = establishIntroductionPoint(	directory, torEventService, tlsConnectionAdmin, hiddenServiceProps,
-																			spIntro, hiddenServiceInstanceFinal);
+						final Circuit result = establishIntroductionPoint(directory, 
+						                                                  torEventService, 
+						                                                  tlsConnectionAdmin, 
+						                                                  hiddenServiceProps,
+						                                                  spIntro, 
+						                                                  hiddenServiceInstanceFinal);
 						LOG.debug("Callable Finished!");
 						return result;
 					}
@@ -181,18 +186,11 @@ public class HiddenServiceServer
 					{
 						final Router introPointRouter = c.getRouteNodes()[c.getRouteEstablished() - 1].getRouter();
 						LOG.info("Tor.provideHiddenService: establish introduction point at " + introPointRouter.getNickname());
-						hiddenServiceProps.addIntroPoint(new SDIntroductionPoint(	Encoding.toBase32(introPointRouter.getFingerprint().getBytes()),
-																					new TcpipNetAddress(introPointRouter.getAddress().getAddress(),
-																										introPointRouter.getOrPort()),
-																					introPointRouter.getOnionKey(),
-																					hiddenServiceProps.getPublicKey() // TODO:
-																														// introPointRouter.getSigningKey()
-																														// OR
-																														// use
-																														// intro-point
-																														// specific
-																														// key
-
+						hiddenServiceProps.addIntroPoint(new SDIntroductionPoint(Encoding.toBase32(introPointRouter.getFingerprint().getBytes()),
+						                                                         new TcpipNetAddress(introPointRouter.getAddress().getAddress(),
+						                                                                             introPointRouter.getOrPort()),
+						                                                         introPointRouter.getOnionKey(),
+						                                                         hiddenServiceProps.getPublicKey() // TODO: introPointRouter.getSigningKey() OR use intro-point specific key
 								));
 					}
 				}
@@ -215,8 +213,8 @@ public class HiddenServiceServer
 		// advertise introduction points/service descriptor
 		//
 		RendezvousServiceDescriptorService.getInstance().putRendezvousServiceDescriptorToDirectory(torConfig, directory,
-																									torNetLayerToConnectToDirectoryService,
-																									hiddenServiceProps);
+																								   torNetLayerToConnectToDirectoryService,
+																								   hiddenServiceProps);
 	}
 
 	/**
@@ -227,12 +225,12 @@ public class HiddenServiceServer
 	 * @param spIntro
 	 * @return
 	 */
-	private Circuit establishIntroductionPoint(Directory directory,
-											   TorEventService torEventService,
-											   TLSConnectionAdmin tlsConnectionAdmin,
-											   HiddenServiceProperties service,
-											   TCPStreamProperties spIntro,
-											   HiddenServiceInstance hiddenServiceInstance)
+	private Circuit establishIntroductionPoint(final Directory directory,
+											   final TorEventService torEventService,
+											   final TLSConnectionAdmin tlsConnectionAdmin,
+											   final HiddenServiceProperties service,
+											   final TCPStreamProperties spIntro,
+											   final HiddenServiceInstance hiddenServiceInstance)
 	{
 		Circuit circuit = null;
 		for (int i = 0; i < spIntro.getConnectRetries(); ++i)

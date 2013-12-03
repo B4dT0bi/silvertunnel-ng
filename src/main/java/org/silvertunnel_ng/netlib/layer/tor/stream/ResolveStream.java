@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Lexi Pimenidis
  */
-public class ResolveStream extends TCPStream
+public final class ResolveStream extends TCPStream
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(ResolveStream.class);
@@ -69,14 +69,12 @@ public class ResolveStream extends TCPStream
 		setClosed(false);
 		if (LOG.isDebugEnabled())
 		{
-			LOG.debug("resolving hostname " + hostname + " on stream "
-					+ toString());
+			LOG.debug("resolving hostname " + hostname + " on stream " + toString());
 		}
 		// send RELAY-RESOLV
 		sendCell(new CellRelayResolve(this, hostname));
 		// wait for RELAY_RESOLVED
-		final CellRelay relay = queue
-				.receiveRelayCell(CellRelay.RELAY_RESOLVED);
+		final CellRelay relay = queue.receiveRelayCell(CellRelay.RELAY_RESOLVED);
 		// read payload
 		final int len = ((relay.getData()[1]) & 0xff);
 		final byte[] value = new byte[len];
@@ -94,8 +92,7 @@ public class ResolveStream extends TCPStream
 		// check return code
 		if ((relayData[0] != 0) && (relayData[0] != 4) && (relayData[0] != 6))
 		{
-			throw new TorException("can't handle answers of type "
-					+ relayData[0]);
+			throw new TorException("can't handle answers of type " + relayData[0]);
 		}
 		// return payload
 		if (relayData[0] == 0)

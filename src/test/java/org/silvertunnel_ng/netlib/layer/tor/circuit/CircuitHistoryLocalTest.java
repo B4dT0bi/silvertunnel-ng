@@ -54,7 +54,7 @@ public final class CircuitHistoryLocalTest
 		assertTrue(history.getMapCurrentHistoricPorts().isEmpty());
 		
 		TCPStreamProperties streamProperties = new TCPStreamProperties();
-		streamProperties.setConnectToTorIntern(true);
+		streamProperties.setExitPolicyRequired(false);
 				
 		history.addCircuit(streamProperties);
 		assertEquals(0, history.getCountExternal());
@@ -82,7 +82,7 @@ public final class CircuitHistoryLocalTest
 		assertTrue(history.getMapCurrentHistoricPorts().isEmpty());
 		
 		TCPStreamProperties streamProperties = new TCPStreamProperties();
-		streamProperties.setConnectToTorIntern(true);
+		streamProperties.setExitPolicyRequired(false);
 
 		history.addCircuit(streamProperties);
 		assertEquals(0, history.getCountExternal());
@@ -109,7 +109,7 @@ public final class CircuitHistoryLocalTest
 		assertTrue(history.getMapCurrentHistoricPorts().isEmpty());
 		
 		TCPStreamProperties streamProperties = new TCPStreamProperties();
-		streamProperties.setConnectToTorIntern(false);
+		streamProperties.setExitPolicyRequired(true);
 		streamProperties.setPort(22);
 
 		history.addCircuit(streamProperties);
@@ -138,7 +138,7 @@ public final class CircuitHistoryLocalTest
 		assertTrue(history.getMapCurrentHistoricPorts().isEmpty());
 		
 		TCPStreamProperties streamProperties = new TCPStreamProperties();
-		streamProperties.setConnectToTorIntern(true);
+		streamProperties.setExitPolicyRequired(false);
 		
 		history.addCircuit(streamProperties);
 		assertEquals(0, history.getCountExternal());
@@ -169,7 +169,7 @@ public final class CircuitHistoryLocalTest
 		assertTrue(history.getMapCurrentHistoricPorts().isEmpty());
 		
 		TCPStreamProperties streamProperties = new TCPStreamProperties();
-		streamProperties.setConnectToTorIntern(false);
+		streamProperties.setExitPolicyRequired(true);
 		streamProperties.setPort(22);
 		
 		history.addCircuit(streamProperties);

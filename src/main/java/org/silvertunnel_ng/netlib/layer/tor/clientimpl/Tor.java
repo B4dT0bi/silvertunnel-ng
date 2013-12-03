@@ -188,7 +188,7 @@ public class Tor implements NetLayerStatusAdmin
 		// establish handler for TLS connections
 		tlsConnectionAdmin = new TLSConnectionAdmin(lowerTlsConnectionNetLayer, privateKeyHandler);
 		// initialize thread to renew every now and then
-		torBackgroundMgmtThread = new TorBackgroundMgmtThread(this, TorConfig.getMinimumIdleCircuits());
+		torBackgroundMgmtThread = new TorBackgroundMgmtThread(this);
 	}
 
 	/**
@@ -337,7 +337,7 @@ public class Tor implements NetLayerStatusAdmin
 					}
 					catch (final TorException e)
 					{
-						LOG.warn("Tor.connect: TorException trying to reuse existing circuit:" + e.getMessage());
+						LOG.warn("Tor.connect: TorException trying to reuse existing circuit:" + e.getMessage(), e);
 					}
 					catch (final IOException e)
 					{
@@ -506,7 +506,6 @@ public class Tor implements NetLayerStatusAdmin
 			// build a new circuit and ask this one to resolve the query
 //			final ResolveStream rs = new ResolveStream(new Circuit(tlsConnectionAdmin, directory, new TCPStreamProperties(), torEventService));
 			final TCPStreamProperties streamProperties = new TCPStreamProperties();
-			streamProperties.setConnectToTorIntern(true);
 			final Circuit [] rsCircuit = CircuitAdmin.provideSuitableCircuits(tlsConnectionAdmin, 
 																			  directory, 
 																			  streamProperties, 
@@ -647,8 +646,7 @@ public class Tor implements NetLayerStatusAdmin
 	{
 		// count circuits
 		int circuitsTotal = 0; // all circuits
-		int circuitsAlive = 0; // circuits that are building up, or that are
-								// established
+		int circuitsAlive = 0; // circuits that are building up, or that are established
 		int circuitsEstablished = 0; // established, but not already closed
 		int circuitsClosed = 0; // closing down
 

@@ -63,7 +63,7 @@ public class KeepAliveCache extends
 		{
 			try
 			{
-				result = Integer.parseInt(System.getProperty(""));
+				result = Integer.parseInt(System.getProperty("http.maxConnections"));
 			}
 			catch (final Exception e)
 			{ /* ignore invalid property value */

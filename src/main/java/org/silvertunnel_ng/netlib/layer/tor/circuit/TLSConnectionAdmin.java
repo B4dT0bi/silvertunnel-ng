@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
  * @author hapke
  * @author Tobias Boese
  */
-public class TLSConnectionAdmin
+public final class TLSConnectionAdmin
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TLSConnectionAdmin.class);
@@ -74,8 +74,8 @@ public class TLSConnectionAdmin
 			.synchronizedMap(new HashMap<Fingerprint, WeakReference<TLSConnection>>());
 
 	/**
-	 * key=fingerprint, value=connection to this router; contains all
-	 * connections of all TLSConnectionAdmin instances, used by some test cases
+	 * key=fingerprint, value=connection to this router. 
+	 * contains all connections of all TLSConnectionAdmin instances, used by some test cases
 	 */
 	private static Map<Fingerprint, WeakReference<TLSConnection>> connectionMapAll = Collections
 			.synchronizedMap(new HashMap<Fingerprint, WeakReference<TLSConnection>>());
@@ -135,7 +135,7 @@ public class TLSConnectionAdmin
 	 * 
 	 * @param conn
 	 */
-	public void removeConnection(TLSConnection conn)
+	public void removeConnection(final TLSConnection conn)
 	{
 		connectionMap.remove(conn.getRouter().getFingerprint());
 	}
@@ -150,8 +150,7 @@ public class TLSConnectionAdmin
 	{
 		synchronized (connectionMapAll)
 		{
-			for (final WeakReference<TLSConnection> w : connectionMapAll
-					.values())
+			for (final WeakReference<TLSConnection> w : connectionMapAll.values())
 			{
 				final TLSConnection t = w.get();
 				if (t != null)
@@ -164,12 +163,12 @@ public class TLSConnectionAdmin
 	}
 
 	/**
-	 * closes all TLS connections
+	 * closes all TLS connections.
 	 * 
 	 * @param force
 	 *            set to false, if circuits shall be terminated gracefully
 	 */
-	public void close(boolean force)
+	public void close(final boolean force)
 	{
 		synchronized (connectionMap)
 		{
@@ -184,32 +183,34 @@ public class TLSConnectionAdmin
 			connectionMap.clear();
 		}
 	}
-
+	/**
+	 * Get a collection of all valid {@link TLSConnection}s.
+	 * 
+	 * @return a {@link Collection} with valid {@link TLSConnection}s
+	 */
 	public Collection<TLSConnection> getConnections()
 	{
 		// create new Collection to avoid concurrent modifications,
 		// use the iteration to remove weak references that lost it object
-		final Collection<Fingerprint> entriesToRemove = new ArrayList<Fingerprint>(
-				connectionMap.size());
-		final Collection<TLSConnection> result = new ArrayList<TLSConnection>(
-				connectionMap.size());
+		final Collection<Fingerprint> entriesToRemove = new ArrayList<Fingerprint>(connectionMap.size());
+		final Collection<TLSConnection> result = new ArrayList<TLSConnection>(connectionMap.size());
 		synchronized (connectionMap)
 		{
-			for (final Fingerprint f : connectionMap.keySet())
+			for (final Fingerprint fingerprint : connectionMap.keySet())
 			{
-				final WeakReference<TLSConnection> w = connectionMap.get(f);
-				if (w != null)
+				final WeakReference<TLSConnection> weakReference = connectionMap.get(fingerprint);
+				if (weakReference != null)
 				{
-					final TLSConnection t = w.get();
-					if (t != null)
+					final TLSConnection tlsConnection = weakReference.get();
+					if (tlsConnection != null)
 					{
 						// valid TLSConnection found
-						result.add(t);
+						result.add(tlsConnection);
 					}
 					else
 					{
 						// entry with lost reference found
-						entriesToRemove.add(f);
+						entriesToRemove.add(fingerprint);
 					}
 				}
 			}

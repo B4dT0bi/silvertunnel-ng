@@ -67,7 +67,7 @@ public final class TorHiddenServiceClientRemoteTest extends TorRemoteAbstractTes
 		// tests.
 		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH, "2");
 		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH, "2");
-		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS, "1"); // just
+		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS, "2"); // just
 																						// 2
 																						// initial
 																						// circuit
@@ -78,7 +78,7 @@ public final class TorHiddenServiceClientRemoteTest extends TorRemoteAbstractTes
 	}
 
 	@Override
-	@Test(timeOut = 60000)
+	@Test(timeOut = 30000)
 	public void initializeTor() throws Exception
 	{
 		// repeat method declaration here to be the first test method of the
@@ -86,7 +86,7 @@ public final class TorHiddenServiceClientRemoteTest extends TorRemoteAbstractTes
 		super.initializeTor();
 	}
 
-	@Test(timeOut = 120000, dependsOnMethods = { "initializeTor" })
+	@Test(timeOut = 60000, dependsOnMethods = { "initializeTor" })
 	public void testAccessToTorsExampleOnionDomain() throws Exception
 	{
 		final String TORCHECK_HOSTNAME = "duskgytldkxiuqc6.onion";
@@ -126,7 +126,7 @@ public final class TorHiddenServiceClientRemoteTest extends TorRemoteAbstractTes
 		}
 	}
 
-	@Test(timeOut = 120000, dependsOnMethods = { "initializeTor" })
+	@Test(timeOut = 60000, dependsOnMethods = { "initializeTor" })
 	public void testAccessToSilvertunnelOnionDomain() throws Exception
 	{
 		final String TORCHECK_HOSTNAME = "h6hk2h7fnr66d4o3.onion";
@@ -202,7 +202,7 @@ public final class TorHiddenServiceClientRemoteTest extends TorRemoteAbstractTes
 		}
 	}
 
-	@Test(timeOut = 120000, dependsOnMethods = { "initializeTor" })
+	@Test(timeOut = 60000, dependsOnMethods = { "initializeTor" })
 	public void testAccessToTORDirectoryOnionDomain() throws Exception
 	{
 		final String TORCHECK_HOSTNAME = "dppmfxaacucguzpc.onion";

@@ -65,6 +65,11 @@ public final class TCPStreamProperties
 	private boolean untrustedExitAllowed = true;
 	/** allow entry node to be non Guard (dirv2). */
 	private boolean nonGuardEntryAllowed = true;
+	/** 
+	 * Is an exit policy required?
+	 * 
+	 * if not this Circuit is probably used for internal Communication.
+	 */
 	private boolean exitPolicyRequired = true;
 	/** fast route preferred? (use only Router which are flagged as fast when set to true)*/
 	private boolean fastRoute = true;
@@ -79,11 +84,6 @@ public final class TCPStreamProperties
 	private int connectRetries;
 	/** are we connecting to a dir server? */
 	private boolean connectToDirServer = false;
-	/** 
-	 * are we connecting to an internal node of the Tor network?
-	 * (e.g. a Rendezvouspoint or Introduction point) 
-	 */
-	private boolean connectToTorIntern = false;
 	/**
 	 * p = [0..1] 0 -> select hosts completely randomly 1 -> select hosts with
 	 * good uptime/bandwidth with higher prob.
@@ -179,7 +179,17 @@ public final class TCPStreamProperties
 	{
 		this.route = route;
 	}
-
+	/** the ucstom exitpoint fingerprint. */
+	private Fingerprint customExitpoint;
+	/**
+	 * Get the custom set exit point.
+	 * 
+	 * @return the {@link Fingerprint} of the custom exitpoint
+	 */
+	public Fingerprint getCustomExitpoint()
+	{
+		return customExitpoint;
+	}
 	/**
 	 * sets this node as a predefined exit-point.
 	 * 
@@ -188,6 +198,7 @@ public final class TCPStreamProperties
 	 */
 	public void setCustomExitpoint(final Fingerprint node)
 	{
+		customExitpoint = node;
 		if (route == null)
 		{
 			routeMinLength = routeMaxLength;
@@ -454,24 +465,5 @@ public final class TCPStreamProperties
 	public void setConnectToDirServer(final boolean connectToDirServer)
 	{
 		this.connectToDirServer = connectToDirServer;
-	}
-	/**
-	 * Is this connection used for internal Tor communication?
-	 * (like Rendezvouspoint/Introductionpoint)
-	 * @return true if it is Tor-internal
-	 */
-	public boolean isConnectToTorIntern()
-	{
-		return connectToTorIntern;
-	}
-	/**
-	 * Is this connection used for internal Tor communication?
-	 * (like Rendezvouspoint/Introductionpoint)
-	 * 
-	 * @param connectToTorIntern true if it is tor internal
-	 */
-	public void setConnectToTorIntern(final boolean connectToTorIntern)
-	{
-		this.connectToTorIntern = connectToTorIntern;
 	}
 }

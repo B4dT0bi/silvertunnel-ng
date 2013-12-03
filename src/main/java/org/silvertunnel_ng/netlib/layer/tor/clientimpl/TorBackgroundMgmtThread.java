@@ -66,25 +66,20 @@ class TorBackgroundMgmtThread extends Thread
 	private static final Logger LOG = LoggerFactory.getLogger(TorBackgroundMgmtThread.class);
 
 	/** general factor seconds:milliseconds. */
-	static final int MILLISEC = 1000;
+	private static final int MILLISEC = 1000;
 	/** time to sleep until first actions in seconds. */
-	static final int INITIAL_INTERVAL_S = 3;
+	private static final int INITIAL_INTERVAL_S = 3;
 	/** time to wait between working loads in seconds. */
-	static final int INTERVAL_S = 3;
+	protected static final int INTERVAL_S = 3;
 	/** interval of padding messages on circuits in seconds. */
-	static final int CIRCUITS_KEEP_ALIVE_INTERVAL_S = 30;
+	private static final int CIRCUITS_KEEP_ALIVE_INTERVAL_S = 30;
 	/** interval of padding messages on streams in seconds. */
-	static final int STREAMS_KEEP_ALIVE_INTERVAL_S = 30;
+	private static final int STREAMS_KEEP_ALIVE_INTERVAL_S = 30;
 
 	private static long idleThreadCounter = 0;
 
 	/** reference to main class. */
 	private final Tor tor;
-	/**
-	 * at least this amount of circuits should always be available; upper bound
-	 * is (numberOfCircuits+tor.torConfig.circuitsMaximumNumber).
-	 */
-	private final int numberOfCircuits;
 	/** store the current time. */
 	private long currentTimeMillis;
 	/** List of background threads (for graceful close). */
@@ -96,15 +91,13 @@ class TorBackgroundMgmtThread extends Thread
 	/**
 	 * Run the {@link TorBackgroundMgmtThread}.
 	 * @param tor current {@link Tor} object
-	 * @param numberOfCircuits number of circuit to be created
 	 */
-	TorBackgroundMgmtThread(final Tor tor, final int numberOfCircuits)
+	TorBackgroundMgmtThread(final Tor tor)
 	{
-		this.backgroundThreads = new ArrayList<Thread>(numberOfCircuits);
+		this.backgroundThreads = new ArrayList<Thread>(TorConfig.getMinimumIdleCircuits());
 		this.tor = tor;
-		this.numberOfCircuits = numberOfCircuits;
 		currentTimeMillis = System.currentTimeMillis();
-		spawnIdleCircuits(numberOfCircuits);
+		spawnIdleCircuits(TorConfig.getMinimumIdleCircuits());
 		this.directoryManagerThread = new DirectoryManagerThread(tor.getDirectory());
 		setName(getClass().getName());
 		setDaemon(true);
@@ -154,6 +147,7 @@ class TorBackgroundMgmtThread extends Thread
 						// TODO : implement circuit predictor here
 						// idle threads should at least allow using port 80
 						final TCPStreamProperties sp = new TCPStreamProperties();
+						sp.setFastRoute(true);
 						sp.setPort(80);
 						new Circuit(tor.getTlsConnectionAdmin(),
 								tor.getDirectory(), sp,
@@ -161,8 +155,7 @@ class TorBackgroundMgmtThread extends Thread
 					}
 					catch (final Exception e)
 					{
-						LOG.debug("TorBackgroundMgmtThread.spawnIdleCircuits got Exception: {}"
-								, e.getMessage(), e);
+						LOG.debug("TorBackgroundMgmtThread.spawnIdleCircuits got Exception: {}"	, e.getMessage(), e);
 					}
 				}
 			};
@@ -178,20 +171,16 @@ class TorBackgroundMgmtThread extends Thread
 	 */
 	private void sendKeepAlivePackets()
 	{
-		for (final TLSConnection tls : tor.getTlsConnectionAdmin()
-				.getConnections())
+		for (final TLSConnection tls : tor.getTlsConnectionAdmin().getConnections())
 		{
 			for (final Circuit c : tls.getCircuits())
 			{
 				// check if this circuit needs a keep-alive-packet
-				if ((c.isEstablished())
-						&& (currentTimeMillis - c.getLastCell() > CIRCUITS_KEEP_ALIVE_INTERVAL_S
-								* MILLISEC))
+				if ((c.isEstablished())	&& (currentTimeMillis - c.getLastCell() > CIRCUITS_KEEP_ALIVE_INTERVAL_S * MILLISEC))
 				{
 					if (LOG.isDebugEnabled())
 					{
-						LOG.debug("TorBackgroundMgmtThread.sendKeepAlivePackets(): Circuit "
-								+ c.toString());
+						LOG.debug("TorBackgroundMgmtThread.sendKeepAlivePackets(): Circuit " + c.toString());
 					}
 					c.sendKeepAlive();
 				}
@@ -235,21 +224,18 @@ class TorBackgroundMgmtThread extends Thread
 				+ circuitsStatus.getCircuitsTotal());
 		}
 		// check if enough 'alive' circuits are there
-		if (circuitsStatus.getCircuitsAlive()
-				+ Circuit.numberOfCircuitsInConstructor < numberOfCircuits)
+		if (circuitsStatus.getCircuitsAlive() + Circuit.numberOfCircuitsInConstructor < TorConfig.getMinimumIdleCircuits())
 		{
-			spawnIdleCircuits((numberOfCircuits - circuitsStatus
-					.getCircuitsAlive()) * 3 / 2);
+			spawnIdleCircuits((TorConfig.getMinimumIdleCircuits() - circuitsStatus.getCircuitsAlive()) * 3 / 2);
 		}
-		else if (circuitsStatus.getCircuitsEstablished() > numberOfCircuits
-				+ TorConfig.circuitsMaximumNumber)
+		else if (circuitsStatus.getCircuitsEstablished() > TorConfig.getMinimumIdleCircuits()	+ TorConfig.circuitsMaximumNumber)
 		{
 			// TODO: if for some reason there are too many established circuits.
 			// close the oldest ones
 			if (LOG.isDebugEnabled())
 			{
 				LOG.debug("TorBackgroundMgmtThread.manageIdleCircuits(): kill "
-					+ (numberOfCircuits + TorConfig.circuitsMaximumNumber - circuitsStatus
+					+ (TorConfig.getMinimumIdleCircuits() + TorConfig.circuitsMaximumNumber - circuitsStatus
 							.getCircuitsAlive()) + "new circuits (FIXME)");
 			}
 		}
@@ -261,8 +247,7 @@ class TorBackgroundMgmtThread extends Thread
 	 */
 	private void tearDownClosedCircuits()
 	{
-		for (final TLSConnection tls : tor.getTlsConnectionAdmin()
-				.getConnections())
+		for (final TLSConnection tls : tor.getTlsConnectionAdmin().getConnections())
 		{
 			LOG.debug("check tls={}", tls);
 			if (tls.isClosed())
@@ -324,8 +309,7 @@ class TorBackgroundMgmtThread extends Thread
 				// check if this circuit can be removed from the set of circuits
 				if (c.isDestruct())
 				{
-					LOG.debug("TorBackgroundMgmtThread.tearDownClosedCircuits(): destructing circuit "
-							+ c.toString());
+					LOG.debug("TorBackgroundMgmtThread.tearDownClosedCircuits(): destructing circuit " + c.toString());
 					tls.removeCircuit(c.getId());
 				}
 			}
@@ -344,8 +328,7 @@ class TorBackgroundMgmtThread extends Thread
 
 	public void cleanup()
 	{
-		final ListIterator<Thread> brtIterator = backgroundThreads
-				.listIterator();
+		final ListIterator<Thread> brtIterator = backgroundThreads.listIterator();
 		while (brtIterator.hasNext())
 		{
 			final Thread brt = brtIterator.next();

@@ -81,12 +81,19 @@ public class CircuitAdmin
 
 	private static SecureRandom rnd = new SecureRandom();
 
-	static Circuit provideSuitableNewCircuit(
-			final TLSConnectionAdmin tlsConnectionAdmin, 
-			final Directory dir,
-			final TCPStreamProperties sp, 
-			final TorEventService torEventService)
-			throws IOException
+	/**
+	 * Create new circuit.
+	 * 
+	 * @param tlsConnectionAdmin
+	 * @param dir
+	 * @param sp
+	 * @param torEventService
+	 * @return a new {@link Circuit} object if successful (null if not)
+	 */
+	static Circuit provideSuitableNewCircuit(final TLSConnectionAdmin tlsConnectionAdmin, 
+	                                         final Directory dir,
+	                                         final TCPStreamProperties sp, 
+	                                         final TorEventService torEventService)
 	{
 		for (int retries = 0; retries < TorConfig.getRetriesConnect(); ++retries)
 		{
@@ -121,21 +128,49 @@ public class CircuitAdmin
 	 * @param dir
 	 * @param sp
 	 * @param torEventService
-	 * @return
-	 * @throws IOException
+	 * @return an established {@link Circuit}
 	 */
-	public static Circuit provideSuitableExclusiveCircuit(
-			final TLSConnectionAdmin tlsConnectionAdmin, 
-			final Directory dir,
-			final TCPStreamProperties sp, 
-			final TorEventService torEventService)
-			throws IOException
+	public static Circuit provideSuitableExclusiveCircuit(final TLSConnectionAdmin tlsConnectionAdmin, 
+	                                                      final Directory dir,
+	                                                      final TCPStreamProperties sp, 
+	                                                      final TorEventService torEventService)
 	{
-		return provideSuitableNewCircuit(tlsConnectionAdmin, dir, sp, torEventService);
+		try
+		{
+			for (final TLSConnection tls : tlsConnectionAdmin.getConnections())
+			{
+				for (final Circuit circuit : tls.getCircuits())
+				{
+					if (circuit.isUnused())
+					{
+						if (sp.getCustomExitpoint() == null)
+						{
+							circuit.setUnused(false);
+							LOG.debug("we successfully used an unused Circuit! Id : {}", circuit.getId());
+							return circuit;
+						}
+						if (circuit.getRelayEarlyCellsRemaining() > 0) // is extendable?
+						{
+							circuit.extend(sp.getCustomExitpoint());
+							circuit.setUnused(false);
+							LOG.debug("we successfully extended and used an unused Circuit! Id : {}", circuit.getId());
+							return circuit;
+						}
+					}
+				}
+			}
+		}
+		catch (Exception exception)
+		{
+			LOG.debug("we got an exception while finding a already established Circuit. using new one.", exception);
+		}
+		Circuit result = provideSuitableNewCircuit(tlsConnectionAdmin, dir, sp, torEventService);
+		result.setUnused(false);
+		return result;
 	}
 
 	/**
-	 * used to return a number of circuits to a target. established a new
+	 * used to return a number of circuits to a target. establishes a new
 	 * circuit or uses an existing one
 	 * 
 	 * @param sp
@@ -144,11 +179,11 @@ public class CircuitAdmin
 	 *            if set to true, use circuit that is unused and don't regard
 	 *            exit-policies
 	 */
-	public static Circuit[] provideSuitableCircuits(TLSConnectionAdmin tlsConnectionAdmin, 
-													Directory dir,
-													TCPStreamProperties sp, 
-													TorEventService torEventService,
-													boolean forHiddenService) throws IOException
+	public static Circuit[] provideSuitableCircuits(final TLSConnectionAdmin tlsConnectionAdmin, 
+													final Directory dir,
+													final TCPStreamProperties sp, 
+													final TorEventService torEventService,
+													final boolean forHiddenService) throws IOException
 	{
 		LOG.debug("TLSConnectionAdmin.provideSuitableCircuits: called for {}", sp.getHostname());
 
@@ -210,7 +245,7 @@ public class CircuitAdmin
 				final boolean thisPointsToAddr = thisCirc.getStreamHistory().contains(sp.getHostname());
 				final float rankingQuota = thisRanking / minRanking;
 				if ((thisPointsToAddr && !minPointsToAddr)
-						|| (TLSConnectionAdmin.rnd.nextFloat() > Math
+						|| (rnd.nextFloat() > Math
 								.exp(-rankingQuota)))
 				{
 					// sort stochastically
@@ -502,7 +537,7 @@ public class CircuitAdmin
 		{
 			if (LOG.isDebugEnabled())
 			{
-				final StringBuffer sb = new StringBuffer();
+				final StringBuffer sb = new StringBuffer(50);
 				for (final RouterImpl server : result)
 				{
 					sb.append("server(or=" + server.getHostname() + ":"
@@ -530,7 +565,7 @@ public class CircuitAdmin
 											  TCPStreamProperties sp, 
 											  RouterImpl[] route, 
 											  final int failedNode)
-			throws TorException
+													  	throws TorException
 	{
 
 		// used to build the custom route up to the failed node

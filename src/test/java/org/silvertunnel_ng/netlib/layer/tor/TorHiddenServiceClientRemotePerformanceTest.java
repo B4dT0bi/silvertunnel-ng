@@ -38,6 +38,8 @@ import org.testng.annotations.Test;
  * Open's and closes man connections for profiling.
  * 
  * @author Tobias Boese
+ * 
+ * TestNG arguments : -agentpath:"C:\Program Files (x86)\YourKit Java Profiler 2013 build 13050\bin\win64\yjpagent.dll=tracing"
  */
 public final class TorHiddenServiceClientRemotePerformanceTest extends TorRemoteAbstractTest
 {
