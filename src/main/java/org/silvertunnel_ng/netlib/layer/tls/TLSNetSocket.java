@@ -42,8 +42,9 @@ public class TLSNetSocket implements NetSocket
 	/** SSLSession */
 	protected SSLSession sslSession;
 
-	protected TLSNetSocket(NetSocket innerNetSocket, SSLSession sslSession,
-			String lowerLayerSocketInfoMsg)
+	protected TLSNetSocket(final NetSocket innerNetSocket, 
+	                       final SSLSession sslSession,
+	                       final String lowerLayerSocketInfoMsg)
 	{
 		this.innerNetSocket = innerNetSocket;
 		this.sslSession = sslSession;
