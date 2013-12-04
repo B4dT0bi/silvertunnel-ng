@@ -53,7 +53,7 @@ public interface Router
 
 	String getPlatform();
 
-	Date getPublished();
+	long getPublished();
 
 	Fingerprint getFingerprint();
 
@@ -69,9 +69,9 @@ public interface Router
 
 	Set<Fingerprint> getFamily();
 
-	Date getValidUntil();
+	long getValidUntil();
 
-	Date getLastUpdate();
+	long getLastUpdate();
 
 	boolean isDirv2Authority();
 

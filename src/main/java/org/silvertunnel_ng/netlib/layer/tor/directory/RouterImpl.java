@@ -110,7 +110,7 @@ public final class RouterImpl implements Router, Cloneable
 
 	/** Platform of the relay. (tor version + os)*/
 	private String platform;
-	private Date published;
+	private long published;
 
 	private Fingerprint fingerprint;
 	private Fingerprint v3ident;
@@ -132,13 +132,13 @@ public final class RouterImpl implements Router, Cloneable
 	private Set<Fingerprint> family = new HashSet<Fingerprint>();
 
 	/** based on the time of loading this data. */
-	private Date validUntil;
+	private long validUntil;
 
 	/** FIXME: read-history, write-history not implemented. */
 	private static final int MAX_EXITPOLICY_ITEMS = 300;
 
 	// Additional information for V2-Directories
-	private Date lastUpdate;
+	private long lastUpdate;
 	private boolean dirv2Authority = false;
 	private boolean dirv2Exit = false;
 	private boolean dirv2Fast = false;
@@ -524,8 +524,8 @@ public final class RouterImpl implements Router, Cloneable
 							}
 							break;
 						case PUBLISHED:
-							published = Util.parseUtcTimestamp(tmpElements[1] + " " + tmpElements[2]);
-							validUntil = new Date(published.getTime() + TorConfig.ROUTER_DESCRIPTION_VALID_PERIOD_MS);
+							published = Util.parseUtcTimestamp(tmpElements[1] + " " + tmpElements[2]).getTime();
+							validUntil = published + TorConfig.ROUTER_DESCRIPTION_VALID_PERIOD_MS;
 							break;
 						case UPTIME:
 							uptime = Integer.parseInt(tmpElements[1]);
@@ -544,8 +544,7 @@ public final class RouterImpl implements Router, Cloneable
 								family.add(new FingerprintImpl(tmpElements[n]));
 							}
 						case HIBERNATING:
-							// TODO : add flag that router is hibernating (do
-							// not use it for building circuits)
+							// TODO : add flag that router is hibernating (do not use it for building circuits)
 							break;
 						case HIDDEN_SERVICE_DIR:
 							// TODO : implement
@@ -912,25 +911,25 @@ public final class RouterImpl implements Router, Cloneable
 	public String toLongString()
 	{
 		final StringBuffer sb = new StringBuffer();
-		sb.append("---- " + nickname + " (" + contact + ")\n");
-		sb.append("hostname:" + hostname + "\n");
-		sb.append("or port:" + orPort + "\n");
-		sb.append("socks port:" + socksPort + "\n");
-		sb.append("dirserver port:" + dirPort + "\n");
-		sb.append("platform:" + platform + "\n");
-		sb.append("published:" + published + "\n");
-		sb.append("uptime:" + uptime + "\n");
-		sb.append("rankingIndex:" + rankingIndex + "\n");
-		sb.append("bandwidth: " + bandwidthAvg + " " + bandwidthBurst + " " + bandwidthObserved + "\n");
-		sb.append("fingerprint:" + fingerprint + "\n");
-		sb.append("validUntil:" + validUntil + "\n");
-		sb.append("onion key:" + onionKey + "\n");
-		sb.append("signing key:" + signingKey + "\n");
-		sb.append("signature:" + toStringArray(routerSignature) + "\n");
-		sb.append("exit policies:" + "\n");
+		sb.append("---- ").append(nickname).append(" (").append(contact).append(")\n");
+		sb.append("hostname:").append(hostname).append('\n');
+		sb.append("or port:").append(orPort).append('\n');
+		sb.append("socks port:").append(socksPort).append('\n');
+		sb.append("dirserver port:").append(dirPort).append('\n');
+		sb.append("platform:").append(platform).append('\n');
+		sb.append("published:").append(new Date(published)).append('\n');
+		sb.append("uptime:").append(uptime).append('\n');
+		sb.append("rankingIndex:").append(rankingIndex).append('\n');
+		sb.append("bandwidth: ").append(bandwidthAvg).append(' ').append(bandwidthBurst).append(' ').append(bandwidthObserved).append('\n');
+		sb.append("fingerprint:").append(fingerprint).append('\n');
+		sb.append("validUntil:").append(new Date(validUntil)).append('\n');
+		sb.append("onion key:").append(onionKey).append('\n');
+		sb.append("signing key:").append(signingKey).append('\n');
+		sb.append("signature:").append(toStringArray(routerSignature)).append('\n');
+		sb.append("exit policies:").append('\n');
 		for (int i = 0; i < exitpolicy.length; ++i)
 		{
-			sb.append("  ").append(exitpolicy[i]).append("\n");
+			sb.append("  ").append(exitpolicy[i]).append('\n');
 		}
 		return sb.toString();
 	}
@@ -942,13 +941,7 @@ public final class RouterImpl implements Router, Cloneable
 	 */
 	public boolean isValid()
 	{
-		if (validUntil == null)
-		{
-			return false;
-		}
-
-		final Date now = new Date();
-		return validUntil.after(now);
+		return validUntil > System.currentTimeMillis();
 	}
 
 	/**
@@ -1054,7 +1047,7 @@ public final class RouterImpl implements Router, Cloneable
 	}
 
 	@Override
-	public Date getPublished()
+	public long getPublished()
 	{
 		return published;
 	}
@@ -1108,13 +1101,13 @@ public final class RouterImpl implements Router, Cloneable
 	}
 
 	@Override
-	public Date getValidUntil()
+	public long getValidUntil()
 	{
 		return validUntil;
 	}
 
 	@Override
-	public Date getLastUpdate()
+	public long getLastUpdate()
 	{
 		return lastUpdate;
 	}
@@ -1125,20 +1118,10 @@ public final class RouterImpl implements Router, Cloneable
 		return dirv2Authority;
 	}
 
-	public void setDirv2Authority(boolean dirv2Authority)
-	{
-		this.dirv2Authority = dirv2Authority;
-	}
-
 	@Override
 	public boolean isDirv2Exit()
 	{
 		return dirv2Exit;
-	}
-
-	public void setDirv2Exit(boolean dirv2Exit)
-	{
-		this.dirv2Exit = dirv2Exit;
 	}
 
 	@Override
@@ -1147,20 +1130,10 @@ public final class RouterImpl implements Router, Cloneable
 		return dirv2Fast;
 	}
 
-	public void setDirv2Fast(boolean dirv2Fast)
-	{
-		this.dirv2Fast = dirv2Fast;
-	}
-
 	@Override
 	public boolean isDirv2Guard()
 	{
 		return dirv2Guard;
-	}
-
-	public void setDirv2Guard(boolean dirv2Guard)
-	{
-		this.dirv2Guard = dirv2Guard;
 	}
 
 	@Override
@@ -1169,20 +1142,10 @@ public final class RouterImpl implements Router, Cloneable
 		return dirv2Named;
 	}
 
-	public void setDirv2Named(boolean dirv2Named)
-	{
-		this.dirv2Named = dirv2Named;
-	}
-
 	@Override
 	public boolean isDirv2Stable()
 	{
 		return dirv2Stable;
-	}
-
-	public void setDirv2Stable(boolean dirv2Stable)
-	{
-		this.dirv2Stable = dirv2Stable;
 	}
 
 	@Override
@@ -1191,31 +1154,16 @@ public final class RouterImpl implements Router, Cloneable
 		return dirv2Running;
 	}
 
-	public void setDirv2Running(boolean dirv2Running)
-	{
-		this.dirv2Running = dirv2Running;
-	}
-
 	@Override
 	public boolean isDirv2Valid()
 	{
 		return dirv2Valid;
 	}
 
-	public void setDirv2Valid(boolean dirv2Valid)
-	{
-		this.dirv2Valid = dirv2Valid;
-	}
-
 	@Override
 	public boolean isDirv2V2dir()
 	{
 		return dirv2V2dir;
-	}
-
-	public void setDirv2V2dir(boolean dirv2V2dir)
-	{
-		this.dirv2V2dir = dirv2V2dir;
 	}
 
 	/**
@@ -1230,11 +1178,6 @@ public final class RouterImpl implements Router, Cloneable
 	public float getRankingIndex()
 	{
 		return rankingIndex;
-	}
-
-	public void setRankingIndex(float rankingIndex)
-	{
-		this.rankingIndex = rankingIndex;
 	}
 
 	public static int getHighBandwidth()
@@ -1281,13 +1224,13 @@ public final class RouterImpl implements Router, Cloneable
 		result = prime * result + ((family == null) ? 0 : family.hashCode());
 		result = prime * result + ((fingerprint == null) ? 0 : fingerprint.hashCode());
 		result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
-		result = prime * result + ((lastUpdate == null) ? 0 : lastUpdate.hashCode());
+		result = prime * result + (int) lastUpdate;
 		result = prime * result + ((nickname == null) ? 0 : nickname.hashCode());
 		result = prime * result + ((onionKey == null) ? 0 : onionKey.hashCode());
 		result = prime * result + ((onionKeyPrivate == null) ? 0 : onionKeyPrivate.hashCode());
 		result = prime * result + orPort;
 		result = prime * result + ((platform == null) ? 0 : platform.hashCode());
-		result = prime * result + ((published == null) ? 0 : published.hashCode());
+		result = prime * result + (int) published;
 		result = prime * result + Float.floatToIntBits(rankingIndex);
 		result = prime * result + ((routerDescriptor == null) ? 0 : routerDescriptor.hashCode());
 		result = prime * result + Arrays.hashCode(routerSignature);
@@ -1296,7 +1239,7 @@ public final class RouterImpl implements Router, Cloneable
 		result = prime * result + socksPort;
 		result = prime * result + uptime;
 		result = prime * result + ((v3ident == null) ? 0 : v3ident.hashCode());
-		result = prime * result + ((validUntil == null) ? 0 : validUntil.hashCode());
+		result = (int) (prime * result + validUntil);
 		return result;
 	}
 
@@ -1447,16 +1390,9 @@ public final class RouterImpl implements Router, Cloneable
 		{
 			return false;
 		}
-		if (lastUpdate == null)
+		if (lastUpdate != other.lastUpdate)
 		{
-			if (other.lastUpdate != null)
-			{
 				return false;
-			}
-		}
-		else if (!lastUpdate.equals(other.lastUpdate))
-		{
-			return false;
 		}
 		if (nickname == null)
 		{
@@ -1506,16 +1442,9 @@ public final class RouterImpl implements Router, Cloneable
 		{
 			return false;
 		}
-		if (published == null)
+		if (published != other.published)
 		{
-			if (other.published != null)
-			{
 				return false;
-			}
-		}
-		else if (!published.equals(other.published))
-		{
-			return false;
 		}
 		if (Float.floatToIntBits(rankingIndex) != Float.floatToIntBits(other.rankingIndex))
 		{
@@ -1577,14 +1506,7 @@ public final class RouterImpl implements Router, Cloneable
 		{
 			return false;
 		}
-		if (validUntil == null)
-		{
-			if (other.validUntil != null)
-			{
-				return false;
-			}
-		}
-		else if (!validUntil.equals(other.validUntil))
+		if (validUntil != other.validUntil)
 		{
 			return false;
 		}
