@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * stalling the other management tasks: updating a directory can take quite an
  * amount of time :-/
  */
-public class DirectoryManagerThread extends Thread
+public final class DirectoryManagerThread extends Thread
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(DirectoryManagerThread.class);
@@ -43,7 +43,7 @@ public class DirectoryManagerThread extends Thread
 	/** time stamp. */
 	private long dirNextUpdateTimeMillis;
 
-	public DirectoryManagerThread(Directory directory)
+	public DirectoryManagerThread(final Directory directory)
 	{
 		this.directory = directory;
 		dirNextUpdateTimeMillis = currentTimeMillis; // +
@@ -59,21 +59,11 @@ public class DirectoryManagerThread extends Thread
 	private void updateDirectory()
 	{
 		currentTimeMillis = System.currentTimeMillis();
-		if ((currentTimeMillis > dirNextUpdateTimeMillis)
-				|| (directory.getValidRoutersByFingerprint().size() < 1))
+		if (currentTimeMillis > dirNextUpdateTimeMillis || directory.getValidRoutersByFingerprint().isEmpty())
 		{
 			LOG.debug("DirectoryManagerThread.updateDirectory: updating directory");
-			dirNextUpdateTimeMillis = currentTimeMillis
-					+ TorConfig.intervalDirectoryRefresh * 60 * MILLISEC;
+			dirNextUpdateTimeMillis = currentTimeMillis + TorConfig.getIntervalDirectoryRefresh() * 60 * MILLISEC;
 			directory.refreshListOfServers();
-
-			/*
-			 * TODO if (tor.dir.validServersByName.size()>1) { // TODO:
-			 * tor.dir.writeDirectoryToFile(TorConfig.getCacheFilename()); }
-			 * else { Logger.logGeneral(Logger.WARNING,
-			 * "DirectoryManagerThread.updateDirectory: no directory available"
-			 * ); }
-			 */
 		}
 	}
 
@@ -88,7 +78,12 @@ public class DirectoryManagerThread extends Thread
 				// do work
 				updateDirectory();
 				// wait
-				sleep(INTERVAL_S * MILLISEC);
+				long sleepTime = dirNextUpdateTimeMillis - System.currentTimeMillis();
+				if (sleepTime <= 0)
+				{
+					sleepTime = INTERVAL_S * MILLISEC; 
+				}
+				sleep(sleepTime);
 			}
 			catch (final Exception e)
 			{
@@ -102,12 +97,7 @@ public class DirectoryManagerThread extends Thread
 	// getters and setters
 	// /////////////////////////////////////////////////////
 
-	public boolean isStopped()
-	{
-		return stopped;
-	}
-
-	public void setStopped(boolean stopped)
+	public void setStopped(final boolean stopped)
 	{
 		this.stopped = stopped;
 	}

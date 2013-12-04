@@ -178,28 +178,24 @@ public class AuthorityServers
 					final int orPort = Integer.parseInt(m.group(2));
 					final String v3IdentStr = m.group(3);
 					final Fingerprint v3Ident = (v3IdentStr == null) ? null
-							: new FingerprintImpl(
-									DatatypeConverter
-											.parseHexBinary(v3IdentStr));
-					final TcpipNetAddress netAddress = new TcpipNetAddress(
-							m.group(4) + ":0");
+							: new FingerprintImpl(DatatypeConverter.parseHexBinary(v3IdentStr));
+					final TcpipNetAddress netAddress = new TcpipNetAddress(m.group(4) + ":0");
 					final int dirPort = Integer.parseInt(m.group(5));
-					final String fingerprintStr = m.group(6)
-							.replaceAll(" ", "");
-					final Fingerprint fingerprint = new FingerprintImpl(
-							DatatypeConverter.parseHexBinary(fingerprintStr));
+					final String fingerprintStr = m.group(6).replaceAll(" ", "");
+					final Fingerprint fingerprint = new FingerprintImpl(DatatypeConverter.parseHexBinary(fingerprintStr));
 
 					// create and collect object
-					final RouterImpl router = new RouterImpl(torConfig,
-							nickname, InetAddress.getByAddress(netAddress
-									.getIpaddress()), orPort, dirPort, v3Ident,
-							fingerprint);
+					final RouterImpl router = new RouterImpl(nickname, 
+					                                         InetAddress.getByAddress(netAddress.getIpaddress()), 
+					                                         orPort, 
+					                                         dirPort, 
+					                                         v3Ident,
+					                                         fingerprint);
 					result.add(router);
 				}
 				else
 				{
-					LOG.warn("Did not match to pattern: \"" + singleRawData
-							+ "\"");
+					LOG.warn("Did not match to pattern: \"" + singleRawData	+ "\"");
 				}
 			}
 			catch (final Exception e)

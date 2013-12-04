@@ -343,7 +343,7 @@ public final class HiddenServiceClient
 			LOG.info("sendIntroduction1Cell(): use Circuit to introduction point=" + myIntroCirc);
 
 			// send CellIntro1 data encrypted with PK of the introPoint
-			final RouterImpl introPointServicePublicKey = new RouterImpl(torConfig, introPoint.getServicePublicKey());
+			final RouterImpl introPointServicePublicKey = new RouterImpl(introPoint.getServicePublicKey());
 			final Node introPointServicePublicKeyNode = new Node(introPointServicePublicKey);
 			myIntroCirc.sendCell(new CellRelayIntroduce1(myIntroCirc,
 															rendezvousPointData.getRendezvousCookie(),

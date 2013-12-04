@@ -57,7 +57,7 @@ public final class RouterImplLocalTest
 	public void testRouterImplTorConfigString() throws TorException, IOException
 	{
 		String descriptor = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTOR_PATH);
-		RouterImpl testObject = new RouterImpl(TorConfig.getInstance(), descriptor);
+		RouterImpl testObject = new RouterImpl(descriptor);
 		assertNotNull(testObject);
 	}
 
@@ -123,17 +123,6 @@ public final class RouterImplLocalTest
 	 */
 	@Test(enabled = false)
 	public void testParseRouterDescriptors()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link RouterImpl#renderRouterDescriptor()}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testRenderRouterDescriptor()
 	{
 		fail("Not yet implemented");
 	}

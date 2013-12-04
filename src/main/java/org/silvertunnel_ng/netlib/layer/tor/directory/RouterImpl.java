@@ -82,8 +82,6 @@ public final class RouterImpl implements Router, Cloneable
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(RouterImpl.class);
 
-	TorConfig torConfig;
-
 	/**
 	 * The raw router descriptor which has been handed to us. In the normal case
 	 * we just return this stored descriptor.
@@ -99,14 +97,18 @@ public final class RouterImpl implements Router, Cloneable
 	/** country code where it is located. */
 	private String countryCode;
 
+	/** Onion relay port. */
 	private int orPort;
+	/** Socks port. */
 	private int socksPort;
+	/** Directory port. */
 	private int dirPort;
 
 	private int bandwidthAvg;
 	private int bandwidthBurst;
 	private int bandwidthObserved;
 
+	/** Platform of the relay. (tor version + os)*/
 	private String platform;
 	private Date published;
 
@@ -127,7 +129,7 @@ public final class RouterImpl implements Router, Cloneable
 	private String contact;
 
 	/** Fingerprints of the routers of the family. */
-	private Set<String/* TODO: Fingerprint */> family = new HashSet<String>();
+	private Set<Fingerprint> family = new HashSet<Fingerprint>();
 
 	/** based on the time of loading this data. */
 	private Date validUntil;
@@ -184,18 +186,13 @@ public final class RouterImpl implements Router, Cloneable
 	 * @param routerDescriptor
 	 *            a router descriptor to initialize the object from
 	 */
-	public RouterImpl(final TorConfig torConfig, final String routerDescriptor) throws TorException
+	public RouterImpl(final String routerDescriptor) throws TorException
 	{
-		if (torConfig == null)
-		{
-			throw new TorException("torConfig is null");
-		}
 		if (routerDescriptor.length() > MAX_ROUTERDESCRIPTOR_LENGTH)
 		{
 			throw new TorException("skipped router with routerDescriptor of length=" + routerDescriptor.length());
 		}
 
-		this.torConfig = torConfig;
 		init();
 		parseRouterDescriptor(routerDescriptor);
 		updateServerRanking();
@@ -210,14 +207,8 @@ public final class RouterImpl implements Router, Cloneable
 	 * @param pk
 	 * @throws TorException
 	 */
-	public RouterImpl(final TorConfig torConfig, final RSAPublicKey pk) throws TorException
+	public RouterImpl(final RSAPublicKey pk) throws TorException
 	{
-		if (torConfig == null)
-		{
-			throw new TorException("torConfig is null");
-		}
-
-		this.torConfig = torConfig;
 		init();
 		onionKey = pk;
 		// this.countryCode =
@@ -229,8 +220,7 @@ public final class RouterImpl implements Router, Cloneable
 	 * takes input data and initializes the server object with it. A router
 	 * descriptor and a signature will be automatically generated.
 	 */
-	RouterImpl(final TorConfig torConfig, 
-	           final String nickname, 
+	RouterImpl(final String nickname, 
 	           final InetAddress address, 
 	           final int orPort, 
 	           final int dirPort, 
@@ -238,12 +228,7 @@ public final class RouterImpl implements Router, Cloneable
 	           final Fingerprint fingerprint)
 				throws TorException
 	{
-		if (torConfig == null)
-		{
-			throw new TorException("torConfig is null");
-		}
 		// Set member variables.
-		this.torConfig = torConfig;
 		this.nickname = nickname;
 		this.address = address;
 		this.hostname = address.getHostAddress();
@@ -252,70 +237,6 @@ public final class RouterImpl implements Router, Cloneable
 		this.dirPort = dirPort;
 		this.fingerprint = fingerprint.cloneReliable();
 		this.v3ident = (v3ident == null) ? null : v3ident.cloneReliable();
-	}
-
-	/**
-	 * takes input data and initializes the server object with it. A router
-	 * descriptor and a signature will be automatically generated.
-	 */
-	RouterImpl(final TorConfig torConfig, 
-	           final String varNickname, 
-	           final InetAddress varAddress, 
-	           final int varOrPort, 
-	           final int varSocksPort,
-	           final int varDirPort, 
-	           final int varBandwidthAvg, 
-	           final int varBandwidthBurst, 
-	           final int varBandwidthObserved,
-	           final Fingerprint varfingerprint, 
-	           final int varInitialUptime, 
-	           final RSAPublicKey varOnionKey, 
-	           final RSAPrivateKey varOnionKeyPrivate,
-	           final RSAPublicKey varSigningKey, 
-	           final RSAPrivateKey varSigningKeyPrivate, 
-	           final RouterExitPolicy[] varExitpolicy,
-	           final String varContact, 
-	           final HashSet<String> varFamily) throws TorException
-	{
-		if (torConfig == null)
-		{
-			throw new TorException("torConfig is null");
-		}
-
-		// Set member variables.
-		this.torConfig = torConfig;
-		this.nickname = varNickname;
-		this.address = varAddress;
-		this.hostname = varAddress.getHostAddress();
-
-		this.orPort = varOrPort;
-		this.socksPort = varSocksPort;
-		this.dirPort = varDirPort;
-
-		this.bandwidthAvg = varBandwidthAvg;
-		this.bandwidthBurst = varBandwidthBurst;
-		this.bandwidthObserved = varBandwidthObserved;
-
-		this.platform = Util.MYNAME + " on " + TorConfig.operatingSystem();
-
-		this.published = new Date(System.currentTimeMillis());
-		this.fingerprint = varfingerprint.cloneReliable();
-		this.uptime = varInitialUptime;
-
-		this.onionKey = varOnionKey;
-		this.onionKeyPrivate = varOnionKeyPrivate;
-		this.signingKey = varSigningKey;
-		this.signingKeyPrivate = varSigningKeyPrivate;
-
-		this.exitpolicy = varExitpolicy;
-
-		this.contact = varContact;
-
-		this.family = varFamily;
-
-		// Render router descriptor
-		this.routerDescriptor = renderRouterDescriptor();
-		this.countryCode = LookupServiceUtil.getCountryCodeOfIpAddress(this.address);
 	}
 
 	/** Constructor-indepentent initialization. */
@@ -518,7 +439,7 @@ public final class RouterImpl implements Router, Cloneable
 				singleDescriptor = new String(singleDescriptor);
 
 				// parse and store a single router
-				final RouterImpl singleServer = new RouterImpl(torConfig, singleDescriptor);
+				final RouterImpl singleServer = new RouterImpl(singleDescriptor);
 				result.put(singleServer.fingerprint, singleServer);
 			}
 			catch (final TorException e)
@@ -620,7 +541,7 @@ public final class RouterImpl implements Router, Cloneable
 						case FAMILY:
 							for (int n = 1; n < tmpElements.length; n++)
 							{
-								family.add(tmpElements[n]);
+								family.add(new FingerprintImpl(tmpElements[n]));
 							}
 						case HIBERNATING:
 							// TODO : add flag that router is hibernating (do
@@ -809,57 +730,6 @@ public final class RouterImpl implements Router, Cloneable
 		}
 
 		return rawPolicy.toString();
-	}
-
-	/**
-	 * renders a router descriptor from member variables.
-	 * 
-	 * @return router descriptor in extensible information format
-	 */
-	String renderRouterDescriptor()
-	{
-		final StringBuffer rawServer = new StringBuffer();
-
-		rawServer.append("router " + nickname + " " + address.getHostAddress() + " " + orPort + " " + socksPort + " " + dirPort + "\n");
-		rawServer.append("platform " + platform + "\n");
-
-		rawServer.append("published(UTC) " + Util.formatUtcTimestamp(published) + "\n");
-		rawServer.append("opt fingerprint " + fingerprint.getHexWithSpaces() + "\n");
-		if (uptime != 0)
-		{
-			rawServer.append("uptime " + uptime + "\n");
-		}
-		rawServer.append("bandwidth " + bandwidthAvg + " " + bandwidthBurst + " " + bandwidthObserved + "\n");
-
-		rawServer.append("onion-key\n" + Encryption.getPEMStringFromRSAPublicKey(onionKey) + "\n");
-
-		rawServer.append("signing-key\n" + Encryption.getPEMStringFromRSAPublicKey(signingKey) + "\n");
-
-		String stringFamily = "";
-		final Iterator<String> familyIterator = family.iterator();
-		while (familyIterator.hasNext())
-		{
-			stringFamily += " " + familyIterator.next();
-		}
-
-		rawServer.append("opt family" + stringFamily + "\n");
-
-		if (contact != "")
-		{
-			rawServer.append("contact " + contact + "\n");
-		}
-		LOG.info("xxxxx2 contact.length=" + contact.length());
-
-		rawServer.append(renderExitPolicy(exitpolicy));
-
-		// sign data
-		rawServer.append("router-signature\n");
-
-		rawServer.append("directory-signature " + torConfig.nickname + "\n");
-		final byte[] data = rawServer.toString().getBytes();
-		rawServer.append(Encryption.binarySignatureToPEM(Encryption.signData(data, signingKeyPrivate)));
-
-		return rawServer.toString();
 	}
 
 	/**
@@ -1424,7 +1294,6 @@ public final class RouterImpl implements Router, Cloneable
 		result = prime * result + ((signingKey == null) ? 0 : signingKey.hashCode());
 		result = prime * result + ((signingKeyPrivate == null) ? 0 : signingKeyPrivate.hashCode());
 		result = prime * result + socksPort;
-		result = prime * result + ((torConfig == null) ? 0 : torConfig.hashCode());
 		result = prime * result + uptime;
 		result = prime * result + ((v3ident == null) ? 0 : v3ident.hashCode());
 		result = prime * result + ((validUntil == null) ? 0 : validUntil.hashCode());

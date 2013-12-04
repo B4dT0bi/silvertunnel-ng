@@ -310,8 +310,24 @@ public final class TorConfig
 	}
 
 	// directory parameters
-	/** in minutes. */
-	public static int intervalDirectoryRefresh = 2;
+	/** Interval of the Directory refresh in minutes. */
+	private int intervalDirectoryRefresh = 5;
+
+	/**
+	 * @return the intervalDirectoryRefresh
+	 */
+	public static int getIntervalDirectoryRefresh()
+	{
+		return getInstance().intervalDirectoryRefresh;
+	}
+
+	/**
+	 * @param intervalDirectoryRefresh the intervalDirectoryRefresh to set
+	 */
+	public static void setIntervalDirectoryRefresh(final int intervalDirectoryRefresh)
+	{
+		getInstance().intervalDirectoryRefresh = intervalDirectoryRefresh;
+	}
 
 	/** to access directory servers: connect timeout: 1 minute. */
 	public static final long DIR_CONNECT_TIMEOUT_MILLIS = 60L * 1000L;
