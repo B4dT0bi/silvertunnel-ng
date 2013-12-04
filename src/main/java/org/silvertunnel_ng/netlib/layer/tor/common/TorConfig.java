@@ -329,10 +329,10 @@ public final class TorConfig
 		getInstance().intervalDirectoryRefresh = intervalDirectoryRefresh;
 	}
 
-	/** to access directory servers: connect timeout: 1 minute. */
-	public static final long DIR_CONNECT_TIMEOUT_MILLIS = 60L * 1000L;
-	/** to access directory servers: max. connection timeout: 60 minutes */
-	public static final long DIR_OVERALL_TIMEOUT_MILLIS = 60L * 60L * 1000L;
+	/** to access directory servers: connect timeout: 10 seconds. */
+	public static final long DIR_CONNECT_TIMEOUT_MILLIS = 10L * 1000L;
+	/** to access directory servers: max. connection timeout: 30 seconds */
+	public static final long DIR_OVERALL_TIMEOUT_MILLIS = 30L * 1000L;
 	/**
 	 * to access directory servers: max. bytes to transfer (to avoid endless
 	 * transfers and out-of-memory problems): 50 MByte

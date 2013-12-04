@@ -43,7 +43,7 @@ class DescriptorFetcherThread extends Thread
 	private RouterStatusDescription loadFrom;
 	private NetLayer lowerDirConnectionNetLayer;
 
-	DescriptorFetcherThread(NetLayer lowerDirConnectionNetLayer)
+	DescriptorFetcherThread(final NetLayer lowerDirConnectionNetLayer)
 	{
 		this.lowerDirConnectionNetLayer = lowerDirConnectionNetLayer;
 		this.start();
@@ -55,8 +55,7 @@ class DescriptorFetcherThread extends Thread
 	private void fetchDescriptor()
 	{
 		// download descriptor(s)
-		final String newDescriptor = downloadSingleDescriptor(
-				nodesDigests.toString(), loadFrom, lowerDirConnectionNetLayer);
+		final String newDescriptor = downloadSingleDescriptor(nodesDigests.toString(), loadFrom, lowerDirConnectionNetLayer);
 		if (newDescriptor != null)
 		{
 			resolved = true;
@@ -76,19 +75,17 @@ class DescriptorFetcherThread extends Thread
 	 * @param dirConnectionNetLayer
 	 * @return the descriptor as single String; null in the case of an error
 	 */
-	public static String downloadSingleDescriptor(String nodesDigestsToLoad,
-			RouterStatusDescription directoryServer,
-			NetLayer dirConnectionNetLayer)
+	public static String downloadSingleDescriptor(final String nodesDigestsToLoad,
+	                                              final RouterStatusDescription directoryServer,
+	                                              final NetLayer dirConnectionNetLayer)
 	{
 		// download descriptor(s)
 		try
 		{
 			final String path = "/tor/server/d" + nodesDigestsToLoad;
-			final TcpipNetAddress hostAndPort = new TcpipNetAddress(
-					directoryServer.getIp(), directoryServer.getDirPort());
+			final TcpipNetAddress hostAndPort = new TcpipNetAddress(directoryServer.getIp(), directoryServer.getDirPort());
 
-			final String httpResponse = SimpleHttpClient.getInstance().get(
-					dirConnectionNetLayer, hostAndPort, path);
+			final String httpResponse = SimpleHttpClient.getInstance().get(dirConnectionNetLayer, hostAndPort, path);
 			return httpResponse;
 
 		}
@@ -111,17 +108,17 @@ class DescriptorFetcherThread extends Thread
 	 * @param dirConnectionNetLayer
 	 * @return the descriptors as String; null in the case of an error
 	 */
-	public static String downloadAllDescriptors(RouterImpl directoryServer,
-			NetLayer dirConnectionNetLayer)
+	public static String downloadAllDescriptors(final RouterImpl directoryServer,
+	                                            final NetLayer dirConnectionNetLayer)
 	{
 		// download descriptor(s)
 		try
 		{
 			final String path = "/tor/server/all";
 
-			final String httpResponse = SimpleHttpClientCompressed
-					.getInstance().get(dirConnectionNetLayer,
-							directoryServer.getDirAddress(), path);
+			final String httpResponse = SimpleHttpClientCompressed.getInstance().get(dirConnectionNetLayer,
+			                                                                         directoryServer.getDirAddress(), 
+			                                                                         path);
 			return httpResponse;
 
 		}
@@ -172,7 +169,7 @@ class DescriptorFetcherThread extends Thread
 		return stopped;
 	}
 
-	public void setStopped(boolean stopped)
+	public void setStopped(final boolean stopped)
 	{
 		this.stopped = stopped;
 	}
@@ -182,7 +179,7 @@ class DescriptorFetcherThread extends Thread
 		return resolved;
 	}
 
-	public void setResolved(boolean resolved)
+	public void setResolved(final boolean resolved)
 	{
 		this.resolved = resolved;
 	}
@@ -192,7 +189,7 @@ class DescriptorFetcherThread extends Thread
 		return failed;
 	}
 
-	public void setFailed(boolean failed)
+	public void setFailed(final boolean failed)
 	{
 		this.failed = failed;
 	}
@@ -202,7 +199,7 @@ class DescriptorFetcherThread extends Thread
 		return idle;
 	}
 
-	public void setIdle(boolean idle)
+	public void setIdle(final boolean idle)
 	{
 		this.idle = idle;
 	}
@@ -212,7 +209,7 @@ class DescriptorFetcherThread extends Thread
 		return reloadRetries;
 	}
 
-	public void setReloadRetries(int reloadRetries)
+	public void setReloadRetries(final int reloadRetries)
 	{
 		this.reloadRetries = reloadRetries;
 	}
@@ -222,7 +219,7 @@ class DescriptorFetcherThread extends Thread
 		return descriptor;
 	}
 
-	public void setDescriptor(String descriptor)
+	public void setDescriptor(final String descriptor)
 	{
 		this.descriptor = descriptor;
 	}
@@ -232,7 +229,7 @@ class DescriptorFetcherThread extends Thread
 		return nodesDigests;
 	}
 
-	public void setNodesDigests(StringBuffer nodesDigests)
+	public void setNodesDigests(final StringBuffer nodesDigests)
 	{
 		this.nodesDigests = nodesDigests;
 	}
@@ -242,7 +239,7 @@ class DescriptorFetcherThread extends Thread
 		return nicks;
 	}
 
-	public void setNicks(StringBuffer nicks)
+	public void setNicks(final StringBuffer nicks)
 	{
 		this.nicks = nicks;
 	}
@@ -252,7 +249,7 @@ class DescriptorFetcherThread extends Thread
 		return loadFrom;
 	}
 
-	public void setLoadFrom(RouterStatusDescription loadFrom)
+	public void setLoadFrom(final RouterStatusDescription loadFrom)
 	{
 		this.loadFrom = loadFrom;
 	}
@@ -262,8 +259,7 @@ class DescriptorFetcherThread extends Thread
 		return lowerDirConnectionNetLayer;
 	}
 
-	public void setLowerDirConnectionNetLayer(
-			NetLayer lowerDirConnectionNetLayer)
+	public void setLowerDirConnectionNetLayer(final NetLayer lowerDirConnectionNetLayer)
 	{
 		this.lowerDirConnectionNetLayer = lowerDirConnectionNetLayer;
 	}

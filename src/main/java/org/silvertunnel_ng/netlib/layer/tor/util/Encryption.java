@@ -376,7 +376,7 @@ public class Encryption
 	 * @return
 	 * @see JCERSAPublicKey
 	 */
-	public static RSAPublicKey extractPublicRSAKey(final String s)
+	public static RSAPublicKey extractPublicRSAKey(final String s) // TODO : remove bouncycastle as it is too expensive (memory footprint)
 	{
 		RSAPublicKey theKey;
 		try

@@ -50,7 +50,7 @@ public final class TorHiddenServiceClientRemotePerformanceTest extends TorRemote
 	 * if NUM_OF_TEST_EXECUTIONS==1 then this test class behaves like an
 	 * unparameterized one.
 	 */
-	private static final int NUM_OF_TEST_EXECUTIONS = 10;
+	private static final int NUM_OF_TEST_EXECUTIONS = 50;
 
 	/** 
 	 * Parametrized testcase.

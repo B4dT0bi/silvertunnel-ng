@@ -744,7 +744,7 @@ public final class Directory
 		}
 
 		// load from directory server
-		final int TRHESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPIONS = 50;
+		final int TRHESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPIONS = 200; // TODO : verify value (was 50)
 		LOG.debug("load {} routers from dir server(s) - start", fingerprintsOfRoutersToLoad.size());
 		int successes = 0;
 		if (fingerprintsOfRoutersToLoad.size() <= TRHESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPIONS)

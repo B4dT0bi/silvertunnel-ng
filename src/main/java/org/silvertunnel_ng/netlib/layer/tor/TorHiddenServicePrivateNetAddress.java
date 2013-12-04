@@ -55,21 +55,17 @@ public class TorHiddenServicePrivateNetAddress
 	 * @param publicKey
 	 * @param privateKey
 	 */
-	public TorHiddenServicePrivateNetAddress(RSAPublicKey publicKey,
-			RSAPrivateCrtKey privateKey)
+	public TorHiddenServicePrivateNetAddress(final RSAPublicKey publicKey,
+	                                         final RSAPrivateCrtKey privateKey)
 	{
 		this.privateKey = privateKey;
 		this.publicKey = publicKey;
 
 		// pre-calculate some values
-		publicKeyHash = Encryption.getDigest(Encryption
-				.getPKCS1EncodingFromRSAPublicKey(publicKey));
-		;
+		publicKeyHash = Encryption.getDigest(Encryption.getPKCS1EncodingFromRSAPublicKey(publicKey));
 
-		final String hiddenServicePermanentIdBase32 = RendezvousServiceDescriptorUtil
-				.calculateZFromPublicKey(publicKey);
+		final String hiddenServicePermanentIdBase32 = RendezvousServiceDescriptorUtil.calculateZFromPublicKey(publicKey);
 		publicOnionHostname = hiddenServicePermanentIdBase32 + ".onion";
-
 	}
 
 	/**
@@ -95,8 +91,7 @@ public class TorHiddenServicePrivateNetAddress
 	 */
 	protected String getId()
 	{
-		return "TorHiddenServicePrivateNetAddress(hostname="
-				+ getPublicOnionHostname() + ")";
+		return "TorHiddenServicePrivateNetAddress(hostname=" + getPublicOnionHostname() + ")";
 	}
 
 	@Override
