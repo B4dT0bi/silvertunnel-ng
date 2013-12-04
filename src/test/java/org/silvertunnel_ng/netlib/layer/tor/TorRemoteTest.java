@@ -47,6 +47,7 @@ import org.silvertunnel_ng.netlib.api.NetLayerIDs;
 import org.silvertunnel_ng.netlib.api.NetSocket;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.api.Router;
+import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.nameservice.inetaddressimpl.DefaultIpNetAddressNameService;
 import org.silvertunnel_ng.netlib.util.ByteArrayUtil;
 import org.silvertunnel_ng.netlib.util.HttpUtil;
@@ -73,6 +74,16 @@ public final class TorRemoteTest extends TorRemoteAbstractTest
 	{
 		// repeat method declaration here to be the first test method of the
 		// class
+		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH, "2");
+		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH, "2");
+		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS, "2"); // just
+																						// 2
+																						// initial
+																						// circuit
+																						// for
+																						// faster
+																						// tests
+		TorConfig.reloadConfigFromProperties();
 		super.initializeTor();
 	}
 
