@@ -264,12 +264,32 @@ public class Encryption
 
 	public static boolean verifySignature(final byte[] signature, final PublicKey signingKey, final byte[] data)
 	{
+		final byte[] dataDigest = getDigest(data);
+		return verifySignatureWithHash(signature, signingKey, dataDigest);
+	}
+
+	/**
+	 * checks row signature.
+	 * 
+	 * @param signature
+	 *            signature to check
+	 * @param signingKey
+	 *            public key from signing
+	 * @param dataDigest
+	 *            byte array, the already calculated digest
+	 * 
+	 * @return true, if the signature is correct
+	 * 
+	 */
+
+	public static boolean verifySignatureWithHash(final byte[] signature, final PublicKey signingKey, final byte[] dataDigest)
+	{
 		try
 		{
 			final Cipher cipher = Cipher.getInstance(PK_ALGORITHM);
 			cipher.init(Cipher.DECRYPT_MODE, signingKey);
 			byte[] decryptedDigest = cipher.doFinal(signature);
-			final byte[] dataDigest = getDigest(DIGEST_ALGORITHM, data);
+			
 			if (decryptedDigest != null && dataDigest != null && decryptedDigest.length > dataDigest.length)
 			{
 				// try to fix bug in security calculation with OpenJDK-6 java

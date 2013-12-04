@@ -103,7 +103,7 @@ public final class RouterImplLocalTest
 		final Map<Fingerprint, RouterImpl> allrouters = RouterImpl.parseRouterDescriptors(descriptors);
 		assertNotNull(allrouters);
 		assertFalse(allrouters.isEmpty());
-		assertEquals(4642, allrouters.size());
+		assertEquals(4648, allrouters.size());
 	}
 
 	/**

@@ -37,6 +37,7 @@ package org.silvertunnel_ng.netlib.layer.tor.directory;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ import org.silvertunnel_ng.netlib.layer.tor.util.Encryption;
 import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.layer.tor.util.Util;
+import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,22 +164,6 @@ public final class RouterImpl implements Router, Cloneable
 	 */
 	private static final float punishmentFactor = 0.75f;
 
-	// patterns used to parse a router descriptor
-	/** router signature. */
-	private static Pattern SHA1INPUT_PATTERN;
-
-	{
-		// initialize patterns,
-		// do it here to be able to log exceptions
-		try
-		{
-			SHA1INPUT_PATTERN = Parsing.compileRegexPattern("^(router .*?router-signature\n)");
-		}
-		catch (final Exception e)
-		{
-			LOG.error("could not initialize all patterns", e);
-		}
-	}
 	private static final int MAX_ROUTERDESCRIPTOR_LENGTH = 10000;
 
 	/**
@@ -427,7 +413,7 @@ public final class RouterImpl implements Router, Cloneable
 			}
 			catch (final Exception e)
 			{
-				LOG.info("unexpected", e);
+				LOG.info("unexpected exception", e);
 			}
 		}
 		if (LOG.isDebugEnabled())
@@ -451,14 +437,27 @@ public final class RouterImpl implements Router, Cloneable
 		String[] tmpLine = routerDescriptor.split("\n");
 
 		Map<RouterDescriptorFormatKeys, Integer> keysToFind = RouterDescriptorFormatKeys.getAllKeysAsMap();
-
+		MessageDigest mdMessage = null;
+		boolean runMd = false;
 		// Router item: nickname, hostname, onion-router-port, socks-port,
 		// dir-port
 		StringBuffer exitPolicyString = new StringBuffer();
 		for (int i = 0; i < tmpLine.length; i++)
 		{
-			if (tmpLine[i].startsWith("opt")) // remove the opt as we dont need
-												// it here
+			if (mdMessage == null && tmpLine[i].startsWith("router "))
+			{
+				mdMessage = Encryption.getMessagesDigest();
+				runMd = true;
+			}
+			if (runMd)
+			{
+				mdMessage.update((tmpLine[i] + "\n").getBytes());
+				if ("router-signature".equals(tmpLine[i]))
+				{
+					runMd = false;
+				}
+			}
+			if (tmpLine[i].startsWith("opt")) // remove the opt as we dont need it here
 			{
 				tmpLine[i] = tmpLine[i].substring(4);
 			}
@@ -520,7 +519,15 @@ public final class RouterImpl implements Router, Cloneable
 						case FAMILY:
 							for (int n = 1; n < tmpElements.length; n++)
 							{
-								family.add(new FingerprintImpl(tmpElements[n]));
+								if (tmpElements[n].startsWith("$"))
+								{
+									family.add(new FingerprintImpl(DatatypeConverter.parseHexBinary(tmpElements[n].substring(1, 21))));
+								}
+								else
+								{
+									LOG.debug("skipping family member {}", tmpElements[n]);
+									//TODO : implement family members without fingerprint
+								}
 							}
 						case HIBERNATING:
 							// TODO : add flag that router is hibernating (do not use it for building circuits)
@@ -549,6 +556,7 @@ public final class RouterImpl implements Router, Cloneable
 								i++;
 							}
 							tmpOnionKey.append(tmpLine[i]).append('\n');
+							mdMessage.update(tmpOnionKey.toString().getBytes());
 							onionKey = Encryption.extractPublicRSAKey(tmpOnionKey.toString());
 							break;
 						case SIGNING_KEY:
@@ -560,6 +568,7 @@ public final class RouterImpl implements Router, Cloneable
 								i++;
 							}
 							tmpSigningKey.append(tmpLine[i]).append('\n');
+							mdMessage.update(tmpSigningKey.toString().getBytes());
 							signingKey = Encryption.extractPublicRSAKey(tmpSigningKey.toString());
 							break;
 						case ROUTER_SIGNATURE:
@@ -621,8 +630,8 @@ public final class RouterImpl implements Router, Cloneable
 		}
 
 		// check the validity of the signature
-		final byte[] sha1Input = (Parsing.parseStringByRE(routerDescriptor, SHA1INPUT_PATTERN, "")).getBytes();
-		if (!Encryption.verifySignature(routerSignature, signingKey, sha1Input))
+		final byte[] sha1Digest = mdMessage.digest();
+		if (!Encryption.verifySignatureWithHash(routerSignature, signingKey, sha1Digest))
 		{
 			LOG.info("Server -> router-signature check failed for " + nickname);
 			throw new TorException("Server " + nickname + ": description signature verification failed");
