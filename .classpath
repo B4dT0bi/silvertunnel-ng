@@ -26,10 +26,6 @@
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
-		<accessrules>
-			<accessrule kind="accessible" pattern="sun/net/spi/**"/>
-			<accessrule kind="accessible" pattern="sun/net/InetAddressCachePolicy"/>
-		</accessrules>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>

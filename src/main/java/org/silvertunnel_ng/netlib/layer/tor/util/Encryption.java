@@ -367,22 +367,6 @@ public class Encryption
 		}
 	}
 
-	/** used to encode a signature in PEM. */
-	public static String binarySignatureToPEM(final byte[] signature)
-	{
-		String sigB64 = DatatypeConverter.printBase64Binary(signature);
-		final StringBuffer sig = new StringBuffer();
-
-		sig.append("-----BEGIN SIGNATURE-----\n");
-		while (sigB64.length() > 64)
-		{
-			sig.append(sigB64.substring(0, 64) + "\n");
-			sigB64 = sigB64.substring(64);
-		}
-		sig.append(sigB64 + "\n");
-		sig.append("-----END SIGNATURE-----\n");
-		return sig.toString();
-	}
 
 	/**
 	 * makes RSA public key from PEM string.

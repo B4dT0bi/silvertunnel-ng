@@ -29,6 +29,7 @@ import java.util.Map;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.util.FileUtil;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -48,6 +49,15 @@ public final class RouterImplLocalTest
 	 */
 	private static final String EXAMPLE_SERVER_DESCRIPTORS_PATH = "/org/silvertunnel_ng/netlib/layer/tor/example-router-descriptors.txt";
 
+	private String descriptor;
+	private String descriptors;
+
+	@BeforeClass
+	public void setUp() throws IOException
+	{
+		descriptor = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTOR_PATH);
+		descriptors = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTORS_PATH);		
+	}
 	/**
 	 * Test method for
 	 * {@link RouterImpl#RouterImpl(String)}
@@ -59,7 +69,6 @@ public final class RouterImplLocalTest
 	@Test
 	public void testRouterImplTorConfigString() throws TorException, IOException
 	{
-		final String descriptor = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTOR_PATH);
 		final RouterImpl testObject = new RouterImpl(descriptor);
 		assertNotNull(testObject);
 		assertEquals("J. Random Hacker <anonymizer@ccc.de>", testObject.getContact());
@@ -99,7 +108,6 @@ public final class RouterImplLocalTest
 	@Test
 	public void testParseRouterDescriptors() throws IOException
 	{
-		final String descriptors = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTORS_PATH);
 		final Map<Fingerprint, RouterImpl> allrouters = RouterImpl.parseRouterDescriptors(descriptors);
 		assertNotNull(allrouters);
 		assertFalse(allrouters.isEmpty());
