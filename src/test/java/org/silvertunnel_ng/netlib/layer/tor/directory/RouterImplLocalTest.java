@@ -18,12 +18,15 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.fail;
 
 import java.io.IOException;
+import java.util.Map;
 
-import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
+import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.util.FileUtil;
 import org.testng.annotations.Test;
@@ -47,7 +50,7 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link RouterImpl#RouterImpl(TorConfig, String)}
+	 * {@link RouterImpl#RouterImpl(String)}
 	 * .
 	 * 
 	 * @throws IOException
@@ -56,31 +59,13 @@ public final class RouterImplLocalTest
 	@Test
 	public void testRouterImplTorConfigString() throws TorException, IOException
 	{
-		String descriptor = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTOR_PATH);
-		RouterImpl testObject = new RouterImpl(descriptor);
+		final String descriptor = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTOR_PATH);
+		final RouterImpl testObject = new RouterImpl(descriptor);
 		assertNotNull(testObject);
-	}
-
-	/**
-	 * Test method for
-	 * {@link RouterImpl#RouterImpl(TorConfig, String, InetAddress, int, int, org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint, org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testRouterImplTorConfigStringInetAddressIntIntFingerprintFingerprint()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link RouterImpl#updateServerStatus(boolean, boolean)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testUpdateServerStatusBooleanBoolean()
-	{
-		fail("Not yet implemented");
+		assertEquals("J. Random Hacker <anonymizer@ccc.de>", testObject.getContact());
+		assertEquals("AT", testObject.getCountryCode());
+		assertEquals("chaoscomputerclub27", testObject.getNickname());
+		assertEquals("Tor 0.2.4.17-rc on Linux", testObject.getPlatform());
 	}
 
 	/**
@@ -90,17 +75,6 @@ public final class RouterImplLocalTest
 	 */
 	@Test(enabled = false)
 	public void testUpdateServerStatusString()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link RouterImpl#regularExpression()}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testRegularExpression()
 	{
 		fail("Not yet implemented");
 	}
@@ -118,13 +92,18 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link RouterImpl#parseRouterDescriptors(TorConfig, String)}
+	 * {@link RouterImpl#parseRouterDescriptors(String)}
 	 * .
+	 * @throws IOException when loading the example_server_descriptors from classpath didnt worked
 	 */
-	@Test(enabled = false)
-	public void testParseRouterDescriptors()
+	@Test
+	public void testParseRouterDescriptors() throws IOException
 	{
-		fail("Not yet implemented");
+		final String descriptors = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTORS_PATH);
+		final Map<Fingerprint, RouterImpl> allrouters = RouterImpl.parseRouterDescriptors(descriptors);
+		assertNotNull(allrouters);
+		assertFalse(allrouters.isEmpty());
+		assertEquals(4642, allrouters.size());
 	}
 
 	/**
@@ -492,33 +471,11 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link RouterImpl#setDirv2Authority(boolean)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testSetDirv2Authority()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
 	 * {@link RouterImpl#isDirv2Exit()}
 	 * .
 	 */
 	@Test(enabled = false)
 	public void testIsDirv2Exit()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link RouterImpl#setDirv2Exit(boolean)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testSetDirv2Exit()
 	{
 		fail("Not yet implemented");
 	}
@@ -536,33 +493,11 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link RouterImpl#setDirv2Fast(boolean)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testSetDirv2Fast()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
 	 * {@link RouterImpl#isDirv2Guard()}
 	 * .
 	 */
 	@Test(enabled = false)
 	public void testIsDirv2Guard()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link RouterImpl#setDirv2Guard(boolean)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testSetDirv2Guard()
 	{
 		fail("Not yet implemented");
 	}
@@ -580,33 +515,11 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link RouterImpl#setDirv2Named(boolean)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testSetDirv2Named()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
 	 * {@link RouterImpl#isDirv2Stable()}
 	 * .
 	 */
 	@Test(enabled = false)
 	public void testIsDirv2Stable()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link RouterImpl#setDirv2Stable(boolean)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testSetDirv2Stable()
 	{
 		fail("Not yet implemented");
 	}
@@ -624,17 +537,6 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link RouterImpl#setDirv2Running(boolean)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testSetDirv2Running()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
 	 * {@link RouterImpl#isDirv2Valid()}
 	 * .
 	 */
@@ -646,33 +548,11 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link RouterImpl#setDirv2Valid(boolean)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testSetDirv2Valid()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
 	 * {@link RouterImpl#isDirv2V2dir()}
 	 * .
 	 */
 	@Test(enabled = false)
 	public void testIsDirv2V2dir()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link RouterImpl#setDirv2V2dir(boolean)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testSetDirv2V2dir()
 	{
 		fail("Not yet implemented");
 	}
@@ -695,28 +575,6 @@ public final class RouterImplLocalTest
 	 */
 	@Test(enabled = false)
 	public void testGetRankingIndex()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link RouterImpl#setRankingIndex(float)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testSetRankingIndex()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link RouterImpl#getHighBandwidth()}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testGetHighBandwidth()
 	{
 		fail("Not yet implemented");
 	}

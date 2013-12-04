@@ -726,7 +726,7 @@ public final class Directory
 			// split into single server descriptors
 			if (allDescriptors != null && allDescriptors.length() >= ALL_DESCRIPTORS_STR_MIN_LEN)
 			{
-				final Map<Fingerprint, RouterImpl> parsedServers = RouterImpl.parseRouterDescriptors(torConfig, allDescriptors);
+				final Map<Fingerprint, RouterImpl> parsedServers = RouterImpl.parseRouterDescriptors(allDescriptors);
 				final Set<Fingerprint> fingerprintsOfRoutersToLoadCopy = new HashSet<Fingerprint>(fingerprintsOfRoutersToLoad);
 				for (final Fingerprint fingerprint : fingerprintsOfRoutersToLoadCopy)
 				{
@@ -773,7 +773,7 @@ public final class Directory
 				// split into single server descriptors
 				if (allDescriptors != null && allDescriptors.length() >= ALL_DESCRIPTORS_STR_MIN_LEN)
 				{
-					final Map<Fingerprint, RouterImpl> parsedServers = RouterImpl.parseRouterDescriptors(torConfig, allDescriptors);
+					final Map<Fingerprint, RouterImpl> parsedServers = RouterImpl.parseRouterDescriptors(allDescriptors);
 					int attempts = 0;
 					for (final Fingerprint fingerprint : fingerprintsOfRoutersToLoad)
 					{

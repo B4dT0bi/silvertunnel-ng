@@ -247,17 +247,6 @@ public final class RouterImpl implements Router, Cloneable
 	}
 
 	/**
-	 * wrapper from server-flags of dir-spec v1 to dir-spec v2.
-	 */
-	void updateServerStatus(final boolean alive, final boolean trusted)
-	{
-		dirv2Running = alive;
-		dirv2Exit = trusted;
-		dirv2Guard = trusted;
-		dirv2Valid = trusted;
-	}
-
-	/**
 	 * Update this server's status.
 	 * 
 	 * @param flags
@@ -305,15 +294,6 @@ public final class RouterImpl implements Router, Cloneable
 		{
 			dirv2HSDir = true;
 		}
-	}
-
-	/**
-	 * @return the regular expression that can be evaluated by the
-	 *         initialisation function
-	 */
-	static String regularExpression()
-	{
-		return "(router (\\w+) \\S+ \\d+ \\d+.*?END SIGNATURE-----\n)";
 	}
 
 	/**
@@ -414,12 +394,11 @@ public final class RouterImpl implements Router, Cloneable
 	/**
 	 * parse multiple router descriptors from one String.
 	 * 
-	 * @param tor
 	 * @param routerDescriptors
 	 * @return the result; if multiple entries with the same fingerprint are in
 	 *         routerDescriptors, the last be be considered
 	 */
-	public static Map<Fingerprint, RouterImpl> parseRouterDescriptors(final TorConfig torConfig, final String routerDescriptors)
+	public static Map<Fingerprint, RouterImpl> parseRouterDescriptors(final String routerDescriptors)
 	{
 		final long timeStart = System.currentTimeMillis();
 		final Map<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>();
@@ -444,7 +423,7 @@ public final class RouterImpl implements Router, Cloneable
 			}
 			catch (final TorException e)
 			{
-				LOG.info("" + e);
+				LOG.info("got TorException while parsing RouterDescriptor", e);
 			}
 			catch (final Exception e)
 			{
@@ -668,70 +647,6 @@ public final class RouterImpl implements Router, Cloneable
 	}
 
 	/**
-	 * converts exit policy objects back into an item.
-	 * 
-	 * @param ep
-	 *            an array of exit-policy objects.
-	 * @return an exit policy item.
-	 * 
-	 */
-	private String renderExitPolicy(RouterExitPolicy[] ep)
-	{
-		final StringBuffer rawPolicy = new StringBuffer();
-
-		for (int i = 0; i < ep.length; i++)
-		{
-			if (ep[i].isAccept())
-			{
-				rawPolicy.append("accept ");
-			}
-			else
-			{
-				rawPolicy.append("reject ");
-			}
-
-			if (ep[i].getNetmask() == 0 && ep[i].getIp() == 0)
-			{
-				rawPolicy.append("*");
-			}
-			else
-			{
-				if (ep[i].getNetmask() == 0xffffffff)
-				{
-					rawPolicy.append(Encoding.binaryToDottedNotation(ep[i].getIp()));
-				}
-				else
-				{
-					rawPolicy.append(Encoding.binaryToDottedNotation(ep[i].getIp()));
-					rawPolicy.append("/" + Encoding.netmaskToInt(ep[i].getNetmask()));
-				}
-			}
-
-			rawPolicy.append(":");
-
-			if (ep[i].getLoPort() == 0 && ep[i].getHiPort() == 65535)
-			{
-				rawPolicy.append("*");
-			}
-			else
-			{
-				if (ep[i].getLoPort() == ep[i].getHiPort())
-				{
-					rawPolicy.append(ep[i].getLoPort());
-				}
-				else
-				{
-					rawPolicy.append(ep[i].getLoPort() + "-" + ep[i].getHiPort());
-				}
-			}
-
-			rawPolicy.append("\n");
-		}
-
-		return rawPolicy.toString();
-	}
-
-	/**
 	 * updates the server ranking index
 	 * 
 	 * Is supposed to be between 0 (undesirable) and 1 (very desirable). Two
@@ -801,7 +716,7 @@ public final class RouterImpl implements Router, Cloneable
 	 *            the port that is to be connected to
 	 * @return a boolean value whether the connection would be allowed
 	 */
-	public boolean exitPolicyAccepts(InetAddress addr, int port)
+	public boolean exitPolicyAccepts(final InetAddress addr, final int port)
 	{
 		long ip;
 		if (addr != null)
@@ -837,18 +752,16 @@ public final class RouterImpl implements Router, Cloneable
 			{
 				return exitpolicy[i].isAccept();
 			}
-			;
 		}
-		;
 		return false;
 	}
 
 	/**
 	 * @return can this server be used as a directory-server?
 	 */
-	boolean isDirServer()
+	protected boolean isDirServer()
 	{
-		return (dirPort > 0);
+		return (dirPort > 0); //TODO : in newer Tor versions it is also possible to be a dir-server without port...
 	}
 
 	/**
@@ -865,30 +778,6 @@ public final class RouterImpl implements Router, Cloneable
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * used for debugging purposes.
-	 * 
-	 * @param b
-	 *            an array t be printed in hex
-	 */
-	private String toStringArray(final byte[] b)
-	{
-		final String hex = "0123456789abcdef";
-		final StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < b.length; ++i)
-		{
-			int x = b[i];
-			if (x < 0)
-			{
-				x = 256 + x; // why are there no unsigned bytes in java?
-			}
-			sb.append(hex.substring(x >> 4, (x >> 4) + 1));
-			sb.append(hex.substring(x % 16, (x % 16) + 1));
-			sb.append(" ");
-		}
-		return sb.toString();
 	}
 
 	/**
@@ -925,7 +814,7 @@ public final class RouterImpl implements Router, Cloneable
 		sb.append("validUntil:").append(new Date(validUntil)).append('\n');
 		sb.append("onion key:").append(onionKey).append('\n');
 		sb.append("signing key:").append(signingKey).append('\n');
-		sb.append("signature:").append(toStringArray(routerSignature)).append('\n');
+		sb.append("signature:").append(DatatypeConverter.printHexBinary(routerSignature)).append('\n');
 		sb.append("exit policies:").append('\n');
 		for (int i = 0; i < exitpolicy.length; ++i)
 		{
@@ -1096,8 +985,7 @@ public final class RouterImpl implements Router, Cloneable
 	@Override
 	public Set<Fingerprint> getFamily()
 	{
-		// TODO:
-		return new HashSet<Fingerprint>();
+		return family;
 	}
 
 	@Override
@@ -1178,11 +1066,6 @@ public final class RouterImpl implements Router, Cloneable
 	public float getRankingIndex()
 	{
 		return rankingIndex;
-	}
-
-	public static int getHighBandwidth()
-	{
-		return highBandwidth;
 	}
 
 	/**
