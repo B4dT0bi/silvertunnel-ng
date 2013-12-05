@@ -27,8 +27,9 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 /**
+ * Check the atomic time against system time.
+ * 
  * @author Tobias Boese
- *
  */
 public final class TimeTest
 {
@@ -36,7 +37,7 @@ public final class TimeTest
 	private static final Logger LOG = LoggerFactory.getLogger(TimeTest.class);
 	
 	/** maximum allowed difference in ms. */
-	private static final long DIFFERENCE_OK = 2000; // 2 secs
+	private static final long DIFFERENCE_OK = 30L * 60L * 1000L; // 30 minutes
 	
 	/**
 	 * Gets the current difference between system time and atomic time.
