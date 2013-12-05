@@ -211,6 +211,7 @@ public class HiddenServiceServer
 
 		//
 		// advertise introduction points/service descriptor
+		// TODO : the descriptor should be renewed every hour but at least every 18 hours (see rend-spec.txt 1.4)
 		//
 		RendezvousServiceDescriptorService.getInstance().putRendezvousServiceDescriptorToDirectory(torConfig, directory,
 																								   torNetLayerToConnectToDirectoryService,

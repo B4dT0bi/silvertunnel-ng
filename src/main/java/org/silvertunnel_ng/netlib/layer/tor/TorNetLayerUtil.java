@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author hapke
  */
-public class TorNetLayerUtil
+public final class TorNetLayerUtil
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TorNetLayerUtil.class);
@@ -52,7 +52,7 @@ public class TorNetLayerUtil
 	{
 		return instance;
 	}
-
+	/** */
 	protected TorNetLayerUtil()
 	{
 	}
@@ -78,9 +78,9 @@ public class TorNetLayerUtil
 	 * @throws IOException
 	 *             in the case of an error
 	 */
-	public TorHiddenServicePrivateNetAddress readTorHiddenServicePrivateNetAddressFromFiles(
-			File directory, boolean checkHostname) throws UnknownHostException,
-			IOException
+	public TorHiddenServicePrivateNetAddress readTorHiddenServicePrivateNetAddressFromFiles(final File directory, final boolean checkHostname) 
+						throws UnknownHostException,
+							   IOException
 	{
 		// read private key
 		final File privateKeyFile = new File(directory, FILENAME_PRIVATE_KEY);
@@ -91,8 +91,7 @@ public class TorNetLayerUtil
 		final String hostnameStr = fileUtil.readFile(hostnameFile);
 
 		// do the rest
-		return parseTorHiddenServicePrivateNetAddressFromStrings(privateKeyStr,
-				hostnameStr, checkHostname);
+		return parseTorHiddenServicePrivateNetAddressFromStrings(privateKeyStr, hostnameStr, checkHostname);
 	}
 
 	/**
@@ -114,20 +113,18 @@ public class TorNetLayerUtil
 	 *             in the case of an error
 	 */
 	public TorHiddenServicePrivateNetAddress parseTorHiddenServicePrivateNetAddressFromStrings(
-			String privateKeyPEMStr, String hostnameStr, boolean checkHostname)
+			final String privateKeyPEMStr, 
+			final String hostnameStr, 
+			final boolean checkHostname)
 			throws UnknownHostException, IOException
 	{
 		// create result
-		final RSAKeyPair keyPair = Encryption
-				.extractRSAKeyPair(privateKeyPEMStr);
-		final TorHiddenServicePrivateNetAddress result = new TorHiddenServicePrivateNetAddress(
-				keyPair.getPublic(), keyPair.getPrivate());
+		final RSAKeyPair keyPair = Encryption.extractRSAKeyPair(privateKeyPEMStr);
+		final TorHiddenServicePrivateNetAddress result = new TorHiddenServicePrivateNetAddress(keyPair.getPublic(), keyPair.getPrivate());
 
 		// check hostnameStr parameter
-		final String hostnameLowerStr = (hostnameStr == null) ? null
-				: hostnameStr.toLowerCase();
-		final boolean isHostnameOK = result.getPublicOnionHostname().equals(
-				hostnameLowerStr);
+		final String hostnameLowerStr = (hostnameStr == null) ? null : hostnameStr.toLowerCase();
+		final boolean isHostnameOK = result.getPublicOnionHostname().equals(hostnameLowerStr);
 		if (!isHostnameOK)
 		{
 			final String msg = "hostname=" + hostnameStr
@@ -168,13 +165,13 @@ public class TorNetLayerUtil
 	 * @throws IOException
 	 *             in the case of an error
 	 */
-	public void writeTorHiddenServicePrivateNetAddressToFiles(File directory,
-			TorHiddenServicePrivateNetAddress netAddress) throws IOException
+	public void writeTorHiddenServicePrivateNetAddressToFiles(final File directory,
+	                                                          final TorHiddenServicePrivateNetAddress netAddress) 
+	                                                        		  throws IOException
 	{
 		// write private key
-		final String pemStr = Encryption
-				.getPEMStringFromRSAKeyPair(new RSAKeyPair(netAddress
-						.getPublicKey(), netAddress.getPrivateKey()));
+		final String pemStr = Encryption.getPEMStringFromRSAKeyPair(new RSAKeyPair(netAddress.getPublicKey(), 
+		                                                                           netAddress.getPrivateKey()));
 		final File privateKeyFile = new File(directory, FILENAME_PRIVATE_KEY);
 		fileUtil.writeFile(privateKeyFile, pemStr);
 
@@ -186,15 +183,14 @@ public class TorNetLayerUtil
 	/**
 	 * Create private and public key for a new Tor hidden service.
 	 * 
-	 * The result should be stored on a persistent media before use to be able
-	 * the start the same hidden service on the same address after a restart.
+	 * The result should be stored on a persistent media before use, to be able to
+	 * start the same hidden service on the same address after a restart.
 	 * 
 	 * @return new private and public key
 	 */
 	public TorHiddenServicePrivateNetAddress createNewTorHiddenServicePrivateNetAddress()
 	{
 		final RSAKeyPair keyPair = Encryption.createNewRSAKeyPair();
-		return new TorHiddenServicePrivateNetAddress(keyPair.getPublic(),
-				keyPair.getPrivate());
+		return new TorHiddenServicePrivateNetAddress(keyPair.getPublic(), keyPair.getPrivate());
 	}
 }

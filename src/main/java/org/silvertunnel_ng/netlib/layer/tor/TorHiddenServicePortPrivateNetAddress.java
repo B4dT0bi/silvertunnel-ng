@@ -53,9 +53,7 @@ public class TorHiddenServicePortPrivateNetAddress implements NetAddress
 	 * @param port
 	 *            port number
 	 */
-	public TorHiddenServicePortPrivateNetAddress(
-			TorHiddenServicePrivateNetAddress torHiddenServicePrivateNetAddress,
-			int port)
+	public TorHiddenServicePortPrivateNetAddress(final TorHiddenServicePrivateNetAddress torHiddenServicePrivateNetAddress, final int port)
 	{
 		this.torHiddenServicePrivateNetAddress = torHiddenServicePrivateNetAddress;
 		this.port = port;
@@ -72,8 +70,7 @@ public class TorHiddenServicePortPrivateNetAddress implements NetAddress
 	{
 		if (port < MIN_PORT || port > MAX_PORT)
 		{
-			throw new IllegalArgumentException("port=" + port
-					+ " is out of range");
+			throw new IllegalArgumentException("port=" + port + " is out of range");
 		}
 	}
 
@@ -124,10 +121,9 @@ public class TorHiddenServicePortPrivateNetAddress implements NetAddress
 	}
 
 	@Override
-	public boolean equals(Object obj)
+	public boolean equals(final Object obj)
 	{
-		if (obj == null
-				|| !(obj instanceof TorHiddenServicePortPrivateNetAddress))
+		if (obj == null || !(obj instanceof TorHiddenServicePortPrivateNetAddress))
 		{
 			return false;
 		}
