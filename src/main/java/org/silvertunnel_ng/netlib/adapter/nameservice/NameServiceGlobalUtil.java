@@ -38,6 +38,7 @@ package org.silvertunnel_ng.netlib.adapter.nameservice;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -218,8 +219,7 @@ public class NameServiceGlobalUtil
 			provider = System.getProperty(propPrefix + n);
 			while (provider != null)
 			{
-				Method m = InetAddress.class.getDeclaredMethod(
-						"createNSProvider", String.class);
+				Method m = InetAddress.class.getDeclaredMethod("createNSProvider", String.class);
 				m.setAccessible(true);
 				NameService ns = (NameService) m.invoke(null, provider);
 				if (ns != null)
@@ -235,8 +235,7 @@ public class NameServiceGlobalUtil
 			// create a default one
 			if (nameServices.size() == 0)
 			{
-				Method m = InetAddress.class.getDeclaredMethod(
-						"createNSProvider", String.class);
+				Method m = InetAddress.class.getDeclaredMethod("createNSProvider", String.class);
 				m.setAccessible(true);
 				NameService ns = (NameService) m.invoke(null, "default");
 				nameServices.add(ns);
@@ -285,31 +284,41 @@ public class NameServiceGlobalUtil
 	 */
 	public static boolean isNopNetAddressNameServiceInstalled()
 	{
+		// test name service
 		try
 		{
-			final InetAddress[] result = InetAddress
-					.getAllByName(NopNetAddressNameService.CHECKER_NAME);
+			// try to use Java standard way of DNS resolution
+			final InetAddress[] address = InetAddress.getAllByName("dnstest.silvertunnel-ng.org"); // if this resolves to 1.2.3.4 it is wrong
+			return false;
+		}
+		catch (final UnknownHostException e)
+		{
+			// this is expected
+		}
+
+		try
+		{
+			final InetAddress[] address = InetAddress.getAllByName(NopNetAddressNameService.CHECKER_NAME);
 
 			// check the expected result
-			if (result == null)
+			if (address == null)
 			{
 				LOG.error("InetAddress.getAllByName() returned null as address (but this is wrong)");
 				return false;
 			}
-			else if (result.length != 1)
+			else if (address.length != 1)
 			{
-				LOG.error("InetAddress.getAllByName() returned array of wrong size={}", result.length);
+				LOG.error("InetAddress.getAllByName() returned array of wrong size={}", address.length);
 				return false;
 			}
-			else if (Arrays.equals(result[0].getAddress(),
-					NopNetAddressNameService.CHECKER_IP[0].getIpaddress()))
+			else if (Arrays.equals(address[0].getAddress(), NopNetAddressNameService.CHECKER_IP[0].getIpaddress()))
 			{
 				// correct return value
 				return true;
 			}
 			else
 			{
-				LOG.error("InetAddress.getAllByName() returned wrong IP address={}", Arrays.toString(result[0].getAddress()));
+				LOG.error("InetAddress.getAllByName() returned wrong IP address={}", Arrays.toString(address[0].getAddress()));
 				return false;
 			}
 		}
@@ -333,8 +342,7 @@ public class NameServiceGlobalUtil
 	 *             if initSocketImplFactory() was not called before calling this
 	 *             method
 	 */
-	public static synchronized void setIpNetAddressNameService(
-			NetAddressNameService lowerNetAddressNameService)
+	public static synchronized void setIpNetAddressNameService(final NetAddressNameService lowerNetAddressNameService)
 			throws IllegalStateException
 	{
 		if (!initialized)

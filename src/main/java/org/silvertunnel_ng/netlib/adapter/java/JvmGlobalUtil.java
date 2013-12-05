@@ -164,10 +164,9 @@ public class JvmGlobalUtil
 	 * @throws IllegalStateException
 	 *             if the initialization was omitted or failed before
 	 */
-	public static synchronized void setNetLayerAndNetAddressNameService(
-			NetLayer nextNetLayer,
-			NetAddressNameService nextNetAddressNameService,
-			boolean waitUntilReady) throws IllegalStateException
+	public static synchronized void setNetLayerAndNetAddressNameService(final NetLayer nextNetLayer,
+	                                                                    final NetAddressNameService nextNetAddressNameService,
+	                                                                    final boolean waitUntilReady) throws IllegalStateException
 	{
 		LOG.info("setNetLayerAndNetAddressNameService(nextNetLayer={}"
 				+ ", nextNetAddressNameService={})", nextNetLayer, nextNetAddressNameService);
@@ -175,15 +174,14 @@ public class JvmGlobalUtil
 		// action
 		if (nextNetAddressNameService != null)
 		{
-			NameServiceGlobalUtil
-					.setIpNetAddressNameService(nextNetAddressNameService);
+			NameServiceGlobalUtil.initNameService();
+			NameServiceGlobalUtil.setIpNetAddressNameService(nextNetAddressNameService);
 		}
 		final long time1 = System.currentTimeMillis();
 		if (nextNetLayer != null)
 		{
 			SocketGlobalUtil.setNetLayerUsedBySocketImplFactory(nextNetLayer);
-			URLGlobalUtil
-					.setNetLayerUsedByURLStreamHandlerFactory(nextNetLayer);
+			URLGlobalUtil.setNetLayerUsedByURLStreamHandlerFactory(nextNetLayer);
 		}
 
 		// wait a bit
@@ -192,7 +190,7 @@ public class JvmGlobalUtil
 			// wait until layer is ready
 			nextNetLayer.waitUntilReady();
 
-			// wait until the name service cache is timed out (if necessary)
+			// wait until the name service cache is timed out (if necessary) // TODO : check if this is really needed
 			final long time2 = System.currentTimeMillis();
 			try
 			{
@@ -220,16 +218,14 @@ public class JvmGlobalUtil
 	 * @throws IllegalStateException
 	 *             if the initialization was omitted or failed before
 	 */
-	public static synchronized void setNetLayerAndNetAddressNameService(
-			NetLayer nextNetLayer, boolean waitUntilReady)
+	public static synchronized void setNetLayerAndNetAddressNameService(final NetLayer nextNetLayer, final boolean waitUntilReady)
 			throws IllegalStateException
 	{
 		LOG.info("setNetLayerAndNetAddressNameService(nextNetLayer={})", nextNetLayer);
 
 		if (nextNetLayer != null)
 		{
-			setNetLayerAndNetAddressNameService(nextNetLayer,
-					nextNetLayer.getNetAddressNameService(), waitUntilReady);
+			setNetLayerAndNetAddressNameService(nextNetLayer, nextNetLayer.getNetAddressNameService(), waitUntilReady);
 		}
 	}
 

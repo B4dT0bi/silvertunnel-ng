@@ -55,7 +55,7 @@ import org.silvertunnel_ng.netlib.api.NetLayerIDs;
 import org.silvertunnel_ng.netlib.api.util.IpNetAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -81,7 +81,7 @@ public final class JvmGlobalUtilRemoteTest
 	/**
 	 * Do initial setup.
 	 */
-	@BeforeClass
+	@BeforeMethod
 	public void setUp()
 	{
 		JvmGlobalUtil.init();
