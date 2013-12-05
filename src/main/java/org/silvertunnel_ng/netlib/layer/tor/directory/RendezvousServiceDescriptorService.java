@@ -197,10 +197,10 @@ public class RendezvousServiceDescriptorService
 	 * @throws IOException
 	 * @throws TorException
 	 */
-	public void putRendezvousServiceDescriptorToDirectory(	TorConfig torConfig,
-															Directory directory,
-															final NetLayer torNetLayerToConnectToDirectoryService,
-															HiddenServiceProperties hiddenServiceProps) throws IOException, TorException
+	public void putRendezvousServiceDescriptorToDirectory(TorConfig torConfig,
+	                                                      Directory directory,
+	                                                      final NetLayer torNetLayerToConnectToDirectoryService,
+	                                                      HiddenServiceProperties hiddenServiceProps) throws IOException, TorException
 	{
 		// get the the z-part of the address/domain name
 		final String hiddenServicePermanentIdBase32 = RendezvousServiceDescriptorUtil.calculateZFromPublicKey(hiddenServiceProps.getPublicKey());

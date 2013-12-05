@@ -302,6 +302,10 @@ public final class TCPStreamProperties
 
 	public String getHostname()
 	{
+		if (hostname == null && addr != null)
+		{
+			return addr.getHostAddress();
+		}
 		return hostname;
 	}
 

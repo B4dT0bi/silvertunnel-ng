@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * of it gets lost.
  * 
  * @author Lexi Pimenidis
+ * @author Tobias Boese
  */
 public final class AESCounterMode
 {
@@ -40,6 +41,9 @@ public final class AESCounterMode
 
 	/** Algorithm used for crypt. */
 	private static final String ALGORITHM = "AES";
+	/** key length in byte. */
+	public static final int KEY_LEN = 16;
+	/** the {@link Cipher} instance. */
 	private final Cipher cipher;
 	private int blockSize;
 	private byte[] counterBuffer;

@@ -1,3 +1,6 @@
+/*
+ * Code origin : JTor (https://github.com/subgraph/Orchid) 
+ */
 package org.silvertunnel_ng.netlib.layer.tor.util;
 
 import java.security.InvalidKeyException;
@@ -150,15 +153,15 @@ public class HybridEncryption
 
 		// RSA( C1 ) --> ( K | M1 ) --> K, M1
 		final byte[] kAndM1 = decryptSimple(c1, privateKey);
-		final byte[] streamKey = new byte[TorStreamCipher.KEY_LEN];
-		final int m1Length = kAndM1.length - TorStreamCipher.KEY_LEN;
+		final byte[] streamKey = new byte[AESCounterMode.KEY_LEN];
+		final int m1Length = kAndM1.length - AESCounterMode.KEY_LEN;
 		final byte[] m1 = new byte[m1Length];
-		System.arraycopy(kAndM1, 0, streamKey, 0, TorStreamCipher.KEY_LEN);
-		System.arraycopy(kAndM1, TorStreamCipher.KEY_LEN, m1, 0, m1Length);
+		System.arraycopy(kAndM1, 0, streamKey, 0, AESCounterMode.KEY_LEN);
+		System.arraycopy(kAndM1, AESCounterMode.KEY_LEN, m1, 0, m1Length);
 
 		// AES_CTR( C2 ) --> M2
-		final TorStreamCipher streamCipher = TorStreamCipher.createFromKeyBytes(streamKey);
-		streamCipher.encrypt(c2);
+		final AESCounterMode streamCipher = new AESCounterMode(streamKey);
+		streamCipher.processStream(c2);
 		final byte[] m2 = c2;
 
 		final byte[] output = new byte[m1.length + m2.length];

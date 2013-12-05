@@ -213,8 +213,7 @@ public final class Queue
 		{
 			throw new TorNoAnswerException(
 					"Queue.receiveCell: connection closed or no answer after "
-							+ this.timeoutMs / 1000 + " s",
-					this.timeoutMs / 1000);
+							+ this.timeoutMs / 1000 + " s");
 		}
 		if (cell.getCommand() != type)
 		{

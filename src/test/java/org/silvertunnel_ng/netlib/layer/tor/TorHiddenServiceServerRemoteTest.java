@@ -50,6 +50,7 @@ import org.silvertunnel_ng.netlib.api.NetFactory;
 import org.silvertunnel_ng.netlib.api.NetLayerIDs;
 import org.silvertunnel_ng.netlib.api.NetSocket;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
+import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.util.ByteArrayUtil;
 import org.silvertunnel_ng.netlib.util.FileUtil;
 import org.silvertunnel_ng.netlib.util.HttpUtil;
@@ -96,6 +97,11 @@ public final class TorHiddenServiceServerRemoteTest extends
 	@Test(timeOut = 120000, dependsOnMethods = {"trivialTest" })
 	public void initializeTor() throws Exception
 	{
+		// setting the route length to 2 (we do not need high security for our
+		// tests.
+		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH, "2");
+		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH, "2");
+		TorConfig.reloadConfigFromProperties();
 		// repeat method declaration here to be the first test method of the class
 		super.initializeTor();
 	}
@@ -117,18 +123,15 @@ public final class TorHiddenServiceServerRemoteTest extends
 	 * @throws Exception
 	 */
 	private TcpipNetAddress provideHiddenService(final String responseStr,
-			final TorHiddenServicePrivateNetAddress netAddressWithoutPort)
-			throws Exception
+	                                             final TorHiddenServicePrivateNetAddress netAddressWithoutPort)
+	                                            		 throws Exception
 	{
 		// create net address inclusive port number
-		final TorHiddenServicePortPrivateNetAddress netAddress = new TorHiddenServicePortPrivateNetAddress(
-				netAddressWithoutPort, PORT);
+		final TorHiddenServicePortPrivateNetAddress netAddress = new TorHiddenServicePortPrivateNetAddress(netAddressWithoutPort, PORT);
 		LOG.info("netAddress=" + netAddress);
 
 		// establish the hidden service
-		final TorNetServerSocket netServerSocket = (TorNetServerSocket) torNetLayer
-				.createNetServerSocket(null, netAddress);
-
+		final TorNetServerSocket netServerSocket = (TorNetServerSocket) torNetLayer.createNetServerSocket(null, netAddress);
 		// start a thread that waits for incoming connections
 		new Thread()
 		{
@@ -156,9 +159,7 @@ public final class TorHiddenServiceServerRemoteTest extends
 								}
 								catch (final Exception e)
 								{
-									LOG.warn(
-											"exception while handling a server side connection",
-											e);
+									LOG.warn("exception while handling a server side connection", e);
 								}
 							}
 						}.start();
@@ -166,18 +167,14 @@ public final class TorHiddenServiceServerRemoteTest extends
 				}
 				catch (final Exception e)
 				{
-					LOG.warn(
-							"exception while handling server side connections",
-							e);
+					LOG.warn("exception while handling server side connections", e);
 				}
 			}
 		}.start();
 
 		// save public address of this service for later access of the client
-		final TcpipNetAddress publicHiddenServiceTcpipNetAddress = netAddress
-				.getPublicTcpipNetAddress();
-		LOG.info("publicHiddenServiceTcpipNetAddress="
-				+ publicHiddenServiceTcpipNetAddress);
+		final TcpipNetAddress publicHiddenServiceTcpipNetAddress = netAddress.getPublicTcpipNetAddress();
+		LOG.info("publicHiddenServiceTcpipNetAddress=" + publicHiddenServiceTcpipNetAddress);
 		return publicHiddenServiceTcpipNetAddress;
 	}
 
@@ -309,6 +306,7 @@ public final class TorHiddenServiceServerRemoteTest extends
 	@Test(timeOut = 120000, dependsOnMethods = {"testPhase1ProvideNewHiddenService" })
 	public void testPhase3AccessProvidedNewHiddenService() throws Exception
 	{
+//		testPhase1ProvideNewHiddenService();
 		checkAccessProvidedHiddenService(publicNewHiddenServiceTcpipNetAddress, "NEW-SERVICE");
 	}
 
@@ -323,6 +321,7 @@ public final class TorHiddenServiceServerRemoteTest extends
 	@Test(timeOut = 120000, dependsOnMethods = {"testPhase2ProvideOldHiddenService" })
 	public void testPhase4AccessProvidedOldHiddenService() throws Exception
 	{
+//		testPhase2ProvideOldHiddenService();
 		checkAccessProvidedHiddenService(publicOldHiddenServiceTcpipNetAddress, "old-service");
 	}
 
@@ -345,10 +344,11 @@ public final class TorHiddenServiceServerRemoteTest extends
 	 * 
 	 * @throws Exception
 	 */
-	@Test(timeOut = 120000, dependsOnMethods = {"testPhase1ProvideNewHiddenService" })
+	@Test(timeOut = 120000, dependsOnMethods = {"testPhase1ProvideNewHiddenService" }, enabled = false)
 	public void testPhase5AccessProvidedNewHiddenServiceViaOriginalTorWithTor2webOrg()
 			throws Exception
 	{
+		testPhase1ProvideNewHiddenService();
 		LOG.info("use tor2web proxy now");
 		// sleep be be able to manually connect to the tor2web proxy
 		// Thread.sleep(240000);
@@ -387,14 +387,6 @@ public final class TorHiddenServiceServerRemoteTest extends
 			fail("did not get correct response of hidden service, response body="
 					+ httpResponseStr);
 		}
-	}
-
-	@Test(timeOut = 120000, dependsOnMethods = {"testPhase5AccessProvidedNewHiddenServiceViaOriginalTorWithTor2webOrg" })
-	public void test_phase5a_accessProvidedNewHiddenService_via_originalTor_with_tor2web_org_again()
-			throws Exception
-	{
-		LOG.info("start to do it again");
-		testPhase5AccessProvidedNewHiddenServiceViaOriginalTorWithTor2webOrg();
 	}
 
 	// /////////////////////////////////////////////////////

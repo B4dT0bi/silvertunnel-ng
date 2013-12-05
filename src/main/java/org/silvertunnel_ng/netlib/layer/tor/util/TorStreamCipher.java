@@ -1,3 +1,6 @@
+/*
+ * Code origin : JTor (https://github.com/subgraph/Orchid) 
+ */
 package org.silvertunnel_ng.netlib.layer.tor.util;
 
 import java.security.GeneralSecurityException;
@@ -18,7 +21,7 @@ public class TorStreamCipher
 		return new TorStreamCipher(randomKey.getEncoded());
 	}
 
-	public static TorStreamCipher createFromKeyBytes(byte[] keyBytes) throws TorException
+	public static TorStreamCipher createFromKeyBytes(final byte[] keyBytes) throws TorException
 	{
 		return new TorStreamCipher(keyBytes);
 	}
@@ -31,7 +34,7 @@ public class TorStreamCipher
 	private int keystreamPointer = -1;
 	private final SecretKeySpec key;
 
-	private TorStreamCipher(byte[] keyBytes) throws TorException
+	private TorStreamCipher(final byte[] keyBytes) throws TorException
 	{
 		key = keyBytesToSecretKey(keyBytes);
 		cipher = createCipher(key);

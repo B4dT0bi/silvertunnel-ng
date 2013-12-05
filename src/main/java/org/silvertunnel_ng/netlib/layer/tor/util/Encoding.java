@@ -320,14 +320,12 @@ public class Encoding
 		final String rawResult = DatatypeConverter.printBase64Binary(bytes);
 
 		// format columns
-		final StringBuffer result = new StringBuffer(1
-				+ (rawResult.length() + columnWidth) / columnWidth);
+		final StringBuffer result = new StringBuffer(1 + (rawResult.length() + columnWidth) / columnWidth);
 		for (int i = 0; i < rawResult.length(); i += columnWidth)
 		{
-			final String line = rawResult.substring(i,
-					Math.min(rawResult.length(), i + columnWidth));
+			final String line = rawResult.substring(i, Math.min(rawResult.length(), i + columnWidth));
 			result.append(line);
-			result.append("\n");
+			result.append('\n');
 		}
 
 		return result.toString();
@@ -360,8 +358,7 @@ public class Encoding
 		}
 		// end fix
 
-		final StringBuffer base32 = new StringBuffer(
-				((bytes.length + 7) * 8 / 5) + add);
+		final StringBuffer base32 = new StringBuffer(((bytes.length + 7) * 8 / 5) + add);
 
 		while (i < bytes.length)
 		{
@@ -372,8 +369,7 @@ public class Encoding
 			{
 				if ((i + 1) < bytes.length)
 				{
-					nextByte = (bytes[i + 1] >= 0) ? bytes[i + 1]
-							: (bytes[i + 1] + 256);
+					nextByte = (bytes[i + 1] >= 0) ? bytes[i + 1] : (bytes[i + 1] + 256);
 				}
 				else
 				{
@@ -492,9 +488,8 @@ public class Encoding
 		for (int i = 0; i < 4; ++i)
 		{
 			buf.append(HEX_CHARS.substring(octet[i] >> 4, (octet[i] >> 4) + 1));
-			buf.append(HEX_CHARS
-					.substring(octet[i] & 0xf, (octet[i] & 0xf) + 1));
-			buf.append(" ");
+			buf.append(HEX_CHARS.substring(octet[i] & 0xf, (octet[i] & 0xf) + 1));
+			buf.append(' ');
 		}
 		return buf.toString();
 	}
@@ -531,26 +526,5 @@ public class Encoding
 		result.put("z", z);
 
 		return result;
-	}
-
-	/**
-	 * takes a string and returns it urlencoded.
-	 */
-	public static String UrlEncode(final String input)
-	{
-		final StringBuffer output = new StringBuffer();
-		final char[] c = input.toCharArray();
-		for (int i = 0; i < c.length; ++i)
-		{
-			if (Character.isDigit(c[i]) || Character.isLetter(c[i]))
-			{
-				output.append(c[i]);
-			}
-			else
-			{
-				output.append("%" + HEX_LOOKUP[c[i] & 0xff]);
-			}
-		}
-		return output.toString();
 	}
 }

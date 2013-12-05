@@ -47,23 +47,39 @@ public class TorException extends Exception
 
 	/** */
 	private static final long serialVersionUID = 597691078427388360L;
-
+	
+	/**
+	 * A TorException.
+	 */
 	public TorException()
 	{
 		super();
 	}
 
-	public TorException(final String s)
+	/**
+	 * TorException with detail Message.
+	 * @param message the detail message
+	 */
+	public TorException(final String message)
 	{
-		super(s);
+		super(message);
 	}
 
-	public TorException(final Throwable ex)
+	/**
+	 * TorException with root cause.
+	 * @param cause the root cause
+	 */
+	public TorException(final Throwable cause)
 	{
-		super(ex);
+		super(cause);
 	}
-	public TorException(final String message, final Throwable ex)
+	/**
+	 * TorException with detail message and root cause.
+	 * @param message the detail message
+	 * @param cause the root cause
+	 */
+	public TorException(final String message, final Throwable cause)
 	{
-		super(message, ex);
+		super(message, cause);
 	}
 }

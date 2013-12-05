@@ -251,8 +251,8 @@ public final class TorConfig
 	public static final String SYSTEMPROPERTY_TOR_MAX_ALLOWED_SETUP_DURATION_MS = SYSTEMPROPERTY_TOR_PREFIX
 			+ "maxAllowedSetupDurationMs";
 	
-	public static int queueTimeoutCircuit = 20;
-	public static int queueTimeoutResolve = 10;
+	public static int queueTimeoutCircuit = 10; // was 20
+	public static int queueTimeoutResolve = 5; // was 10
 	/* TODO was: 11 */
 	public static int queueTimeoutStreamBuildup = 5;
 
