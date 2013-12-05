@@ -216,14 +216,14 @@ public final class TorHiddenServiceServerRemoteTest extends
 	 * Provide the NEW hidden service and establish a Thread that wait for
 	 * incoming connections.
 	 * 
-	 * @throws Exception
+	 * @throws Exception when an error occurs
 	 */
 	@Test(timeOut = 120000, dependsOnMethods = {"initializeTor" })
 	public void testPhase1ProvideNewHiddenService() throws Exception
 	{
 		final TorHiddenServicePrivateNetAddress netAddressWithoutPort = torNetLayerUtil.createNewTorHiddenServicePrivateNetAddress();
 
-		// in real life this netAddressWithoutPort should be saved on persistentmedia
+		// in real life this netAddressWithoutPort should be saved on persistent media
 		// for latter reuse, e.g.:
 		// torNetLayerUtil.writeTorHiddenServicePrivateNetAddressToFiles(directory, netAddressWithoutPort);
 
@@ -234,7 +234,7 @@ public final class TorHiddenServiceServerRemoteTest extends
 	 * Provide the OLD hidden service (based on existing private key) and
 	 * establish a Thread that wait for incoming connections.
 	 * 
-	 * @throws Exception
+	 * @throws Exception when an unexpected error occurs
 	 */
 	@Test(timeOut = 120000, dependsOnMethods = {"initializeTor" })
 	public void testPhase2ProvideOldHiddenService() throws Exception
@@ -246,15 +246,15 @@ public final class TorHiddenServiceServerRemoteTest extends
 
 		// start OLD hidden service
 		publicOldHiddenServiceTcpipNetAddress = provideHiddenService("old-service", netAddressWithoutPort);
+		assertNotNull(publicOldHiddenServiceTcpipNetAddress);
 	}
 
 	// /////////////////////////////////////////////////////
 	// test access to the hidden service(s) with silvertunnel-ng.org Netlib
 	// /////////////////////////////////////////////////////
 
-	private void checkAccessProvidedHiddenService(
-			TcpipNetAddress publicHiddenServiceTcpipNetAddress,
-			String expectedResponseStr) throws Exception
+	private void checkAccessProvidedHiddenService(final TcpipNetAddress publicHiddenServiceTcpipNetAddress,
+	                                              final String expectedResponseStr) throws Exception
 	{
 		// pre-check
 		assertNotNull("publicHiddenServiceTcpipNetAddress==null",
@@ -306,7 +306,6 @@ public final class TorHiddenServiceServerRemoteTest extends
 	@Test(timeOut = 120000, dependsOnMethods = {"testPhase1ProvideNewHiddenService" })
 	public void testPhase3AccessProvidedNewHiddenService() throws Exception
 	{
-//		testPhase1ProvideNewHiddenService();
 		checkAccessProvidedHiddenService(publicNewHiddenServiceTcpipNetAddress, "NEW-SERVICE");
 	}
 
@@ -321,13 +320,11 @@ public final class TorHiddenServiceServerRemoteTest extends
 	@Test(timeOut = 120000, dependsOnMethods = {"testPhase2ProvideOldHiddenService" })
 	public void testPhase4AccessProvidedOldHiddenService() throws Exception
 	{
-//		testPhase2ProvideOldHiddenService();
 		checkAccessProvidedHiddenService(publicOldHiddenServiceTcpipNetAddress, "old-service");
 	}
 
 	@Test(timeOut = 110000, dependsOnMethods = {"testPhase4AccessProvidedOldHiddenService" })
-	public void testPhase4aAccessProvidedOldHiddenService_again()
-			throws Exception
+	public void testPhase4aAccessProvidedOldHiddenService_again() throws Exception
 	{
 		LOG.info("start to do it again");
 		testPhase4AccessProvidedOldHiddenService();
@@ -372,8 +369,7 @@ public final class TorHiddenServiceServerRemoteTest extends
 
 		HttpUtil.getInstance();
 		// communicate with the remote side
-		final byte[] httpResponse = HttpUtil.get(topSocket,
-				proxyTcpipNetAddress, path, 150000);
+		final byte[] httpResponse = HttpUtil.get(topSocket, proxyTcpipNetAddress, path, 150000);
 		String httpResponseStr = ByteArrayUtil.showAsString(httpResponse);
 		LOG.info("http response body: " + httpResponseStr);
 

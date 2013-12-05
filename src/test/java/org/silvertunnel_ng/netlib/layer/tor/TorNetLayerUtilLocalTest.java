@@ -69,40 +69,31 @@ public final class TorNetLayerUtilLocalTest
 	public static final String EXAMPLE_ONION_DOMAIN_DERIVED_FROM_PRIVATE_KEY = "4xuwatxuqzfnqjuz";
 
 	@Test(timeOut = 5000)
-	public void testCreationOfNewHiddenSericePrivateNetAddresses()
-			throws Exception
+	public void testCreationOfNewHiddenSericePrivateNetAddresses() throws Exception
 	{
 		// 1st creation
-		final TorHiddenServicePrivateNetAddress netAddress1 = torNetLayerUtil
-				.createNewTorHiddenServicePrivateNetAddress();
+		final TorHiddenServicePrivateNetAddress netAddress1 = torNetLayerUtil.createNewTorHiddenServicePrivateNetAddress();
 		LOG.info("new hidden service netAddress1=" + netAddress1);
 		assertNotNull("invalid netAddress1=null", netAddress1);
-		LOG.debug("new hidden service netAddress1.getPrivateKey()="
-				+ netAddress1.getPrivateKey());
+		LOG.debug("new hidden service netAddress1.getPrivateKey()=" + netAddress1.getPrivateKey());
 
 		// 2nd creation
-		final TorHiddenServicePrivateNetAddress netAddress2 = torNetLayerUtil
-				.createNewTorHiddenServicePrivateNetAddress();
+		final TorHiddenServicePrivateNetAddress netAddress2 = torNetLayerUtil.createNewTorHiddenServicePrivateNetAddress();
 		LOG.info("new hidden service netAddress2=" + netAddress2);
 		assertNotNull("invalid netAddress2=null", netAddress2);
-		LOG.debug("new hidden service netAddress2.getPrivateKey()="
-				+ netAddress1.getPrivateKey());
+		LOG.debug("new hidden service netAddress2.getPrivateKey()=" + netAddress1.getPrivateKey());
 
 		// check that both hidden services are different
-		assertFalse("new netAddress1=new netAddress2",
-				netAddress1.equals(netAddress2));
+		assertFalse("new netAddress1=new netAddress2", netAddress1.equals(netAddress2));
 	}
 
 	@Test(timeOut = 5000)
-	public void testParsingTorsOriginalHiddenSericePrivateNetAddressInfo()
-			throws Exception
+	public void testParsingTorsOriginalHiddenSericePrivateNetAddressInfo() throws Exception
 	{
 		// read the Strings
-		final String originalTorPrivateKeyPEMStr = fileUtil
-				.readFileFromClasspath(EXAMPLE_PRIVATE_KEY_PEM_PATH);
+		final String originalTorPrivateKeyPEMStr = fileUtil.readFileFromClasspath(EXAMPLE_PRIVATE_KEY_PEM_PATH);
 		LOG.info("originalTorPrivateKeyPEMStr=" + originalTorPrivateKeyPEMStr);
-		final String originalTorHostnameStr = EXAMPLE_ONION_DOMAIN_DERIVED_FROM_PRIVATE_KEY
-				+ ".onion";
+		final String originalTorHostnameStr = EXAMPLE_ONION_DOMAIN_DERIVED_FROM_PRIVATE_KEY + ".onion";
 
 		// parse and check
 		final boolean checkHostname = true;
@@ -117,36 +108,28 @@ public final class TorNetLayerUtilLocalTest
 	}
 
 	@Test(timeOut = 5000)
-	public void testWritingAndReadingHiddenSericePrivateNetAddressInfo()
-			throws Exception
+	public void testWritingAndReadingHiddenSericePrivateNetAddressInfo() throws Exception
 	{
 		// create new NetAddress
-		final TorHiddenServicePrivateNetAddress netAddressOriginal = torNetLayerUtil
-				.createNewTorHiddenServicePrivateNetAddress();
+		final TorHiddenServicePrivateNetAddress netAddressOriginal = torNetLayerUtil.createNewTorHiddenServicePrivateNetAddress();
 		LOG.info("new hidden service netAddressOriginal=" + netAddressOriginal);
-		LOG.debug("new hidden service netAddressOriginal="
-				+ netAddressOriginal.toStringDetails());
+		LOG.debug("new hidden service netAddressOriginal=" + netAddressOriginal.toStringDetails());
 
 		// prepare directory
 		final File directory = new File(TEMPDIR, TEST_SUB_DIR_NAME);
 		directory.mkdir();
 
 		// write to directory
-		torNetLayerUtil.writeTorHiddenServicePrivateNetAddressToFiles(
-				directory, netAddressOriginal);
+		torNetLayerUtil.writeTorHiddenServicePrivateNetAddressToFiles(directory, netAddressOriginal);
 
 		// read from directory
-		final boolean checkHostname = true;
 		final TorHiddenServicePrivateNetAddress netAddressRead = torNetLayerUtil
-				.readTorHiddenServicePrivateNetAddressFromFiles(directory,
-						checkHostname);
+				.readTorHiddenServicePrivateNetAddressFromFiles(directory, true);
 		LOG.info("new hidden service netAddressRead=" + netAddressRead);
-		LOG.debug("new hidden service netAddressRead="
-				+ netAddressRead.toStringDetails());
+		LOG.debug("new hidden service netAddressRead=" + netAddressRead.toStringDetails());
 
 		// check result
-		assertEquals(
-				"TorHiddenServicePrivateNetAddress changed after writing and reading",
+		assertEquals("TorHiddenServicePrivateNetAddress changed after writing and reading",
 				netAddressOriginal, netAddressRead);
 	}
 }
