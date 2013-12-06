@@ -49,6 +49,7 @@ import org.silvertunnel_ng.netlib.api.util.IpNetAddress;
 import org.silvertunnel_ng.netlib.nameservice.mock.MockNetAddressNameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 
@@ -77,10 +78,9 @@ public class WithNetlibNameServiceLocalTest
 
 	/**
 	 * Install NetlibNameService.
-	 * 
-	 * Do not use Junit's @org.junit.Before because this is too late.
 	 */
-	static
+	@BeforeMethod
+	public void setUp()
 	{
 		LOG.info("static init");
 		try
@@ -97,19 +97,14 @@ public class WithNetlibNameServiceLocalTest
 	 * Check that the NopNetAddressNameService is really used after setup.
 	 */
 	@Test(timeOut = 5000)
-	public void testWithNopNetAddressNameService() throws Throwable
+	public void testWithNopNetAddressNameService()
 	{
 		LOG.info("testWithNopNetAddressNameService()");
-		if (throwableOfStaticInitializer != null)
-		{
-			throw throwableOfStaticInitializer;
-		}
 
 		try
 		{
 			// try to use Java standard way of DNS resolution
-			final InetAddress result1 = InetAddress
-					.getAllByName(MOCK_HOSTNAME1)[0];
+			final InetAddress result1 = InetAddress.getAllByName(MOCK_HOSTNAME1)[0];
 			// we should not reach this code because name resolution should fail
 			fail(MOCK_HOSTNAME1
 					+ " could be resolved to "
@@ -128,13 +123,9 @@ public class WithNetlibNameServiceLocalTest
 	 * MockNetAddressNameService).
 	 */
 	@Test(timeOut = 15000, dependsOnMethods = {"testWithNopNetAddressNameService" })
-	public void testWithMockNetAddressNameService() throws Throwable
+	public void testWithMockNetAddressNameService()
 	{
 		LOG.info("testWithMockNetAddressNameService()");
-		if (throwableOfStaticInitializer != null)
-		{
-			throw throwableOfStaticInitializer;
-		}
 
 		//
 		// switch to MockNetAddressNameService
@@ -142,12 +133,11 @@ public class WithNetlibNameServiceLocalTest
 		final Map<String, NetAddress> name2AddressMapping = new HashMap<String, NetAddress>();
 		final Map<NetAddress, String> address2NameMapping = new HashMap<NetAddress, String>();
 		name2AddressMapping.put(MOCK_HOSTNAME1, MOCK_IP1);
-		final NetAddressNameService ns = new MockNetAddressNameService(
-				name2AddressMapping, address2NameMapping);
+		final NetAddressNameService ns = new MockNetAddressNameService(name2AddressMapping, address2NameMapping);
 		NameServiceGlobalUtil.setIpNetAddressNameService(ns);
 
 		// circumvent caching
-		Thread.sleep(NameServiceGlobalUtil.getCacheTimeoutMillis());
+		//Thread.sleep(NameServiceGlobalUtil.getCacheTimeoutMillis());
 
 		//
 		// check that dnstest.silvertunnel-ng.org can be resolved now
@@ -156,27 +146,21 @@ public class WithNetlibNameServiceLocalTest
 		try
 		{
 			// try to use Java standard way of DNS resolution
-			final InetAddress result1 = InetAddress
-					.getAllByName(MOCK_HOSTNAME1)[0];
-			assertEquals(MOCK_HOSTNAME1 + " resolved to wrong address",
-					MOCK_IP1, new IpNetAddress(result1));
+			final InetAddress result1 = InetAddress.getAllByName(MOCK_HOSTNAME1)[0];
+			assertEquals(MOCK_HOSTNAME1 + " resolved to wrong address",	MOCK_IP1, new IpNetAddress(result1));
 
 		}
 		catch (final UnknownHostException e)
 		{
-			fail("resolution of " + MOCK_HOSTNAME1
-					+ " failed, but it should be resolved to " + MOCK_IP1);
+			fail("resolution of " + MOCK_HOSTNAME1 + " failed, but it should be resolved to " + MOCK_IP1);
 		}
 
 		try
 		{
 			// try to use Java standard way of DNS resolution
-			final InetAddress result2 = InetAddress
-					.getAllByName(MOCK_HOSTNAME2)[0];
+			final InetAddress result2 = InetAddress.getAllByName(MOCK_HOSTNAME2)[0];
 			// we should not reach this code because name resolution should fail
-			fail(MOCK_HOSTNAME2 + "resolved to " + result2
-					+ " (was not expected)");
-
+			fail(MOCK_HOSTNAME2 + "resolved to " + result2 + " (was not expected)");
 		}
 		catch (final UnknownHostException e)
 		{
@@ -189,13 +173,9 @@ public class WithNetlibNameServiceLocalTest
 	 * MockNetAddressNameService).
 	 */
 	@Test(timeOut = 15000, dependsOnMethods = {"testWithMockNetAddressNameService" })
-	public void testWithMockNetAddressNameService2() throws Throwable
+	public void testWithMockNetAddressNameService2()
 	{
 		LOG.info("testWithMockNetAddressNameService2()");
-		if (throwableOfStaticInitializer != null)
-		{
-			throw throwableOfStaticInitializer;
-		}
 
 		//
 		// switch to 2nd MockNetAddressNameService
@@ -203,12 +183,11 @@ public class WithNetlibNameServiceLocalTest
 		final Map<String, NetAddress> name2AddressMapping = new HashMap<String, NetAddress>();
 		final Map<NetAddress, String> address2NameMapping = new HashMap<NetAddress, String>();
 		name2AddressMapping.put(MOCK_HOSTNAME2, MOCK_IP2);
-		final NetAddressNameService ns = new MockNetAddressNameService(
-				name2AddressMapping, address2NameMapping);
+		final NetAddressNameService ns = new MockNetAddressNameService(name2AddressMapping, address2NameMapping);
 		NameServiceGlobalUtil.setIpNetAddressNameService(ns);
 
 		// circumvent caching
-		Thread.sleep(NameServiceGlobalUtil.getCacheTimeoutMillis());
+//		Thread.sleep(NameServiceGlobalUtil.getCacheTimeoutMillis());
 
 		//
 		// check that dnstest.silvertunnel-ng.org can be resolved now
@@ -217,11 +196,9 @@ public class WithNetlibNameServiceLocalTest
 		try
 		{
 			// try to use Java standard way of DNS resolution
-			final InetAddress result1 = InetAddress
-					.getAllByName(MOCK_HOSTNAME1)[0];
+			final InetAddress result1 = InetAddress.getAllByName(MOCK_HOSTNAME1)[0];
 			// we should not reach this code because name resolution should fail
-			fail(MOCK_HOSTNAME1 + "resolved to " + result1
-					+ " (was not expected)");
+			fail(MOCK_HOSTNAME1 + "resolved to " + result1 + " (was not expected)");
 
 		}
 		catch (final UnknownHostException e)
@@ -232,16 +209,13 @@ public class WithNetlibNameServiceLocalTest
 		try
 		{
 			// try to use Java standard way of DNS resolution
-			final InetAddress result2 = InetAddress
-					.getAllByName(MOCK_HOSTNAME2)[0];
-			assertEquals(MOCK_HOSTNAME2 + " resolved to wrong address",
-					MOCK_IP2, new IpNetAddress(result2));
+			final InetAddress result2 = InetAddress.getAllByName(MOCK_HOSTNAME2)[0];
+			assertEquals(MOCK_HOSTNAME2 + " resolved to wrong address", MOCK_IP2, new IpNetAddress(result2));
 
 		}
 		catch (final UnknownHostException e)
 		{
-			fail("resolution of " + MOCK_HOSTNAME2
-					+ " failed, but it should be resolved to " + MOCK_IP2);
+			fail("resolution of " + MOCK_HOSTNAME2 + " failed, but it should be resolved to " + MOCK_IP2);
 		}
 	}
 }
