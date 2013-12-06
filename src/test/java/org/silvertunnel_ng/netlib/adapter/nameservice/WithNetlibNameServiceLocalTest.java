@@ -71,26 +71,13 @@ public class WithNetlibNameServiceLocalTest
 	private static final IpNetAddress MOCK_IP2 = new IpNetAddress("88.66.77.56");
 
 	/**
-	 * field to store a Throwable thrown in the static constructor to throw it
-	 * later (in a test method).
-	 */
-	private static Throwable throwableOfStaticInitializer;
-
-	/**
 	 * Install NetlibNameService.
 	 */
 	@BeforeMethod
-	public void setUp()
+	public final void setUp()
 	{
 		LOG.info("static init");
-		try
-		{
-			NameServiceGlobalUtil.initNameService();
-		}
-		catch (final Throwable t)
-		{
-			throwableOfStaticInitializer = t;
-		}
+		NameServiceGlobalUtil.initNameService();
 	}
 
 	/**
@@ -121,9 +108,10 @@ public class WithNetlibNameServiceLocalTest
 	/**
 	 * Check that we can switch to an alternative NetAddressNameService (to the
 	 * MockNetAddressNameService).
+	 * @throws InterruptedException 
 	 */
 	@Test(timeOut = 15000, dependsOnMethods = {"testWithNopNetAddressNameService" })
-	public void testWithMockNetAddressNameService()
+	public void testWithMockNetAddressNameService() throws InterruptedException
 	{
 		LOG.info("testWithMockNetAddressNameService()");
 
@@ -137,7 +125,7 @@ public class WithNetlibNameServiceLocalTest
 		NameServiceGlobalUtil.setIpNetAddressNameService(ns);
 
 		// circumvent caching
-		//Thread.sleep(NameServiceGlobalUtil.getCacheTimeoutMillis());
+		Thread.sleep(NameServiceGlobalUtil.getCacheTimeoutMillis());
 
 		//
 		// check that dnstest.silvertunnel-ng.org can be resolved now
