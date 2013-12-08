@@ -65,7 +65,7 @@ public final class CircuitHistory
 		if (streamProperties != null)
 		{
 			if (streamProperties.isExitPolicyRequired())
-			{// external
+			{ // external
 				synchronized (mapCountExternal)
 				{
 					countExternal++;

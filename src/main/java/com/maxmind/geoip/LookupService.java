@@ -106,10 +106,6 @@ public final class LookupService
 	int dboptions;
 	byte [] dbbuffer;
 	byte [] index_cache;
-	private static final int US_OFFSET = 1;
-	private static final int CANADA_OFFSET = 677;
-	private static final int WORLD_OFFSET = 1353;
-	private static final int FIPS_RANGE = 360;
 	private static final int COUNTRY_BEGIN = 16776960;
 	private static final int STATE_BEGIN_REV0 = 16700000;
 	private static final int STATE_BEGIN_REV1 = 16000000;
@@ -129,16 +125,13 @@ public final class LookupService
 	private static final int ORG_RECORD_LENGTH = 4;
 	private static final int MAX_RECORD_LENGTH = 4;
 
-	private static final int MAX_ORG_RECORD_LENGTH = 300;
 	private static final int FULL_RECORD_LENGTH = 60;
 
 	private static final Country UNKNOWN_COUNTRY = new Country("--", "N/A");
 
-	private static final HashMap<String, Integer> hashmapcountryCodetoindex = new HashMap<String, Integer>(
-			512);
-	private static final HashMap<String, Integer> hashmapcountryNametoindex = new HashMap<String, Integer>(
-			512);
-	private static final String[] countryCode = { "--", "AP", "EU", "AD", "AE",
+	private static final HashMap<String, Integer> hashmapcountryCodetoindex = new HashMap<String, Integer>(512);
+	private static final HashMap<String, Integer> hashmapcountryNametoindex = new HashMap<String, Integer>(512);
+	private static final String[] COUNTRY_CODE = { "--", "AP", "EU", "AD", "AE",
 			"AF", "AG", "AI", "AL", "AM", "AN", "AO", "AQ", "AR", "AS", "AT",
 			"AU", "AW", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI",
 			"BJ", "BM", "BN", "BO", "BR", "BS", "BT", "BV", "BW", "BY", "BZ",
@@ -163,7 +156,7 @@ public final class LookupService
 			"WS", "YE", "YT", "RS", "ZA", "ZM", "ME", "ZW", "A1", "A2", "O1",
 			"AX", "GG", "IM", "JE", "BL", "MF" };
 
-	private static final String[] countryName = { "N/A", "Asia/Pacific Region",
+	private static final String[] COUNTRY_NAME = { "N/A", "Asia/Pacific Region",
 			"Europe", "Andorra", "United Arab Emirates", "Afghanistan",
 			"Antigua and Barbuda", "Anguilla", "Albania", "Armenia",
 			"Netherlands Antilles", "Angola", "Antarctica", "Argentina",
@@ -267,8 +260,8 @@ public final class LookupService
 			// distributed service only
 			for (i = 0; i < 233; i++)
 			{
-				hashmapcountryCodetoindex.put(countryCode[i], Integer.valueOf(i));
-				hashmapcountryNametoindex.put(countryName[i], Integer.valueOf(i));
+				hashmapcountryCodetoindex.put(COUNTRY_CODE[i], Integer.valueOf(i));
+				hashmapcountryNametoindex.put(COUNTRY_NAME[i], Integer.valueOf(i));
 			}
 			return;
 		}
@@ -412,7 +405,7 @@ public final class LookupService
 		}
 		else
 		{
-			return new Country(countryCode[ret], countryName[ret]);
+			return new Country(COUNTRY_CODE[ret], COUNTRY_NAME[ret]);
 		}
 	}
 
@@ -521,8 +514,8 @@ public final class LookupService
 			}
 
 			// get country
-			record.countryCode = countryCode[unsignedByteToInt(recordBuf[0])];
-			record.countryName = countryName[unsignedByteToInt(recordBuf[0])];
+			record.countryCode = COUNTRY_CODE[unsignedByteToInt(recordBuf[0])];
+			record.countryName = COUNTRY_NAME[unsignedByteToInt(recordBuf[0])];
 			recordBufOffset++;
 
 			// get region

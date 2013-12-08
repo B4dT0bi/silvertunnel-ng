@@ -763,9 +763,9 @@ public final class Circuit
 		LOG.debug("Sending CREATE-FAST cell");
 		sendCell(new CellCreateFast(this));
 		// wait for answer
-		final Cell created_fast = queue.receiveCell(Cell.CELL_CREATED_FAST);
+		final Cell createdFast = queue.receiveCell(Cell.CELL_CREATED_FAST);
 		// finish DH-exchange
-		routeNodes[0].finishDh(created_fast.getPayload());
+		routeNodes[0].finishDh(createdFast.getPayload());
 	}
 
 	/**

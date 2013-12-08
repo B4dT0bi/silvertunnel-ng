@@ -80,10 +80,8 @@ public class HttpUtilRemoteTest
 		final int randomNo = (int) (1000000000 * Math.random());
 		final String id = "testGetRequest" + randomNo;
 		// communicate with the remote side
-		final NetLayer netLayer = NetFactory.getInstance().getNetLayerById(
-				NetLayerIDs.TCPIP);
-		final NetSocket netSocket = netLayer.createNetSocket(null, null,
-				HttpUtil.HTTPTEST_SERVER_NETADDRESS);
+		final NetLayer netLayer = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TCPIP);
+		final NetSocket netSocket = netLayer.createNetSocket(null, null, HttpUtil.HTTPTEST_SERVER_NETADDRESS);
 		final long timeoutInMs = 5L * 1000L;
 		HttpUtil.getInstance();
 		final byte[] httpResponse = HttpUtil.get(netSocket,
@@ -91,12 +89,9 @@ public class HttpUtilRemoteTest
 				"/httptest/smalltest.php?id=" + id, timeoutInMs);
 
 		// check response
-		LOG.info("http response body: "
-				+ ByteArrayUtil.showAsString(httpResponse));
-		final String expectedResponse = "<response><id>" + id
-				+ "</id></response>\n";
-		assertEquals("wrong response", expectedResponse, new String(
-				httpResponse, Util.UTF8));
+		LOG.info("http response body: "	+ ByteArrayUtil.showAsString(httpResponse));
+		final String expectedResponse = "<response><id>" + id + "</id></response>\n";
+		assertEquals("wrong response", expectedResponse, new String(httpResponse, Util.UTF8));
 
 		netSocket.close();
 	}
@@ -111,11 +106,9 @@ public class HttpUtilRemoteTest
 
 		// prepare request
 		final URL url = new URL(POSTTEST_URL);
-		final NetLayer netLayer = NetFactory.getInstance().getNetLayerById(
-				NetLayerIDs.TCPIP);
+		final NetLayer netLayer = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TCPIP);
 		final int port = url.getPort();
-		final TcpipNetAddress httpServerNetAddress = new TcpipNetAddress(
-				url.getHost(), port < 0 ? 80 : port);
+		final TcpipNetAddress httpServerNetAddress = new TcpipNetAddress(url.getHost(), port < 0 ? 80 : port);
 		final Map<String, Object> localProperties = null;
 		String pathOnHttpServer = url.getPath();
 		if (pathOnHttpServer == null || pathOnHttpServer.length() < 1)

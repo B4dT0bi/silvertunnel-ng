@@ -143,7 +143,7 @@ class DigestAuthentication extends AuthenticationInfo
 			redoCachedHA1 = true;
 		}
 
-		synchronized void setQop(String qop)
+		synchronized void setQop(final String qop)
 		{
 			if (qop != null)
 			{
@@ -165,7 +165,7 @@ class DigestAuthentication extends AuthenticationInfo
 			return opaque;
 		}
 
-		synchronized void setOpaque(String s)
+		synchronized void setOpaque(final String s)
 		{
 			opaque = s;
 		}
@@ -175,7 +175,7 @@ class DigestAuthentication extends AuthenticationInfo
 			return nonce;
 		}
 
-		synchronized void setNonce(String s)
+		synchronized void setNonce(final String s)
 		{
 			if (!s.equals(nonce))
 			{
@@ -197,7 +197,7 @@ class DigestAuthentication extends AuthenticationInfo
 			}
 		}
 
-		synchronized void setCachedHA1(String s)
+		synchronized void setCachedHA1(final String s)
 		{
 			cachedHA1 = s;
 			redoCachedHA1 = false;
@@ -208,7 +208,7 @@ class DigestAuthentication extends AuthenticationInfo
 			return algorithm;
 		}
 
-		synchronized void setAlgorithm(String s)
+		synchronized void setAlgorithm(final String s)
 		{
 			algorithm = s;
 		}
@@ -219,22 +219,28 @@ class DigestAuthentication extends AuthenticationInfo
 	/**
 	 * Create a DigestAuthentication
 	 */
-	public DigestAuthentication(boolean isProxy, URL url, String realm,
-			String authMethod, PasswordAuthentication pw, Parameters params)
+	public DigestAuthentication(final boolean isProxy, 
+								final URL url, 
+								final String realm,
+								final String authMethod, 
+								final PasswordAuthentication pw, 
+								final Parameters params)
 	{
-		super(isProxy ? PROXY_AUTHENTICATION : SERVER_AUTHENTICATION,
-				DIGEST_AUTH, url, realm);
+		super(isProxy ? PROXY_AUTHENTICATION : SERVER_AUTHENTICATION, DIGEST_AUTH, url, realm);
 		this.authMethod = authMethod;
 		this.pw = pw;
 		this.params = params;
 	}
 
-	public DigestAuthentication(boolean isProxy, String host, int port,
-			String realm, String authMethod, PasswordAuthentication pw,
-			Parameters params)
+	public DigestAuthentication(final boolean isProxy, 
+								final String host, 
+								final int port,
+								final String realm, 
+								final String authMethod, 
+								final PasswordAuthentication pw,
+								final Parameters params)
 	{
-		super(isProxy ? PROXY_AUTHENTICATION : SERVER_AUTHENTICATION,
-				DIGEST_AUTH, host, port, realm);
+		super(isProxy ? PROXY_AUTHENTICATION : SERVER_AUTHENTICATION, DIGEST_AUTH, host, port, realm);
 		this.authMethod = authMethod;
 		this.pw = pw;
 		this.params = params;
@@ -280,7 +286,7 @@ class DigestAuthentication extends AuthenticationInfo
 	 * @return the value of the HTTP header this authentication wants set
 	 */
 	@Override
-	String getHeaderValue(URL url, String method)
+	String getHeaderValue(final URL url, final String method)
 	{
 		return getHeaderValueImpl(url.getFile(), method);
 	}
@@ -300,7 +306,7 @@ class DigestAuthentication extends AuthenticationInfo
 	 * 
 	 * @return the value of the HTTP header this authentication wants set
 	 */
-	String getHeaderValue(String requestURI, String method)
+	String getHeaderValue(final String requestURI, final String method)
 	{
 		return getHeaderValueImpl(requestURI, method);
 	}
@@ -313,7 +319,7 @@ class DigestAuthentication extends AuthenticationInfo
 	 * go back to the user to ask for a new username password.
 	 */
 	@Override
-	boolean isAuthorizationStale(String header)
+	boolean isAuthorizationStale(final String header)
 	{
 		final HeaderParser p = new HeaderParser(header);
 		final String s = p.findValue("stale");
@@ -342,7 +348,7 @@ class DigestAuthentication extends AuthenticationInfo
 	 * @return true if all goes well, false if no headers were set.
 	 */
 	@Override
-	boolean setHeaders(HttpURLConnection conn, HeaderParser p, String raw)
+	boolean setHeaders(final HttpURLConnection conn, final HeaderParser p, final String raw)
 	{
 		params.setNonce(p.findValue("nonce"));
 		params.setOpaque(p.findValue("opaque"));
@@ -407,7 +413,7 @@ class DigestAuthentication extends AuthenticationInfo
 	 * Calculate the Authorization header field given the request URI and based
 	 * on the authorization information in params
 	 */
-	private String getHeaderValueImpl(String uri, String method)
+	private String getHeaderValueImpl(final String uri, final String method)
 	{
 		String response;
 		final char[] passwd = pw.getPassword();
@@ -426,7 +432,7 @@ class DigestAuthentication extends AuthenticationInfo
 			final int len = ncstring.length();
 			if (len < 8)
 			{
-				ncstring = zeroPad[len] + ncstring;
+				ncstring = ZEROPAD[len] + ncstring;
 			}
 		}
 
@@ -467,7 +473,7 @@ class DigestAuthentication extends AuthenticationInfo
 	}
 
 	@Override
-	public void checkResponse(String header, String method, URL url)
+	public void checkResponse(final String header, final String method, final URL url)
 			throws IOException
 	{
 		final String uri = url.getFile();
@@ -493,7 +499,7 @@ class DigestAuthentication extends AuthenticationInfo
 			final int len = ncstring.length();
 			if (len < 8)
 			{
-				ncstring = zeroPad[len] + ncstring;
+				ncstring = ZEROPAD[len] + ncstring;
 			}
 		}
 		try
@@ -524,9 +530,15 @@ class DigestAuthentication extends AuthenticationInfo
 		}
 	}
 
-	private String computeDigest(boolean isRequest, String userName,
-			char[] password, String realm, String connMethod,
-			String requestURI, String nonceString, String cnonce, String ncValue)
+	private String computeDigest(final boolean isRequest, 
+								 final String userName,
+								 final char[] password, 
+								 final String realm, 
+								 final String connMethod,
+								 final String requestURI, 
+								 final String nonceString, 
+								 final String cnonce, 
+								 final String ncValue)
 			throws NoSuchAlgorithmException
 	{
 
@@ -578,15 +590,15 @@ class DigestAuthentication extends AuthenticationInfo
 		finalHash = encode(combo, null, md);
 		return finalHash;
 	}
+	/** char array containing chars for hex notation. */
+	private static final char [] HEX_CHARS = { '0', '1', '2', '3', '4', '5', '6', '7', 
+											   '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
-	private static final char [] charArray = { '0', '1', '2', '3', '4', '5',
-			'6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-
-	private static final String [] zeroPad = {
+	private static final String [] ZEROPAD = {
 			// 0 1 2 3 4 5 6 7
 			"00000000", "0000000", "000000", "00000", "0000", "000", "00", "0" };
 
-	private String encode(String src, char[] passwd, MessageDigest md)
+	private String encode(final String src, final char[] passwd, final MessageDigest md)
 	{
 		try
 		{
@@ -612,9 +624,9 @@ class DigestAuthentication extends AuthenticationInfo
 		for (int i = 0; i < digest.length; i++)
 		{
 			int hashchar = ((digest[i] >>> 4) & 0xf);
-			res.append(charArray[hashchar]);
+			res.append(HEX_CHARS[hashchar]);
 			hashchar = (digest[i] & 0xf);
-			res.append(charArray[hashchar]);
+			res.append(HEX_CHARS[hashchar]);
 		}
 		return res.toString();
 	}
