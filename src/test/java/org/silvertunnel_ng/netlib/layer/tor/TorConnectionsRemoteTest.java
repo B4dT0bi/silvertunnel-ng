@@ -35,7 +35,7 @@
 
 package org.silvertunnel_ng.netlib.layer.tor;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.*;
 
 import org.silvertunnel_ng.netlib.adapter.nameservice.NameServiceGlobalUtil;
 import org.silvertunnel_ng.netlib.api.NetFactory;
@@ -54,9 +54,8 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Test Tor's basic features.
+ * Test many connection through Tor.
  * 
- * @author hapke
  * @author Tobias Boese
  */
 public final class TorConnectionsRemoteTest extends TorRemoteAbstractTest
@@ -132,6 +131,27 @@ public final class TorConnectionsRemoteTest extends TorRemoteAbstractTest
 		final byte[] httpResponse = HttpUtil.get(topSocket, HttpUtil.HTTPTEST_SERVER_NETADDRESS, "/httptest/testfile100000bytes.bin", 20000);
 		AssertJUnit.assertArrayEquals(HTTPTEST_TESTFILE_CONTENT_testfile100000bytes, httpResponse);
 		topSocket.close();
+	}
+
+	/**
+	 * Executes getip.php for fetching our ip address.
+	 * 
+	 * @throws Exception
+	 */
+	@Test(timeOut = 20000, dependsOnMethods = { "initializeTor" }, dataProvider = "multipleTestExecutions")
+	public void testGetIP() throws Exception
+	{
+		final NetSocket topSocket = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TOR_OVER_TLS_OVER_TCPIP)
+				.createNetSocket(null, null, HttpUtil.HTTPTEST_SERVER_NETADDRESS);
+
+		// use open socket for to execute HTTP request and to check the response
+		HttpUtil.getInstance();
+		// communicate with the remote side
+		final byte[] httpResponse = HttpUtil.get(topSocket, HttpUtil.HTTPTEST_SERVER_NETADDRESS, "/httptest/getip.php", 20000);
+		assertNotNull(httpResponse);
+		assertTrue(httpResponse.length > 0);
+		topSocket.close();
+		LOG.info("Our IP : " + new String(httpResponse));
 	}
 
 	/**
