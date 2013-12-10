@@ -198,16 +198,16 @@ public final class TorConfig
 
 	/**
 	 * Set the minimum number of idling circuits.
-	 * 
-	 * recommended value : 3 
+	 * <br><br>
+	 * recommended value : 3<br> 
 	 * maximum value : 20 // TODO : verify or set a good max value
-	 * 
+	 * <br><br>
 	 * if this value is 0 then tor will only open circuits when a connection is
 	 * needed, but in this case the connection will take longer as the circuit
 	 * needs to be built first.
-	 * 
+	 * <br><br>
 	 * default value : 3
-	 * 
+	 * <br><br>
 	 * if the value is not allowed (< 0 or > MAXIMUM_IDLE_CIRCUITS) the value
 	 * will be either set to 0 or to MAXIMUM_IDLE_CIRCUITS and a warning will be
 	 * logged.
@@ -351,7 +351,34 @@ public final class TorConfig
 	public static final int CIRCUIT_ESTABLISHMENT_TIME_IMPACT = 5;
 
 	// Security parameters
-	public static int streamsPerCircuit = 50;
+	/** How many streams are allowed in one Circuit? */
+	private int streamsPerCircuit = 50;
+	/**
+	 * How many streams are allowed in one Circuit?
+	 * 
+	 * @return the number of allowed streams
+	 */
+	public static int getStreamsPerCircuit()
+	{
+		return getInstance().streamsPerCircuit;
+	}
+	/**
+	 * Set the maximum allowed streams per circuit.
+	 * 
+	 * @param streams the number of streams allowed in one circuit
+	 */
+	public static void setStreamsPerCircuit(final int streams)
+	{
+		if (streams <= 0)
+		{
+			LOG.error("it is not allowed to set the number of streams in a circuit lower than 1!");
+		}
+		else
+		{
+			LOG.debug("setting streamsPerCircuit from {} to {}", new Object[] {getInstance().streamsPerCircuit, streams});
+			getInstance().streamsPerCircuit = streams;
+		}
+	}
 	/** see Server.getRefinedRankingIndex. */
 	public static float rankingIndexEffect = 0.9f;
 

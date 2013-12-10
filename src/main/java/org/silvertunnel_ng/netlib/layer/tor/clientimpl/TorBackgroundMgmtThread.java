@@ -293,7 +293,7 @@ class TorBackgroundMgmtThread extends Thread
 					}
 				}
 				// check if this circuit should not accept more streams
-				if (c.getEstablishedStreams() > TorConfig.streamsPerCircuit)
+				if (c.getEstablishedStreams() > TorConfig.getStreamsPerCircuit())
 				{
 					LOG.debug("TorBackgroundMgmtThread.tearDownClosedCircuits(): closing (maximum streams) "
 							+ c.toString());
