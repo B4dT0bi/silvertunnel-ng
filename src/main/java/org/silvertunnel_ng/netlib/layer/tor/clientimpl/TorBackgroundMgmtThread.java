@@ -230,8 +230,7 @@ class TorBackgroundMgmtThread extends Thread
 		}
 		else if (circuitsStatus.getCircuitsEstablished() > TorConfig.getMinimumIdleCircuits()	+ TorConfig.circuitsMaximumNumber)
 		{
-			// TODO: if for some reason there are too many established circuits.
-			// close the oldest ones
+			// TODO: if for some reason there are too many established circuits. close the oldest ones
 			if (LOG.isDebugEnabled())
 			{
 				LOG.debug("TorBackgroundMgmtThread.manageIdleCircuits(): kill "

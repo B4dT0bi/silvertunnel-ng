@@ -107,12 +107,7 @@ public class Tor implements NetLayerStatusAdmin
 	private static final Logger LOG = LoggerFactory.getLogger(Tor.class);
 
 	private static final int TOR_CONNECT_MAX_RETRIES = 10;
-	private static final long TOR_CONNECT_MILLICESCONDS_BETWEEN_RETRIES = 10;
-	/**
-	 * List of "long-lived" ports listed in path-spec 2.2. a circuit needs to be
-	 * "stable" for these ports. 
-	 */
-	public static final int[] LONG_LIVED_PORTS = { 21, 22, 706, 1863, 5050, 5190, 5222, 5223, 6667, 6697, 8300 };
+	private static final long TOR_CONNECT_MILLISECONDS_BETWEEN_RETRIES = 10;
 	private Directory directory;
 	private TLSConnectionAdmin tlsConnectionAdmin;
 	private TorBackgroundMgmtThread torBackgroundMgmtThread;
@@ -350,7 +345,7 @@ public class Tor implements NetLayerStatusAdmin
 			LOG.info("Tor.connect: not (yet) connected to " + hostnameAddress + ":" + sp.getPort() + ", full retry count=" + retry);
 			try
 			{
-				Thread.sleep(TOR_CONNECT_MILLICESCONDS_BETWEEN_RETRIES);
+				Thread.sleep(TOR_CONNECT_MILLISECONDS_BETWEEN_RETRIES);
 			}
 			catch (final InterruptedException e)
 			{

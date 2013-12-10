@@ -55,6 +55,11 @@ public final class TCPStreamProperties
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TCPStreamProperties.class);
+	/**
+	 * List of "long-lived" ports listed in path-spec 2.2. a circuit needs to be
+	 * "stable" for these ports. 
+	 */
+	private static final int[] LONG_LIVED_PORTS = { 21, 22, 706, 1863, 5050, 5190, 5222, 5223, 6667, 6697, 8300 };
 
 	/** The host which we want to connect to. */
 	private String hostname;
@@ -444,7 +449,21 @@ public final class TCPStreamProperties
 	 */
 	public boolean isStableRoute()
 	{
-		return stableRoute;
+		if (stableRoute)
+		{
+			return true;
+		}
+		if (getPort() > 0)
+		{
+			for (int tmpPort : LONG_LIVED_PORTS)
+			{
+				if (getPort() == tmpPort)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
