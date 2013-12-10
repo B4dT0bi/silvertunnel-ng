@@ -141,7 +141,6 @@ public final class TCPStreamProperties
 
 			this.port = address.getPort();
 			addrResolved = true;
-
 		}
 		else
 		{
@@ -184,7 +183,7 @@ public final class TCPStreamProperties
 	{
 		this.route = route;
 	}
-	/** the ucstom exitpoint fingerprint. */
+	/** the custom exitpoint fingerprint. */
 	private Fingerprint customExitpoint;
 	/**
 	 * Get the custom set exit point.
@@ -401,16 +400,6 @@ public final class TCPStreamProperties
 	public void setPort(final int port)
 	{
 		this.port = port;
-	}
-
-	public int getRouteMaxLength()
-	{
-		return routeMaxLength;
-	}
-
-	public void setRouteMaxLength(final int routeMaxLength)
-	{
-		this.routeMaxLength = routeMaxLength;
 	}
 
 	public int getConnectRetries()

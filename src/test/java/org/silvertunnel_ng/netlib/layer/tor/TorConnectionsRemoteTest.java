@@ -1,21 +1,4 @@
 /*
- * silvertunnel.org Netlib - Java library to easily access anonymity networks
- * Copyright (c) 2009-2012 silvertunnel.org
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
- * more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, see <http://www.gnu.org/licenses/>.
- */
-/*
  * silvertunnel-ng.org Netlib - Java library to easily access anonymity networks
  * Copyright (c) 2013 silvertunnel-ng.org
  *
@@ -67,7 +50,7 @@ public final class TorConnectionsRemoteTest extends TorRemoteAbstractTest
 	 * if NUM_OF_TEST_EXECUTIONS==1 then this test class behaves like an
 	 * unparameterized one.
 	 */
-	private static final int NUM_OF_TEST_EXECUTIONS = 50;
+	private static final int NUM_OF_TEST_EXECUTIONS = 200;
 
 	/** 
 	 * Parametrized testcase.
@@ -89,7 +72,7 @@ public final class TorConnectionsRemoteTest extends TorRemoteAbstractTest
 		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH, "2");
 		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH, "2");
 		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS, "1"); // just
-																						// 2
+																						// 1
 																						// initial
 																						// circuit
 																						// for
@@ -118,7 +101,7 @@ public final class TorConnectionsRemoteTest extends TorRemoteAbstractTest
 	 * 
 	 * @throws Exception
 	 */
-	@Test(timeOut = 20000, dependsOnMethods = { "initializeTor" }, dataProvider = "multipleTestExecutions")
+	@Test(timeOut = 20000, dependsOnMethods = { "initializeTor" }, dataProvider = "multipleTestExecutions", enabled = false)
 	public void testDownloadPerformance() throws Exception
 	{
 		final NetSocket topSocket = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TOR_OVER_TLS_OVER_TCPIP)
@@ -161,7 +144,7 @@ public final class TorConnectionsRemoteTest extends TorRemoteAbstractTest
 	 * 
 	 * @throws Exception
 	 */
-	@Test(timeOut = 20000, dependsOnMethods = { "initializeTor" }, dataProvider = "multipleTestExecutions")
+	@Test(timeOut = 20000, dependsOnMethods = { "initializeTor" }, dataProvider = "multipleTestExecutions", enabled = false)
 	public void testThatRequestGoesThroughTorNetworkVariantOwn() throws Exception
 	{
 		final String TORCHECK_HOSTNAME = "httptest.silvertunnel-ng.org";
