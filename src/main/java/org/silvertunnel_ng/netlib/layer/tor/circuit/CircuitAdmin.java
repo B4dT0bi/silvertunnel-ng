@@ -516,8 +516,7 @@ public class CircuitAdmin
 			{
 				if (proposedRoute[j] != null)
 				{
-					final RouterImpl s = directory
-							.getValidRoutersByFingerprint().get(proposedRoute[j]);
+					final RouterImpl s = directory.getValidRoutersByFingerprint().get(proposedRoute[j]);
 					if (s != null)
 					{
 						excludedServerFingerprints.addAll(directory.excludeRelatedNodes(s));
@@ -525,8 +524,13 @@ public class CircuitAdmin
 				}
 			}
 		}
-		final RouterImpl[] result = createNewRoute(directory, sp,
-				proposedRoute, excludedServerFingerprints, route, len - 1, -1);
+		final RouterImpl[] result = createNewRoute(directory, 
+		                                           sp,
+		                                           proposedRoute, 
+		                                           excludedServerFingerprints, 
+		                                           route, 
+		                                           len - 1, 
+		                                           -1);
 
 		// the end
 		if (result == null)

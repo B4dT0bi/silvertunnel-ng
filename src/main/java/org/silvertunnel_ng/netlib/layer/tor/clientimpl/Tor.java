@@ -111,7 +111,6 @@ public class Tor implements NetLayerStatusAdmin
 	private Directory directory;
 	private TLSConnectionAdmin tlsConnectionAdmin;
 	private TorBackgroundMgmtThread torBackgroundMgmtThread;
-	private final TorConfig torConfig;
 	private PrivateKeyHandler privateKeyHandler;
 	/**
 	 * Absolute time in milliseconds: until this date/time the init is in
@@ -148,8 +147,6 @@ public class Tor implements NetLayerStatusAdmin
 		this.lowerTlsConnectionNetLayer = lowerTlsConnectionNetLayer;
 		this.lowerDirConnectionNetLayer = lowerDirConnectionNetLayer;
 		this.stringStorage = stringStorage;
-		// TODO webstart: config = new TorConfig(true);
-		torConfig = TorConfig.getInstance();
 		initLocalSystem(false);
 		initDirectory();
 		initRemoteAccess();
@@ -175,7 +172,7 @@ public class Tor implements NetLayerStatusAdmin
 
 	private void initDirectory() throws IOException
 	{
-		directory = new Directory(torConfig, stringStorage, lowerDirConnectionNetLayer, privateKeyHandler.getIdentity(), this);
+		directory = new Directory(stringStorage, lowerDirConnectionNetLayer, privateKeyHandler.getIdentity(), this);
 	}
 
 	private void initRemoteAccess() throws IOException
@@ -224,7 +221,7 @@ public class Tor implements NetLayerStatusAdmin
 		// check whether the address is hidden
 		if (sp.getHostname() != null && sp.getHostname().endsWith(".onion"))
 		{
-			return HiddenServiceClient.connectToHiddenService(torConfig, directory, torEventService, tlsConnectionAdmin, torNetLayer, sp);
+			return HiddenServiceClient.connectToHiddenService(directory, torEventService, tlsConnectionAdmin, torNetLayer, sp);
 		}
 
 		// connect to exit server
@@ -371,8 +368,12 @@ public class Tor implements NetLayerStatusAdmin
 		checkStartup();
 
 		// action
-		HiddenServiceServer.getInstance().provideHiddenService(torConfig, directory, torEventService, tlsConnectionAdmin,
-																torNetLayerToConnectToDirectoryService, service, hiddenServicePortInstance);
+		HiddenServiceServer.getInstance().provideHiddenService(directory, 
+		                                                       torEventService, 
+		                                                       tlsConnectionAdmin,
+		                                                       torNetLayerToConnectToDirectoryService, 
+		                                                       service, 
+		                                                       hiddenServicePortInstance);
 	}
 
 	/**
@@ -392,7 +393,7 @@ public class Tor implements NetLayerStatusAdmin
 		// shutdown directory
 		directory.close();
 		// write config file
-		torConfig.close();
+		TorConfig.close();
 		// close hidden services
 		// TODO close hidden services
 		// kill logger
@@ -711,11 +712,6 @@ public class Tor implements NetLayerStatusAdmin
 	public TLSConnectionAdmin getTlsConnectionAdmin()
 	{
 		return tlsConnectionAdmin;
-	}
-
-	public TorConfig getTorConfig()
-	{
-		return torConfig;
 	}
 
 	public NetLayer getLowerTlsConnectionNetLayer()

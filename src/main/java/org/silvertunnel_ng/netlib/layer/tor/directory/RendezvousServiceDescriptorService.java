@@ -111,14 +111,12 @@ public class RendezvousServiceDescriptorService
 	 * @param z
 	 *            the z-part of the address/domain name = rendezvous descriptor
 	 *            service ID
-	 * @param torConfig
 	 * @param directory
 	 * @param torNetLayer
 	 *            NetLayer to establish stream that goes through Tor network -
 	 *            used to load rendezvous ServiceDescriptor
 	 */
 	public RendezvousServiceDescriptor loadRendezvousServiceDescriptorFromDirectory(String z,
-																					TorConfig torConfig,
 																					Directory directory,
 																					NetLayer torNetLayer) throws IOException
 	{
@@ -188,7 +186,6 @@ public class RendezvousServiceDescriptorService
 	 * Save a RendezvousServiceDescriptor in the network, i.e. advertise
 	 * introduction points of a hidden service.
 	 * 
-	 * @param torConfig
 	 * @param directory
 	 * @param torNetLayerToConnectToDirectoryService
 	 *            NetLayer to establish stream that goes through Tor network -
@@ -197,10 +194,9 @@ public class RendezvousServiceDescriptorService
 	 * @throws IOException
 	 * @throws TorException
 	 */
-	public void putRendezvousServiceDescriptorToDirectory(TorConfig torConfig,
-	                                                      Directory directory,
+	public void putRendezvousServiceDescriptorToDirectory(final Directory directory,
 	                                                      final NetLayer torNetLayerToConnectToDirectoryService,
-	                                                      HiddenServiceProperties hiddenServiceProps) throws IOException, TorException
+	                                                      final HiddenServiceProperties hiddenServiceProps) throws IOException, TorException
 	{
 		// get the the z-part of the address/domain name
 		final String hiddenServicePermanentIdBase32 = RendezvousServiceDescriptorUtil.calculateZFromPublicKey(hiddenServiceProps.getPublicKey());

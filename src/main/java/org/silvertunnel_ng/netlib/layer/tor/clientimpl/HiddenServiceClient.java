@@ -48,7 +48,6 @@ import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelay;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelayEstablishRendezvous;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelayIntroduce1;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
-import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorEventService;
 import org.silvertunnel_ng.netlib.layer.tor.directory.Directory;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RendezvousServiceDescriptor;
@@ -81,8 +80,6 @@ public final class HiddenServiceClient
 	/**
 	 * makes a connection to a hidden service.
 	 * 
-	 * @param torConfig
-	 *            tor environment
 	 * @param directory
 	 *            tor environment
 	 * @param torEventService
@@ -96,8 +93,7 @@ public final class HiddenServiceClient
 	 * @return
 	 * @throws IOException
 	 */
-	static TCPStream connectToHiddenService(TorConfig torConfig,
-											final Directory directory,
+	static TCPStream connectToHiddenService(final Directory directory,
 											final TorEventService torEventService,
 											final TLSConnectionAdmin tlsConnectionAdmin,
 											final NetLayer torNetLayer,
@@ -113,7 +109,7 @@ public final class HiddenServiceClient
 		if (sd == null || (!sd.isPublicationTimeValid()))
 		{
 			// no valid entry in cache: retrieve a fresh one
-			sd = rendezvousServiceDescriptorService.loadRendezvousServiceDescriptorFromDirectory(z, torConfig, directory, torNetLayer);
+			sd = rendezvousServiceDescriptorService.loadRendezvousServiceDescriptorFromDirectory(z, directory, torNetLayer);
 			// cache it
 			HiddenServiceDescriptorCache.getInstance().put(z, sd);
 		}
@@ -153,9 +149,12 @@ public final class HiddenServiceClient
 				{
 					try
 					{
-						final Node introPointServicePublicKeyNode = sendIntroduction1Cell(torConfig, directory, torEventService,
-																							tlsConnectionAdmin,
-																							rendezvousPointData, introPoint, z);
+						final Node introPointServicePublicKeyNode = sendIntroduction1Cell(directory, 
+						                                                                  torEventService,
+						                                                                  tlsConnectionAdmin,
+						                                                                  rendezvousPointData, 
+						                                                                  introPoint, 
+						                                                                  z);
 						connectedToIntroPoint = true;
 
 						//
@@ -300,7 +299,6 @@ public final class HiddenServiceClient
 	 * 
 	 * "Introduction: from Alice's OP to Introduction Point (section 1.8 of Tor Rendezvous Specification)"
 	 * 
-	 * @param torConfig
 	 * @param directory
 	 * @param torEventService
 	 * @param tlsConnectionAdmin
@@ -313,13 +311,12 @@ public final class HiddenServiceClient
 	 * @throws TorException
 	 * @throws InterruptedException
 	 */
-	private static Node sendIntroduction1Cell(final TorConfig torConfig,
-												final Directory directory,
-												final TorEventService torEventService,
-												final TLSConnectionAdmin tlsConnectionAdmin,
-												final RendezvousPointData rendezvousPointData,
-												final SDIntroductionPoint introPoint,
-												final String z) throws IOException, TorException, InterruptedException
+	private static Node sendIntroduction1Cell(final Directory directory,
+	                                          final TorEventService torEventService,
+	                                          final TLSConnectionAdmin tlsConnectionAdmin,
+	                                          final RendezvousPointData rendezvousPointData,
+	                                          final SDIntroductionPoint introPoint,
+	                                          final String z) throws IOException, TorException, InterruptedException
 	{
 
 		final Fingerprint introPointFingerprint = introPoint.getIdentifierAsFingerprint();

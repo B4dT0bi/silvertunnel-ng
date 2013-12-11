@@ -410,12 +410,13 @@ public final class TorConfig
 
 	/**
 	 * set the minimum circuit path length. 
-	 * recommended value : 3 
+	 * <br><br>
+	 * recommended value : 3<br> 
 	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a simple IP
-	 * obfuscation, for more security a value of at least 3 is recommended
-	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
-	 * 
-	 * default value : 3
+	 * obfuscation, for more security a value of at least 3 is recommended<br>
+	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)<br>
+	 * <br>
+	 * default value : 3<br>
 	 * 
 	 * @param length
 	 *            the desired minimum length Logs a message as WARNING in case
@@ -447,12 +448,12 @@ public final class TorConfig
 
 	/**
 	 * maximum circuit path length. 
-	 * 
-	 * recommended value : 5 
+	 * <br><br>
+	 * recommended value : 5<br> 
 	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a simple IP obfuscation,
-	 * for more security a value of at least 3 is recommended 
+	 * for more security a value of at least 3 is recommended<br> 
 	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
-	 * 
+	 * <br><br>
 	 * default value : 5
 	 */
 	private int routeMaxLength = 5;
@@ -467,12 +468,12 @@ public final class TorConfig
 
 	/**
 	 * set the maximum circuit path length. 
-	 * 
-	 * recommended value : 4 
+	 * <br><br>
+	 * recommended value : 4<br> 
 	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a simple IP
-	 * obfuscation, for more security a value of at least 3 is recommended
+	 * obfuscation, for more security a value of at least 3 is recommended<br>
 	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
-	 * 
+	 * <br><br>
 	 * default value : 4
 	 * 
 	 * @param length
@@ -524,7 +525,7 @@ public final class TorConfig
 	 * @param percent
 	 *            the percentage as double (range : 0.0 - 100.0)
 	 * @throws TorException
-	 *             is thrown when an invalid value is choosen
+	 *             is thrown when an invalid value is chosen
 	 */
 	public static void setMinDescriptorsPercentage(final double percent)
 			throws TorException
@@ -622,8 +623,53 @@ public final class TorConfig
 	 * List of countries of routers which should be avoided when creating
 	 * circuits.
 	 */
-	private static Set<String> avoidedCountries; // TODO : currently not used. we should implement it.
-	// TODO : create getter & setter for countries
+	private Set<String> avoidedCountries;
+	/**
+	 * Check if the specified Country is allowed to be used for Circuit building.
+	 * 
+	 * @param countryCode the country code to be checked
+	 * @return true if it is allowed to connect to, false if not
+	 */
+	public static boolean isCountryAllowed(final String countryCode)
+	{
+		if (getInstance().avoidedCountries == null)
+		{
+			return true;
+		}
+		if (getInstance().avoidedCountries.contains(countryCode))
+		{
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * Set the avoided countries.
+	 * @param countryCodes a set of country codes to be avoided.
+	 */
+	public static void setCountryAllowed(final Set<String> countryCodes)
+	{
+		getInstance().avoidedCountries = countryCodes;
+	}
+	/**
+	 * Allow a specified country or avoid it.
+	 * @param countryCode the country code
+	 * @param allowed if set to true we will allow connections to this country, if set to false we will avoid a connection
+	 */
+	public static void setCountryAllowed(final String countryCode, final boolean allowed)
+	{
+		if (getInstance().avoidedCountries == null)
+		{
+			getInstance().avoidedCountries = new HashSet<String>();
+		}
+		if (allowed)
+		{
+			getInstance().avoidedCountries.remove(countryCode);
+		}
+		else
+		{
+			getInstance().avoidedCountries.add(countryCode);
+		}
+	}
 	/** collection of fingerprints to be avoided. */
 	private Set<byte[]> avoidedNodeFingerprints;
 
@@ -775,9 +821,9 @@ public final class TorConfig
 		TorConfig.filename = filename;
 	}
 
-	public void close()
+	public static void close()
 	{
-		writeToFile("/tmp/torrc.test");
+		getInstance().writeToFile("/tmp/torrc.test");
 	}
 
 	private String replaceSpaceWithSpaceRegExp(final String regexp)

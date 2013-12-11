@@ -65,6 +65,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -118,7 +119,6 @@ public final class Directory
 	/** key to locally cache the router descriptors. */
 	private static final String STORAGEKEY_DIRECTORY_CACHED_ROUTER_DESCRIPTORS_TXT = "directory-cached-router-descriptors.txt";
 
-	private final TorConfig torConfig;
 	/** local cache. */
 	private final StringStorage stringStorage;
 	/** lower layer network layer, e.g. TCP/IP to connect to directory servers. */
@@ -188,8 +188,10 @@ public final class Directory
 	/**
 	 * Initialize directory to prepare later network operations.
 	 */
-	public Directory(final TorConfig torConfig, final StringStorage stringStorage, final NetLayer lowerDirConnectionNetLayer,
-						final KeyPair dirServerKeys, final NetLayerStatusAdmin statusAdmin)
+	public Directory(final StringStorage stringStorage, 
+	                 final NetLayer lowerDirConnectionNetLayer,
+					 final KeyPair dirServerKeys, 
+					 final NetLayerStatusAdmin statusAdmin)
 	{
 		// initialization from network
 		// is done from background mgmt .. but should be done here a first time
@@ -198,7 +200,6 @@ public final class Directory
 		// refreshListOfServers();
 
 		// save parameters
-		this.torConfig = torConfig;
 		this.stringStorage = stringStorage;
 		this.lowerDirConnectionNetLayer = lowerDirConnectionNetLayer;
 		this.statusAdmin = statusAdmin;
@@ -293,7 +294,7 @@ public final class Directory
 			authorityDirs = new ArrayList<RouterImpl>();
 			for (final RouterImpl r : allFingerprintsRouters.values())
 			{
-				if (r.isValid())
+				if (TorConfig.isCountryAllowed(r.getCountryCode()) && r.isValid())
 				{
 					if (r.isDirv2Authority()) // is this a authority dir?
 					{
@@ -530,6 +531,7 @@ public final class Directory
 					// valid server with description
 					r.updateServerStatus(networkStatusDescription.getFlags());
 					newValidRoutersByfingerprint.put(fingerprint, r);
+					addToNeighbours(r);
 					if (r.isDirv2Exit() || r.isExitNode())
 					{
 						newExitnodeRouters.put(fingerprint, r);
@@ -1004,7 +1006,7 @@ public final class Directory
 	 */
 	public RouterImpl getValidRouterByIpAddressAndOnionPort(final TcpipNetAddress tcpipNetAddress)
 	{
-		for (final RouterImpl router : validRoutersByFingerprint.values())
+		for (final RouterImpl router : getValidRoutersByFingerprint().values())
 		{
 			if (router.getOrAddress().equals(tcpipNetAddress))
 			{
@@ -1023,7 +1025,7 @@ public final class Directory
 	 */
 	public RouterImpl getValidRouterByIpAddressAndDirPort(final TcpipNetAddress tcpipNetAddress)
 	{
-		for (final RouterImpl router : validRoutersByFingerprint.values())
+		for (final RouterImpl router : getValidRoutersByFingerprint().values())
 		{
 			if (router.getDirAddress().equals(tcpipNetAddress))
 			{
@@ -1167,7 +1169,16 @@ public final class Directory
 
 	public Map<Fingerprint, RouterImpl> getValidRoutersByFingerprint()
 	{
-		return validRoutersByFingerprint;
+		HashMap<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>(validRoutersByFingerprint);
+		Iterator<Entry<Fingerprint, RouterImpl>>itRouter = result.entrySet().iterator();
+		while (itRouter.hasNext())
+		{
+			if (!TorConfig.isCountryAllowed(itRouter.next().getValue().getCountryCode()))
+			{
+				itRouter.remove();
+			}
+		}
+		return result;
 	}
 
 	public void setValidRoutersByFingerprint(final Map<Fingerprint, RouterImpl> validRoutersByFingerprint)
@@ -1180,7 +1191,16 @@ public final class Directory
 	 */
 	public Map<Fingerprint, RouterImpl> getRoutersWithExit()
 	{
-		return routersWithExit;
+		HashMap<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>(routersWithExit);
+		Iterator<Entry<Fingerprint, RouterImpl>>itRouter = result.entrySet().iterator();
+		while (itRouter.hasNext())
+		{
+			if (!TorConfig.isCountryAllowed(itRouter.next().getValue().getCountryCode()))
+			{
+				itRouter.remove();
+			}
+		}
+		return result;
 	}
 
 	/**

@@ -39,7 +39,6 @@ import org.silvertunnel_ng.netlib.layer.tor.circuit.TLSConnectionAdmin;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelay;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelayEstablishIntro;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
-import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorEventService;
 import org.silvertunnel_ng.netlib.layer.tor.directory.Directory;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RendezvousServiceDescriptorService;
@@ -77,7 +76,6 @@ public class HiddenServiceServer
 	/**
 	 * Establish a hidden service (server-side).
 	 * 
-	 * @param torConfig
 	 * @param directory
 	 * @param torEventService
 	 * @param tlsConnectionAdmin
@@ -86,13 +84,12 @@ public class HiddenServiceServer
 	 * @throws IOException
 	 * @throws TorException
 	 */
-	public void provideHiddenService(	TorConfig torConfig,
-										final Directory directory,
-										final TorEventService torEventService,
-										final TLSConnectionAdmin tlsConnectionAdmin,
-										NetLayer torNetLayerToConnectToDirectoryService,
-										final HiddenServiceProperties hiddenServiceProps,
-										HiddenServicePortInstance hiddenServicePortInstance) throws IOException, TorException
+	public void provideHiddenService(final Directory directory,
+	                                 final TorEventService torEventService,
+	                                 final TLSConnectionAdmin tlsConnectionAdmin,
+	                                 NetLayer torNetLayerToConnectToDirectoryService,
+	                                 final HiddenServiceProperties hiddenServiceProps,
+	                                 HiddenServicePortInstance hiddenServicePortInstance) throws IOException, TorException
 	{
 		// check whether this service was already published
 		HiddenServiceInstance hiddenServiceInstance = null;
@@ -213,7 +210,7 @@ public class HiddenServiceServer
 		// advertise introduction points/service descriptor
 		// TODO : the descriptor should be renewed every hour but at least every 18 hours (see rend-spec.txt 1.4)
 		//
-		RendezvousServiceDescriptorService.getInstance().putRendezvousServiceDescriptorToDirectory(torConfig, directory,
+		RendezvousServiceDescriptorService.getInstance().putRendezvousServiceDescriptorToDirectory(directory,
 																								   torNetLayerToConnectToDirectoryService,
 																								   hiddenServiceProps);
 	}
