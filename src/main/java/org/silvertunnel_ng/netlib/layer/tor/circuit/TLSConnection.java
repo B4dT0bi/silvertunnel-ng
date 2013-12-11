@@ -43,7 +43,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.TrustManager;
@@ -68,6 +67,7 @@ import org.slf4j.LoggerFactory;
  * @author Lexi Pimenidis
  * @author Vinh Pham
  * @author hapke
+ * @author Tobias Boese
  */
 public class TLSConnection
 {
@@ -84,8 +84,7 @@ public class TLSConnection
 	private final TLSDispatcherThread dispatcher;
 	private final DataOutputStream sout;
 	/** key=circuit ID, value=circuit. */
-	private final Map<Integer, Circuit> circuitMap = Collections
-			.synchronizedMap(new HashMap<Integer, Circuit>());
+	private final Map<Integer, Circuit> circuitMap = Collections.synchronizedMap(new HashMap<Integer, Circuit>());
 
 	/**
 	 * creates the TLS connection and installs a dispatcher for incoming data.
@@ -101,9 +100,11 @@ public class TLSConnection
 	 * @exception IOException
 	 * @exception SSLPeerUnverifiedException
 	 */
-	TLSConnection(final RouterImpl server, final NetLayer lowerNetLayer,
-			final PrivateKeyHandler pkh) throws IOException,
-			SSLPeerUnverifiedException, SSLException
+	TLSConnection(final RouterImpl server, 
+				  final NetLayer lowerNetLayer,
+				  final PrivateKeyHandler pkh) throws IOException,
+				  									  SSLPeerUnverifiedException, 
+				  									  SSLException
 	{
 		if (server == null)
 		{
@@ -112,7 +113,7 @@ public class TLSConnection
 		this.router = server;
 
 		// create new certificates and use them ad-hoc
-		final KeyManager[] kms = new KeyManager[1];
+//		final KeyManager[] kms = new KeyManager[1];
 
 		// TODO: Leave out the PrivateKeyHandler, should be needed for
 		// server operation and hidden services only
@@ -126,8 +127,7 @@ public class TLSConnection
 		final Map<String, Object> props = new HashMap<String, Object>();
 		props.put(TLSNetLayer.ENABLES_CIPHER_SUITES, enabledSuitesStr);
 		props.put(TLSNetLayer.TRUST_MANAGERS, tms);
-		final NetAddress remoteAddress = new TcpipNetAddress(
-				server.getHostname(), server.getOrPort());
+		final NetAddress remoteAddress = new TcpipNetAddress(server.getHostname(), server.getOrPort());
 		final NetAddress localAddress = null;
 		tls = lowerNetLayer.createNetSocket(props, localAddress, remoteAddress);
 
@@ -154,8 +154,7 @@ public class TLSConnection
 		// create object to write data to stream
 		sout = new DataOutputStream(tls.getOutputStream());
 		// start listening for incoming data
-		this.dispatcher = new TLSDispatcherThread(this, new DataInputStream(
-				tls.getInputStream()));
+		this.dispatcher = new TLSDispatcherThread(this, new DataInputStream(tls.getInputStream()));
 	}
 
 	/**
@@ -206,9 +205,9 @@ public class TLSConnection
 							+ " is closed for new circuits");
 		}
 		// find a free number (other than zero)
-		int ID;
+		int newId = 0;
 		int j = 0;
-		do
+		while (newId == 0)
 		{
 			if (++j > 1000)
 			{
@@ -223,17 +222,17 @@ public class TLSConnection
 			// consider
 			// the MSB as long as we are in client mode (see main-tor-spec.txt,
 			// Section 5.1)
-			ID = TLSConnectionAdmin.rnd.nextInt() & 0xffff; // & 0x7fff;
+			newId = TLSConnectionAdmin.rnd.nextInt() & 0xffff; // & 0x7fff;
 
-			if (circuitMap.containsKey(Integer.valueOf(ID)))
+			if (circuitMap.containsKey(Integer.valueOf(newId)))
 			{
-				ID = 0;
+				newId = 0;
 			}
 		}
-		while (ID == 0);
+		
 		// memorize circuit
-		circuitMap.put(Integer.valueOf(ID), circuit);
-		return ID;
+		circuitMap.put(Integer.valueOf(newId), circuit);
+		return newId;
 	}
 
 	/**

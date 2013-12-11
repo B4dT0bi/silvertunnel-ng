@@ -111,7 +111,10 @@ class TorBackgroundMgmtThread extends Thread
 		// routers is known
 		if (tor.getDirectory().isDirectoryReady())
 		{
-			LOG.info("TorBackgroundMgmtThread.spawnIdleCircuits: Spawn {} new circuits", amount);
+			if (amount > 0)
+			{
+				LOG.info("TorBackgroundMgmtThread.spawnIdleCircuits: Spawn {} new circuits", amount);
+			}
 		}
 		else
 		{
@@ -133,7 +136,7 @@ class TorBackgroundMgmtThread extends Thread
 		// Spawn new background threads
 		if (amount > 0)
 		{
-			tor.updateStatus(TorNetLayerStatus.INITIAL_CICRUITES_ESTABLISHING);
+			tor.updateStatus(TorNetLayerStatus.INITIAL_CIRCUITES_ESTABLISHING);
 		}
 		for (int i = 0; i < amount; ++i)
 		{

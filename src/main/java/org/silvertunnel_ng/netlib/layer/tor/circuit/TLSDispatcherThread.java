@@ -80,7 +80,7 @@ class TLSDispatcherThread extends Thread
 	private final TLSConnection tls;
 	private boolean stopped;
 
-	TLSDispatcherThread(TLSConnection tls, DataInputStream sin)
+	TLSDispatcherThread(final TLSConnection tls, final DataInputStream sin)
 	{
 		this.tls = tls;
 		this.sin = sin;
@@ -100,6 +100,7 @@ class TLSDispatcherThread extends Thread
 		boolean dispatched = false;
 		while (!stopped)
 		{
+			
 			// read next data-packet
 			Cell cell = null;
 			try
@@ -110,7 +111,8 @@ class TLSDispatcherThread extends Thread
 			{
 				if (e instanceof SocketTimeoutException)
 				{
-					LOG.info("TLSDispatcher.run: connection error: socket timeout", e);
+					LOG.debug("TLSDispatcher.run: {} connection error: socket timeout", this.getName(), e);
+					continue; // SocketTimeout should not be a showstopper here
 				}
 				else
 				{
@@ -124,7 +126,7 @@ class TLSDispatcherThread extends Thread
 			{
 				if (LOG.isDebugEnabled())
 				{
-					LOG.debug("TLSDispatcher.run: padding cell from from {}", tls.getRouter().getNickname());
+					LOG.debug("TLSDispatcher.run: padding cell from {}", tls.getRouter().getNickname());
 				}
 			}
 			else

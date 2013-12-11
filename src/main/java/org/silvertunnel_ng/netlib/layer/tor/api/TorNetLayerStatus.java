@@ -21,9 +21,10 @@ package org.silvertunnel_ng.netlib.layer.tor.api;
 import org.silvertunnel_ng.netlib.api.NetLayerStatus;
 
 /**
- * An object represents the state of a TorNetLayer.
+ * An object that represents the state of a TorNetLayer.
  * 
  * @author hapke
+ * @author Tobias Boese
  */
 public class TorNetLayerStatus extends NetLayerStatus
 {
@@ -31,7 +32,7 @@ public class TorNetLayerStatus extends NetLayerStatus
 			"Consensus document (Tor router overview) will be loaded", 0.10);
 	public static final TorNetLayerStatus ROUTER_DESCRIPTORS_LOADING = new TorNetLayerStatus(
 			"Router descriptors (Tor router details) will be loaded", 0.30);
-	public static final TorNetLayerStatus INITIAL_CICRUITES_ESTABLISHING = new TorNetLayerStatus(
+	public static final TorNetLayerStatus INITIAL_CIRCUITES_ESTABLISHING = new TorNetLayerStatus(
 			"Initial circuits to Tor exit nodes will be established", 0.60);
 
 	/**

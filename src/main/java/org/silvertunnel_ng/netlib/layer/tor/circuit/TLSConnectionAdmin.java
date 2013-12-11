@@ -105,7 +105,7 @@ public final class TLSConnectionAdmin
 	 * @return the TLS connection
 	 */
 	TLSConnection getConnection(final RouterImpl router) throws IOException,
-			TorException
+																TorException
 	{
 		if (router == null)
 		{
