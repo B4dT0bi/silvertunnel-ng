@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.silvertunnel-ng</groupId>
 	<artifactId>netlib</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<name>SilverTunnel-NG Netlib</name>
 	<packaging>jar</packaging>
 	<url>https://silvertunnel-ng.org</url>
