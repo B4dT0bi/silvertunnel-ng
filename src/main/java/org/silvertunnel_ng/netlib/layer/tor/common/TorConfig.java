@@ -138,7 +138,7 @@ public final class TorConfig
 
 	// QoS-parameters
 	/** How many times should we try to connect? */
-	private int retriesConnect = 5;
+	private int retriesConnect = 2;
 	public static int reconnectCircuit = 3;
 	public static int retriesStreamBuildup = 5;
 
@@ -1227,4 +1227,25 @@ public final class TorConfig
 	 * @see CircuitHistory
 	 */
 	private boolean saveCircuitHistory = true;
+	
+	/**
+	 * How many parallel running tasks should we spawn for creating a circuit?
+	 */
+	private int parallelCircuitBuilds = 1;
+	/**
+	 * How many parallel running tasks should we spawn for creating a circuit?
+	 * @return the number of allowed parallel tasks for creating a circuit
+	 */
+	public static int getParallelCircuitBuilds()
+	{
+		return getInstance().parallelCircuitBuilds;
+	}
+	/**
+	 * How many parallel running tasks should we spawn for creating a circuit?
+	 * @param number the number of allowed parallel tasks for creating a circuit
+	 */
+	public static void setParallelCircuitBuilds(final int number)
+	{
+		getInstance().parallelCircuitBuilds = number;
+	}	
 }

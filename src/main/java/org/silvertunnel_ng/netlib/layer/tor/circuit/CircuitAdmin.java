@@ -37,11 +37,18 @@ package org.silvertunnel_ng.netlib.layer.tor.circuit;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
@@ -67,8 +74,7 @@ public class CircuitAdmin
 
 	// TODO test:
 	/** key=host name, value=circuit to this host */
-	static Map<String, Circuit[]> suitableCircuitsCache = Collections
-			.synchronizedMap(new HashMap<String, Circuit[]>());
+	static Map<String, Circuit[]> suitableCircuitsCache = Collections.synchronizedMap(new HashMap<String, Circuit[]>());
 
 	/** keep track of built Circuits to predict the best new idle Circuits. */
 	private static CircuitHistory circuitHistory = new CircuitHistory();
@@ -95,27 +101,59 @@ public class CircuitAdmin
 	                                         final TCPStreamProperties sp, 
 	                                         final TorEventService torEventService)
 	{
-		for (int retries = 0; retries < TorConfig.getRetriesConnect(); ++retries)
+		LOG.debug("provideSuitableNewCircuit called");
+		final ExecutorService executor = Executors.newCachedThreadPool();
+		final Collection<Callable<Circuit>> allTasks = new ArrayList<Callable<Circuit>>();
+		for (int i = 0; i < TorConfig.getParallelCircuitBuilds(); i++)
 		{
-			try
+			final Callable<Circuit> callable = new Callable<Circuit>()
 			{
-				return new Circuit(tlsConnectionAdmin, dir, sp, torEventService, circuitHistory);
-			}
-			catch (final InterruptedException e)
-			{
-				/* do nothing, continue trying */
-				LOG.debug("got InterruptedException : {}", e.getMessage(), e);
-			}
-			catch (final TorException e)
-			{
-				/* do nothing, continue trying */
-				LOG.debug("got TorException : {}", e.getMessage(), e);
-			}
-			catch (final IOException e)
-			{
-				/* do nothing, continue trying */
-				LOG.debug("got IOException : {}", e.getMessage(), e);
-			}
+				/** establish Circuit to one introduction point */
+				@Override
+				public Circuit call()
+				{
+					Circuit result = null;
+					LOG.debug("Callable Started..");
+					for (int retries = 0; retries < TorConfig.getRetriesConnect(); ++retries)
+					{
+						try
+						{
+							result = new Circuit(tlsConnectionAdmin, dir, sp, torEventService, circuitHistory);
+						}
+						catch (final InterruptedException e)
+						{
+							/* do nothing, continue trying */
+							LOG.debug("got InterruptedException : {}", e.getMessage(), e);
+						}
+						catch (final TorException e)
+						{
+							/* do nothing, continue trying */
+							LOG.debug("got TorException : {}", e.getMessage(), e);
+						}
+						catch (final IOException e)
+						{
+							/* do nothing, continue trying */
+							LOG.debug("got IOException : {}", e.getMessage(), e);
+						}
+						LOG.debug("provideSuitableNewCircuit retry {} from {}", new Object[] {retries + 1, TorConfig.getRetriesConnect()});
+					}
+					LOG.debug("Callable Finished!");
+					return result;
+				}
+			};
+			allTasks.add(callable);
+		}
+		try
+		{
+			return executor.invokeAny(allTasks);
+		}
+		catch (InterruptedException exception)
+		{
+			LOG.debug("got Exception while executing tasks", exception);
+		}
+		catch (ExecutionException exception)
+		{
+			LOG.debug("got Exception while executing tasks", exception);
 		}
 		return null;
 	}
