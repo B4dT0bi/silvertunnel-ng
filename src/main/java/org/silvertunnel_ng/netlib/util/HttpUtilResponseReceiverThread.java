@@ -20,6 +20,7 @@ package org.silvertunnel_ng.netlib.util;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,43 +28,43 @@ import org.slf4j.LoggerFactory;
  * Extra thread that received data from an input stream.
  * 
  * @author hapke
+ * @author Tobias Boese
  */
-public class HttpUtilResponseReceiverThread extends Thread
+public final class HttpUtilResponseReceiverThread extends Thread
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(HttpUtilResponseReceiverThread.class);
 
-	private static final int DEFAULT_MAX_RESULT_SIZE = 10000000;
+	/** What is the max chunk size? */
+	private static final int DEFAULT_CHUNK_SIZE = 100000;
 
 	private volatile boolean stopThread;
 	private volatile boolean finished;
-	private final byte[] tempResultBuffer;
-	/** how many bytes are currently in the tempResultBuffer? */
-	private volatile int tempResultBufferLen;
+	private final DynByteBuffer tempResultBuffer;
 	private final InputStream is;
 
 	/**
-	 * Start reading from is. A default maximum result size of 10,000,000 bytes
+	 * Start reading from is. A default maximum result size of 100,000 bytes
 	 * is used.
 	 * 
 	 * @param is
 	 */
-	public HttpUtilResponseReceiverThread(InputStream is)
+	public HttpUtilResponseReceiverThread(final InputStream is)
 	{
-		this(is, DEFAULT_MAX_RESULT_SIZE);
+		this(is, DEFAULT_CHUNK_SIZE);
 	}
 
 	/**
-	 * Start reading from is.readCurrentResultAndStopThread
+	 * Start reading from is.readCurrentResultAndStopThread.
 	 * 
 	 * @param is
 	 * @param maxResultSize
 	 *            in bytes
 	 */
-	public HttpUtilResponseReceiverThread(InputStream is, int maxResultSize)
+	public HttpUtilResponseReceiverThread(final InputStream is, final int maxResultSize)
 	{
 		this.is = is;
-		this.tempResultBuffer = new byte[maxResultSize];
+		this.tempResultBuffer = new DynByteBuffer(maxResultSize);
 
 		// the thread should not block the JVM shut down
 		setDaemon(true);
@@ -73,30 +74,17 @@ public class HttpUtilResponseReceiverThread extends Thread
 	@Override
 	public void run()
 	{
+		byte [] buffer = new byte [DEFAULT_CHUNK_SIZE / 2];
 		try
 		{
 			while (!stopThread)
 			{
-				if (tempResultBufferLen >= tempResultBuffer.length)
+				final int lastLen = is.read(buffer, 0, buffer.length);
+				if (lastLen <= 0)
 				{
-					//LOG.info("result buffer is full");
 					break;
 				}
-				final int lastLen = is.read(tempResultBuffer,
-						tempResultBufferLen, tempResultBuffer.length
-								- tempResultBufferLen);
-				//LOG.info("read bytes: "+lastLen);
-				if (lastLen < 0)
-				{
-					//LOG.info("end of result stream tot len : " + tempResultBufferLen);
-					break;
-				}
-				tempResultBufferLen += lastLen;
-
-				// byte[] logBuffer = new byte[tempResultBufferLen];
-				// System.arraycopy(tempResultBuffer, 0, logBuffer, 0,
-				// tempResultBufferLen);
-				// LOG.info("response(part/s)="+new String(logBuffer, Util.UTF8));
+				tempResultBuffer.append(buffer, 0, lastLen);
 			}
 		}
 		catch (final IOException e)
@@ -122,17 +110,10 @@ public class HttpUtilResponseReceiverThread extends Thread
 	 */
 	public byte[] readCurrentResultAndStopThread()
 	{
-		// copy to result buffer
-		final int len = tempResultBufferLen;
-		final byte[] result = new byte[len];
-		System.arraycopy(tempResultBuffer, 0, result, 0, len);
-
 		// set flags
 		stopThread = true;
 		finished = true;
 
-		// LOG.info("readCurrentResultAndStopThread: "+java.util.Arrays.toString(result));
-
-		return result;
+		return tempResultBuffer.toArray();
 	}
 }
