@@ -93,16 +93,11 @@ public class CellRelay extends Cell
 	public static final int RELAY_DATA_SIZE = 498;
 	public static final int RELAY_TOTAL_SIZE = CELL_PAYLOAD_SIZE;
 	public static final int RELAY_COMMAND_POS = 0;
-	public static final int RELAY_RECOGNIZED_POS = RELAY_COMMAND_POS
-			+ RELAY_COMMAND_SIZE;
-	public static final int RELAY_STREAMID_POS = RELAY_RECOGNIZED_POS
-			+ RELAY_RECOGNIZED_SIZE;
-	public static final int RELAY_DIGEST_POS = RELAY_STREAMID_POS
-			+ RELAY_STREAMID_SIZE;
-	public static final int RELAY_LENGTH_POS = RELAY_DIGEST_POS
-			+ RELAY_DIGEST_SIZE;
-	public static final int RELAY_DATA_POS = RELAY_LENGTH_POS
-			+ RELAY_LENGTH_SIZE;
+	public static final int RELAY_RECOGNIZED_POS = RELAY_COMMAND_POS + RELAY_COMMAND_SIZE;
+	public static final int RELAY_STREAMID_POS = RELAY_RECOGNIZED_POS + RELAY_RECOGNIZED_SIZE;
+	public static final int RELAY_DIGEST_POS = RELAY_STREAMID_POS + RELAY_STREAMID_SIZE;
+	public static final int RELAY_LENGTH_POS = RELAY_DIGEST_POS + RELAY_DIGEST_SIZE;
+	public static final int RELAY_DATA_POS = RELAY_LENGTH_POS + RELAY_LENGTH_SIZE;
 
 	/** used for a nicer debugging output. */
 	private static final String[] COMMAND_TO_STRING = { "zero", "begin",
@@ -348,20 +343,21 @@ public class CellRelay extends Cell
 	{
 		if (LOG.isDebugEnabled())
 		{
-			LOG.debug("CellRelay.toByteArray() for "
-					+ outCircuit.getRouteEstablished() + " layers");
+			LOG.debug("CellRelay.toByteArray() for " + outCircuit.getRouteEstablished() + " layers");
 		}
 		// put everything in payload
 		payload[CellRelay.RELAY_COMMAND_POS] = relayCommand;
-		System.arraycopy(Encoding.intToNByteArray(streamId,
-				CellRelay.RELAY_STREAMID_SIZE), 0, payload,
-				CellRelay.RELAY_STREAMID_POS, CellRelay.RELAY_STREAMID_SIZE);
-		System.arraycopy(
-				Encoding.intToNByteArray(length, CellRelay.RELAY_LENGTH_SIZE),
-				0, payload, CellRelay.RELAY_LENGTH_POS,
-				CellRelay.RELAY_LENGTH_SIZE);
-		System.arraycopy(data, 0, payload, CellRelay.RELAY_DATA_POS,
-				CellRelay.RELAY_DATA_SIZE);
+		System.arraycopy(Encoding.intToNByteArray(streamId, CellRelay.RELAY_STREAMID_SIZE), 
+		                 0, 
+		                 payload,
+		                 CellRelay.RELAY_STREAMID_POS, 
+		                 CellRelay.RELAY_STREAMID_SIZE);
+		System.arraycopy(Encoding.intToNByteArray(length, CellRelay.RELAY_LENGTH_SIZE),
+		                 0, 
+		                 payload, 
+		                 CellRelay.RELAY_LENGTH_POS,
+		                 CellRelay.RELAY_LENGTH_SIZE);
+		System.arraycopy(data, 0, payload, CellRelay.RELAY_DATA_POS, CellRelay.RELAY_DATA_SIZE);
 		// calculate digest and insert it
 		int i0 = outCircuit.getRouteEstablished() - 1;
 		if (addressedRouterInCircuit >= 0)
@@ -369,8 +365,7 @@ public class CellRelay extends Cell
 			i0 = addressedRouterInCircuit;
 		}
 		digest = outCircuit.getRouteNodes()[i0].calcForwardDigest(payload);
-		System.arraycopy(digest, 0, payload, CellRelay.RELAY_DIGEST_POS,
-				CellRelay.RELAY_DIGEST_SIZE);
+		System.arraycopy(digest, 0, payload, CellRelay.RELAY_DIGEST_POS, CellRelay.RELAY_DIGEST_SIZE);
 
 		if (LOG.isDebugEnabled())
 		{
@@ -467,8 +462,7 @@ public class CellRelay extends Cell
 		// is the cell not recognized?
 		if (Encoding.byteArrayToInt(payload, 1, 2) != 0)
 		{
-			sb.append("  Recognized    "
-					+ Encoding.toHexString(payload, 100, 1, 2) + "\n");
+			sb.append("  Recognized    " + Encoding.toHexString(payload, 100, 1, 2) + "\n");
 			sb.append("  DigestID      " + Encoding.toHexString(digest) + "\n");
 		}
 		// display connection
@@ -492,8 +486,7 @@ public class CellRelay extends Cell
 			System.arraycopy(data, 0, ip, 0, 4);
 			try
 			{
-				sb.append("  Connected to: "
-						+ InetAddress.getByAddress(ip).toString() + "\n");
+				sb.append("  Connected to: " + InetAddress.getByAddress(ip).toString() + "\n");
 			}
 			catch (final UnknownHostException e)
 			{
@@ -510,8 +503,7 @@ public class CellRelay extends Cell
 		else if ((length > 0) && (relayCommand != 6) && (relayCommand != 7))
 		{
 			// display data field, if there is data AND data is not encrypted
-			sb.append("  Data (" + length + " bytes)\n"
-					+ Encoding.toHexString(data, 100, 0, length) + "\n");
+			sb.append("  Data (" + length + " bytes)\n"	+ Encoding.toHexString(data, 100, 0, length) + "\n");
 		}
 
 		return sb.toString();
