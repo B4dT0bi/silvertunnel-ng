@@ -41,12 +41,10 @@ class SocketTimeoutInputStreamThread extends Thread
 
 	private static final long WAIT_TIMEOUT_MS = 60000;
 
-	private static final DateFormat DF = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss");
+	private static final DateFormat DF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	SocketTimeoutInputStreamThread(
-			SocketTimeoutInputStream socketTimeoutInputStream,
-			InputStream wrappedInputStream)
+	SocketTimeoutInputStreamThread(final SocketTimeoutInputStream socketTimeoutInputStream,
+	                               final InputStream wrappedInputStream)
 	{
 		super(createThreadName());
 		this.stis = socketTimeoutInputStream;
@@ -136,10 +134,8 @@ class SocketTimeoutInputStreamThread extends Thread
 					}
 					waitForRead();
 				}
-				offset = (stis.bufferHead + stis.bufferLen)
-						% stis.buffer.length;
-				len = ((stis.bufferHead > offset) ? stis.bufferHead
-						: stis.buffer.length) - offset;
+				offset = (stis.bufferHead + stis.bufferLen) % stis.buffer.length;
+				len = ((stis.bufferHead > offset) ? stis.bufferHead : stis.buffer.length) - offset;
 			}
 			int count;
 			try
