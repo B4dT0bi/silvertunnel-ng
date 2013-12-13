@@ -108,10 +108,8 @@ public class HttpUtil
 				"/httptest/smalltest.php?id=" + id, timeoutInMs);
 
 		// check response
-		LOG.info("http response body: "
-				+ ByteArrayUtil.showAsString(httpResponse));
-		final byte[] expectedResponse = ("<response><id>" + id + "</id></response>\n")
-				.getBytes(Util.UTF8);
+		LOG.info("http response body: " + ByteArrayUtil.showAsString(httpResponse));
+		final byte[] expectedResponse = ("<response><id>" + id + "</id></response>\n").getBytes(Util.UTF8);
 		final boolean testOK = Arrays.equals(expectedResponse, httpResponse);
 		if (testOK)
 		{
@@ -139,13 +137,13 @@ public class HttpUtil
 	 * @return
 	 * @throws IOException
 	 */
-	public byte[] get(NetLayer lowerNetLayer,
-			TcpipNetAddress httpServerNetAddress, String pathOnHttpServer,
-			long timeoutInMs) throws IOException
+	public byte[] get(final NetLayer lowerNetLayer,
+	                  final TcpipNetAddress httpServerNetAddress, 
+	                  final String pathOnHttpServer,
+	                  final long timeoutInMs) throws IOException
 	{
 		// open network connection
-		final NetSocket s = lowerNetLayer.createNetSocket(null, null,
-				httpServerNetAddress);
+		final NetSocket s = lowerNetLayer.createNetSocket(null, null, httpServerNetAddress);
 
 		return get(s, httpServerNetAddress, pathOnHttpServer, timeoutInMs);
 	}
@@ -162,12 +160,12 @@ public class HttpUtil
 	 * @return the response body
 	 * @throws IOException
 	 */
-	public InputStream getReponseBodyInputStream(NetSocket lowerLayerNetSocket,
-			TcpipNetAddress httpServerNetAddress, String pathOnHttpServer,
-			long timeoutInMs) throws IOException
+	public InputStream getReponseBodyInputStream(final NetSocket lowerLayerNetSocket,
+	                                             final TcpipNetAddress httpServerNetAddress, 
+	                                             final String pathOnHttpServer,
+	                                             final long timeoutInMs) throws IOException
 	{
-		final byte[] responseBody = get(lowerLayerNetSocket,
-				httpServerNetAddress, pathOnHttpServer, timeoutInMs);
+		final byte[] responseBody = get(lowerLayerNetSocket, httpServerNetAddress, pathOnHttpServer, timeoutInMs);
 
 		return new ByteArrayInputStream(responseBody);
 	}
@@ -183,9 +181,10 @@ public class HttpUtil
 	 * @return the response body
 	 * @throws IOException
 	 */
-	public static byte[] get(NetSocket lowerLayerNetSocket,
-			TcpipNetAddress httpServerNetAddress, String pathOnHttpServer,
-			long timeoutInMs) throws IOException
+	public static byte[] get(final NetSocket lowerLayerNetSocket,
+	                         final TcpipNetAddress httpServerNetAddress, 
+	                         final String pathOnHttpServer,
+	                         final long timeoutInMs) throws IOException
 	{
 		try
 		{
@@ -197,8 +196,7 @@ public class HttpUtil
 			final byte[] requestBytes = request.getBytes(Util.UTF8);
 
 			// do the work
-			return request(lowerLayerNetSocket, httpServerNetAddress,
-					pathOnHttpServer, requestBytes, timeoutInMs);
+			return request(lowerLayerNetSocket, httpServerNetAddress, pathOnHttpServer, requestBytes, timeoutInMs);
 		}
 		catch (final UnsupportedEncodingException e)
 		{
@@ -219,7 +217,7 @@ public class HttpUtil
 		if (hostname.endsWith(".exit"))
 		{
 			String tmp = hostname.substring(0, hostname.length() - 5);
-			tmp = tmp.substring(0, tmp.lastIndexOf("."));
+			tmp = tmp.substring(0, tmp.lastIndexOf('.'));
 			return tmp;
 		}
 		return hostname;
@@ -235,9 +233,11 @@ public class HttpUtil
 	 * @return the response body
 	 * @throws IOException
 	 */
-	public byte[] post(NetSocket lowerLayerNetSocket,
-			TcpipNetAddress httpServerNetAddress, String pathOnHttpServer,
-			byte[] dataToPost, long timeoutInMs) throws IOException
+	public byte[] post(final NetSocket lowerLayerNetSocket,
+	                   final TcpipNetAddress httpServerNetAddress, 
+	                   final String pathOnHttpServer,
+	                   final byte[] dataToPost, 
+	                   final long timeoutInMs) throws IOException
 	{
 		try
 		{
@@ -252,8 +252,7 @@ public class HttpUtil
 					requestBytes1, dataToPost);
 
 			// TODO - remove?:
-			LOG.info("httpServerNetAddress=" + httpServerNetAddress
-					+ " with request=" + new String(requestBytes, Util.UTF8));
+			LOG.info("httpServerNetAddress=" + httpServerNetAddress + " with request=" + new String(requestBytes, Util.UTF8));
 
 			// do the work
 			final byte[] response = request(lowerLayerNetSocket,
@@ -265,11 +264,11 @@ public class HttpUtil
 			{
 				try
 				{
-					LOG.info("response=" + new String(response, Util.UTF8));
+					LOG.debug("response=" + new String(response, Util.UTF8));
 				}
 				catch (final Exception e)
 				{
-					LOG.info("response=" + response);
+					LOG.debug("response=" + response);
 				}
 			}
 
@@ -293,9 +292,11 @@ public class HttpUtil
 	 * @return the response body
 	 * @throws IOException
 	 */
-	private static byte[] request(NetSocket lowerLayerNetSocket,
-			TcpipNetAddress httpServerNetAddress, String pathOnHttpServer,
-			byte[] requestBytes, long timeoutInMs) throws IOException
+	private static byte[] request(final NetSocket lowerLayerNetSocket,
+	                              final TcpipNetAddress httpServerNetAddress, 
+	                              final String pathOnHttpServer,
+	                              final byte[] requestBytes, 
+	                              final long timeoutInMs) throws IOException
 	{
 		final long startTime = System.currentTimeMillis();
 
@@ -305,15 +306,13 @@ public class HttpUtil
 		// receive HTTP response
 		// (start the extra thread before sending the HTTP request
 		// to avoid dead locks in certain circumstances)
-		final HttpUtilResponseReceiverThread receiverThread = new HttpUtilResponseReceiverThread(
-				s.getInputStream());
+		final HttpUtilResponseReceiverThread receiverThread = new HttpUtilResponseReceiverThread(s.getInputStream());
 
 		// send HTTP request
 		final OutputStream os = s.getOutputStream();
 		try
 		{
-			LOG.info("send HTTP request now: "
-					+ ByteArrayUtil.showAsString(requestBytes));
+			LOG.info("send HTTP request now: " + ByteArrayUtil.showAsString(requestBytes));
 			os.write(requestBytes);
 		}
 		catch (final UnsupportedEncodingException e)
@@ -324,8 +323,7 @@ public class HttpUtil
 
 		receiverThread.start();
 		// wait for receiving data
-		final long millis = Math.max(100,
-				timeoutInMs - (System.currentTimeMillis() - startTime));
+		final long millis = Math.max(100, timeoutInMs - (System.currentTimeMillis() - startTime));
 		try
 		{
 			receiverThread.join(millis);
@@ -343,11 +341,11 @@ public class HttpUtil
 		{
 			try
 			{
-				LOG.info("response=" + new String(response, Util.UTF8));
+				LOG.debug("response=" + new String(response, Util.UTF8));
 			}
 			catch (final Exception e)
 			{
-				LOG.info("response=" + response);
+				LOG.debug("response=" + response);
 			}
 		}
 
@@ -394,8 +392,7 @@ public class HttpUtil
 		}
 
 		// need to handle chunked HTTP response?
-		final String responseHeadersAsString = ByteArrayUtil
-				.showAsString(responseHeaders);
+		final String responseHeadersAsString = ByteArrayUtil.showAsString(responseHeaders);
 		final String CHUNKED_CONTENT_HEADER = "Transfer-Encoding: chunked";
 		if (responseHeadersAsString.contains(CHUNKED_CONTENT_HEADER))
 		{
@@ -405,20 +402,19 @@ public class HttpUtil
 
 		// short log of results
 		LOG.info("received HTTP response header: " + responseHeadersAsString);
-		LOG.info("received HTTP response body of " + responseBody.length
-				+ " bytes");
+		LOG.info("received HTTP response body of " + responseBody.length + " bytes");
 
 		// result
 		return responseBody;
 	}
 
 	/**
-	 * Decode a chunked HTTP response
+	 * Decode a chunked HTTP response.
 	 * 
 	 * @param chunkedResponse
 	 * @return the decoded response
 	 */
-	protected static byte[] decodeChunkedHttpResponse(byte[] chunkedResponse)
+	protected static byte[] decodeChunkedHttpResponse(final byte[] chunkedResponse)
 	{
 		final List<Byte> result = new ArrayList<Byte>(chunkedResponse.length);
 		StringBuffer chunkLenStr = new StringBuffer();
@@ -467,14 +463,14 @@ public class HttpUtil
 	}
 
 	/**
-	 * Check whether the index points to a 1 or 2 byte long new line
+	 * Check whether the index points to a 1 or 2 byte long new line.
 	 * 
 	 * @param data
 	 * @param index
 	 * @return 1=1 byte new line; 2=2 byte new lin; 0=no new line in data at
 	 *         position index
 	 */
-	private static int isNewLine(byte[] data, int index)
+	private static int isNewLine(final byte[] data, final int index)
 	{
 		if (index + 1 < data.length
 				&& ((data[index] == '\n' && data[index + 1] == '\r') || data[index] == '\r'
