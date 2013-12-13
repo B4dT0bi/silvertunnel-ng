@@ -189,8 +189,7 @@ public final class Directory
 	 * Initialize directory to prepare later network operations.
 	 */
 	public Directory(final StringStorage stringStorage, 
-	                 final NetLayer lowerDirConnectionNetLayer,
-					 final KeyPair dirServerKeys, 
+	                 final NetLayer lowerDirConnectionNetLayer, 
 					 final NetLayerStatusAdmin statusAdmin)
 	{
 		// initialization from network

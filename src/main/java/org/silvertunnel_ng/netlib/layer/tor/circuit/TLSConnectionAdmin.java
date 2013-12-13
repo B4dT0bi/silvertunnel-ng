@@ -46,7 +46,6 @@ import java.util.Map;
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
-import org.silvertunnel_ng.netlib.layer.tor.util.PrivateKeyHandler;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,15 +84,13 @@ public final class TLSConnectionAdmin
 	 * routers
 	 */
 	private final NetLayer lowerTlsConnectionNetLayer;
-	private final PrivateKeyHandler privateKeyHandler;
 
 	/**
 	 * initialize Handler of TLSConnections.
 	 */
-	public TLSConnectionAdmin(final NetLayer lowerTlsConnectionNetLayer, final PrivateKeyHandler privateKeyHandler) throws IOException
+	public TLSConnectionAdmin(final NetLayer lowerTlsConnectionNetLayer) throws IOException
 	{
 		this.lowerTlsConnectionNetLayer = lowerTlsConnectionNetLayer;
-		this.privateKeyHandler = privateKeyHandler;
 	}
 
 	/**
@@ -122,7 +119,7 @@ public final class TLSConnectionAdmin
 		{
 			// not in cache: build new TLS connection
 			LOG.debug("TLSConnectionAdmin: TLS connection to {}", router.getNickname());
-			conn = new TLSConnection(router, lowerTlsConnectionNetLayer, privateKeyHandler);
+			conn = new TLSConnection(router, lowerTlsConnectionNetLayer);
 			weakConn = new WeakReference<TLSConnection>(conn);
 			connectionMap.put(router.getFingerprint(), weakConn);
 			connectionMapAll.put(router.getFingerprint(), weakConn);

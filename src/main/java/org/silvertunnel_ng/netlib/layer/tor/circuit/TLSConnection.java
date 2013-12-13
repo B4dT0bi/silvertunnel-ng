@@ -55,7 +55,6 @@ import org.silvertunnel_ng.netlib.layer.tls.TLSNetLayer;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.Cell;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorX509TrustManager;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
-import org.silvertunnel_ng.netlib.layer.tor.util.PrivateKeyHandler;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,18 +92,15 @@ public class TLSConnection
 	 *            the server to connect to (e.g. a Tor Onion Router)
 	 * @param lowerNetLayer
 	 *            build TLS connection on this lower net layer
-	 * @param pkh
-	 *            handler to check server certs
 	 * 
 	 * @see TLSDispatcherThread
 	 * @exception IOException
 	 * @exception SSLPeerUnverifiedException
 	 */
 	TLSConnection(final RouterImpl server, 
-				  final NetLayer lowerNetLayer,
-				  final PrivateKeyHandler pkh) throws IOException,
-				  									  SSLPeerUnverifiedException, 
-				  									  SSLException
+				  final NetLayer lowerNetLayer) throws IOException,
+				  									   SSLPeerUnverifiedException, 
+				  									   SSLException
 	{
 		if (server == null)
 		{

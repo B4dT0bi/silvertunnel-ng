@@ -80,7 +80,6 @@ import org.silvertunnel_ng.netlib.layer.tor.stream.ResolveStream;
 import org.silvertunnel_ng.netlib.layer.tor.stream.StreamThread;
 import org.silvertunnel_ng.netlib.layer.tor.stream.TCPStream;
 import org.silvertunnel_ng.netlib.layer.tor.util.NetLayerStatusAdmin;
-import org.silvertunnel_ng.netlib.layer.tor.util.PrivateKeyHandler;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorNoAnswerException;
 import org.silvertunnel_ng.netlib.util.StringStorage;
@@ -111,7 +110,6 @@ public class Tor implements NetLayerStatusAdmin
 	private Directory directory;
 	private TLSConnectionAdmin tlsConnectionAdmin;
 	private TorBackgroundMgmtThread torBackgroundMgmtThread;
-	private PrivateKeyHandler privateKeyHandler;
 	/**
 	 * Absolute time in milliseconds: until this date/time the init is in
 	 * progress.
@@ -163,8 +161,6 @@ public class Tor implements NetLayerStatusAdmin
 		}
 		// logger and config
 		LOG.info("Tor implementation of silvertunnel-ng.org is starting up");
-		// create identity
-		privateKeyHandler = new PrivateKeyHandler();
 		// determine end of startup-Phase
 		startupPhaseWithoutConnects = System.currentTimeMillis() + TorConfig.getStartupDelay() * 1000L;
 		// init event-handler
@@ -172,13 +168,13 @@ public class Tor implements NetLayerStatusAdmin
 
 	private void initDirectory() throws IOException
 	{
-		directory = new Directory(stringStorage, lowerDirConnectionNetLayer, privateKeyHandler.getIdentity(), this);
+		directory = new Directory(stringStorage, lowerDirConnectionNetLayer, this);
 	}
 
 	private void initRemoteAccess() throws IOException
 	{
 		// establish handler for TLS connections
-		tlsConnectionAdmin = new TLSConnectionAdmin(lowerTlsConnectionNetLayer, privateKeyHandler);
+		tlsConnectionAdmin = new TLSConnectionAdmin(lowerTlsConnectionNetLayer);
 		// initialize thread to renew every now and then
 		torBackgroundMgmtThread = new TorBackgroundMgmtThread(this);
 	}
@@ -722,10 +718,5 @@ public class Tor implements NetLayerStatusAdmin
 	public NetLayer getLowerDirConnectionNetLayer()
 	{
 		return lowerDirConnectionNetLayer;
-	}
-
-	public PrivateKeyHandler getPrivateKeyHandler()
-	{
-		return privateKeyHandler;
 	}
 }
