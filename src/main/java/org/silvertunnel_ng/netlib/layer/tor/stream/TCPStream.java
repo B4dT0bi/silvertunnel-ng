@@ -251,7 +251,10 @@ public class TCPStream implements Stream, NetSocket
 		this.queue.addHandler(qhT2J);
 		outputStream = new TCPStreamOutputStream(this);
 
-		LOG.info("TCPStream: build stream " + toString() + " within " + setupDuration + " ms");
+		if (LOG.isDebugEnabled())
+		{
+			LOG.debug("TCPStream: build stream " + toString() + " within " + setupDuration + " ms");
+		}
 		// attach stream to history
 		circuit.registerStream(sp, setupDuration);
 		established = true;
