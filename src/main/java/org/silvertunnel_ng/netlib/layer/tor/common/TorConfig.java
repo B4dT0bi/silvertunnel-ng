@@ -449,14 +449,14 @@ public final class TorConfig
 	/**
 	 * maximum circuit path length. 
 	 * <br><br>
-	 * recommended value : 5<br> 
+	 * recommended value : 3<br> 
 	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a simple IP obfuscation,
 	 * for more security a value of at least 3 is recommended<br> 
 	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
 	 * <br><br>
-	 * default value : 5
+	 * default value : 3
 	 */
-	private int routeMaxLength = 5;
+	private int routeMaxLength = 3;
 
 	/**
 	 * @return get the minimum allowed route length for creating a circuit.
@@ -469,12 +469,12 @@ public final class TorConfig
 	/**
 	 * set the maximum circuit path length. 
 	 * <br><br>
-	 * recommended value : 4<br> 
+	 * recommended value : 3<br> 
 	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a simple IP
 	 * obfuscation, for more security a value of at least 3 is recommended<br>
 	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
 	 * <br><br>
-	 * default value : 4
+	 * default value : 3
 	 * 
 	 * @param length
 	 *            the desired maximum length LOGs a warning in case of a wrong
@@ -1246,6 +1246,13 @@ public final class TorConfig
 	 */
 	public static void setParallelCircuitBuilds(final int number)
 	{
-		getInstance().parallelCircuitBuilds = number;
+		if (number < 1)
+		{
+			LOG.error("setParallelCircuitBuilds should not be less than 1");
+		}
+		else
+		{
+			getInstance().parallelCircuitBuilds = number;
+		}
 	}	
 }
