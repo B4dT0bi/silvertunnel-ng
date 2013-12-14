@@ -376,25 +376,16 @@ public class Encryption
 	 * @return
 	 * @see JCERSAPublicKey
 	 */
-	public static RSAPublicKey extractPublicRSAKey(final String s) // TODO : remove bouncycastle as it is too expensive (memory footprint)
+	public static RSAPublicKey extractPublicRSAKey(final String s)
 	{
 		RSAPublicKey theKey;
 		try
 		{
-			final PEMReader reader = new PEMReader(new StringReader(s));
-			final Object o = reader.readObject();
-			reader.close();
-			if (!(o instanceof JCERSAPublicKey))
-			{
-				throw new IOException("Encryption.extractPublicRSAKey: no public key found in string '" + s + "'");
-			}
-			final JCERSAPublicKey JCEKey = (JCERSAPublicKey) o;
-			theKey = getRSAPublicKey(JCEKey.getModulus(), JCEKey.getPublicExponent());
-
+			theKey = new RSAKeyEncoder().parsePEMPublicKey(s);
 		}
 		catch (final Exception e)
 		{
-			LOG.warn("Encryption.extractPublicRSAKey: Caught exception:" + e.getMessage());
+			LOG.warn("Encryption.extractPublicRSAKey: Caught exception:" + e.getMessage(), e);
 			theKey = null;
 		}
 
