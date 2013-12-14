@@ -159,9 +159,10 @@ public class WithNetlibNameServiceLocalTest
 	/**
 	 * Check that we can switch to an alternative NetAddressNameService (to the
 	 * MockNetAddressNameService).
+	 * @throws InterruptedException 
 	 */
 	@Test(timeOut = 15000, dependsOnMethods = {"testWithMockNetAddressNameService" })
-	public void testWithMockNetAddressNameService2()
+	public void testWithMockNetAddressNameService2() throws InterruptedException
 	{
 		LOG.info("testWithMockNetAddressNameService2()");
 
@@ -175,7 +176,7 @@ public class WithNetlibNameServiceLocalTest
 		NameServiceGlobalUtil.setIpNetAddressNameService(ns);
 
 		// circumvent caching
-//		Thread.sleep(NameServiceGlobalUtil.getCacheTimeoutMillis());
+		Thread.sleep(NameServiceGlobalUtil.getCacheTimeoutMillis());
 
 		//
 		// check that dnstest.silvertunnel-ng.org can be resolved now
