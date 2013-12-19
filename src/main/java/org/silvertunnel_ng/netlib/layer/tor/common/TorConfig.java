@@ -134,8 +134,6 @@ public final class TorConfig
 		getInstance().startupDelaySeconds = delay;
 	}
 
-	public String nickname = Util.MYNAME;
-
 	// QoS-parameters
 	/** How many times should we try to connect? */
 	private int retriesConnect = 2;
@@ -1021,7 +1019,6 @@ public final class TorConfig
 			// functionality
 			setStartupDelay(parseInt(config, "startupDelaySeconds", getStartupDelay()));
 
-			nickname = parseString(config, "nickname", nickname);
 			// QoS parameters
 			retriesConnect = parseInt(config, "RetriesConnect", retriesConnect);
 			retriesStreamBuildup = parseInt(config, "RetriesStreamBuildup",
@@ -1131,7 +1128,6 @@ public final class TorConfig
 			}
 			// Functionality
 			config.append(writeInt("startupDelaySeconds", getStartupDelay()));
-			config.append(writeString("nickname", nickname));
 
 			// QoS parameters
 			config.append(writeInt("RetriesConnect", retriesConnect));
