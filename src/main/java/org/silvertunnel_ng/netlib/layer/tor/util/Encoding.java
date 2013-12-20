@@ -252,6 +252,11 @@ public class Encoding
 	{
 		return byteArrayToInt(b, 0, b.length);
 	}
+	/** 
+	 * make it static to save memory.
+	 * the pattern needs to be compiled only once but is used a thousand times.
+	 */
+	private static final Pattern IP_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)");
 
 	/**
 	 * converts a notation like 192.168.3.101 into a binary format.
@@ -264,8 +269,7 @@ public class Encoding
 	{
 		long temp = 0;
 
-		final Pattern p = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)");
-		final Matcher m = p.matcher(s);
+		final Matcher m = IP_PATTERN.matcher(s);
 		if (m.find())
 		{
 			for (int i = 1; i <= 4; ++i)
@@ -302,20 +306,28 @@ public class Encoding
 	 * 
 	 * @param ip
 	 *            binary encoded ip-address.
+	 * @return an IP in dotted notation as {@link String}
 	 */
 	public static String binaryToDottedNotation(final long ip)
 	{
-		final StringBuffer dottedNotation = new StringBuffer();
+		final StringBuffer dottedNotation = new StringBuffer(17);
 
-		dottedNotation.append(((ip & 0xff000000) >> 24) + ".");
-		dottedNotation.append(((ip & 0x00ff0000) >> 16) + ".");
-		dottedNotation.append(((ip & 0x0000ff00) >> 8) + ".");
-		dottedNotation.append(((ip & 0x000000ff) >> 0));
+		dottedNotation.append(((ip & 0xff000000) >> 24)).append('.');
+		dottedNotation.append(((ip & 0x00ff0000) >> 16)).append('.');
+		dottedNotation.append(((ip & 0x0000ff00) >> 8)).append('.');
+		dottedNotation.append((ip & 0x000000ff));
 
 		return dottedNotation.toString();
 	}
 
-	public static String toBase64(final byte[] bytes, int columnWidth)
+	/**
+	 * Convert a byte array to a base64 string.
+	 * 
+	 * @param bytes the byte array which needs to be converted.
+	 * @param columnWidth how many characters are allowed on one line?
+	 * @return a formated base64 string
+	 */
+	public static String toBase64(final byte[] bytes, final int columnWidth)
 	{
 		final String rawResult = DatatypeConverter.printBase64Binary(bytes);
 

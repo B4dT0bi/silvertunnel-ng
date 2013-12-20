@@ -50,14 +50,13 @@ import org.testng.annotations.Test;
  * @author hapke
  * @author Tobias Boese
  */
-public class EncodingLocalTest
+public final class EncodingLocalTest
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(EncodingLocalTest.class);
 
 	/** any data for testing. */
-	private static final byte[] EXAMPLE_DATA = { -11, 22, -33, 44, -55, 66,
-			-77, 88, -99 };
+	private static final byte[] EXAMPLE_DATA = { -11, 22, -33, 44, -55, 66, -77, 88, -99 };
 
 	@Test
 	public void testToBase32()
@@ -71,8 +70,7 @@ public class EncodingLocalTest
 	{
 		final String base32 = Encoding.toBase32(EXAMPLE_DATA);
 		final byte[] result = Encoding.parseBase32(base32);
-		assertEquals("wrong parseBase32() result",
-				Arrays.toString(EXAMPLE_DATA), Arrays.toString(result));
+		assertEquals("wrong parseBase32() result", Arrays.toString(EXAMPLE_DATA), Arrays.toString(result));
 	}
 
 	@Test
@@ -95,5 +93,27 @@ public class EncodingLocalTest
 				"wrong intToNByteArray() (2) result",
 				Arrays.toString(new byte[] { (byte) 0x11, (byte) 0xfc,
 						(byte) 0x00, (byte) 0xee }), Arrays.toString(result));
+	}
+	/**
+	 * Testing Encoding.dottedNotationToBinary(String).
+	 * Check if the parsing of IP addresses is working correctly.
+	 */
+	@Test
+	public void testDottedNotationToBinary()
+	{
+		assertEquals(0x01020304L, Encoding.dottedNotationToBinary("1.2.3.4"));
+		assertEquals(0x04030201L, Encoding.dottedNotationToBinary("4.3.2.1"));
+		assertEquals(0x7f000001L, Encoding.dottedNotationToBinary("127.0.0.1"));
+	}
+	/**
+	 * Testing Encoding.binaryToDottedNotation(long).
+	 * Check if the conversion from long to dotted notation is working correctly.
+	 */
+	@Test
+	public void testBinaryToDottedNotation()
+	{
+		assertEquals("127.0.0.1", Encoding.binaryToDottedNotation(0x7f000001L));
+		assertEquals("1.2.3.4", Encoding.binaryToDottedNotation(0x01020304L));
+		assertEquals("4.3.2.1", Encoding.binaryToDottedNotation(0x04030201L));
 	}
 }
