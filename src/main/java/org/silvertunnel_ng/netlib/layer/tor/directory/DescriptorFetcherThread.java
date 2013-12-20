@@ -104,8 +104,8 @@ class DescriptorFetcherThread extends Thread
 	/**
 	 * Download all descriptors.
 	 * 
-	 * @param directoryServer
-	 * @param dirConnectionNetLayer
+	 * @param directoryServer the chosen Server which should be contacted for fetching the descriptors
+	 * @param dirConnectionNetLayer the {@link NetLayer} to be used for contacting the server
 	 * @return the descriptors as String; null in the case of an error
 	 */
 	public static String downloadAllDescriptors(final RouterImpl directoryServer,
