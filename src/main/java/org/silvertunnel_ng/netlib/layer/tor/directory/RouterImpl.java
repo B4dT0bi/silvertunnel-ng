@@ -136,7 +136,7 @@ public final class RouterImpl implements Router, Cloneable
 	/** based on the time of loading this data. */
 	private long validUntil;
 
-	/** FIXME: read-history, write-history not implemented. */
+	/** How many exit policy items do we parse? */
 	private static final int MAX_EXITPOLICY_ITEMS = 300;
 
 	// Additional information for V2-Directories
@@ -296,6 +296,8 @@ public final class RouterImpl implements Router, Cloneable
 			throw new RuntimeException(e);
 		}
 	}
+	private static final Pattern EXIT_POLICY_PATTERN = Pattern.compile("^(accept|reject) (.*?):(.*?)$", Pattern.DOTALL + Pattern.MULTILINE + Pattern.CASE_INSENSITIVE
+	                  				+ Pattern.UNIX_LINES);
 
 	/**
 	 * This function parses the exit policy items from the router descriptor.
@@ -307,24 +309,21 @@ public final class RouterImpl implements Router, Cloneable
 	private RouterExitPolicy[] parseExitPolicy(final String routerDescriptor)
 	{
 		final ArrayList<RouterExitPolicy> epList = new ArrayList<RouterExitPolicy>(30);
-		final RouterExitPolicy ep;
 
-		final Pattern p = Pattern.compile("^(accept|reject) (.*?):(.*?)$", Pattern.DOTALL + Pattern.MULTILINE + Pattern.CASE_INSENSITIVE
-				+ Pattern.UNIX_LINES);
-		final Matcher m = p.matcher(routerDescriptor);
+		final Matcher matcher = EXIT_POLICY_PATTERN.matcher(routerDescriptor);
 
 		// extract all exit policies from description
 		int nr = 0;
-		while (m.find() && (nr < MAX_EXITPOLICY_ITEMS))
+		while (matcher.find() && (nr < MAX_EXITPOLICY_ITEMS))
 		{
 			boolean epAccept;
 			long epIp;
 			long epNetmask;
 			int epLoPort;
 			int epHiPort;
-			epAccept = m.group(1).equals("accept");
+			epAccept = matcher.group(1).equals("accept");
 			// parse network
-			final String network = m.group(2);
+			final String network = matcher.group(2);
 			epIp = 0;
 			epNetmask = 0;
 			if (!network.equals("*"))
@@ -351,22 +350,22 @@ public final class RouterImpl implements Router, Cloneable
 			}
 			epIp = epIp & epNetmask;
 			// parse port range
-			if (m.group(3).equals("*"))
+			if (matcher.group(3).equals("*"))
 			{
 				epLoPort = 0;
 				epHiPort = 65535;
 			}
 			else
 			{
-				final int dash = m.group(3).indexOf("-");
+				final int dash = matcher.group(3).indexOf("-");
 				if (dash > 0)
 				{
-					epLoPort = Integer.parseInt(m.group(3).substring(0, dash));
-					epHiPort = Integer.parseInt(m.group(3).substring(dash + 1));
+					epLoPort = Integer.parseInt(matcher.group(3).substring(0, dash));
+					epHiPort = Integer.parseInt(matcher.group(3).substring(dash + 1));
 				}
 				else
 				{
-					epLoPort = Integer.parseInt(m.group(3));
+					epLoPort = Integer.parseInt(matcher.group(3));
 					epHiPort = epLoPort;
 				}
 			}
@@ -521,7 +520,7 @@ public final class RouterImpl implements Router, Cloneable
 							{
 								if (tmpElements[n].startsWith("$"))
 								{
-									family.add(new FingerprintImpl(DatatypeConverter.parseHexBinary(tmpElements[n].substring(1, 21))));
+									family.add(new FingerprintImpl(DatatypeConverter.parseHexBinary(tmpElements[n].substring(1, 41))));
 								}
 								else
 								{
@@ -533,7 +532,7 @@ public final class RouterImpl implements Router, Cloneable
 							// TODO : add flag that router is hibernating (do not use it for building circuits)
 							break;
 						case HIDDEN_SERVICE_DIR:
-							// TODO : implement
+							dirv2HSDir = true;
 							break;
 						case PROTOCOLS:
 							// TODO : implement

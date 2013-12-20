@@ -18,13 +18,15 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.*;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.fail;
 
 import java.io.IOException;
 import java.util.Map;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
@@ -70,11 +72,67 @@ public final class RouterImplLocalTest
 	public void testRouterImplTorConfigString() throws TorException, IOException
 	{
 		final RouterImpl testObject = new RouterImpl(descriptor);
-		assertNotNull(testObject);
-		assertEquals("J. Random Hacker <anonymizer@ccc.de>", testObject.getContact());
-		assertEquals("AT", testObject.getCountryCode());
-		assertEquals("chaoscomputerclub27", testObject.getNickname());
-		assertEquals("Tor 0.2.4.17-rc on Linux", testObject.getPlatform());
+		assertNotNull("parsing the descriptor didnt worked (should not return null)", testObject);
+		assertEquals("wrong contact info", "J. Random Hacker <anonymizer@ccc.de>", testObject.getContact());
+		assertEquals("wrong countrycode", "AT", testObject.getCountryCode());
+		assertEquals("wrong nickname", "chaoscomputerclub27", testObject.getNickname());
+		assertEquals("wrong tor version", "Tor 0.2.4.17-rc on Linux", testObject.getPlatform());
+		assertTrue("wrong hidden service dir setting", testObject.isDirv2HSDir());
+		assertEquals("wrong ip address", "77.244.254.227", testObject.getHostname());
+		assertEquals("wrong or port", 443, testObject.getOrPort());
+		assertEquals("wrong socks port", 0, testObject.getSocksPort());
+		assertEquals("wrong dir port", 80, testObject.getDirPort());
+		assertEquals("wrong fingerprint",
+		             new FingerprintImpl(DatatypeConverter.parseHexBinary("EEC954FB78B4FE48C6783FC3CB2E8562092890B8")),
+		             testObject.getFingerprint());
+		assertEquals("wrong uptime", 5637742, testObject.getUptime());
+		assertEquals("wrong number of family members", 11, testObject.getFamily().size());
+		assertTrue("familymember 1 (11a0239fc6668705f68842811318b669c636f86e) not found", 
+		           testObject.getFamily().contains(
+		                          new FingerprintImpl(DatatypeConverter.parseHexBinary("11a0239fc6668705f68842811318b669c636f86e"))));
+		assertTrue("familymember 2 (659df6537d605feab3b77e58e75342d704f0a799) not found", 
+		           testObject.getFamily().contains(
+		                          new FingerprintImpl(DatatypeConverter.parseHexBinary("659df6537d605feab3b77e58e75342d704f0a799"))));
+		assertTrue("familymember 3 (71e78e9b961d5e25f1a16fccd15e81aa3b36cb93) not found", 
+		           testObject.getFamily().contains(
+		                          new FingerprintImpl(DatatypeConverter.parseHexBinary("71e78e9b961d5e25f1a16fccd15e81aa3b36cb93"))));
+		assertTrue("familymember 4 (7610bbd3f5bb67284eee8476721ae6109dc29bea) not found", 
+		           testObject.getFamily().contains(
+		                          new FingerprintImpl(DatatypeConverter.parseHexBinary("7610bbd3f5bb67284eee8476721ae6109dc29bea"))));
+		assertTrue("familymember 5 (7BE683E65D48141321C5ED92F075C55364AC7123) not found", 
+		           testObject.getFamily().contains(
+		                          new FingerprintImpl(DatatypeConverter.parseHexBinary("7BE683E65D48141321C5ED92F075C55364AC7123"))));
+		assertTrue("familymember 6 (92d151a8219cc742de7e0eaeb6d18faf9793ba79) not found", 
+		           testObject.getFamily().contains(
+		                          new FingerprintImpl(DatatypeConverter.parseHexBinary("92d151a8219cc742de7e0eaeb6d18faf9793ba79"))));
+		assertTrue("familymember 7 (9e9fad3187c9911b71849e0e63f35c7cd41faaa3) not found", 
+		           testObject.getFamily().contains(
+		                          new FingerprintImpl(DatatypeConverter.parseHexBinary("9e9fad3187c9911b71849e0e63f35c7cd41faaa3"))));
+		assertTrue("familymember 8 (a9c039a5fd02fca06303dcfaabe25c5912c63b26) not found", 
+		           testObject.getFamily().contains(
+		                          new FingerprintImpl(DatatypeConverter.parseHexBinary("a9c039a5fd02fca06303dcfaabe25c5912c63b26"))));
+		assertTrue("familymember 9 (d5edc74f2fb81e6ac1a8eba56448f71ddfaa4ae5) not found", 
+		           testObject.getFamily().contains(
+		                          new FingerprintImpl(DatatypeConverter.parseHexBinary("d5edc74f2fb81e6ac1a8eba56448f71ddfaa4ae5"))));
+		assertTrue("familymember 10 (fbadb0598b2fe16aa1a078187620ec4c2df08451) not found", 
+		           testObject.getFamily().contains(
+		                          new FingerprintImpl(DatatypeConverter.parseHexBinary("fbadb0598b2fe16aa1a078187620ec4c2df08451"))));
+		assertTrue("familymember 11 (fdba46e69d2dfa3fe165eeb84325e90b0b29bf07) not found", 
+		           testObject.getFamily().contains(
+		                          new FingerprintImpl(DatatypeConverter.parseHexBinary("fdba46e69d2dfa3fe165eeb84325e90b0b29bf07"))));
+		assertEquals(1073741824, testObject.getBandwidthAvg());
+		assertEquals(1258291200, testObject.getBandwidthBurst());
+		assertEquals(4887529, testObject.getBandwidthObserved());
+		assertFalse(testObject.isDirv2Authority());
+		assertFalse(testObject.isDirv2Exit());
+		assertFalse(testObject.isDirv2Fast());
+		assertFalse(testObject.isDirv2Guard());
+		assertFalse(testObject.isDirv2Named());
+		assertFalse(testObject.isDirv2Running());
+		assertFalse(testObject.isDirv2Stable());
+		assertFalse(testObject.isDirv2V2dir());
+		assertFalse(testObject.isDirv2Valid());
+		assertEquals(173, testObject.getExitpolicy().length);
 	}
 
 	/**
