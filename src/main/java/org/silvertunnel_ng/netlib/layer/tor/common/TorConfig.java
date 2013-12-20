@@ -71,7 +71,6 @@ import org.silvertunnel_ng.netlib.layer.tor.circuit.CircuitHistory;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
-import org.silvertunnel_ng.netlib.layer.tor.util.Util;
 import org.silvertunnel_ng.netlib.util.SystemPropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,17 +92,6 @@ public final class TorConfig
 	/** instance to {@link TorConfig}. */
 	private static TorConfig instance;
 
-	/** @return get an instance of {@link TorConfig}. */
-	public static synchronized TorConfig getInstance()
-	{
-		if (instance == null)
-		{
-			instance = new TorConfig();
-			instance.init(null);
-		}
-		return instance;
-	}
-
 	/** Use Create_Fast Cells instead of normal Create Cells? */
 	public static final boolean USE_CREATE_FAST_CELLS = true;
 	/**
@@ -112,6 +100,18 @@ public final class TorConfig
 	 * How long should we wait before trying the first connects?
 	 */
 	private int startupDelaySeconds = 20;
+
+
+	/** @return get an instance of {@link TorConfig}. */
+	private static synchronized TorConfig getInstance()
+	{
+		if (instance == null)
+		{
+			instance = new TorConfig();
+			instance.init(null);
+		}
+		return instance;
+	}
 
 	/**
 	 * How long should we wait before trying the first connects?
@@ -136,7 +136,7 @@ public final class TorConfig
 
 	// QoS-parameters
 	/** How many times should we try to connect? */
-	private int retriesConnect = 2;
+	private int retriesConnect = 1;
 	public static int reconnectCircuit = 3;
 	public static int retriesStreamBuildup = 5;
 

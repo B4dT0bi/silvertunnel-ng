@@ -27,7 +27,6 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
-import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,8 +160,6 @@ public class AuthorityServers
 	 */
 	private static Collection<RouterImpl> parseAuthorityRouters()
 	{
-		final TorConfig torConfig = TorConfig.getInstance();
-
 		final Collection<RouterImpl> result = new ArrayList<RouterImpl>();
 		// try to parse the separate authority server entries
 		for (final String singleRawData : rawData)

@@ -31,15 +31,6 @@ public class TorConfigLocalTest
 {
 
 	/**
-	 * Test method for {@link org.silvertunnel_ng.netlib.layer.tor.common.TorConfig#getInstance()}.
-	 */
-	@Test(enabled = false)
-	public void testGetInstance()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
 	 * Test method for {@link org.silvertunnel_ng.netlib.layer.tor.common.TorConfig#getStartupDelay()}.
 	 */
 	@Test(enabled = false)
