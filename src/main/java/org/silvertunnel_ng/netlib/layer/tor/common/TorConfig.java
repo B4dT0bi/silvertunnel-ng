@@ -137,7 +137,8 @@ public final class TorConfig
 	// QoS-parameters
 	/** How many times should we try to connect? */
 	private int retriesConnect = 1;
-	public static int reconnectCircuit = 3;
+	/** How many times should we try to reconnect a Circuit before failing? */
+	private int reconnectCircuit = 1;
 	public static int retriesStreamBuildup = 5;
 
 	/** How many circuits should be allowed for idling as max? */
@@ -184,6 +185,36 @@ public final class TorConfig
 			LOG.warn("setRetriesConnect : number of retries could be to high.");
 		}
 		getInstance().retriesConnect = retries;
+	}
+
+	/**
+	 * @return get the amount of retries for reconnecting a circuit.
+	 */
+	public static int getReconnectCircuit()
+	{
+		return getInstance().reconnectCircuit;
+	}
+
+	/**
+	 * Set the amount of reconnects for a circuit.
+	 * 
+	 * Should be a value higher than 0
+	 * 
+	 * @param reconnects
+	 *            max reconnects for a circuit
+	 */
+	public static void setReconnectCircuit(final int reconnects)
+	{
+		if (reconnects <= 0)
+		{
+			LOG.warn("setReconnectCircuit : wrong value for reconnectCircuit found!");
+			return; // keep the old value
+		}
+		if (reconnects > 10)
+		{
+			LOG.warn("setReconnectCircuit : number of reconnects could be to high.");
+		}
+		getInstance().reconnectCircuit = reconnects;
 	}
 
 	/**

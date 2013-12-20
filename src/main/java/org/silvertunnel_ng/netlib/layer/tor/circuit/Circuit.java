@@ -369,7 +369,7 @@ public final class Circuit
 					{
 						throw new IOException("Circuit: " + toString() + " closing during buildup");
 					}
-					if (misses >= TorConfig.reconnectCircuit)
+					if (misses >= TorConfig.getReconnectCircuit())
 					{
 						// enough retries, exit
 						if (e instanceof IOException)
@@ -378,7 +378,7 @@ public final class Circuit
 						}
 						else
 						{
-							throw new TorException(e.toString());
+							throw new TorException(e);
 						}
 					}
 					// build a new route over the hosts that are known to be
