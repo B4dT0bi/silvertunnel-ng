@@ -60,7 +60,7 @@ import org.testng.annotations.Test;
  * @author hapke
  * @author Tobias Boese
  */
-public class DirectoryConsensusLocalTest
+public final class DirectoryConsensusLocalTest
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(DirectoryConsensusLocalTest.class);
@@ -71,10 +71,8 @@ public class DirectoryConsensusLocalTest
 
 	// private static final Date EXAMPLE_CONSENSUS_VALID_AND_FRESH_DATE =
 	// Util.parseUtcTimestamp("2010-01-25 21:30:00");
-	private static final Date EXAMPLE_CONSENSUS_VALID_BUT_UNFRESH_DATE = Util
-			.parseUtcTimestamp("2010-01-25 22:30:00");
-	private static final Date EXAMPLE_CONSENSUS_INVALID_DATE = Util
-			.parseUtcTimestamp("2010-01-26 00:30:00");
+	private static final Date EXAMPLE_CONSENSUS_VALID_BUT_UNFRESH_DATE = Util.parseUtcTimestamp("2010-01-25 22:30:00");
+	private static final Date EXAMPLE_CONSENSUS_INVALID_DATE = Util.parseUtcTimestamp("2010-01-26 00:30:00");
 
 	private static final String EXAMPLE_AUTHORITY_KEYS_PATH = "/org/silvertunnel_ng/netlib/layer/tor/example-authority-keys.txt";
 
@@ -97,8 +95,7 @@ public class DirectoryConsensusLocalTest
 	public void testParsingValidConsensus() throws Exception
 	{
 		// read and parse
-		final String directoryConsensusStr = FileUtil.getInstance()
-				.readFileFromClasspath(EXAMPLE_CONSENSUS_PATH);
+		final String directoryConsensusStr = FileUtil.readFileFromClasspath(EXAMPLE_CONSENSUS_PATH);
 		final DirectoryConsensus consensus = new DirectoryConsensus(
 				directoryConsensusStr,
 				getAllExampleAuthorityKeys(EXAMPLE_CONSENSUS_VALID_BUT_UNFRESH_DATE),
@@ -112,8 +109,7 @@ public class DirectoryConsensusLocalTest
 		// hex=7BE6 83E6 5D48 1413 21C5 ED92 F075 C553 64AC 7123/base64=
 		// e+aD5l1IFBMhxe2S8HXFU2SscSM SGRqxFrX6FqxIeOhCxZ1/wnIHvw )
 		final Fingerprint fingerprint = new FingerprintImpl(
-				DatatypeConverter
-						.parseHexBinary("7BE683E65D48141321C5ED92F075C55364AC7123"));
+				DatatypeConverter.parseHexBinary("7BE683E65D48141321C5ED92F075C55364AC7123"));
 		final RouterStatusDescription desc = consensus
 				.getFingerprintsNetworkStatusDescriptors().get(fingerprint);
 		assertEquals("one specific result router entry: wrong fingerprint",
@@ -139,30 +135,19 @@ public class DirectoryConsensusLocalTest
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	@Test (expectedExceptions=TorException.class)
 	public void testParsingConsensusWithoutSignatures() throws Exception
 	{
 		// read
-		final String directoryConsensusStr = FileUtil.getInstance()
-				.readFileFromClasspath(
-						EXAMPLE_CONSENSUS_WITHOUT_SIGNATURES_PATH);
-		try
-		{
-			// parse
-			new DirectoryConsensus(
+		final String directoryConsensusStr = FileUtil.readFileFromClasspath(EXAMPLE_CONSENSUS_WITHOUT_SIGNATURES_PATH);
+		// parse
+		new DirectoryConsensus(
 					directoryConsensusStr,
 					getAllExampleAuthorityKeys(EXAMPLE_CONSENSUS_VALID_BUT_UNFRESH_DATE),
 					EXAMPLE_CONSENSUS_VALID_BUT_UNFRESH_DATE);
 
-			// check result
-			fail("parsing the consesus was expected to fail");
-
-		}
-		catch (final TorException e)
-		{
-			// expected
-			LOG.info("expected exception: " + e);
-		}
+		// check result
+		fail("parsing the consesus was expected to fail");
 	}
 
 	/**
@@ -175,9 +160,7 @@ public class DirectoryConsensusLocalTest
 	public void testParsingConsensusWithInvalidSignatures() throws Exception
 	{
 		// read
-		final String directoryConsensusStr = FileUtil.getInstance()
-				.readFileFromClasspath(
-						EXAMPLE_CONSENSUS_WITH_INVALID_SIGNATURES_PATH);
+		final String directoryConsensusStr = FileUtil.readFileFromClasspath(EXAMPLE_CONSENSUS_WITH_INVALID_SIGNATURES_PATH);
 		try
 		{
 			// parse
@@ -187,7 +170,7 @@ public class DirectoryConsensusLocalTest
 					EXAMPLE_CONSENSUS_VALID_BUT_UNFRESH_DATE);
 
 			// check result
-			fail("parsing the consesus was expected to fail");
+			fail("parsing the consensus was expected to fail");
 
 		}
 		catch (final TorException e)
@@ -207,11 +190,10 @@ public class DirectoryConsensusLocalTest
 	public void testParsingManipulatedConsensus() throws Exception
 	{
 		// read and manipulate
-		final String validDirectoryConsensusStr = FileUtil.getInstance()
-				.readFileFromClasspath(EXAMPLE_CONSENSUS_PATH);
+		final String validDirectoryConsensusStr = FileUtil.readFileFromClasspath(EXAMPLE_CONSENSUS_PATH);
 		final String manipulatedDirectoryConsensusStr = validDirectoryConsensusStr
 				.replace("valid-until 2010-01-26 00:00:00",
-						"valid-until 2010-01-26 00:00:01");
+						 "valid-until 2010-01-26 00:00:01");
 
 		try
 		{
@@ -222,7 +204,7 @@ public class DirectoryConsensusLocalTest
 					EXAMPLE_CONSENSUS_VALID_BUT_UNFRESH_DATE);
 
 			// check result
-			fail("parsing the consesus was expected to fail");
+			fail("parsing the consensus was expected to fail");
 
 		}
 		catch (final TorException e)
@@ -236,13 +218,10 @@ public class DirectoryConsensusLocalTest
 	// helper method(s)
 	// /////////////////////////////////////////////////////
 
-	private AuthorityKeyCertificates getAllExampleAuthorityKeys(Date currentDate)
-			throws TorException, IOException
+	private AuthorityKeyCertificates getAllExampleAuthorityKeys(final Date currentDate) throws TorException, IOException
 	{
-		final String allCertsStr = FileUtil.getInstance()
-				.readFileFromClasspath(EXAMPLE_AUTHORITY_KEYS_PATH);
-		final AuthorityKeyCertificates allCerts = new AuthorityKeyCertificates(
-				allCertsStr, currentDate);
+		final String allCertsStr = FileUtil.readFileFromClasspath(EXAMPLE_AUTHORITY_KEYS_PATH);
+		final AuthorityKeyCertificates allCerts = new AuthorityKeyCertificates(allCertsStr, currentDate);
 		return allCerts;
 	}
 }

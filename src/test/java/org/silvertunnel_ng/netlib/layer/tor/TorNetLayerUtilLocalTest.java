@@ -63,7 +63,6 @@ public final class TorNetLayerUtilLocalTest
 	private static final String TEST_SUB_DIR_NAME = "testHiddenServiceDir";
 
 	private static TorNetLayerUtil torNetLayerUtil = TorNetLayerUtil.getInstance();
-	private static FileUtil fileUtil = FileUtil.getInstance();
 
 	public static final String EXAMPLE_PRIVATE_KEY_PEM_PATH = "/org/silvertunnel_ng/netlib/layer/tor/util/example-private-key-PEM.txt";
 	public static final String EXAMPLE_ONION_DOMAIN_DERIVED_FROM_PRIVATE_KEY = "4xuwatxuqzfnqjuz";
@@ -91,7 +90,7 @@ public final class TorNetLayerUtilLocalTest
 	public void testParsingTorsOriginalHiddenSericePrivateNetAddressInfo() throws Exception
 	{
 		// read the Strings
-		final String originalTorPrivateKeyPEMStr = fileUtil.readFileFromClasspath(EXAMPLE_PRIVATE_KEY_PEM_PATH);
+		final String originalTorPrivateKeyPEMStr = FileUtil.readFileFromClasspath(EXAMPLE_PRIVATE_KEY_PEM_PATH);
 		LOG.info("originalTorPrivateKeyPEMStr=" + originalTorPrivateKeyPEMStr);
 		final String originalTorHostnameStr = EXAMPLE_ONION_DOMAIN_DERIVED_FROM_PRIVATE_KEY + ".onion";
 

@@ -42,8 +42,6 @@ public final class TempfileStringStorage implements StringStorage
 			.compile("[a-z0-9\\_\\-\\.]+");
 	private static final String FILENAME_PREFIX = "st-";
 
-	private static FileUtil fileUtil = FileUtil.getInstance();
-
 	static
 	{
 		LOG.debug("TempfileStringStorage directory={}", TEMPDIR);
@@ -95,7 +93,7 @@ public final class TempfileStringStorage implements StringStorage
 		// action
 		try
 		{
-			fileUtil.writeFile(getTempfileFile(key), value);
+			FileUtil.writeFile(getTempfileFile(key), value);
 		}
 		catch (final Exception e)
 		{
@@ -127,7 +125,7 @@ public final class TempfileStringStorage implements StringStorage
 		// action
 		try
 		{
-			return fileUtil.readFile(getTempfileFile(key));
+			return FileUtil.readFile(getTempfileFile(key));
 		}
 		catch (final FileNotFoundException e)
 		{

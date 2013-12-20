@@ -142,7 +142,7 @@ public class RendezvousServiceDescriptorLocalTest
 	public void testParseValidRendezvousServiceDescriptor() throws Exception
 	{
 		// read and parse
-		final String rendezvousServiceDescriptorStr = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_RENDEZVOUS_SERVICE_DESCRIPTOR_PATH);
+		final String rendezvousServiceDescriptorStr = FileUtil.readFileFromClasspath(EXAMPLE_RENDEZVOUS_SERVICE_DESCRIPTOR_PATH);
 		final RendezvousServiceDescriptor sd = new RendezvousServiceDescriptor(rendezvousServiceDescriptorStr, EXAMPLE_SD_VALID_DATE.getTime());
 
 		// check basics
@@ -163,7 +163,7 @@ public class RendezvousServiceDescriptorLocalTest
 	public void testParseValidRendezvousServiceDescriptorExample2() throws Exception
 	{
 		// read and parse
-		final String rendezvousServiceDescriptorStr = FileUtil.getInstance().readFileFromClasspath(EXAMPLE2_RENDEZVOUS_SERVICE_DESCRIPTOR_PATH);
+		final String rendezvousServiceDescriptorStr = FileUtil.readFileFromClasspath(EXAMPLE2_RENDEZVOUS_SERVICE_DESCRIPTOR_PATH);
 		final RendezvousServiceDescriptor sd = new RendezvousServiceDescriptor(rendezvousServiceDescriptorStr, EXAMPLE2_SD_VALID_DATE.getTime());
 		LOG.info("sd=" + sd);
 
@@ -183,7 +183,7 @@ public class RendezvousServiceDescriptorLocalTest
 	public void testParseOutdatedRendezvousServiceDescriptor() throws IOException
 	{
 		// read and parse
-		final String rendezvousServiceDescriptorStr = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_RENDEZVOUS_SERVICE_DESCRIPTOR_PATH);
+		final String rendezvousServiceDescriptorStr = FileUtil.readFileFromClasspath(EXAMPLE_RENDEZVOUS_SERVICE_DESCRIPTOR_PATH);
 		try
 		{
 			final RendezvousServiceDescriptor sd = new RendezvousServiceDescriptor(rendezvousServiceDescriptorStr, EXAMPLE_SD_INVALID_DATE.getTime());
@@ -200,8 +200,7 @@ public class RendezvousServiceDescriptorLocalTest
 	public void testParseInvalidRendezvousServiceDescriptor() throws IOException
 	{
 		// read and parse
-		final String rendezvousServiceDescriptorStr = FileUtil.getInstance()
-				.readFileFromClasspath(EXAMPLE_RENDEZVOUS_SERVICE_DESCRIPTOR_INVALID_PATH);
+		final String rendezvousServiceDescriptorStr = FileUtil.readFileFromClasspath(EXAMPLE_RENDEZVOUS_SERVICE_DESCRIPTOR_INVALID_PATH);
 		try
 		{
 			final RendezvousServiceDescriptor sd = new RendezvousServiceDescriptor(rendezvousServiceDescriptorStr, EXAMPLE_SD_VALID_DATE.getTime());
@@ -222,7 +221,7 @@ public class RendezvousServiceDescriptorLocalTest
 	public void testFormatRendezvousServiceDescriptor() throws Exception
 	{
 		// read and parse
-		final String rendezvousServiceDescriptorStr = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_RENDEZVOUS_SERVICE_DESCRIPTOR_PATH);
+		final String rendezvousServiceDescriptorStr = FileUtil.readFileFromClasspath(EXAMPLE_RENDEZVOUS_SERVICE_DESCRIPTOR_PATH);
 		final RendezvousServiceDescriptor sd = new RendezvousServiceDescriptor(rendezvousServiceDescriptorStr, EXAMPLE_SD_VALID_DATE.getTime());
 		// check basics
 		assertEquals("wrong z", "duskgytldkxiuqc6", sd.getZ());
@@ -246,15 +245,15 @@ public class RendezvousServiceDescriptorLocalTest
 	public void testReparsedRendezvousServiceDescriptor() throws Exception
 	{
 		// read and parse
-		final String rendezvousServiceDescriptorStr = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_RENDEZVOUS_SERVICE_DESCRIPTOR_PATH);
+		final String rendezvousServiceDescriptorStr = FileUtil.readFileFromClasspath(EXAMPLE_RENDEZVOUS_SERVICE_DESCRIPTOR_PATH);
 		final RendezvousServiceDescriptor sd = new RendezvousServiceDescriptor(rendezvousServiceDescriptorStr, EXAMPLE_SD_VALID_DATE.getTime());
 		// check basics
 		assertEquals("wrong z", "duskgytldkxiuqc6", sd.getZ());
 
 		final byte[] sdBytes = sd.toByteArray();
-		final RendezvousServiceDescriptor sdReparsed = new RendezvousServiceDescriptor(	new String(sdBytes, Util.UTF8),
-																						EXAMPLE_SD_VALID_DATE.getTime(),
-																						false);
+		final RendezvousServiceDescriptor sdReparsed = new RendezvousServiceDescriptor(new String(sdBytes, Util.UTF8),
+		                                                                               EXAMPLE_SD_VALID_DATE.getTime(),
+		                                                                               false);
 		assertEquals("wrong reformatted RendezvousServiceDescriptorStr", sd.toString(), sdReparsed.toString());
 	}
 }

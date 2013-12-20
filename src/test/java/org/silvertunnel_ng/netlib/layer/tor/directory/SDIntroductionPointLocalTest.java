@@ -63,11 +63,8 @@ public class SDIntroductionPointLocalTest
 	public void testParseValidIntrductionPointsDescriptor() throws Exception
 	{
 		// read and parse
-		final String introductionPointsStr = FileUtil.getInstance()
-				.readFileFromClasspath(
-						EXAMPLE_INTRODUCTION_POINTS_DESCRIPTOR_PATH);
-		final Collection<SDIntroductionPoint> ips = SDIntroductionPoint
-				.parseMultipleIntroductionPoints(introductionPointsStr);
+		final String introductionPointsStr = FileUtil.readFileFromClasspath(EXAMPLE_INTRODUCTION_POINTS_DESCRIPTOR_PATH);
+		final Collection<SDIntroductionPoint> ips = SDIntroductionPoint.parseMultipleIntroductionPoints(introductionPointsStr);
 
 		// check introduction points
 		assertEquals("wrong number introduction points", 3, ips.size());
@@ -84,17 +81,12 @@ public class SDIntroductionPointLocalTest
 	public void testFormatIntrductionPointsDescriptor() throws Exception
 	{
 		// read, parse and simple check
-		final String introductionPointsStr = FileUtil.getInstance()
-				.readFileFromClasspath(
-						EXAMPLE_INTRODUCTION_POINTS_DESCRIPTOR_PATH);
-		final Collection<SDIntroductionPoint> ips = SDIntroductionPoint
-				.parseMultipleIntroductionPoints(introductionPointsStr);
+		final String introductionPointsStr = FileUtil.readFileFromClasspath(EXAMPLE_INTRODUCTION_POINTS_DESCRIPTOR_PATH);
+		final Collection<SDIntroductionPoint> ips = SDIntroductionPoint.parseMultipleIntroductionPoints(introductionPointsStr);
 		assertEquals("wrong number introduction points", 3, ips.size());
 
 		// format to String
-		final String reformattedIntroductionPointsStr = SDIntroductionPoint
-				.formatMultipleIntroductionPoints(ips);
-		assertEquals("wrong reformatted introductionPointsStr",
-				introductionPointsStr, reformattedIntroductionPointsStr);
+		final String reformattedIntroductionPointsStr = SDIntroductionPoint.formatMultipleIntroductionPoints(ips);
+		assertEquals("wrong reformatted introductionPointsStr",	introductionPointsStr, reformattedIntroductionPointsStr);
 	}
 }

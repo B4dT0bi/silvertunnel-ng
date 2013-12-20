@@ -18,9 +18,10 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.fail;
 
 import java.io.IOException;
@@ -57,8 +58,8 @@ public final class RouterImplLocalTest
 	@BeforeClass
 	public void setUp() throws IOException
 	{
-		descriptor = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTOR_PATH);
-		descriptors = FileUtil.getInstance().readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTORS_PATH);		
+		descriptor = FileUtil.readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTOR_PATH);
+		descriptors = FileUtil.readFileFromClasspath(EXAMPLE_SERVER_DESCRIPTORS_PATH);		
 	}
 	/**
 	 * Test method for

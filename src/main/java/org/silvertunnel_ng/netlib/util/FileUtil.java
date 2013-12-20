@@ -30,8 +30,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import org.silvertunnel_ng.netlib.layer.tor.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class contains methods to read and to write UTF-8 encoded text files
@@ -42,19 +40,9 @@ import org.slf4j.LoggerFactory;
 public final class FileUtil
 {
 	/** */
-	private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
+//	private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
 
 	private static final String FILE_CHARSET_NAME = Util.UTF8;
-
-	private static FileUtil instance = new FileUtil();
-
-	/**
-	 * @return singleton instance
-	 */
-	public static FileUtil getInstance()
-	{
-		return instance;
-	}
 
 	protected FileUtil()
 	{
@@ -72,7 +60,7 @@ public final class FileUtil
 	 *            String to write; not null
 	 * @throws IOException
 	 */
-	public void writeFile(final File file, final String content) throws IOException
+	public static void writeFile(final File file, final String content) throws IOException
 	{
 		final Writer output = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(file), FILE_CHARSET_NAME));
@@ -95,7 +83,7 @@ public final class FileUtil
 	 * @return file content
 	 * @throws IOException
 	 */
-	public String readFile(final File file) throws IOException
+	public static String readFile(final File file) throws IOException
 	{
 		final BufferedReader input = new BufferedReader(new InputStreamReader(
 				new FileInputStream(file), FILE_CHARSET_NAME));
@@ -128,9 +116,9 @@ public final class FileUtil
 	 *            in the classpath
 	 * @return the file content; null in the case of an error
 	 */
-	public String readFileFromClasspath(final String filePath) throws IOException
+	public static String readFileFromClasspath(final String filePath) throws IOException
 	{
-		return readFileFromInputStream(getClass().getResourceAsStream(filePath));
+		return readFileFromInputStream(FileUtil.class.getResourceAsStream(filePath));
 	}
 
 	/**
@@ -140,7 +128,7 @@ public final class FileUtil
 	 * @return the text file content
 	 * @throws IOException
 	 */
-	public String readFileFromInputStream(final InputStream is) throws IOException
+	public static String readFileFromInputStream(final InputStream is) throws IOException
 	{
 		final BufferedReader input = new BufferedReader(new InputStreamReader(
 				is, FILE_CHARSET_NAME));

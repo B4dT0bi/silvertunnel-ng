@@ -43,7 +43,6 @@ public final class TorNetLayerUtil
 	private static final String FILENAME_PRIVATE_KEY = "private_key";
 
 	private static TorNetLayerUtil instance = new TorNetLayerUtil();
-	private static FileUtil fileUtil = FileUtil.getInstance();
 
 	/**
 	 * @return singleton instance
@@ -78,17 +77,18 @@ public final class TorNetLayerUtil
 	 * @throws IOException
 	 *             in the case of an error
 	 */
-	public TorHiddenServicePrivateNetAddress readTorHiddenServicePrivateNetAddressFromFiles(final File directory, final boolean checkHostname) 
+	public TorHiddenServicePrivateNetAddress readTorHiddenServicePrivateNetAddressFromFiles(final File directory, 
+	                                                                                        final boolean checkHostname) 
 						throws UnknownHostException,
 							   IOException
 	{
 		// read private key
 		final File privateKeyFile = new File(directory, FILENAME_PRIVATE_KEY);
-		final String privateKeyStr = fileUtil.readFile(privateKeyFile);
+		final String privateKeyStr = FileUtil.readFile(privateKeyFile);
 
 		// read hostname
 		final File hostnameFile = new File(directory, FILENAME_HOSTNAME);
-		final String hostnameStr = fileUtil.readFile(hostnameFile);
+		final String hostnameStr = FileUtil.readFile(hostnameFile);
 
 		// do the rest
 		return parseTorHiddenServicePrivateNetAddressFromStrings(privateKeyStr, hostnameStr, checkHostname);
@@ -173,11 +173,11 @@ public final class TorNetLayerUtil
 		final String pemStr = Encryption.getPEMStringFromRSAKeyPair(new RSAKeyPair(netAddress.getPublicKey(), 
 		                                                                           netAddress.getPrivateKey()));
 		final File privateKeyFile = new File(directory, FILENAME_PRIVATE_KEY);
-		fileUtil.writeFile(privateKeyFile, pemStr);
+		FileUtil.writeFile(privateKeyFile, pemStr);
 
 		// write hostname
 		final File hostnameFile = new File(directory, FILENAME_HOSTNAME);
-		fileUtil.writeFile(hostnameFile, netAddress.getPublicOnionHostname());
+		FileUtil.writeFile(hostnameFile, netAddress.getPublicOnionHostname());
 	}
 
 	/**

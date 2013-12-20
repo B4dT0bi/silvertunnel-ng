@@ -90,24 +90,16 @@ public class AuthorityKeyCertificatesLocalTest
 	public void testSingleCertificateSuccessfulParsing() throws Exception
 	{
 		// parse certificate
-		final String allCertsStr = FileUtil
-				.getInstance()
-				.readFileFromClasspath(
-						"/org/silvertunnel_ng/netlib/layer/tor/example-authority-keys.txt");
+		final String allCertsStr = FileUtil.readFileFromClasspath("/org/silvertunnel_ng/netlib/layer/tor/example-authority-keys.txt");
 		final AuthorityKeyCertificate firstCert = new AuthorityKeyCertificate(
 				allCertsStr);
 
 		// check result
 		final String expectedFingerprint = "ED03BB616EB2F60BEC80151114BB25CEF515B226";
-		assertEquals("wrong fingerprint", expectedFingerprint, firstCert
-				.getDirIdentityKeyDigest().getHex());
-		assertEquals("wrong dirKeyPublished", "2010-01-19 13:48:46",
-				Util.formatUtcTimestamp(firstCert.getDirKeyPublished()));
-		assertEquals("wrong dirKeyExpires", "2011-01-19 13:48:46",
-				Util.formatUtcTimestamp(firstCert.getDirKeyExpires()));
-		LOG.debug("dirSigningKey="
-				+ Encryption.getPEMStringFromRSAPublicKey(firstCert
-						.getDirSigningKey()));
+		assertEquals("wrong fingerprint", expectedFingerprint, firstCert.getDirIdentityKeyDigest().getHex());
+		assertEquals("wrong dirKeyPublished", "2010-01-19 13:48:46", Util.formatUtcTimestamp(firstCert.getDirKeyPublished()));
+		assertEquals("wrong dirKeyExpires", "2011-01-19 13:48:46", Util.formatUtcTimestamp(firstCert.getDirKeyExpires()));
+		LOG.debug("dirSigningKey=" + Encryption.getPEMStringFromRSAPublicKey(firstCert.getDirSigningKey()));
 	}
 
 	/**
@@ -117,23 +109,13 @@ public class AuthorityKeyCertificatesLocalTest
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+	@Test (expectedExceptions = TorException.class)
 	public void testSingeCertificateSignatureCheck() throws Exception
 	{
 		// parse certificate, must throw TorException
-		final String allCertsStr = FileUtil
-				.getInstance()
-				.readFileFromClasspath(
-						"/org/silvertunnel_ng/netlib/layer/tor/example-authority-key-corrupted.txt");
-		try
-		{
-			new AuthorityKeyCertificate(allCertsStr);
-			fail("expected TorException not thrown");
-		}
-		catch (final TorException e)
-		{
-			// expected
-		}
+		final String allCertsStr = FileUtil.readFileFromClasspath("/org/silvertunnel_ng/netlib/layer/tor/example-authority-key-corrupted.txt");
+		new AuthorityKeyCertificate(allCertsStr);
+		fail("expected TorException not thrown");
 	}
 
 	/**
@@ -149,18 +131,12 @@ public class AuthorityKeyCertificatesLocalTest
 	public void testAllCertificatesSuccessfulParsing() throws Exception
 	{
 		// parse all certificates
-		final String allCertsStr = FileUtil
-				.getInstance()
-				.readFileFromClasspath(
-						"/org/silvertunnel_ng/netlib/layer/tor/example-authority-keys.txt");
-		final AuthorityKeyCertificates allCerts = new AuthorityKeyCertificates(
-				allCertsStr, DATE_20091231);
-		final Map<Fingerprint, AuthorityKeyCertificate> all = allCerts
-				.getAuthorityKeyCertificates();
+		final String allCertsStr = FileUtil.readFileFromClasspath("/org/silvertunnel_ng/netlib/layer/tor/example-authority-keys.txt");
+		final AuthorityKeyCertificates allCerts = new AuthorityKeyCertificates(allCertsStr, DATE_20091231);
+		final Map<Fingerprint, AuthorityKeyCertificate> all = allCerts.getAuthorityKeyCertificates();
 
 		// check result
-		assertEquals("list: invalid number of certificates in allCerts", 7,
-				all.size());
+		assertEquals("list: invalid number of certificates in allCerts", 7, all.size());
 		final String[] allExpectedFingerprintStrs = new String[] {
 				"ED03BB616EB2F60BEC80151114BB25CEF515B226",
 				"E8A9C45EDE6D711294FADF8E7951F4DE6CA56B58",
@@ -187,8 +163,7 @@ public class AuthorityKeyCertificatesLocalTest
 	 * @throws Exception
 	 */
 	@Test
-	public void testSkippingOfCertificatedWithUnauthorizedFingerprint()
-			throws Exception
+	public void testSkippingOfCertificatedWithUnauthorizedFingerprint() throws Exception
 	{
 		//
 		// test preparation: check the test certificate (to avoid
@@ -197,15 +172,10 @@ public class AuthorityKeyCertificatesLocalTest
 
 		// parse the (unauthorized) certificate, i.e. check that the certificate
 		// is valid
-		final String allCertsStr = FileUtil
-				.getInstance()
-				.readFileFromClasspath(
-						"/org/silvertunnel_ng/netlib/layer/tor/unauthorized-authority-key.txt");
-		final AuthorityKeyCertificate firstCert = new AuthorityKeyCertificate(
-				allCertsStr);
+		final String allCertsStr = FileUtil.readFileFromClasspath("/org/silvertunnel_ng/netlib/layer/tor/unauthorized-authority-key.txt");
+		final AuthorityKeyCertificate firstCert = new AuthorityKeyCertificate(allCertsStr);
 		assertEquals("test preparation: wrong fingerprint",
-				"C14378EB4ED0B8D6F449F3982298279A44D4D2A0", firstCert
-						.getDirIdentityKeyDigest().getHex());
+				"C14378EB4ED0B8D6F449F3982298279A44D4D2A0", firstCert.getDirIdentityKeyDigest().getHex());
 
 		// try parse the (unauthorized) certificate as (single-element) list,
 		// the fingerprint will be handled as authorized
@@ -227,7 +197,6 @@ public class AuthorityKeyCertificatesLocalTest
 
 		// try parse the (unauthorized) certificate as (single-element) list
 		allCerts = new AuthorityKeyCertificates(allCertsStr, DATE_20091231);
-		assertEquals("invalid number of certificates in allCerts", 0, allCerts
-				.getAuthorityKeyCertificates().size());
+		assertEquals("invalid number of certificates in allCerts", 0, allCerts.getAuthorityKeyCertificates().size());
 	}
 }

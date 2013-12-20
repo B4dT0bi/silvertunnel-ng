@@ -60,15 +60,12 @@ public class EncryptionLocalTest
 	public void testExtractRSAKeyPair() throws Exception
 	{
 		// parse private key from PEM
-		final String privateKeyPEM = FileUtil.getInstance()
-				.readFileFromClasspath(
-						TorNetLayerUtilLocalTest.EXAMPLE_PRIVATE_KEY_PEM_PATH);
+		final String privateKeyPEM = FileUtil.readFileFromClasspath(TorNetLayerUtilLocalTest.EXAMPLE_PRIVATE_KEY_PEM_PATH);
 		final RSAKeyPair keyPair = Encryption.extractRSAKeyPair(privateKeyPEM);
 		assertNotNull("could not parse prive key from PEM format", keyPair);
 
 		// check the the public part of the key is as expected
-		final String z = RendezvousServiceDescriptorUtil
-				.calculateZFromPublicKey(keyPair.getPublic());
+		final String z = RendezvousServiceDescriptorUtil.calculateZFromPublicKey(keyPair.getPublic());
 		assertEquals(
 				"public part of the parted key pair does not create the correct z value",
 				TorNetLayerUtilLocalTest.EXAMPLE_ONION_DOMAIN_DERIVED_FROM_PRIVATE_KEY,
@@ -79,33 +76,25 @@ public class EncryptionLocalTest
 	public void testFormattingPrivateKeyAsPEM() throws Exception
 	{
 		// read one private key as PEM to have an example key
-		String privateKeyPEM = FileUtil.getInstance().readFileFromClasspath(
-				TorNetLayerUtilLocalTest.EXAMPLE_PRIVATE_KEY_PEM_PATH);
+		String privateKeyPEM = FileUtil.readFileFromClasspath(TorNetLayerUtilLocalTest.EXAMPLE_PRIVATE_KEY_PEM_PATH);
 		final RSAKeyPair keyPair = Encryption.extractRSAKeyPair(privateKeyPEM);
 
 		LOG.info("keyPair=" + keyPair);
 
 		// convert private key to PEM and compare with original PEM
-		String newPrivateKeyPEM = Encryption
-				.getPEMStringFromRSAKeyPair(keyPair);
-		final RSAKeyPair newKeyPair = Encryption
-				.extractRSAKeyPair(newPrivateKeyPEM);
+		String newPrivateKeyPEM = Encryption.getPEMStringFromRSAKeyPair(keyPair);
+		final RSAKeyPair newKeyPair = Encryption.extractRSAKeyPair(newPrivateKeyPEM);
 
 		LOG.info("\n\nnewKeyPair=" + newKeyPair);
 
 		// replace operation system specific line seperators
-		privateKeyPEM = privateKeyPEM.replaceAll("\\r\\n", "\n").replaceAll(
-				"\\r", "\n");
-		newPrivateKeyPEM = newPrivateKeyPEM.replaceAll("\\r\\n", "\n")
-				.replaceAll("\\r", "\n");
+		privateKeyPEM = privateKeyPEM.replaceAll("\\r\\n", "\n").replaceAll("\\r", "\n");
+		newPrivateKeyPEM = newPrivateKeyPEM.replaceAll("\\r\\n", "\n").replaceAll("\\r", "\n");
 
 		// check the the conversion PEM -> keyPair -> PEM did not change the
 		// content
-		assertEquals("wrong private key", keyPair.getPrivate(),
-				newKeyPair.getPrivate());
-		assertEquals("wrong public key", keyPair.getPublic(),
-				newKeyPair.getPublic());
-		assertEquals("wrong private key PEM string", privateKeyPEM,
-				newPrivateKeyPEM);
+		assertEquals("wrong private key", keyPair.getPrivate(),	newKeyPair.getPrivate());
+		assertEquals("wrong public key", keyPair.getPublic(), newKeyPair.getPublic());
+		assertEquals("wrong private key PEM string", privateKeyPEM, newPrivateKeyPEM);
 	}
 }

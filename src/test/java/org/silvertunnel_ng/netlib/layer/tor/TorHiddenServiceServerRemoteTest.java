@@ -65,15 +65,13 @@ import org.testng.annotations.Test;
  * @author hapke
  * @author Tobias Boese
  */
-public final class TorHiddenServiceServerRemoteTest extends
-		TorRemoteAbstractTest
+public final class TorHiddenServiceServerRemoteTest extends TorRemoteAbstractTest
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TorHiddenServiceServerRemoteTest.class);
 
 	private static final DateFormat DF = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 	protected static TorNetLayerUtil torNetLayerUtil = TorNetLayerUtil.getInstance();
-	protected static FileUtil fileUtil = FileUtil.getInstance();
 
 	protected static TcpipNetAddress publicNewHiddenServiceTcpipNetAddress;
 	protected static TcpipNetAddress publicOldHiddenServiceTcpipNetAddress;
@@ -240,7 +238,7 @@ public final class TorHiddenServiceServerRemoteTest extends
 	public void testPhase2ProvideOldHiddenService() throws Exception
 	{
 		// read private key of OLD hidden service
-		final String privateKeyPEMStr = fileUtil.readFileFromClasspath(OLD_HIDDEN_SERVICE_PRIVATE_KEY_PEM_PATH);
+		final String privateKeyPEMStr = FileUtil.readFileFromClasspath(OLD_HIDDEN_SERVICE_PRIVATE_KEY_PEM_PATH);
 		final TorHiddenServicePrivateNetAddress netAddressWithoutPort = torNetLayerUtil
 				.parseTorHiddenServicePrivateNetAddressFromStrings(privateKeyPEMStr, null, false);
 
