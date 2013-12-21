@@ -43,13 +43,20 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,6 +66,7 @@ import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.api.RouterExitPolicy;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 import org.silvertunnel_ng.netlib.layer.tor.common.LookupServiceUtil;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
@@ -376,6 +384,10 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 		return (epList.toArray(new RouterExitPolicy[epList.size()]));
 	}
 
+	// split into single server descriptors
+	private static final Pattern ROUTER_DESCRIPTORS_PATTERN = Pattern.compile("^(router.*?END SIGNATURE-----)", Pattern.DOTALL + Pattern.MULTILINE + Pattern.CASE_INSENSITIVE
+			+ Pattern.UNIX_LINES);
+
 	/**
 	 * parse multiple router descriptors from one String.
 	 * 
@@ -388,31 +400,45 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 		final long timeStart = System.currentTimeMillis();
 		final Map<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>();
 
-		// split into single server descriptors
-		final Pattern p = Pattern.compile("^(router.*?END SIGNATURE-----)", Pattern.DOTALL + Pattern.MULTILINE + Pattern.CASE_INSENSITIVE
-				+ Pattern.UNIX_LINES);
-		final Matcher m = p.matcher(routerDescriptors);
+		final Matcher m = ROUTER_DESCRIPTORS_PATTERN.matcher(routerDescriptors);
+
+		final ExecutorService executor = Executors.newCachedThreadPool();
+		final Collection<RouterParserCallable> allTasks = new ArrayList<RouterParserCallable>();
+
 		while (m.find())
 		{
-			// parse single descriptor
-			try
+			allTasks.add(new RouterParserCallable(m.group(1)));
+		}
+		List<Future<RouterImpl>> results = null;
+		try
+		{
+			results = executor.invokeAll(allTasks);
+		}
+		catch (InterruptedException exception)
+		{
+			LOG.warn("error while parsing the router descriptors in parallel", exception);
+		}
+		if (results != null && !results.isEmpty())
+		{
+			for (Future<RouterImpl> item : results)
 			{
-				String singleDescriptor = m.group(1);
-
-				// avoid reference to the very big routerDescriptors String:
-				singleDescriptor = new String(singleDescriptor);
-
-				// parse and store a single router
-				final RouterImpl singleServer = new RouterImpl(singleDescriptor);
-				result.put(singleServer.fingerprint, singleServer);
-			}
-			catch (final TorException e)
-			{
-				LOG.info("got TorException while parsing RouterDescriptor", e);
-			}
-			catch (final Exception e)
-			{
-				LOG.info("unexpected exception", e);
+				RouterImpl router = null;
+				try
+				{
+					router = item.get();
+				}
+				catch (InterruptedException exception)
+				{
+					LOG.warn("error while parsing the router descriptors in parallel", exception);
+				}
+				catch (ExecutionException exception)
+				{
+					LOG.warn("error while parsing the router descriptors in parallel", exception);
+				}
+				if (router != null)
+				{
+					result.put(router.getFingerprint(), router);
+				}
 			}
 		}
 		if (LOG.isDebugEnabled())

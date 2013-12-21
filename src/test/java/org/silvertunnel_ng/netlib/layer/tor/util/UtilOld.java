@@ -22,6 +22,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author hapke
  * @author Tobias Boese
  */
-public final class Util
+public final class UtilOld
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(Util.class);
@@ -50,7 +51,7 @@ public final class Util
 	 * 
 	 * After executing utcTimestampDateFormat is initialized.
 	 */
-	private static synchronized void initUtcTimestampIfNeeded()
+	private synchronized static void initUtcTimestampIfNeeded()
 	{
 		if (utcTimestampDateFormat == null)
 		{
@@ -69,17 +70,23 @@ public final class Util
 	 */
 	public static Date parseUtcTimestamp(final String timestampStr)
 	{
-		Calendar calendar = Calendar.getInstance(UTC_TZ);
-		calendar.clear();
-		calendar.setTimeZone(UTC_TZ);
-		int year = Integer.parseInt(timestampStr.substring(0, 4));
-		int month = Integer.parseInt(timestampStr.substring(5, 7));
-		int day = Integer.parseInt(timestampStr.substring(8, 10));
-		int hour = Integer.parseInt(timestampStr.substring(11, 13));
-		int minute = Integer.parseInt(timestampStr.substring(14, 16));
-		int second = Integer.parseInt(timestampStr.substring(17));
-		calendar.set(year, month - 1, day, hour, minute, second);
-		return calendar.getTime();
+		try
+		{
+			// synchronized because SimpleDateFormat is not thread safe
+			synchronized (Util.class)
+			{
+				initUtcTimestampIfNeeded();
+
+				// parse
+				return utcTimestampDateFormat.parse(timestampStr);
+			}
+
+		}
+		catch (final Exception e)
+		{
+			LOG.debug("Exception while parsing timestampStr={}", timestampStr, e);
+			return null;
+		}
 	}
 
 	/**
@@ -91,11 +98,49 @@ public final class Util
 	 */
 	public static Long parseUtcTimestampAsLong(final String timestampStr)
 	{
-		return parseUtcTimestamp(timestampStr).getTime();
+		try
+		{
+			// synchronized because SimpleDateFormat is not thread safe
+			synchronized (Util.class)
+			{
+				initUtcTimestampIfNeeded();
+
+				// parse
+				return utcTimestampDateFormat.parse(timestampStr).getTime();
+			}
+
+		}
+		catch (final Exception e)
+		{
+			LOG.debug("Exception while parsing timestampStr={}", timestampStr, e);
+			return null;
+		}
 	}
 	
 	private static final TimeZone UTC_TZ = TimeZone.getTimeZone("UTC");
 	
+	/**
+	 * Parse with format "yyyy-MM-dd HH:mm:ss".
+	 * 
+	 * @param timestampStr
+	 *            interpret the time as UTC
+	 * @return the time stamp as Date; null in the case of an error
+	 */
+	public static Date parseUtcTimestampNew(final String timestampStr)
+	{
+		Calendar calendar = Calendar.getInstance(UTC_TZ);
+		calendar.clear();
+		calendar.setTimeZone(UTC_TZ);
+		int year = Integer.parseInt(timestampStr.substring(0, 4));
+		int month = Integer.parseInt(timestampStr.substring(5, 7));
+		int day = Integer.parseInt(timestampStr.substring(8, 10));
+		int hour = Integer.parseInt(timestampStr.substring(11, 13));
+		int minute = Integer.parseInt(timestampStr.substring(14, 16));
+		int second = Integer.parseInt(timestampStr.substring(17));
+		calendar.set(year, month - 1, day, hour, minute, second);
+		return calendar.getTime();
+
+	}
 	/**
 	 * Format with format "yyyy-MM-dd HH:mm:ss".
 	 * 
