@@ -35,6 +35,7 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
@@ -79,16 +80,15 @@ import org.slf4j.LoggerFactory;
  * @author hapke
  * @author Tobias Boese
  */
-public final class RouterImpl implements Router, Cloneable
+public final class RouterImpl implements Router, Cloneable, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8605647987890472910L;
+
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(RouterImpl.class);
-
-	/**
-	 * The raw router descriptor which has been handed to us. In the normal case
-	 * we just return this stored descriptor.
-	 */
-	private String routerDescriptor;
 
 	/** Information extracted from the Router descriptor. */
 	private String nickname;
@@ -432,7 +432,6 @@ public final class RouterImpl implements Router, Cloneable
 	private void parseRouterDescriptor(final String routerDescriptor) throws TorException
 	{
 		final long timeStart = System.currentTimeMillis();
-		this.routerDescriptor = routerDescriptor;
 		String[] tmpLine = routerDescriptor.split("\n");
 
 		Map<RouterDescriptorFormatKeys, Integer> keysToFind = RouterDescriptorFormatKeys.getAllKeysAsMap();
@@ -1076,14 +1075,6 @@ public final class RouterImpl implements Router, Cloneable
 		return rankingIndex;
 	}
 
-	/**
-	 * @return the stored routerDescriptor string
-	 */
-	public String getRouterDescriptor()
-	{
-		return routerDescriptor;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1123,7 +1114,6 @@ public final class RouterImpl implements Router, Cloneable
 		result = prime * result + ((platform == null) ? 0 : platform.hashCode());
 		result = prime * result + (int) published;
 		result = prime * result + Float.floatToIntBits(rankingIndex);
-		result = prime * result + ((routerDescriptor == null) ? 0 : routerDescriptor.hashCode());
 		result = prime * result + Arrays.hashCode(routerSignature);
 		result = prime * result + ((signingKey == null) ? 0 : signingKey.hashCode());
 		result = prime * result + ((signingKeyPrivate == null) ? 0 : signingKeyPrivate.hashCode());
@@ -1338,17 +1328,6 @@ public final class RouterImpl implements Router, Cloneable
 				return false;
 		}
 		if (Float.floatToIntBits(rankingIndex) != Float.floatToIntBits(other.rankingIndex))
-		{
-			return false;
-		}
-		if (routerDescriptor == null)
-		{
-			if (other.routerDescriptor != null)
-			{
-				return false;
-			}
-		}
-		else if (!routerDescriptor.equals(other.routerDescriptor))
 		{
 			return false;
 		}

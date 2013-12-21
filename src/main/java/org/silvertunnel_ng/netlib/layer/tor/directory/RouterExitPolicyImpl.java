@@ -35,6 +35,8 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
+import java.io.Serializable;
+
 import org.silvertunnel_ng.netlib.layer.tor.api.RouterExitPolicy;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 
@@ -46,8 +48,12 @@ import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
  * @author hapke
  * @author Tobias Boese
  */
-public class RouterExitPolicyImpl implements RouterExitPolicy, Cloneable
+public final class RouterExitPolicyImpl implements RouterExitPolicy, Cloneable, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8729142704980213826L;
 	/** if false: reject. */
 	private final boolean accept;
 	private final long ip;
@@ -55,8 +61,11 @@ public class RouterExitPolicyImpl implements RouterExitPolicy, Cloneable
 	private final int loPort;
 	private final int hiPort;
 
-	public RouterExitPolicyImpl(boolean accept, long ip, long netmask,
-			int loPort, int hiPort)
+	public RouterExitPolicyImpl(final boolean accept, 
+	                            final long ip, 
+	                            final long netmask,
+	                            final int loPort, 
+	                            final int hiPort)
 	{
 		this.accept = accept;
 		this.ip = ip;

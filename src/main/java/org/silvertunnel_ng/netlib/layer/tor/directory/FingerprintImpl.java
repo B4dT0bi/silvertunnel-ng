@@ -18,6 +18,7 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import javax.xml.bind.DatatypeConverter;
@@ -33,13 +34,21 @@ import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;
  * 
  * @author hapke
  */
-public class FingerprintImpl implements Fingerprint, Cloneable
+public final class FingerprintImpl implements Fingerprint, Cloneable, Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1621113144294310736L;
 	/** internal byte array containing the data of the fingerprint. */
 	private byte[] bytes;
 	/** cache of result of getHex(). */
 	private String hexCache;
 
+	/**
+	 * Create an {@link Fingerprint} object by using the BASE64 encoded data.
+	 * @param identityKeyBase64 the BASE64 encoded data
+	 */
 	public FingerprintImpl(final String identityKeyBase64)
 	{
 		String b64fp = identityKeyBase64;

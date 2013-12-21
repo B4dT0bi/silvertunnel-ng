@@ -52,6 +52,11 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,6 +88,7 @@ import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.tool.SimpleHttpClientCompressed;
 import org.silvertunnel_ng.netlib.util.StringStorage;
+import org.silvertunnel_ng.netlib.util.TempfileStringStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -573,13 +579,19 @@ public final class Directory
 				LOG.debug("number of guard routers : " + newGuardRouters.size());
 			}
 			// write server descriptors to local cache
-			final StringBuffer allDescriptors = new StringBuffer();
-			for (final RouterImpl r : validRoutersByFingerprint.values())
+			try
 			{
-				allDescriptors.append(r.getRouterDescriptor()).append("\n");
+				FileOutputStream fileOutputStream = new FileOutputStream(
+				                     TempfileStringStorage.getTempfileFile(STORAGEKEY_DIRECTORY_CACHED_ROUTER_DESCRIPTORS_TXT));
+				ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+				objectOutputStream.writeObject(validRoutersByFingerprint);
+				objectOutputStream.close();
+				LOG.debug("wrote router descriptors to local cache");
 			}
-			stringStorage.put(STORAGEKEY_DIRECTORY_CACHED_ROUTER_DESCRIPTORS_TXT, allDescriptors.toString());
-			LOG.debug("wrote router descriptors to local cache");
+			catch (Exception exception)
+			{
+				LOG.warn("Could not cache routers due to exception {}", exception, exception);
+			}
 		}
 	}
 
@@ -720,12 +732,14 @@ public final class Directory
 		if (fingerprintsRouters.size() == 0)
 		{
 			// try to load from local cache
-			allDescriptors = stringStorage.get(STORAGEKEY_DIRECTORY_CACHED_ROUTER_DESCRIPTORS_TXT);
-
-			// split into single server descriptors
-			if (allDescriptors != null && allDescriptors.length() >= ALL_DESCRIPTORS_STR_MIN_LEN)
+			try
 			{
-				final Map<Fingerprint, RouterImpl> parsedServers = RouterImpl.parseRouterDescriptors(allDescriptors);
+				FileInputStream fileInputStream = new FileInputStream(
+				                           TempfileStringStorage.getTempfileFile(STORAGEKEY_DIRECTORY_CACHED_ROUTER_DESCRIPTORS_TXT));
+				ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+				@SuppressWarnings("unchecked") // if it fails just skip and download the descriptors
+				final Map<Fingerprint, RouterImpl> parsedServers = (Map<Fingerprint, RouterImpl>) objectInputStream.readObject();
+				objectInputStream.close();
 				final Set<Fingerprint> fingerprintsOfRoutersToLoadCopy = new HashSet<Fingerprint>(fingerprintsOfRoutersToLoad);
 				for (final Fingerprint fingerprint : fingerprintsOfRoutersToLoadCopy)
 				{
@@ -738,8 +752,16 @@ public final class Directory
 						fingerprintsOfRoutersToLoad.remove(fingerprint);
 					}
 				}
+				LOG.debug("loaded {} routers from local cache", fingerprintsRouters.size());
 			}
-			LOG.debug("loaded {} routers from local cache", fingerprintsRouters.size());
+			catch (FileNotFoundException exception)
+			{
+				LOG.debug("no cached routers found");
+			}
+			catch (Exception exception)
+			{
+				LOG.warn("could not load cached routers due to exception {}", exception, exception);
+			}
 		}
 
 		// load from directory server

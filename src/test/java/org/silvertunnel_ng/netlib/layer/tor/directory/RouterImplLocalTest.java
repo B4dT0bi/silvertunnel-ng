@@ -24,7 +24,11 @@ import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.fail;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
@@ -135,7 +139,27 @@ public final class RouterImplLocalTest
 		assertFalse(testObject.isDirv2Valid());
 		assertEquals(173, testObject.getExitpolicy().length);
 	}
-
+	/**
+	 * Test method if it is possible to write a parsed Router to a file using {@link ObjectOutputStream}.
+	 * @throws TorException 
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
+	 */
+	@Test
+	public void testWriteRouterToFile() throws TorException, IOException, ClassNotFoundException
+	{
+		final RouterImpl testObject = new RouterImpl(descriptor);
+		FileOutputStream fileOutputStream = new FileOutputStream("router.test");
+		ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+		objectOutputStream.writeObject(testObject);
+		objectOutputStream.close();
+		
+		FileInputStream fileInputStream = new FileInputStream("router.test");
+		ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+		RouterImpl testObject2 = (RouterImpl) objectInputStream.readObject();
+		objectInputStream.close();
+		assertEquals(testObject, testObject2);
+	}
 	/**
 	 * Test method for
 	 * {@link RouterImpl#updateServerStatus(java.lang.String)}

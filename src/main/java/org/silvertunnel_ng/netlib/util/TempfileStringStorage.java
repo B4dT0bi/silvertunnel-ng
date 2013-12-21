@@ -147,7 +147,7 @@ public final class TempfileStringStorage implements StringStorage
 	 * 
 	 * @throws IOException
 	 */
-	protected File getTempfileFile(final String key) throws IOException
+	public static File getTempfileFile(final String key) throws IOException
 	{
 		final String prefix = FILENAME_PREFIX + key;
 
