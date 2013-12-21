@@ -388,8 +388,6 @@ public class Tor implements NetLayerStatusAdmin
 		tlsConnectionAdmin.close(force);
 		// shutdown directory
 		directory.close();
-		// write config file
-		TorConfig.close();
 		// close hidden services
 		// TODO close hidden services
 		// kill logger

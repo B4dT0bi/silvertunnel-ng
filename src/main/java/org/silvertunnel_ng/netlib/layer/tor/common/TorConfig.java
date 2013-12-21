@@ -51,25 +51,10 @@
  */
 package org.silvertunnel_ng.netlib.layer.tor.common;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.layer.tor.circuit.CircuitHistory;
-import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
-import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.util.SystemPropertiesHelper;
 import org.slf4j.Logger;
@@ -108,7 +93,6 @@ public final class TorConfig
 		if (instance == null)
 		{
 			instance = new TorConfig();
-			instance.init(null);
 		}
 		return instance;
 	}
@@ -314,7 +298,7 @@ public final class TorConfig
 	}
 
 	public static int circuitsMaximumNumber = 30;
-	public static long maxAllowedSetupDurationMs = 15000;
+	public static long maxAllowedSetupDurationMs = 10000;
 
 	/** 0..1 . */
 	public static float rankingTransferPerServerUpdate = 0.95f;
@@ -741,14 +725,9 @@ public final class TorConfig
 		getInstance().avoidedNodeFingerprints.add(fingerprint);
 	}
 
-	/** TOR config filename. */
-	private static final String TOR_CONFIG_FILENAME = "torrc";
-
 	/** Path of the resource to the GeoIP DB. */
 	public static final String TOR_GEOIPCITY_PATH = "/com/maxmind/geoip/GeoIP.dat";
 	public static final int TOR_GEOIPCITY_MAX_FILE_SIZE = 2000000;
-
-	private static String filename;
 
 	/**
 	 * Shall we cache the fetched Hidden service Descriptors?
@@ -765,15 +744,10 @@ public final class TorConfig
 	public static final long ROUTER_DESCRIPTION_VALID_PERIOD_MS = 1L * 24L
 			* 60L * 60L * 1000L;
 
-	static
-	{
-		reloadConfigFromProperties();
-	}
-
 	/**
 	 * Try to load the TorConfig from System properties.
 	 */
-	public static final void reloadConfigFromProperties()
+	public static void reloadConfigFromProperties()
 	{
 		try
 		{
@@ -803,414 +777,7 @@ public final class TorConfig
 
 	private TorConfig()
 	{
-
-	}
-
-	/**
-	 * @param readFileName
-	 *            set to false to avoid any access to the local file system
-	 */
-	private TorConfig(final boolean readFileName)
-	{
-		instance = this;
-		if (readFileName)
-		{
-			init(getConfigDir() + TOR_CONFIG_FILENAME);
-		}
-		else
-		{
-			init(null);
-		}
-	}
-
-	private TorConfig(final String filename)
-	{
-		instance = this;
-		init(filename);
-	}
-
-	public void reload()
-	{
-		if (filename == null)
-		{
-			return; // TODO : add reloading of System.properties
-		}
-		LOG.info("TorConfig.reload: reloading config-file " + filename);
-		init(filename);
-	}
-
-	private void init(final String filename)
-	{
-		// init set of avoided nodes, countries
-		avoidedCountries = new HashSet<String>();
-		avoidedNodeFingerprints = new HashSet<byte[]>();
-		// read everything else from config
-		readFromConfig(filename);
-		// set filename, such that file can be reloaded
-		TorConfig.filename = filename;
-	}
-
-	public static void close()
-	{
-		getInstance().writeToFile("/tmp/torrc.test");
-	}
-
-	private String replaceSpaceWithSpaceRegExp(final String regexp)
-	{
-		return regexp.replaceAll(" ", "\\\\s+");
-	}
-
-	private int parseInt(final String config, final String name,
-			final int myDefault)
-	{
-		final int x = Integer.parseInt(Parsing.parseStringByRE(
-				config,
-				Parsing.compileRegexPattern("^\\s*"
-						+ replaceSpaceWithSpaceRegExp(name) + "\\s+(\\d+)"),
-				Integer.toString(myDefault)));
-		LOG.debug("TorConfig.parseInt: Parsed '{}' as '{}'", name, x);
-		return x;
-	}
-
-	private String writeInt(final String name, final int value)
-	{
-		return name + " " + value + "\n";
-	}
-
-	/*
-	 * private float parseFloat(String config,String name,float myDefault) {
-	 * float x = Float.parseFloat(Parsing.parseStringByRE(config,"^\\s*"+
-	 * replaceSpaceWithSpaceRegExp
-	 * (name)+"\\s+([0-9.]+)",Float.toString(myDefault)));
-	 * LOG.debug("TorConfig.parseFloat: Parsed '"+name+"' as '"+x+"'"); return
-	 * x; }
-	 */
-	private String writeFloat(final String name, final float value)
-	{
-		return name + " " + value + "\n";
-	}
-
-	private String writeDouble(final String name, final double value)
-	{
-		return name + " " + value + "\n";
-	}
-
-	private float parseFloat(final String config, final String name,
-			final float myDefault, final float lower, final float upper)
-	{
-		float x = Float.parseFloat(Parsing.parseStringByRE(
-				config,
-				Parsing.compileRegexPattern("^\\s*"
-						+ replaceSpaceWithSpaceRegExp(name) + "\\s+([0-9.]+)"),
-				Float.toString(myDefault)));
-		if (x < lower)
-		{
-			x = lower;
-		}
-		if (x > upper)
-		{
-			x = upper;
-		}
-		LOG.debug("TorConfig.parseFloat: Parsed '{}' as '{}'", name, x);
-		return x;
-	}
-
-	private double parseDouble(final String config, final String name,
-			final double myDefault, final double lower, final double upper)
-	{
-		double x = Double.parseDouble(Parsing.parseStringByRE(
-				config,
-				Parsing.compileRegexPattern("^\\s*"
-						+ replaceSpaceWithSpaceRegExp(name) + "\\s+([0-9.]+)"),
-				Double.toString(myDefault)));
-		if (x < lower)
-		{
-			x = lower;
-		}
-		if (x > upper)
-		{
-			x = upper;
-		}
-		LOG.debug("TorConfig.parseDouble: Parsed '{}' as '{}'", name, x);
-		return x;
-	}
-
-	private String parseString(final String config, final String name,
-			final String myDefault)
-	{
-		final String x = Parsing.parseStringByRE(
-				config,
-				Parsing.compileRegexPattern("^\\s*"
-						+ replaceSpaceWithSpaceRegExp(name) + "\\s+(\\S.*?)$"),
-				myDefault);
-		LOG.debug("TorConfig.parseString: Parsed '{}' as '{}'", name, x);
-		return x;
-	}
-
-	private String writeString(final String name, final String value)
-	{
-		return name + " " + value + "\n";
-	}
-
-	private boolean parseBoolean(final String config, final String name,
-			final boolean myDefault)
-	{
-		String mydef = "false";
-		if (myDefault)
-		{
-			mydef = "true";
-		}
-		final String x = Parsing.parseStringByRE(
-				config,
-				Parsing.compileRegexPattern("^\\s*"
-						+ replaceSpaceWithSpaceRegExp(name) + "\\s+(\\S.*?)$"),
-				mydef).trim();
-		boolean ret = false;
-		if (x.equals("1") || x.equalsIgnoreCase("true")
-				|| x.equalsIgnoreCase("yes"))
-		{
-			ret = true;
-		}
-		LOG.debug("TorConfig.parseBoolean: Parsed '{}' as '{}'", name, ret);
-		return ret;
-	}
-
-	private String writeBoolean(final String name, final boolean value)
-	{
-		if (value)
-		{
-			return name + " " + "true" + "\n";
-		}
-		else
-		{
-			return name + " " + "false" + "\n";
-		}
-	}
-
-	private void readFromConfig(final String filename)
-	{
-		try
-		{
-			String config = "";
-			if (filename != null)
-			{
-				final DataInputStream sin = new DataInputStream(
-						new FileInputStream(new File(filename)));
-				// DataInputStream sin = new
-				// DataInputStream(ClassLoader.getSystemResourceAsStream(filename));
-				config = readAllFromStream(sin);
-				LOG.debug("TorConfig.readFromConfig(): {}", config);
-			}
-			// Read variable config information here
-
-			// security parameters
-			streamsPerCircuit = parseInt(config, "StreamsPerCircuit",
-					streamsPerCircuit);
-			rankingIndexEffect = parseFloat(config, "RankingIndexEffect",
-					rankingIndexEffect, 0, 1);
-			routeMinLength = parseInt(config, "RouteMinLength", routeMinLength);
-			routeMaxLength = parseInt(config, "RouteMaxLength", routeMaxLength);
-			try
-			{
-				setMinDescriptorsPercentage(parseDouble(config,
-						"MinPercentage", minDescriptorsPercentage, 0, 1));
-			}
-			catch (TorException e)
-			{
-				LOG.warn("could not load MinPercentage from config file");
-			}
-			// minDescriptors = parseInt(config, "MinDescriptors",
-			// minDescriptors);
-			routeUniqueClassC = parseBoolean(config, "RouteUniqClassC",
-					routeUniqueClassC);
-			routeUniqueCountry = parseBoolean(config, "RouteUniqCountry",
-					routeUniqueCountry);
-			allowModeMultipleCircuits = parseInt(config,
-					"AllowNodeMultipleCircuits", allowModeMultipleCircuits);
-			// Avoid Countries
-			Pattern p = Pattern.compile("^\\s*AvoidCountry\\s+(.*?)$",
-					Pattern.MULTILINE + Pattern.CASE_INSENSITIVE
-							+ Pattern.UNIX_LINES);
-			Matcher m = p.matcher(config);
-			while (m.find())
-			{
-				LOG.debug("TorConfig.readConfig: will avoid country: {}", m.group(1));
-				avoidedCountries.add(m.group(1));
-			}
-			// Avoid Nodes
-			p = Pattern.compile("^\\s*AvoidNode\\s+(.*?)$", Pattern.MULTILINE
-					+ Pattern.CASE_INSENSITIVE + Pattern.UNIX_LINES);
-			m = p.matcher(config);
-			while (m.find())
-			{
-				LOG.debug("TorConfig.readConfig: will avoid node: {}", m.group(1));
-				avoidedNodeFingerprints.add(DatatypeConverter.parseHexBinary(m
-						.group(1)));
-			}
-			// functionality
-			setStartupDelay(parseInt(config, "startupDelaySeconds", getStartupDelay()));
-
-			// QoS parameters
-			retriesConnect = parseInt(config, "RetriesConnect", retriesConnect);
-			retriesStreamBuildup = parseInt(config, "RetriesStreamBuildup",
-					retriesStreamBuildup);
-			reconnectCircuit = parseInt(config, "ReconnectCircuit",
-					reconnectCircuit);
-
-			queueTimeoutCircuit = parseInt(config, "QueueTimeoutCircuit",
-					queueTimeoutCircuit);
-			queueTimeoutResolve = parseInt(config, "QueueTimeoutResolve",
-					queueTimeoutResolve);
-			queueTimeoutStreamBuildup = parseInt(config,
-					"QueueTimeoutStreamBuildup", queueTimeoutStreamBuildup);
-
-			rankingTransferPerServerUpdate = parseFloat(config,
-					"RankingTransferPerServerUpdate",
-					rankingTransferPerServerUpdate, 0, 1);
-
-			circuitClosesOnFailures = parseInt(config,
-					"CircuitClosesOnFailures", circuitClosesOnFailures);
-			circuitsMaximumNumber = parseInt(config, "circuitsMaximumNumber",
-					circuitsMaximumNumber);
-
-			veryAggressiveStreamBuilding = parseBoolean(config,
-					"veryAggressiveStreamBuilding",
-					veryAggressiveStreamBuilding);
-			// directory parameters
-			intervalDirectoryRefresh = parseInt(config, "DirectoryRefresh",
-					intervalDirectoryRefresh);
-		}
-		catch (final IOException e)
-		{
-			LOG.warn("TorConfig.readFromConfig(): Warning: "
-					+ e.getMessage());
-		}
-	}
-
-	/**
-	 * reads all data from an inputstream.
-	 */
-	private static String readAllFromStream(final InputStream in)
-	{
-		// DataInputStream.readLine() is depreciated
-		final BufferedReader sin = new BufferedReader(new InputStreamReader(in));
-
-		final StringBuffer buf = new StringBuffer();
-		try
-		{
-			String str = sin.readLine();
-			while (str != null)
-			{
-				buf.append(str);
-				buf.append("\n");
-				str = sin.readLine();
-			}
-
-		}
-		catch (final IOException e)
-		{
-			/* eof, reset, ... */
-			LOG.debug("got IOException : {}", e.getMessage(), e);
-		}
-		return buf.toString();
-	}
-
-	/** used to store some new values to a file. */
-	private void writeToFile(final String filename)
-	{
-		if (filename == null)
-		{
-			return;
-		}
-
-		try
-		{
-			final StringBuffer config = new StringBuffer();
-
-			LOG.debug("TorConfig.writeToFile(): {}", config);
-			// Write variable config information here
-
-			// security parameters
-			config.append(writeInt("StreamsPerCircuit", streamsPerCircuit));
-			config.append(writeFloat("RankingIndexEffect", rankingIndexEffect));
-			config.append(writeInt("RouteMinLength", getRouteMinLength()));
-			config.append(writeInt("RouteMaxLength", getRouteMaxLength()));
-			config.append(writeDouble("MinPercentage",
-					getMinDescriptorsPercentage()));
-			config.append(writeInt("MinDescriptors", minDescriptors));
-			config.append(writeBoolean("RouteUniqClassC", routeUniqueClassC));
-			config.append(writeBoolean("RouteUniqCountry", routeUniqueCountry));
-			config.append(writeInt("AllowNodeMultipleCircuits", allowModeMultipleCircuits));
-
-			// Avoided countries
-			final Iterator<String> it = avoidedCountries.iterator();
-			while (it.hasNext())
-			{
-				final String countryName = it.next();
-				config.append(writeString("AvoidCountry", countryName));
-				LOG.debug("TorConfig.writeToFile: will avoid country {}", countryName);
-			}
-			// Avoided nodes
-			for (final byte[] fingerprint : avoidedNodeFingerprints)
-			{
-				final String fingerprintStr = Encoding.toHexString(fingerprint);
-				config.append(writeString("AvoidNode", fingerprintStr));
-				LOG.debug("TorConfig.writeToFile: will avoid node {}", fingerprintStr);
-			}
-			// Functionality
-			config.append(writeInt("startupDelaySeconds", getStartupDelay()));
-
-			// QoS parameters
-			config.append(writeInt("RetriesConnect", retriesConnect));
-			config.append(writeInt("RetriesStreamBuildup", retriesStreamBuildup));
-			config.append(writeInt("ReconnectCircuit", reconnectCircuit));
-
-			config.append(writeInt("QueueTimeoutCircuit", queueTimeoutCircuit));
-			config.append(writeInt("QueueTimeoutResolve", queueTimeoutResolve));
-			config.append(writeInt("QueueTimeoutStreamBuildup",	queueTimeoutStreamBuildup));
-
-			config.append(writeInt("CircuitClosesOnFailures", circuitClosesOnFailures));
-			config.append(writeInt("circuitsMaximumNumber", circuitsMaximumNumber));
-
-			config.append(writeBoolean("veryAggressiveStreamBuilding",
-					veryAggressiveStreamBuilding));
-
-			// FIXME: Check if this really works
-			config.append(writeFloat("RankingTransferPerServerUpdate",
-					rankingTransferPerServerUpdate));
-			// directory parameters
-			config.append(writeInt("DirectoryRefresh", intervalDirectoryRefresh));
-
-			final FileWriter writer = new FileWriter(new File(filename));
-			writer.write(config.toString());
-			writer.close();
-
-		}
-		catch (final IOException e)
-		{
-			LOG.warn("TorConfig.writeToFile(): Warning: " + e.getMessage());
-		}
-
-	}
-
-	private static String getConfigDir()
-	{
-		final String fileSeparator = System.getProperty("file.separator");
-		if ("Linux".equals(operatingSystem()))
-		{
-			return System.getProperty("user.home") + fileSeparator + ".TorJava"
-					+ fileSeparator;
-		}
-		return System.getProperty("user.home") + fileSeparator + "TorJava"
-				+ fileSeparator;
-	}
-
-	/**
-	 * @return get the operating system name.
-	 */
-	public static String operatingSystem()
-	{
-		return System.getProperty("os.name");
+		reloadConfigFromProperties();
 	}
 
 	/**
@@ -1225,8 +792,7 @@ public final class TorConfig
 	 * @param cacheHiddenServiceDescriptor
 	 *            the cacheHiddenServiceDescriptor to set
 	 */
-	public static void setCacheHiddenServiceDescriptor(
-			final boolean cacheHiddenServiceDescriptor)
+	public static void setCacheHiddenServiceDescriptor(final boolean cacheHiddenServiceDescriptor)
 	{
 		TorConfig.cacheHiddenServiceDescriptor = cacheHiddenServiceDescriptor;
 	}
