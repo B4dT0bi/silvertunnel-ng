@@ -56,8 +56,7 @@ class QueueTor2JavaHandler implements QueueHandler
 		}
 		catch (final IOException e)
 		{
-			LOG.error("QueueTor2JavaHandler: caught IOException "
-					+ e.getMessage(), e);
+			LOG.error("QueueTor2JavaHandler: caught IOException " + e.getMessage(), e);
 		}
 	}
 
@@ -104,8 +103,7 @@ class QueueTor2JavaHandler implements QueueHandler
 			}
 			catch (final IOException e)
 			{
-				LOG.error("QueueTor2JavaHandler.handleCell(): caught IOException "
-						+ e.getMessage(), e);
+				LOG.error("QueueTor2JavaHandler.handleCell(): caught IOException " + e.getMessage(), e);
 			}
 			return true;
 		}

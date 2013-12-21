@@ -52,7 +52,6 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
-import java.security.KeyPair;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -175,7 +174,6 @@ public final class Directory
 	private final SecureRandom rnd;
 
 	private volatile boolean updateRunning = false;
-	private int updateCounter = 0;
 
 	private AuthorityKeyCertificates authorityKeyCertificates;
 
@@ -380,7 +378,6 @@ public final class Directory
 	 */
 	private synchronized void updateNetworkStatusNew() throws TorException
 	{
-		++updateCounter;
 		//
 		// handle consensus
 		//

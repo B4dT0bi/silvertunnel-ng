@@ -59,7 +59,7 @@ public class SDIntroductionPoint
 	private final TcpipNetAddress ipAddressAndOnionPort;
 	/** part of the service descriptor entry. */
 	private final RSAPublicKey onionPublicKey;
-	/** part of the service descriptor entry */
+	/** part of the service descriptor entry. */
 	private final RSAPublicKey servicePublicKey;
 
 	/**
@@ -94,8 +94,7 @@ public class SDIntroductionPoint
 	 *            introduction points as (decrypted) String
 	 * @return the parsed
 	 */
-	public static Collection<SDIntroductionPoint> parseMultipleIntroductionPoints(
-			String introductionPointsStr)
+	public static Collection<SDIntroductionPoint> parseMultipleIntroductionPoints(final String introductionPointsStr)
 	{
 		final Collection<SDIntroductionPoint> result = new ArrayList<SDIntroductionPoint>();
 
@@ -125,8 +124,7 @@ public class SDIntroductionPoint
 	 *            introduction points as (decrypted) String
 	 * @return the parsed
 	 */
-	public static String formatMultipleIntroductionPoints(
-			Collection<SDIntroductionPoint> introPoints)
+	public static String formatMultipleIntroductionPoints(final Collection<SDIntroductionPoint> introPoints)
 	{
 		final StringBuffer result = new StringBuffer();
 		for (final SDIntroductionPoint introPoint : introPoints)
@@ -147,7 +145,7 @@ public class SDIntroductionPoint
 	 * @param m
 	 *            a matcher of patternSingle that found an occurrence
 	 */
-	private SDIntroductionPoint(Matcher m)
+	private SDIntroductionPoint(final Matcher m)
 	{
 		identifier = m.group(1);
 
@@ -176,9 +174,10 @@ public class SDIntroductionPoint
 	 * @param servicePublicKey
 	 *            part of the service descriptor entry
 	 */
-	public SDIntroductionPoint(String identifier,
-			TcpipNetAddress ipAddressAndOnionPort, RSAPublicKey onionPublicKey,
-			RSAPublicKey servicePublicKey)
+	public SDIntroductionPoint(final String identifier,
+	                           final TcpipNetAddress ipAddressAndOnionPort, 
+	                           final RSAPublicKey onionPublicKey,
+	                           final RSAPublicKey servicePublicKey)
 	{
 		this.identifier = identifier;
 		this.ipAddressAndOnionPort = ipAddressAndOnionPort;

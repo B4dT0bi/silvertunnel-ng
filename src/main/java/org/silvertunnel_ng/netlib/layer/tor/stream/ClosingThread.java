@@ -60,8 +60,7 @@ public class ClosingThread extends Thread
 					}
 					catch (final Exception e)
 					{
-						LOG.warn("Tor.ClosingThread.run(): "
-								+ e.getMessage());
+						LOG.warn("Tor.ClosingThread.run(): " + e.getMessage(), e);
 					}
 					try
 					{
@@ -69,8 +68,7 @@ public class ClosingThread extends Thread
 					}
 					catch (final Exception e)
 					{
-						LOG.warn("Tor.ClosingThread.run(): "
-								+ e.getMessage());
+						LOG.warn("Tor.ClosingThread.run(): " + e.getMessage(), e);
 					}
 				}
 				try
@@ -79,7 +77,7 @@ public class ClosingThread extends Thread
 				}
 				catch (final Exception e)
 				{
-					LOG.warn("Tor.ClosingThread.run(): " + e.getMessage());
+					LOG.warn("Tor.ClosingThread.run(): " + e.getMessage(), e);
 				}
 			}
 		}

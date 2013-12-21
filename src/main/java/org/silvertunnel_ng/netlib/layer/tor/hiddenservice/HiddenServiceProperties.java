@@ -46,8 +46,7 @@ public class HiddenServiceProperties
 	private int minimumNumberOfIntroPoints;
 
 	/** constructor for first initialization or use-once-services. */
-	public HiddenServiceProperties(final int port, final RSAKeyPair keyPair)
-			throws TorException
+	public HiddenServiceProperties(final int port, final RSAKeyPair keyPair) throws TorException
 	{
 		init(port, new HashSet<SDIntroductionPoint>(), keyPair);
 	}

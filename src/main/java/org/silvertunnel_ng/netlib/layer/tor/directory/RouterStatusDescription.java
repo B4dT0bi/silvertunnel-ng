@@ -61,23 +61,19 @@ public class RouterStatusDescription
 	{
 		// do a fixed prioritizing: Running, Authority, Exit, Guard, Fast,
 		// Stable, Valid
-		if ((flags.indexOf("Running") >= 0)
-				&& (other.flags.indexOf("Running") < 0))
+		if ((flags.indexOf("Running") >= 0) && (other.flags.indexOf("Running") < 0))
 		{
 			return true;
 		}
-		if ((other.flags.indexOf("Running") >= 0)
-				&& (flags.indexOf("Running") < 0))
+		if ((other.flags.indexOf("Running") >= 0) && (flags.indexOf("Running") < 0))
 		{
 			return false;
 		}
-		if ((flags.indexOf("Authority") >= 0)
-				&& (other.flags.indexOf("Authority") < 0))
+		if ((flags.indexOf("Authority") >= 0) && (other.flags.indexOf("Authority") < 0))
 		{
 			return true;
 		}
-		if ((other.flags.indexOf("Authority") >= 0)
-				&& (flags.indexOf("Authority") < 0))
+		if ((other.flags.indexOf("Authority") >= 0) && (flags.indexOf("Authority") < 0))
 		{
 			return false;
 		}
@@ -105,13 +101,11 @@ public class RouterStatusDescription
 		{
 			return false;
 		}
-		if ((flags.indexOf("Stable") >= 0)
-				&& (other.flags.indexOf("Stable") < 0))
+		if ((flags.indexOf("Stable") >= 0) && (other.flags.indexOf("Stable") < 0))
 		{
 			return true;
 		}
-		if ((other.flags.indexOf("Stable") >= 0)
-				&& (flags.indexOf("Stable") < 0))
+		if ((other.flags.indexOf("Stable") >= 0) && (flags.indexOf("Stable") < 0))
 		{
 			return false;
 		}

@@ -57,7 +57,7 @@ class SafePipedInputStream extends PipedInputStream
 	}
 
 	@Override
-	public int read(byte[] b, int off, int len) throws IOException
+	public int read(byte[] b, final int off, final int len) throws IOException
 	{
 		try
 		{

@@ -61,7 +61,7 @@ public final class HiddenServiceDescriptorCache
 	/**
 	 * @return get an instance of {@link HiddenServiceDescriptorCache}.
 	 */
-	public synchronized static HiddenServiceDescriptorCache getInstance()
+	public static synchronized HiddenServiceDescriptorCache getInstance()
 	{
 		if (instance == null)
 		{

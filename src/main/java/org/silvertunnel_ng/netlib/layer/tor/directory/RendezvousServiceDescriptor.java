@@ -76,7 +76,7 @@ public final class RendezvousServiceDescriptor
 	/** pattern of a RendezvousServiceDescriptor String. */
 	private static Pattern serviceDescriptorStringPattern;
 
-	/** two days in milliseconds */
+	/** two days in milliseconds. */
 	private static final long MAX_SERVICE_DESCRIPTOR_AGE_IN_MS = 2L * 24L * 60L * 60L * 1000L;
 
 	/** descriptor-id. */
@@ -91,7 +91,7 @@ public final class RendezvousServiceDescriptor
 	/** publication time of this service descriptor. */
 	private Long publicationTime;
 	/**
-	 * recognized and permitted version numbers for use in INTRODUCE cells
+	 * recognized and permitted version numbers for use in INTRODUCE cells.
 	 * (currently, we do not support version 3)
 	 */
 	private Collection<String> protocolVersions = Arrays.asList("2");
@@ -199,7 +199,7 @@ public final class RendezvousServiceDescriptor
 	}
 
 	/**
-	 * Constructor for creating a service descriptor
+	 * Constructor for creating a service descriptor.
 	 */
 	public RendezvousServiceDescriptor(final String version, 
 	                                   final String hiddenServicePermanentIdBase32, 
@@ -248,7 +248,7 @@ public final class RendezvousServiceDescriptor
 	}
 
 	/**
-	 * Constructor for parsing a service descriptor
+	 * Constructor for parsing a service descriptor.
 	 * 
 	 * @param serviceDescriptorStr
 	 * @param currentDate
@@ -260,7 +260,7 @@ public final class RendezvousServiceDescriptor
 	}
 
 	/**
-	 * Constructor for parsing a service descriptor
+	 * Constructor for parsing a service descriptor.
 	 * 
 	 * @param serviceDescriptorStr
 	 * @param currentTime
@@ -357,7 +357,7 @@ public final class RendezvousServiceDescriptor
 
 	/**
 	 * needs to be called, in case of service descriptor is self-generated and
-	 * shall be called with toByteArray()
+	 * shall be called with toByteArray().
 	 */
 	void updateSignature() throws TorException
 	{
@@ -368,7 +368,7 @@ public final class RendezvousServiceDescriptor
 	}
 
 	/**
-	 * for sending the descriptor
+	 * for sending the descriptor.
 	 */
 	byte[] toByteArray()
 	{
@@ -445,7 +445,7 @@ public final class RendezvousServiceDescriptor
 	// /////////////////////////////////////////////////////
 
 	/**
-	 * returns the z-part of the url
+	 * returns the z-part of the url.
 	 */
 	public String getURL()
 	{

@@ -76,13 +76,12 @@ public class DirectoryConsensus
 	 *             or outdated)
 	 */
 	public DirectoryConsensus(final String consensusStr,
-			final AuthorityKeyCertificates authorityKeyCertificates,
-			final Date currentDate) throws TorException, ParseException
+	                          final AuthorityKeyCertificates authorityKeyCertificates,
+	                          final Date currentDate) throws TorException, ParseException
 	{
 
 		// Check the version
-		final String version = Parsing.parseStringByRE(consensusStr,
-				VERSION_PATTERN, "");
+		final String version = Parsing.parseStringByRE(consensusStr, VERSION_PATTERN, "");
 		if (!version.equals("3"))
 		{
 			throw new TorException("wrong network status version");
@@ -120,17 +119,14 @@ public class DirectoryConsensus
 		final Set<Fingerprint> dirIdentityKeyDigestOfMatchingSignatures = new HashSet<Fingerprint>();
 		while (mSig.find())
 		{
-			final byte[] identityKeyDigest = DatatypeConverter
-					.parseHexBinary(mSig.group(1));
-			final byte[] signingKeyDigest = DatatypeConverter
-					.parseHexBinary(mSig.group(2));
+			final byte[] identityKeyDigest = DatatypeConverter.parseHexBinary(mSig.group(1));
+			final byte[] signingKeyDigest = DatatypeConverter.parseHexBinary(mSig.group(2));
 			String sigBase64 = mSig.group(3);
 			while (sigBase64.length() % 4 != 0)
 			{
 				sigBase64 += "="; // add missing padding
 			}
-			final byte[] signature = DatatypeConverter
-					.parseBase64Binary(sigBase64);
+			final byte[] signature = DatatypeConverter.parseBase64Binary(sigBase64);
 			if (LOG.isDebugEnabled())
 			{
 				LOG.debug("Directory.parseDirV3NetworkStatus: Extracted identityKeyDigest(hex)="
@@ -143,9 +139,8 @@ public class DirectoryConsensus
 
 			// verify signature
 			final AuthorityKeyCertificate authorityKeyCertificate = authorityKeyCertificates
-					.getCertByFingerprints(new FingerprintImpl(
-							identityKeyDigest), new FingerprintImpl(
-							signingKeyDigest));
+					.getCertByFingerprints(new FingerprintImpl(identityKeyDigest), 
+					                       new FingerprintImpl(signingKeyDigest));
 			if (authorityKeyCertificate == null)
 			{
 				LOG.debug("No authorityKeyCertificate found");
@@ -162,8 +157,7 @@ public class DirectoryConsensus
 				LOG.debug("No signature found in network status");
 				continue;
 			}
-			if (!Encryption.verifySignature(signature,
-					authorityKeyCertificate.getDirSigningKey(), signedData))
+			if (!Encryption.verifySignature(signature, authorityKeyCertificate.getDirSigningKey(), signedData))
 			{
 				if (LOG.isDebugEnabled())
 				{
@@ -204,16 +198,14 @@ public class DirectoryConsensus
 			sinfo.setNickname(m.group(1));
 			sinfo.setFingerprint(m.group(2));
 			sinfo.setDigestDescriptor(m.group(3));
-			sinfo.setLastPublication(Util.parseUtcTimestamp(m.group(4) + " "
-					+ m.group(5)));
+			sinfo.setLastPublication(Util.parseUtcTimestamp(m.group(4) + " " + m.group(5)));
 			sinfo.setIp(m.group(6));
 			sinfo.setOrPort(Integer.parseInt(m.group(7)));
 			sinfo.setDirPort(Integer.parseInt(m.group(8)));
 			sinfo.setFlags(m.group(9));
 			if (sinfo.getFlags().contains("Running"))
 			{
-				getFingerprintsNetworkStatusDescriptors().put(
-						sinfo.getFingerprint(), sinfo);
+				getFingerprintsNetworkStatusDescriptors().put(sinfo.getFingerprint(), sinfo);
 			}
 		}
 	}

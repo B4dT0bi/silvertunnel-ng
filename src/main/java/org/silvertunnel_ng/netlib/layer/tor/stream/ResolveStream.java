@@ -59,8 +59,7 @@ public final class ResolveStream extends TCPStream
 	 * @return either an IpNetAddress (normal query), or a String
 	 *         (reverse-DNS-lookup)
 	 */
-	public Object resolve(final String hostname) throws TorException,
-			IOException
+	public Object resolve(final String hostname) throws TorException, IOException
 	{
 		circuit.assignStreamId(this);
 		// add resolved hostname to the history
