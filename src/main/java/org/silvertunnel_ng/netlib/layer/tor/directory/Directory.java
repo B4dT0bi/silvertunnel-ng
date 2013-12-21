@@ -122,7 +122,7 @@ public final class Directory
 	/** key to locally cache the consensus. */
 	private static final String STORAGEKEY_DIRECTORY_CACHED_CONSENSUS_TXT = "directory-cached-consensus.txt";
 	/** key to locally cache the router descriptors. */
-	private static final String STORAGEKEY_DIRECTORY_CACHED_ROUTER_DESCRIPTORS_TXT = "directory-cached-router-descriptors.txt";
+	private static final String DIRECTORY_CACHED_ROUTER_DESCRIPTORS = "directory-router-descriptors.cache";
 
 	/** local cache. */
 	private final StringStorage stringStorage;
@@ -582,7 +582,7 @@ public final class Directory
 			try
 			{
 				FileOutputStream fileOutputStream = new FileOutputStream(
-				                     TempfileStringStorage.getTempfileFile(STORAGEKEY_DIRECTORY_CACHED_ROUTER_DESCRIPTORS_TXT));
+				                     TempfileStringStorage.getTempfileFile(DIRECTORY_CACHED_ROUTER_DESCRIPTORS));
 				ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
 				objectOutputStream.writeObject(validRoutersByFingerprint);
 				objectOutputStream.close();
@@ -735,7 +735,7 @@ public final class Directory
 			try
 			{
 				FileInputStream fileInputStream = new FileInputStream(
-				                           TempfileStringStorage.getTempfileFile(STORAGEKEY_DIRECTORY_CACHED_ROUTER_DESCRIPTORS_TXT));
+				                           TempfileStringStorage.getTempfileFile(DIRECTORY_CACHED_ROUTER_DESCRIPTORS));
 				ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 				@SuppressWarnings("unchecked") // if it fails just skip and download the descriptors
 				final Map<Fingerprint, RouterImpl> parsedServers = (Map<Fingerprint, RouterImpl>) objectInputStream.readObject();
