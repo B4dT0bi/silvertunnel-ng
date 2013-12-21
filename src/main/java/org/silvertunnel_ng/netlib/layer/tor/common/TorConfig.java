@@ -636,7 +636,7 @@ public final class TorConfig
 	 * List of countries of routers which should be avoided when creating
 	 * circuits.
 	 */
-	private Set<String> avoidedCountries;
+	private Set<String> avoidedCountries = new HashSet<String>();
 	/**
 	 * Check if the specified Country is allowed to be used for Circuit building.
 	 * 
@@ -645,7 +645,7 @@ public final class TorConfig
 	 */
 	public static boolean isCountryAllowed(final String countryCode)
 	{
-		if (getInstance().avoidedCountries == null)
+		if (getInstance().avoidedCountries.isEmpty())
 		{
 			return true;
 		}
@@ -659,7 +659,7 @@ public final class TorConfig
 	 * Set the avoided countries.
 	 * @param countryCodes a set of country codes to be avoided.
 	 */
-	public static void setCountryAllowed(final Set<String> countryCodes)
+	public static synchronized void setCountryAllowed(final Set<String> countryCodes)
 	{
 		getInstance().avoidedCountries = countryCodes;
 	}
@@ -668,12 +668,8 @@ public final class TorConfig
 	 * @param countryCode the country code
 	 * @param allowed if set to true we will allow connections to this country, if set to false we will avoid a connection
 	 */
-	public static void setCountryAllowed(final String countryCode, final boolean allowed)
+	public static synchronized void setCountryAllowed(final String countryCode, final boolean allowed)
 	{
-		if (getInstance().avoidedCountries == null)
-		{
-			getInstance().avoidedCountries = new HashSet<String>();
-		}
 		if (allowed)
 		{
 			getInstance().avoidedCountries.remove(countryCode);
@@ -684,7 +680,7 @@ public final class TorConfig
 		}
 	}
 	/** collection of fingerprints to be avoided. */
-	private Set<byte[]> avoidedNodeFingerprints;
+	private Set<byte[]> avoidedNodeFingerprints = new HashSet<byte[]>();
 
 	/**
 	 * @return get the {@link Set} of fingerprints which should be avoided in
@@ -702,7 +698,7 @@ public final class TorConfig
 	 * @param fingerprints
 	 *            a list of fingerprints
 	 */
-	public static void setAvoidedNodeFingerprints(final Set<byte[]> fingerprints)
+	public static synchronized void setAvoidedNodeFingerprints(final Set<byte[]> fingerprints)
 	{
 		getInstance().avoidedNodeFingerprints = fingerprints;
 	}
@@ -713,15 +709,8 @@ public final class TorConfig
 	 * @param fingerprint
 	 *            the fingerprint which should be avoided
 	 */
-	public static void addAvoidednodeFingerprint(final byte[] fingerprint)
+	public static synchronized void addAvoidedNodeFingerprint(final byte[] fingerprint)
 	{
-		synchronized (getInstance().avoidedNodeFingerprints)
-		{
-			if (getInstance().avoidedNodeFingerprints == null)
-			{
-				getInstance().avoidedNodeFingerprints = new HashSet<byte[]>();
-			}
-		}
 		getInstance().avoidedNodeFingerprints.add(fingerprint);
 	}
 
@@ -774,10 +763,13 @@ public final class TorConfig
 					e);
 		}
 	}
-
+	// first load the config from System properties
+	static
+	{
+		reloadConfigFromProperties();		
+	}
 	private TorConfig()
 	{
-		reloadConfigFromProperties();
 	}
 
 	/**
