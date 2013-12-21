@@ -56,8 +56,11 @@ public final class LogHelper
 	 *            true=log include current stack trace
 	 * @param logMessagePrefix messagePreFix
 	 */
-	public static void logLine(final Logger logger, final Level level, final String msg,
-			final boolean withStackTrace, final String logMessagePrefix)
+	public static void logLine(final Logger logger, 
+	                           final Level level, 
+	                           final String msg,
+	                           final boolean withStackTrace, 
+	                           final String logMessagePrefix)
 	{
 		final String finalMsg = logMessagePrefix + msg;
 		if (level == Level.INFO)
