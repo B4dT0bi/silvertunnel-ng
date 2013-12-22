@@ -3,6 +3,9 @@
  */
 package org.silvertunnel_ng.netlib.layer.tor.util;
 
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.fail;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,10 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 import org.testng.annotations.Test;
-
-import static org.testng.AssertJUnit.*;
 
 /**
  * @author Tobias Boese
@@ -107,9 +107,9 @@ public final class UtilTest
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		calendar.setTime(dateFormat.parse(timeStamp));
 		
-		final ExecutorService executorOld = Executors.newCachedThreadPool();
+		final ExecutorService executorOld = Executors.newFixedThreadPool(5);
 		final Collection<Callable<Object[]>> allTasksOld = new ArrayList<Callable<Object[]>>();
-		final ExecutorService executorNew = Executors.newCachedThreadPool();
+		final ExecutorService executorNew = Executors.newFixedThreadPool(5);
 		final Collection<Callable<Object[]>> allTasksNew = new ArrayList<Callable<Object[]>>();
 
 		for (int i = 0; i < 100000; i++)

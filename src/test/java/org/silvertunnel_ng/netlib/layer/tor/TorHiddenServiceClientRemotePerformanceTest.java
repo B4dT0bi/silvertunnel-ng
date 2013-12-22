@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
  * 
  * @author Tobias Boese
  * 
- * TestNG arguments : -agentpath:"C:\Program Files (x86)\YourKit Java Profiler 2013 build 13050\bin\win64\yjpagent.dll=tracing"
+ * TestNG arguments : -agentpath:"C:\Program Files (x86)\YourKit Java Profiler 2013 build 13062\bin\win64\yjpagent.dll=tracing"
  */
 public final class TorHiddenServiceClientRemotePerformanceTest extends TorRemoteAbstractTest
 {
@@ -82,7 +82,7 @@ public final class TorHiddenServiceClientRemotePerformanceTest extends TorRemote
 	}
 
 	@Override
-	@Test(timeOut = 60000)
+	@Test(timeOut = 1200000)
 	public void initializeTor() throws Exception
 	{
 		// repeat method declaration here to be the first test method of the

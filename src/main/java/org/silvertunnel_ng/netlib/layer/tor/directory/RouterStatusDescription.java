@@ -30,8 +30,9 @@ import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
  * used to store server descriptors from a dir-spec v2 network status document.
  * 
  * @author hapke
+ * @author Tobias Boese
  */
-public class RouterStatusDescription
+public final class RouterStatusDescription
 {
 	/** nickname of the router. */
 	private String nickname;
@@ -43,7 +44,64 @@ public class RouterStatusDescription
 	private String ip;
 	/** OR port and Dir Port. */
 	private int orPort, dirPort;
-	private String flags;
+	/** 
+	 * flag Running. 
+	 * "Running" if the router is currently usable
+	 */
+	private boolean running = false;
+	/** 
+	 * flag Authority.
+	 * "Authority" if the router is a directory authority.
+	 */
+	private boolean authority = false;
+	/**
+	 * "Exit" if the router is more useful for building general-purpose exit circuits than for relay circuits.  
+	 * The path building algorithm uses this flag; see path-spec.txt.
+	 */
+	private boolean exit = false;
+	/**
+	 * "BadExit" if the router is believed to be useless as an exit node 
+	 * (because its ISP censors it, because it is behind a restrictive proxy, or for some similar reason).
+	 */
+	private boolean badExit = false;
+	/**
+	 * "BadDirectory" if the router is believed to be useless as a directory cache 
+	 * (because its directory port isn't working, its bandwidth is always throttled, or for some similar reason).
+	 */
+	private boolean badDirectory = false;
+	/**
+	 * "Fast" if the router is suitable for high-bandwidth circuits.
+	 */
+	private boolean fast = false;
+	/**
+	 * "Guard" if the router is suitable for use as an entry guard.
+	 */
+	private boolean guard = false;
+	/**
+	 * "HSDir" if the router is considered a v2 hidden service directory.
+	 */
+	private boolean HSDir = false;
+	/**
+	 *  "Named" if the router's identity-nickname mapping is canonical, and this authority binds names.
+	 */
+	private boolean named = false;
+	/**
+	 * "Stable" if the router is suitable for long-lived circuits.
+	 */
+	private boolean stable = false;
+	/**
+	 * "Unnamed" if another router has bound the name used by this router, and this authority binds names.
+	 */
+	private boolean unnamed = false;
+	/** 
+	 * "Valid" if the router has been 'validated'.
+	 */
+	private boolean valid = false;
+	/**
+	 * "V2Dir" if the router implements the v2 directory protocol.
+	 */
+	private boolean v2Dir = false;
+	
 	private SecureRandom rnd = new SecureRandom();
 
 	/**
@@ -59,61 +117,60 @@ public class RouterStatusDescription
 	 */
 	public boolean isBetterThan(final RouterStatusDescription other)
 	{
-		// do a fixed prioritizing: Running, Authority, Exit, Guard, Fast,
-		// Stable, Valid
-		if ((flags.indexOf("Running") >= 0) && (other.flags.indexOf("Running") < 0))
+		// do a fixed prioritizing: Running, Authority, Exit, Guard, Fast, Stable, Valid
+		if (running && !other.running)
 		{
 			return true;
 		}
-		if ((other.flags.indexOf("Running") >= 0) && (flags.indexOf("Running") < 0))
+		if (other.running && !running)
 		{
 			return false;
 		}
-		if ((flags.indexOf("Authority") >= 0) && (other.flags.indexOf("Authority") < 0))
+		if (authority && !other.authority)
 		{
 			return true;
 		}
-		if ((other.flags.indexOf("Authority") >= 0) && (flags.indexOf("Authority") < 0))
+		if (other.authority && !authority)
 		{
 			return false;
 		}
-		if ((flags.indexOf("Exit") >= 0) && (other.flags.indexOf("Exit") < 0))
+		if (exit && !other.exit)
 		{
 			return true;
 		}
-		if ((other.flags.indexOf("Exit") >= 0) && (flags.indexOf("Exit") < 0))
+		if (other.exit && !exit)
 		{
 			return false;
 		}
-		if ((flags.indexOf("Guard") >= 0) && (other.flags.indexOf("Guard") < 0))
+		if (guard && !other.guard)
 		{
 			return true;
 		}
-		if ((other.flags.indexOf("Guard") >= 0) && (flags.indexOf("Guard") < 0))
+		if (other.guard && !guard)
 		{
 			return false;
 		}
-		if ((flags.indexOf("Fast") >= 0) && (other.flags.indexOf("Fast") < 0))
+		if (fast && !other.fast)
 		{
 			return true;
 		}
-		if ((other.flags.indexOf("Fast") >= 0) && (flags.indexOf("Fast") < 0))
+		if (!other.fast && !fast)
 		{
 			return false;
 		}
-		if ((flags.indexOf("Stable") >= 0) && (other.flags.indexOf("Stable") < 0))
+		if (stable && !other.stable)
 		{
 			return true;
 		}
-		if ((other.flags.indexOf("Stable") >= 0) && (flags.indexOf("Stable") < 0))
+		if (other.stable && !stable)
 		{
 			return false;
 		}
-		if ((flags.indexOf("Valid") >= 0) && (other.flags.indexOf("Valid") < 0))
+		if (valid && !other.valid)
 		{
 			return true;
 		}
-		if ((other.flags.indexOf("Valid") >= 0) && (flags.indexOf("Valid") < 0))
+		if (other.valid && !valid)
 		{
 			return false;
 		}
@@ -147,7 +204,7 @@ public class RouterStatusDescription
 		return nickname;
 	}
 
-	public void setNickname(String nickname)
+	public void setNickname(final String nickname)
 	{
 		this.nickname = nickname;
 	}
@@ -207,7 +264,7 @@ public class RouterStatusDescription
 		return ip;
 	}
 
-	public void setIp(String ip)
+	public void setIp(final String ip)
 	{
 		this.ip = ip;
 	}
@@ -217,7 +274,7 @@ public class RouterStatusDescription
 		return orPort;
 	}
 
-	public void setOrPort(int orPort)
+	public void setOrPort(final int orPort)
 	{
 		this.orPort = orPort;
 	}
@@ -227,29 +284,138 @@ public class RouterStatusDescription
 		return dirPort;
 	}
 
-	public void setDirPort(int dirPort)
+	public void setDirPort(final int dirPort)
 	{
 		this.dirPort = dirPort;
 	}
 
-	public String getFlags()
+	public void setFlags(final String flags)
 	{
-		return flags;
+		running = flags.contains("Running");
+		exit = flags.contains("Exit");
+		authority = flags.contains("Authority");
+		fast = flags.contains("Fast");
+		guard = flags.contains("Guard");
+		stable = flags.contains("Stable");
+		named = flags.contains("Named");
+		unnamed = flags.contains("Unnamed");
+		v2Dir = flags.contains("V2Dir");
+		valid = flags.contains("Valid");
+		HSDir = flags.contains("HSDir");
+		badDirectory = flags.contains("BadDirectory");
+		badExit = flags.contains("BadExit");
 	}
 
-	public void setFlags(String flags)
+	/**
+	 * @return the running
+	 */
+	public boolean isRunning()
 	{
-		this.flags = flags;
+		return running;
 	}
 
+	/**
+	 * @return the authority
+	 */
+	public boolean isAuthority()
+	{
+		return authority;
+	}
+
+	/**
+	 * @return the exit
+	 */
+	public boolean isExit()
+	{
+		return exit;
+	}
+
+	/**
+	 * @return the badExit
+	 */
+	public boolean isBadExit()
+	{
+		return badExit;
+	}
+
+	/**
+	 * @return the badDirectory
+	 */
+	public boolean isBadDirectory()
+	{
+		return badDirectory;
+	}
+
+	/**
+	 * @return the fast
+	 */
+	public boolean isFast()
+	{
+		return fast;
+	}
+
+	/**
+	 * @return the guard
+	 */
+	public boolean isGuard()
+	{
+		return guard;
+	}
+
+	/**
+	 * @return the hSDir
+	 */
+	public boolean isHSDir()
+	{
+		return HSDir;
+	}
+
+	/**
+	 * @return the named
+	 */
+	public boolean isNamed()
+	{
+		return named;
+	}
+
+	/**
+	 * @return the stable
+	 */
+	public boolean isStable()
+	{
+		return stable;
+	}
+
+	/**
+	 * @return the unnamed
+	 */
+	public boolean isUnnamed()
+	{
+		return unnamed;
+	}
+
+	/**
+	 * @return the valid
+	 */
+	public boolean isValid()
+	{
+		return valid;
+	}
+
+	/**
+	 * @return the v2Dir
+	 */
+	public boolean isV2Dir()
+	{
+		return v2Dir;
+	}
+
+	/**
+	 * @return the rnd
+	 */
 	public SecureRandom getRnd()
 	{
 		return rnd;
-	}
-
-	public void setRnd(SecureRandom rnd)
-	{
-		this.rnd = rnd;
 	}
 
 	/*
@@ -264,7 +430,6 @@ public class RouterStatusDescription
 				+ ", fingerprint=" + fingerprint + ", digestDescriptor="
 				+ Arrays.toString(digestDescriptor) + ", lastPublication="
 				+ lastPublication + ", ip=" + ip + ", orPort=" + orPort
-				+ ", dirPort=" + dirPort + ", flags=" + flags + ", rnd=" + rnd
-				+ "]";
+				+ ", dirPort=" + dirPort + "]";
 	}
 }

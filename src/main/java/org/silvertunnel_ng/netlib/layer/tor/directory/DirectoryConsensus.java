@@ -56,10 +56,8 @@ public class DirectoryConsensus
 
 	private Map<Fingerprint, RouterStatusDescription> fingerprintsNetworkStatusDescriptors = new HashMap<Fingerprint, RouterStatusDescription>();
 
-	private static final Pattern VERSION_PATTERN = Parsing
-			.compileRegexPattern("^network-status-version (\\d+)");
-	private static final Pattern SIGNEDDATA_PATTERN = Parsing
-			.compileRegexPattern("^(network-status-version.*?directory-signature )");
+	private static final Pattern VERSION_PATTERN = Parsing.compileRegexPattern("^network-status-version (\\d+)");
+	private static final Pattern SIGNEDDATA_PATTERN = Parsing.compileRegexPattern("^(network-status-version.*?directory-signature )");
 
 	/**
 	 * Parse a directory protocol V3 network-status consensus document.
@@ -203,7 +201,7 @@ public class DirectoryConsensus
 			sinfo.setOrPort(Integer.parseInt(m.group(7)));
 			sinfo.setDirPort(Integer.parseInt(m.group(8)));
 			sinfo.setFlags(m.group(9));
-			if (sinfo.getFlags().contains("Running"))
+			if (sinfo.isRunning())
 			{
 				getFingerprintsNetworkStatusDescriptors().put(sinfo.getFingerprint(), sinfo);
 			}

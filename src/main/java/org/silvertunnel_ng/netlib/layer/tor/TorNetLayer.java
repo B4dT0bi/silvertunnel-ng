@@ -158,9 +158,11 @@ public class TorNetLayer implements NetLayer
 			ip[1] = (byte) Integer.parseInt(octets[1]);
 			ip[2] = (byte) Integer.parseInt(octets[2]);
 			ip[3] = (byte) Integer.parseInt(octets[3]);
-
+			sp.setMinRouteLength(1);
+			sp.setMaxRouteLength(1);
 			sp.setCustomExitpoint(tor.getDirectory().getValidRouterByIpAddressAndDirPort(new TcpipNetAddress(ip, sp.getPort()))
 					.getFingerprint());
+			sp.setCustomRoute(new FingerprintImpl[] {(FingerprintImpl) sp.getCustomExitpoint()});
 		}
 		final TCPStream remote = tor.connect(sp, thisTorNetLayerWithTimeoutControl);
 

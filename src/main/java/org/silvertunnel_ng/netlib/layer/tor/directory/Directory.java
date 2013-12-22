@@ -314,17 +314,19 @@ public final class Directory
 		// prefer non-authorities
 		if (cacheDirs.size() >= MIN_NUM_OF_CACHE_DIRS)
 		{
+			LOG.debug("using non-authorities");
 			return cacheDirs;
 		}
 
 		// try authorities
 		if (authorityDirs.size() + cacheDirs.size() >= MIN_NUM_OF_DIRS)
 		{
+			LOG.debug("using authorities");
 			final Collection<RouterImpl> result = cacheDirs;
 			result.addAll(authorityDirs);
 			return result;
 		}
-
+		LOG.debug("using hard-coded authorities");
 		// try predefined/hard-coded authorities
 		return AuthorityServers.getAuthorityRouters();
 	}
@@ -531,7 +533,7 @@ public final class Directory
 				if (r != null && r.isValid())
 				{
 					// valid server with description
-					r.updateServerStatus(networkStatusDescription.getFlags());
+					r.updateServerStatus(networkStatusDescription);
 					newValidRoutersByfingerprint.put(fingerprint, r);
 					addToNeighbours(r);
 					if (r.isDirv2Exit() || r.isExitNode())
@@ -555,7 +557,7 @@ public final class Directory
 						newStableAndFastRouters.put(fingerprint, r);
 					}
 				}
-				if (networkStatusDescription.getFlags().contains("Running"))
+				if (networkStatusDescription.isRunning())
 				{
 					newNumOfRunningRoutersInDirectoryConsensus++;
 				}

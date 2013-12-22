@@ -246,48 +246,18 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 	 * @param flags
 	 *            string containing flags
 	 */
-	void updateServerStatus(final String flags)
+	void updateServerStatus(final RouterStatusDescription statusDescription)
 	{
-		if (flags.contains("Running"))
-		{
-			dirv2Running = true;
-		}
-		if (flags.contains("Exit"))
-		{
-			dirv2Exit = true;
-		}
-		if (flags.contains("Authority"))
-		{
-			dirv2Authority = true;
-		}
-		if (flags.contains("Fast"))
-		{
-			dirv2Fast = true;
-		}
-		if (flags.contains("Guard"))
-		{
-			dirv2Guard = true;
-		}
-		if (flags.contains("Stable"))
-		{
-			dirv2Stable = true;
-		}
-		if (flags.contains("Named"))
-		{
-			dirv2Named = true;
-		}
-		if (flags.contains("V2Dir"))
-		{
-			dirv2V2dir = true;
-		}
-		if (flags.contains("Valid"))
-		{
-			dirv2Valid = true;
-		}
-		if (flags.contains("HSDir"))
-		{
-			dirv2HSDir = true;
-		}
+		dirv2Running = statusDescription.isRunning();
+		dirv2Exit = statusDescription.isExit() ? !statusDescription.isBadExit() : false;
+		dirv2Authority = statusDescription.isAuthority();
+		dirv2Fast = statusDescription.isFast();
+		dirv2Guard = statusDescription.isGuard();
+		dirv2Stable = statusDescription.isStable();
+		dirv2Named = statusDescription.isNamed();
+		dirv2V2dir = statusDescription.isV2Dir() ? !statusDescription.isBadDirectory() : false;
+		dirv2Valid = statusDescription.isValid();
+		dirv2HSDir = statusDescription.isHSDir();
 	}
 
 	/**
@@ -402,7 +372,8 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 
 		final Matcher m = ROUTER_DESCRIPTORS_PATTERN.matcher(routerDescriptors);
 
-		final ExecutorService executor = Executors.newCachedThreadPool();
+		final ExecutorService executor = Executors.newFixedThreadPool(5); // TODO : make threadpool configurable
+		
 		final Collection<RouterParserCallable> allTasks = new ArrayList<RouterParserCallable>();
 
 		while (m.find())
