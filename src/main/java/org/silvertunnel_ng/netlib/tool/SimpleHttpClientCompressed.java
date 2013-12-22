@@ -35,14 +35,13 @@
 
 package org.silvertunnel_ng.netlib.tool;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 import org.silvertunnel_ng.netlib.adapter.url.NetlibURLStreamHandlerFactory;
 import org.silvertunnel_ng.netlib.api.NetLayer;
@@ -94,7 +93,7 @@ public final class SimpleHttpClientCompressed
 	public String get(final NetLayer netLayer, TcpipNetAddress hostAndPort, String path) throws IOException, DataFormatException
 	{
 		String urlStr = null;
-		DataInputStream in = null;
+		InflaterInputStream in = null;
 		final long startTime = System.currentTimeMillis();
 		try
 		{
@@ -142,8 +141,8 @@ public final class SimpleHttpClientCompressed
 				// wrong protocol (handler)
 				throw new IOException(PROTOCOL_HTTP + " response code could not be determined for url=" + urlStr);
 			}
-
-			in = new DataInputStream(conn.getInputStream());
+			
+			in = new InflaterInputStream(conn.getInputStream());
 			final DynByteBuffer byteBuffer = new DynByteBuffer(conn.getContentLengthLong());
 			final byte[] buffer = new byte[512000];
 			int count;
@@ -153,34 +152,17 @@ public final class SimpleHttpClientCompressed
 			}
 			long timeReceived = System.currentTimeMillis();
 
-			final Inflater inflater = new Inflater();
-			inflater.setInput(byteBuffer.toArray());
-			byteBuffer.init();
-			while (!inflater.finished())
-			{
-				final int len = inflater.inflate(buffer);
-				byteBuffer.append(buffer, 0, len);
-			}
 			final String response = new String(byteBuffer.toArray(), Util.UTF8);
 			// result
 			if (LOG.isDebugEnabled())
 			{
 				LOG.debug("end download with hostAndPort=" + hostAndPort + " and path=" + path + " finished with result of length="
-						+ response.length() + " timeReceived : " + (timeReceived - startTime) + " ms timeDecompress : "
-						+ (System.currentTimeMillis() - timeReceived) + " ms");
+						+ response.length() + " timeReceived : " + (timeReceived - startTime) + " ms");
 			}
 			return response;
 
 		}
 		catch (final IOException e)
-		{
-			if (LOG.isDebugEnabled())
-			{
-				LOG.debug("end download with hostAndPort=" + hostAndPort + " and path=" + path + " with " + e, e);
-			}
-			throw e;
-		}
-		catch (final DataFormatException e)
 		{
 			if (LOG.isDebugEnabled())
 			{

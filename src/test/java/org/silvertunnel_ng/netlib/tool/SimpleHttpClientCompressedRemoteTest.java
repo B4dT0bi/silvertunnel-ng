@@ -53,7 +53,7 @@ public class SimpleHttpClientCompressedRemoteTest
 		final NetLayer netLayer = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TCPIP);
 		final String httpResponse = SimpleHttpClientCompressed.getInstance().get(netLayer, HTTPTEST_SERVER_NETADDRESS, PATH1);
 		assertNotNull(httpResponse);
-		
+		//LOG.info(httpResponse);
 	}
 
 	@Test(timeOut = 50000)
@@ -65,5 +65,6 @@ public class SimpleHttpClientCompressedRemoteTest
 
 		// check response
 		assertNotNull(httpResponse);
+		//LOG.info(httpResponse);
 	}
 }
