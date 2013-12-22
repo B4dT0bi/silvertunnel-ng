@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A class that implements a cache of idle Http connections for keep-alive
+ * A class that implements a cache of idle Http connections for keep-alive.
  * 
  * @author Stephen R. Pietrowicz (NCSA)
  * @author Dave Brown
@@ -90,14 +90,14 @@ public class KeepAliveCache extends
 
 	/**
 	 * Register this URL and HttpClient (that supports keep-alive) with the
-	 * cache
+	 * cache.
 	 * 
 	 * @param url
 	 *            The URL contains info about the host and port
 	 * @param http
 	 *            The HttpClient to be cached
 	 */
-	public synchronized void put(final URL url, Object obj, HttpClient http)
+	public synchronized void put(final URL url, final Object obj, final HttpClient http)
 	{
 		boolean startThread = (keepAliveTimer == null);
 		if (!startThread)
@@ -188,7 +188,7 @@ public class KeepAliveCache extends
 	/**
 	 * Check to see if this URL has a cached HttpClient.
 	 */
-	public synchronized HttpClient get(URL url, Object obj)
+	public synchronized HttpClient get(final URL url, final Object obj)
 	{
 
 		final KeepAliveKey key = new KeepAliveKey(url, obj);
@@ -300,7 +300,7 @@ class ClientVector extends java.util.Stack<KeepAliveEntry>
 	// sleep time in milliseconds, before cache clear
 	int nap;
 
-	ClientVector(int nap)
+	ClientVector(final int nap)
 	{
 		this.nap = nap;
 	}
@@ -334,7 +334,7 @@ class ClientVector extends java.util.Stack<KeepAliveEntry>
 	}
 
 	/* return a still valid, unused HttpClient */
-	synchronized void put(HttpClient h)
+	synchronized void put(final HttpClient h)
 	{
 		if (size() > KeepAliveCache.getMaxConnections())
 		{
@@ -349,13 +349,13 @@ class ClientVector extends java.util.Stack<KeepAliveEntry>
 	/*
 	 * Do not serialize this class!
 	 */
-	private void writeObject(java.io.ObjectOutputStream stream)
+	private void writeObject(final java.io.ObjectOutputStream stream)
 			throws IOException
 	{
 		throw new NotSerializableException();
 	}
 
-	private void readObject(java.io.ObjectInputStream stream)
+	private void readObject(final java.io.ObjectInputStream stream)
 			throws IOException, ClassNotFoundException
 	{
 		throw new NotSerializableException();
@@ -377,13 +377,25 @@ class ClientVector extends java.util.Stack<KeepAliveEntry>
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj)
+	public boolean equals(final Object obj)
 	{
-		if (this == obj) return true;
-		if (!super.equals(obj)) return false;
-		if (!(obj instanceof ClientVector)) return false;
+		if (this == obj)
+		{
+			return true;
+		}
+		if (!super.equals(obj))
+		{
+			return false;
+		}
+		if (!(obj instanceof ClientVector))
+		{
+			return false;
+		}
 		ClientVector other = (ClientVector) obj;
-		if (nap != other.nap) return false;
+		if (nap != other.nap)
+		{
+			return false;
+		}
 		return true;
 	}
 	
@@ -397,7 +409,7 @@ class KeepAliveKey
 	private Object obj = null; // additional key, such as socketfactory
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
 	 * @param url
 	 *            the URL containing the protocol, host and port information
@@ -411,10 +423,10 @@ class KeepAliveKey
 	}
 
 	/**
-	 * Determine whether or not two objects of this type are equal
+	 * Determine whether or not two objects of this type are equal.
 	 */
 	@Override
-	public boolean equals(Object obj)
+	public boolean equals(final Object obj)
 	{
 		if ((obj instanceof KeepAliveKey) == false)
 		{
@@ -443,7 +455,7 @@ class KeepAliveEntry
 	HttpClient hc;
 	long idleStartTime;
 
-	KeepAliveEntry(HttpClient hc, long idleStartTime)
+	KeepAliveEntry(final HttpClient hc, final long idleStartTime)
 	{
 		this.hc = hc;
 		this.idleStartTime = idleStartTime;
