@@ -40,10 +40,8 @@ public class LookupServiceUtil
 	{
 		try
 		{
-			lookupService = new LookupService(
-					LookupServiceUtil.class
-							.getResourceAsStream(TorConfig.TOR_GEOIPCITY_PATH),
-					TorConfig.TOR_GEOIPCITY_MAX_FILE_SIZE);
+			lookupService = new LookupService(LookupServiceUtil.class.getResourceAsStream(TorConfig.TOR_GEOIPCITY_PATH),
+			                                  TorConfig.TOR_GEOIPCITY_MAX_FILE_SIZE);
 		}
 		catch (final Exception e)
 		{
@@ -57,13 +55,12 @@ public class LookupServiceUtil
 	 * @param address
 	 * @return the countryCode; ?? if it could not be determined
 	 */
-	public static String getCountryCodeOfIpAddress(InetAddress address)
+	public static String getCountryCodeOfIpAddress(final InetAddress address)
 	{
 		String countryCode = null;
 		if (lookupService != null)
 		{
-			countryCode = lookupService.getCountry(address.getAddress())
-					.getCode();
+			countryCode = lookupService.getCountry(address.getAddress());
 		}
 
 		if (countryCode == null || countryCode.length() < 1)

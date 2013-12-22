@@ -71,21 +71,6 @@ public class DatabaseInfo
 		this.info = info;
 	}
 
-	public int getType()
-	{
-		if (info == null || info.equals(""))
-		{
-			return COUNTRY_EDITION;
-		}
-		else
-		{
-			// Get the type code from the database info string and then
-			// subtract 105 from the value to preserve compatability with
-			// databases from April 2003 and earlier.
-			return Integer.parseInt(info.substring(4, 7)) - 105;
-		}
-	}
-
 	/**
 	 * Returns true if the database is the premium version.
 	 * 

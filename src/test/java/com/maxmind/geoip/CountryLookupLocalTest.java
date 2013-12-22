@@ -86,7 +86,7 @@ public final class CountryLookupLocalTest
 			final byte octet3 = (byte) Integer.parseInt(tmp[3]);
 			final byte octet4 = (byte) Integer.parseInt(tmp[4]);
 			
-			final String countryFromLs = ls.getCountry(new byte[] {octet1, octet2, octet3, octet4}).getCode();
+			final String countryFromLs = ls.getCountry(new byte[] {octet1, octet2, octet3, octet4});
 			assertEquals("wrong country for ip " + tmp[1] + "." + tmp[2] + "." + tmp[3] + "." + tmp[4], tmp[0], countryFromLs);
 		}
 

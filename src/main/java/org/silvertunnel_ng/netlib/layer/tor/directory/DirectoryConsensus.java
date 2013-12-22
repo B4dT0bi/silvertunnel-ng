@@ -184,10 +184,8 @@ public class DirectoryConsensus
 
 		// Parse the single routers
 		final Pattern pRouter = Pattern
-				.compile(
-						"^r (\\S+) (\\S+) (\\S+) (\\S+) (\\S+) (\\S+) (\\d+) (\\d+)\\s*\ns ([a-z0-9 ]+)?",
-						Pattern.UNIX_LINES + Pattern.MULTILINE
-								+ Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
+				.compile("^r (\\S+) (\\S+) (\\S+) (\\S+) (\\S+) (\\S+) (\\d+) (\\d+)\\s*\ns ([a-z0-9 ]+)?",
+						 Pattern.UNIX_LINES + Pattern.MULTILINE + Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 		final Matcher m = pRouter.matcher(consensusStr);
 		// Loop to extract all routers
 		while (m.find())

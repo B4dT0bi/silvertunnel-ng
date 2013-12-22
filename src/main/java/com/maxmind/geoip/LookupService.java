@@ -39,7 +39,6 @@ package com.maxmind.geoip;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,11 +88,6 @@ public final class LookupService
 	private InMemoryRandomAccessFile file = null;
 
 	/**
-	 * Information about the database.
-	 */
-	private DatabaseInfo databaseInfo = null;
-
-	/**
 	 * The database type. Default is the country edition.
 	 */
 	byte databaseType = DatabaseInfo.COUNTRY_EDITION;
@@ -110,7 +104,6 @@ public final class LookupService
 	private static final int STATE_BEGIN_REV0 = 16700000;
 	private static final int STATE_BEGIN_REV1 = 16000000;
 	private static final int STRUCTURE_INFO_MAX_SIZE = 20;
-	private static final int DATABASE_INFO_MAX_SIZE = 100;
 	public static final int GEOIP_STANDARD = 0;
 	public static final int GEOIP_MEMORY_CACHE = 1;
 	public static final int GEOIP_CHECK_CACHE = 2;
@@ -125,12 +118,6 @@ public final class LookupService
 	private static final int ORG_RECORD_LENGTH = 4;
 	private static final int MAX_RECORD_LENGTH = 4;
 
-	private static final int FULL_RECORD_LENGTH = 60;
-
-	private static final Country UNKNOWN_COUNTRY = new Country("--", "N/A");
-
-	private static final HashMap<String, Integer> hashmapcountryCodetoindex = new HashMap<String, Integer>(512);
-	private static final HashMap<String, Integer> hashmapcountryNametoindex = new HashMap<String, Integer>(512);
 	private static final String[] COUNTRY_CODE = { "--", "AP", "EU", "AD", "AE",
 			"AF", "AG", "AI", "AL", "AM", "AN", "AO", "AQ", "AR", "AS", "AT",
 			"AU", "AW", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI",
@@ -257,12 +244,6 @@ public final class LookupService
 
 		if (file == null)
 		{
-			// distributed service only
-			for (i = 0; i < 233; i++)
-			{
-				hashmapcountryCodetoindex.put(COUNTRY_CODE[i], Integer.valueOf(i));
-				hashmapcountryNametoindex.put(COUNTRY_NAME[i], Integer.valueOf(i));
-			}
 			return;
 		}
 		file.seek(file.length() - 3);
@@ -336,7 +317,6 @@ public final class LookupService
 			dbbuffer = new byte[l];
 			file.seek(0);
 			file.read(dbbuffer, 0, l);
-			databaseInfo = this.getDatabaseInfo();
 			file.close();
 		}
 		if ((dboptions & GEOIP_INDEX_CACHE) != 0)
@@ -380,7 +360,7 @@ public final class LookupService
 	 * @param ipAddress IP address as bte array
 	 * @return the country the IP address is from.
 	 */
-	public Country getCountry(final byte[] ipAddress)
+	public String getCountry(final byte[] ipAddress)
 	{
 		return getCountry(bytesToLong(ipAddress));
 	}
@@ -392,7 +372,7 @@ public final class LookupService
 	 *            the IP address in long format.
 	 * @return the country the IP address is from.
 	 */
-	public Country getCountry(final long ipAddress)
+	public String getCountry(final long ipAddress)
 	{
 		if (file == null && (dboptions & GEOIP_MEMORY_CACHE) == 0)
 		{
@@ -401,198 +381,12 @@ public final class LookupService
 		final int ret = seekCountry(ipAddress) - COUNTRY_BEGIN;
 		if (ret == 0)
 		{
-			return UNKNOWN_COUNTRY;
+			return COUNTRY_CODE[0];
 		}
 		else
 		{
-			return new Country(COUNTRY_CODE[ret], COUNTRY_NAME[ret]);
+			return COUNTRY_CODE[ret];
 		}
-	}
-
-	public int getID(final long ipAddress)
-	{
-		if (file == null && (dboptions & GEOIP_MEMORY_CACHE) == 0)
-		{
-			throw new IllegalStateException("Database has been closed.");
-		}
-		final int ret = seekCountry(ipAddress) - databaseSegments[0];
-		return ret;
-	}
-
-	/**
-	 * Returns information about the database.
-	 * 
-	 * @return database info.
-	 */
-	public DatabaseInfo getDatabaseInfo()
-	{
-		if (databaseInfo != null)
-		{
-			return databaseInfo;
-		}
-		try
-		{
-			// Synchronize since we're accessing the database file.
-			synchronized (this)
-			{
-				boolean hasStructureInfo = false;
-				final byte[] delim = new byte[3];
-				// Advance to part of file where database info is stored.
-				file.seek(file.length() - 3);
-				for (int i = 0; i < STRUCTURE_INFO_MAX_SIZE; i++)
-				{
-					file.read(delim);
-					if ((delim[0] & 0xff) == 255 && (delim[1] & 0xff) == 255 && (delim[2] & 0xff) == 255)
-					{
-						hasStructureInfo = true;
-						break;
-					}
-				}
-				if (hasStructureInfo)
-				{
-					file.seek(file.getFilePointer() - 3);
-				}
-				else
-				{
-					// No structure info, must be pre Sep 2002 database, go back
-					// to end.
-					file.seek(file.length() - 3);
-				}
-				// Find the database info string.
-				for (int i = 0; i < DATABASE_INFO_MAX_SIZE; i++)
-				{
-					file.read(delim);
-					if (delim[0] == 0 && delim[1] == 0 && delim[2] == 0)
-					{
-						final byte[] dbInfo = new byte[i];
-						file.read(dbInfo);
-						// Create the database info object using the string.
-						this.databaseInfo = new DatabaseInfo(new String(dbInfo));
-						return databaseInfo;
-					}
-					file.seek(file.getFilePointer() - 4);
-				}
-			}
-		}
-		catch (final Exception e)
-		{
-			LOG.warn("got Exception", e);
-		}
-		return new DatabaseInfo("");
-	}
-
-	public synchronized Location getLocation(final long ipnum)
-	{
-		int recordPointer;
-		final byte[] recordBuf = new byte[FULL_RECORD_LENGTH];
-		int recordBufOffset = 0;
-		final Location record = new Location();
-		int strLength = 0;
-		int j, seekCountry;
-		double latitude = 0, longitude = 0;
-
-		try
-		{
-			seekCountry = seekCountry(ipnum);
-			if (seekCountry == databaseSegments[0])
-			{
-				return null;
-			}
-			recordPointer = seekCountry + (2 * recordLength - 1) * databaseSegments[0];
-
-			if ((dboptions & GEOIP_MEMORY_CACHE) == 1)
-			{
-				// read from memory
-				System.arraycopy(dbbuffer, recordPointer, recordBuf, 0, Math
-						.min(dbbuffer.length - recordPointer, FULL_RECORD_LENGTH));
-			}
-			else
-			{
-				// read from disk
-				file.seek(recordPointer);
-				file.read(recordBuf);
-			}
-
-			// get country
-			record.countryCode = COUNTRY_CODE[unsignedByteToInt(recordBuf[0])];
-			record.countryName = COUNTRY_NAME[unsignedByteToInt(recordBuf[0])];
-			recordBufOffset++;
-
-			// get region
-			while (recordBuf[recordBufOffset + strLength] != '\0')
-			{
-				strLength++;
-			}
-			if (strLength > 0)
-			{
-				record.region = new String(recordBuf, recordBufOffset,
-						strLength);
-			}
-			recordBufOffset += strLength + 1;
-			strLength = 0;
-
-			// get city
-			while (recordBuf[recordBufOffset + strLength] != '\0')
-			{
-				strLength++;
-			}
-			if (strLength > 0)
-			{
-				record.city = new String(recordBuf, recordBufOffset, strLength, "ISO-8859-1");
-			}
-			recordBufOffset += strLength + 1;
-			strLength = 0;
-
-			// get postal code
-			while (recordBuf[recordBufOffset + strLength] != '\0')
-			{
-				strLength++;
-			}
-			if (strLength > 0)
-			{
-				record.postalCode = new String(recordBuf, recordBufOffset, strLength);
-			}
-			recordBufOffset += strLength + 1;
-
-			// get latitude
-			for (j = 0; j < 3; j++)
-			{
-				latitude += (unsignedByteToInt(recordBuf[recordBufOffset + j]) << (j * 8));
-			}
-			record.latitude = (float) latitude / 10000 - 180;
-			recordBufOffset += 3;
-
-			// get longitude
-			for (j = 0; j < 3; j++)
-			{
-				longitude += (unsignedByteToInt(recordBuf[recordBufOffset + j]) << (j * 8));
-			}
-			record.longitude = (float) longitude / 10000 - 180;
-
-			record.dmaCode = record.metroCode = 0;
-			record.areaCode = 0;
-			if (databaseType == DatabaseInfo.CITY_EDITION_REV1)
-			{
-				// get DMA code
-				int metroareaCombo = 0;
-				if (record.countryCode == "US")
-				{
-					recordBufOffset += 3;
-					for (j = 0; j < 3; j++)
-					{
-						metroareaCombo += (unsignedByteToInt(recordBuf[recordBufOffset
-								+ j]) << (j * 8));
-					}
-					record.metroCode = record.dmaCode = metroareaCombo / 1000;
-					record.areaCode = metroareaCombo % 1000;
-				}
-			}
-		}
-		catch (final IOException e)
-		{
-			LOG.error("IO Exception while seting up segments", e);
-		}
-		return record;
 	}
 
 	/**
