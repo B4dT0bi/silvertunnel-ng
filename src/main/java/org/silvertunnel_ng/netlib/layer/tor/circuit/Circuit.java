@@ -672,7 +672,7 @@ public final class Circuit
 	 * @exception IOException
 	 * @see TLSDispatcherThread
 	 */
-	public final void sendCell(final Cell cell) throws IOException
+	public void sendCell(final Cell cell) throws IOException
 	{
 		// TODO : use also new protocol. (see tor-spec)
 		// update 'action'-timestamp, if not padding cell
@@ -854,7 +854,7 @@ public final class Circuit
 	{
 		++streamFails;
 		// if it's just too much, 'soft'-close this circuit
-		if ((streamFails > TorConfig.getCircuitClosesOnFailures()) && (streamFails > streamCounter * 3 / 2))
+		if (streamFails > TorConfig.getCircuitClosesOnFailures() && streamFails > streamCounter * 3 / 2)
 		{
 			if (!closed)
 			{
@@ -937,7 +937,7 @@ public final class Circuit
 	 * registers a stream in the history to allow bundeling streams to the same
 	 * connection in one circuit.
 	 */
-	final void registerStream(final TCPStreamProperties sp) throws TorException
+	void registerStream(final TCPStreamProperties sp) throws TorException
 	{
 		++establishedStreams;
 		if (sp.getAddr() != null)
@@ -1057,7 +1057,7 @@ public final class Circuit
 			}
 		}
 		//
-		if ((!force) && (!streams.isEmpty()))
+		if (!force && !streams.isEmpty())
 		{
 			return false;
 		}
@@ -1269,7 +1269,7 @@ public final class Circuit
 	 * @throws IOException
 	 * @throws TorException
 	 */
-	public final CellRelay receiveRelayCell(final int type) throws TorNoAnswerException, IOException, TorException
+	public CellRelay receiveRelayCell(final int type) throws TorNoAnswerException, IOException, TorException
 	{
 		return queue.receiveRelayCell(type);
 	}
@@ -1283,7 +1283,7 @@ public final class Circuit
 	 *             will be thrown if there is a problem while sending a
 	 *             RELAY_SENDME cell
 	 */
-	public final void processCell(final Cell cell) throws TorException
+	public void processCell(final Cell cell) throws TorException
 	{
 		if (cell.isTypeRelay() && cell instanceof CellRelay)
 		{
@@ -1310,7 +1310,7 @@ public final class Circuit
 	 *             will be thrown if there is a problem while sending a
 	 *             RELAY_SENDME cell
 	 */
-	public final synchronized void reduceCircWindowRecv() throws TorException
+	public synchronized void reduceCircWindowRecv() throws TorException
 	{
 		circuitFlowRecv--;
 		LOG.debug("CIRCUIT_FLOW_CONTROL_RECV = {}", circuitFlowRecv);
@@ -1340,7 +1340,7 @@ public final class Circuit
 	 * 
 	 * @return a set of objects
 	 */
-	public final Set<Object> getStreamHistory()
+	public Set<Object> getStreamHistory()
 	{
 		return streamHistory;
 	}

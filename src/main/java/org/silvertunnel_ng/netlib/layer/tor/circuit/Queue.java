@@ -197,7 +197,7 @@ public final class Queue
 			}
 			--retries;
 		}
-		while (forever || (retries > 0) || (queue.size() > 0));
+		while (forever || retries > 0 || queue.size() > 0);
 
 		return null;
 	}
@@ -241,8 +241,7 @@ public final class Queue
 		if (relay.getRelayCommand() != type)
 		{
 
-			if ((relay.getRelayCommand() == CellRelay.RELAY_END)
-					&& (relay.getData() != null))
+			if (relay.getRelayCommand() == CellRelay.RELAY_END && relay.getData() != null)
 			{
 				throw new TorException(
 						"Queue.receiveRelayCell: expected relay-cell of type "

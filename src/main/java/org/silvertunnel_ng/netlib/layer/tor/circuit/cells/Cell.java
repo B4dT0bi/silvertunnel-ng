@@ -85,7 +85,7 @@ public class Cell
 		this.payload = new byte[Cell.CELL_PAYLOAD_SIZE];
 
 		this.circuitId = outCircuit.getId();
-		this.command = (Encoding.intToNByteArray(command, 1))[0];
+		this.command = Encoding.intToNByteArray(command, 1)[0];
 		this.outCircuit = outCircuit;
 	}
 
@@ -194,7 +194,7 @@ public class Cell
 
 	public static String type(final int t)
 	{
-		if ((t >= 0) && (t < TYPE_TO_STRING.length))
+		if (t >= 0 && t < TYPE_TO_STRING.length)
 		{
 			return TYPE_TO_STRING[t];
 		}

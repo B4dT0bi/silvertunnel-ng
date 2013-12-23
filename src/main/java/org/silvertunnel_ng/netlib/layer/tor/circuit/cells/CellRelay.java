@@ -247,30 +247,27 @@ public class CellRelay extends Cell
 			}
 
 			// if recognized and digest is correct, then stop decrypting
-			if ((payload[CellRelay.RELAY_RECOGNIZED_POS] == 0)
-					&& (payload[CellRelay.RELAY_RECOGNIZED_POS + 1] == 0))
+			if (payload[CellRelay.RELAY_RECOGNIZED_POS] == 0
+			 && payload[CellRelay.RELAY_RECOGNIZED_POS + 1] == 0)
 			{
 				// check digest.
 
 				// save digest
-				System.arraycopy(payload, CellRelay.RELAY_DIGEST_POS, digest,
-						0, CellRelay.RELAY_DIGEST_SIZE);
+				System.arraycopy(payload, CellRelay.RELAY_DIGEST_POS, digest, 0, CellRelay.RELAY_DIGEST_SIZE);
 				// set to ZERO
 				payload[CellRelay.RELAY_DIGEST_POS] = 0;
 				payload[CellRelay.RELAY_DIGEST_POS + 1] = 0;
 				payload[CellRelay.RELAY_DIGEST_POS + 2] = 0;
 				payload[CellRelay.RELAY_DIGEST_POS + 3] = 0;
 				// calculate digest
-				final byte[] digestCalc = outCircuit.getRouteNodes()[encryptingRouter]
-						.calcBackwardDigest(payload);
+				final byte[] digestCalc = outCircuit.getRouteNodes()[encryptingRouter].calcBackwardDigest(payload);
 				// restore digest
-				System.arraycopy(digest, 0, payload,
-						CellRelay.RELAY_DIGEST_POS, CellRelay.RELAY_DIGEST_SIZE);
+				System.arraycopy(digest, 0, payload, CellRelay.RELAY_DIGEST_POS, CellRelay.RELAY_DIGEST_SIZE);
 				// check digest
-				if ((digest[0] == digestCalc[0])
-						&& (digest[1] == digestCalc[1])
-						&& (digest[2] == digestCalc[2])
-						&& (digest[3] == digestCalc[3]))
+				if (digest[0] == digestCalc[0]
+				 && digest[1] == digestCalc[1]
+				 && digest[2] == digestCalc[2]
+				 && digest[3] == digestCalc[3])
 				{
 					if (LOG.isDebugEnabled())
 					{
@@ -304,12 +301,9 @@ public class CellRelay extends Cell
 
 		// copy data from payload
 		relayCommand = payload[CellRelay.RELAY_COMMAND_POS];
-		streamId = Encoding.byteArrayToInt(payload,
-				CellRelay.RELAY_STREAMID_POS, CellRelay.RELAY_STREAMID_SIZE);
-		length = Encoding.byteArrayToInt(payload, CellRelay.RELAY_LENGTH_POS,
-				CellRelay.RELAY_LENGTH_SIZE);
-		System.arraycopy(payload, CellRelay.RELAY_DATA_POS, data, 0,
-				CellRelay.RELAY_DATA_SIZE);
+		streamId = Encoding.byteArrayToInt(payload, CellRelay.RELAY_STREAMID_POS, CellRelay.RELAY_STREAMID_SIZE);
+		length = Encoding.byteArrayToInt(payload, CellRelay.RELAY_LENGTH_POS, CellRelay.RELAY_LENGTH_SIZE);
+		System.arraycopy(payload, CellRelay.RELAY_DATA_POS, data, 0, CellRelay.RELAY_DATA_SIZE);
 
 		if (LOG.isDebugEnabled())
 		{
@@ -321,9 +315,9 @@ public class CellRelay extends Cell
 	 * set to a value from 0 to outCircuit.routeEstablished-1 to address a
 	 * special router in the chain, default is the last one.
 	 */
-	boolean setAddressedRouter(int router)
+	boolean setAddressedRouter(final int router)
 	{
-		if ((router > -1) && (router < outCircuit.getRouteEstablished()))
+		if (router > -1 && router < outCircuit.getRouteEstablished())
 		{
 			addressedRouterInCircuit = router;
 			return true;
@@ -391,7 +385,7 @@ public class CellRelay extends Cell
 	 */
 	private static String getReasonForClosing(final int reason)
 	{
-		if ((reason < 0) || (reason >= REASON_TO_STRING.length))
+		if (reason < 0 || reason >= REASON_TO_STRING.length)
 		{
 			return "[" + reason + "]";
 		}
@@ -408,7 +402,7 @@ public class CellRelay extends Cell
 	 */
 	private static String getReasonForTruncated(final int reason)
 	{
-		if ((reason < 0) || (reason >= TRUNCATED_REASON_TO_STRING.length))
+		if (reason < 0 || reason >= TRUNCATED_REASON_TO_STRING.length)
 		{
 			return "[" + reason + "]";
 		}
@@ -437,7 +431,7 @@ public class CellRelay extends Cell
 	 */
 	public static String getRelayCommandAsString(final int cmd)
 	{
-		if ((cmd < COMMAND_TO_STRING.length) && (cmd >= 0))
+		if (cmd < COMMAND_TO_STRING.length && cmd >= 0)
 		{
 			return COMMAND_TO_STRING[cmd];
 		}
@@ -601,7 +595,7 @@ public class CellRelay extends Cell
 		return relayCommand;
 	}
 
-	public void setRelayCommand(byte relayCommand)
+	public void setRelayCommand(final byte relayCommand)
 	{
 		this.relayCommand = relayCommand;
 	}
@@ -611,7 +605,7 @@ public class CellRelay extends Cell
 		return streamId;
 	}
 
-	public void setStreamId(int streamId)
+	public void setStreamId(final int streamId)
 	{
 		this.streamId = streamId;
 	}
@@ -621,7 +615,7 @@ public class CellRelay extends Cell
 		return digest;
 	}
 
-	public void setDigest(byte[] digest)
+	public void setDigest(final byte[] digest)
 	{
 		this.digest = digest;
 	}
@@ -633,7 +627,7 @@ public class CellRelay extends Cell
 		return length;
 	}
 
-	public void setLength(int length)
+	public void setLength(final int length)
 	{
 		this.length = length;
 	}
@@ -643,7 +637,7 @@ public class CellRelay extends Cell
 		return data;
 	}
 
-	public void setData(byte[] data)
+	public void setData(final byte[] data)
 	{
 		this.data = data;
 	}

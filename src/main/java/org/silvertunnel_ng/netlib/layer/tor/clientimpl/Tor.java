@@ -260,14 +260,14 @@ public class Tor implements NetLayerStatusAdmin
 						// wait for the first stream to return
 						int chosenStream = -1;
 						int waitingCounter = TorConfig.queueTimeoutStreamBuildup * 1000 / 10;
-						while ((chosenStream < 0) && (waitingCounter >= 0))
+						while (chosenStream < 0 && waitingCounter >= 0)
 						{
 							boolean atLeastOneAlive = false;
-							for (int i = 0; (i < circuits.length) && (chosenStream < 0); ++i)
+							for (int i = 0; i < circuits.length && chosenStream < 0; ++i)
 							{
 								if (!streamThreads[i].isAlive())
 								{
-									if ((streamThreads[i].getStream() != null) && (streamThreads[i].getStream().isEstablished()))
+									if (streamThreads[i].getStream() != null && streamThreads[i].getStream().isEstablished())
 									{
 										chosenStream = i;
 									}
@@ -566,7 +566,7 @@ public class Tor implements NetLayerStatusAdmin
 		if (!gaveMessage)
 		{
 			gaveMessage = true;
-			LOG.debug("Tor.checkStartup(): Tor is still in startup phase, sleeping for max. {} seconds",  (sleep / 1000L));
+			LOG.debug("Tor.checkStartup(): Tor is still in startup phase, sleeping for max. {} seconds",  sleep / 1000L);
 			LOG.debug("Tor not yet started - wait until torServers available");
 		}
 		// try { Thread.sleep(sleep); }

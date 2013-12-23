@@ -48,7 +48,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
@@ -73,7 +72,7 @@ public class CircuitAdmin
 	private static final Logger LOG = LoggerFactory.getLogger(CircuitAdmin.class);
 
 	// TODO test:
-	/** key=host name, value=circuit to this host */
+	/** key=host name, value=circuit to this host. */
 	static Map<String, Circuit[]> suitableCircuitsCache = Collections.synchronizedMap(new HashMap<String, Circuit[]>());
 
 	/** keep track of built Circuits to predict the best new idle Circuits. */
@@ -82,8 +81,7 @@ public class CircuitAdmin
 	 * fingerprint of currently used nodes in circuits as key, # of cirs -
 	 * value.
 	 */
-	private static Map<Fingerprint, Integer> currentlyUsedNodes = Collections
-			.synchronizedMap(new HashMap<Fingerprint, Integer>());
+	private static Map<Fingerprint, Integer> currentlyUsedNodes = Collections.synchronizedMap(new HashMap<Fingerprint, Integer>());
 
 	private static SecureRandom rnd = new SecureRandom();
 
@@ -245,7 +243,7 @@ public class CircuitAdmin
 				{
 					++numberOfExistingCircuits;
 					if (circuit.isEstablished()
-							&& (!circuit.isClosed())
+							&& !circuit.isClosed()
 							&& DirectoryService.isCompatible(dir, circuit, sp, forHiddenService))
 					{
 						allCircs.add(circuit);
@@ -282,9 +280,7 @@ public class CircuitAdmin
 				}
 				final boolean thisPointsToAddr = thisCirc.getStreamHistory().contains(sp.getHostname());
 				final float rankingQuota = thisRanking / minRanking;
-				if ((thisPointsToAddr && !minPointsToAddr)
-						|| (rnd.nextFloat() > Math
-								.exp(-rankingQuota)))
+				if ((thisPointsToAddr && !minPointsToAddr) || rnd.nextFloat() > Math.exp(-rankingQuota))
 				{
 					// sort stochastically
 					min = j;
@@ -304,7 +300,7 @@ public class CircuitAdmin
 		{
 			returnValues = allCircs.size();
 		}
-		if ((returnValues == 1) && (numberOfExistingCircuits < TorConfig.circuitsMaximumNumber))
+		if (returnValues == 1 && numberOfExistingCircuits < TorConfig.circuitsMaximumNumber)
 		{
 			// spawn new circuit IN BACKGROUND, unless maximum number of
 			// circuits reached
@@ -313,8 +309,7 @@ public class CircuitAdmin
 			spawnInBackground.setName("CuircuitAdmin.provideSuitableCircuits");
 			spawnInBackground.start();
 		}
-		else if ((returnValues == 0)
-				&& (numberOfExistingCircuits < TorConfig.circuitsMaximumNumber))
+		else if (returnValues == 0 && numberOfExistingCircuits < TorConfig.circuitsMaximumNumber)
 		{
 			// spawn new circuit, unless maximum number of circuits reached
 			LOG.debug("TLSConnectionAdmin.provideSuitableCircuits: spawning circuit to {}", sp.getHostname());
@@ -373,26 +368,24 @@ public class CircuitAdmin
 		final float rankingInfluenceIndex = sp.getRankingInfluenceIndex();
 		final HashSet<Fingerprint> previousExcludedServerFingerprints = new HashSet<Fingerprint>();
 
-		final Map<Fingerprint, RouterImpl> validRoutersByFingerprint = directory
-				.getValidRoutersByFingerprint();
+		final Map<Fingerprint, RouterImpl> validRoutersByFingerprint = directory.getValidRoutersByFingerprint();
 		for (final RouterImpl r : validRoutersByFingerprint.values()) // TODO : isnt it better to iterate through CircuitAdmin.currentlyUsedNodes ???
 		{
 			final Integer allowedCircuitsWithNode = CircuitAdmin.currentlyUsedNodes.get(r.getFingerprint());
 			// check if server has been used already in other circuits
-			if ((allowedCircuitsWithNode != null) && (allowedCircuitsWithNode.intValue() > TorConfig.allowModeMultipleCircuits))
+			if (allowedCircuitsWithNode != null && allowedCircuitsWithNode.intValue() > TorConfig.allowModeMultipleCircuits)
 			{
 				excludedServerFingerprints.add(r.getFingerprint());
 			}
 		}
 
-		if ((proposedRoute != null) && (i < proposedRoute.length) && (proposedRoute[i] != null))
+		if (proposedRoute != null && i < proposedRoute.length && proposedRoute[i] != null)
 		{
 			// choose proposed server
 			route[i] = validRoutersByFingerprint.get(proposedRoute[i]);
 			if (route[i] == null)
 			{
-				throw new TorException("couldn't find server "
-						+ proposedRoute[i] + " for position " + i);
+				throw new TorException("couldn't find server " + proposedRoute[i] + " for position " + i);
 			}
 		}
 		else
@@ -408,8 +401,7 @@ public class CircuitAdmin
 				for (final RouterImpl r : directory.getRoutersWithExit().values())
 				{
 					// exit server must be trusted
-					if (r.exitPolicyAccepts(sp.getAddr(), sp.getPort())
-							&& (sp.isUntrustedExitAllowed() || r.isDirv2Exit()))
+					if (r.exitPolicyAccepts(sp.getAddr(), sp.getPort()) && (sp.isUntrustedExitAllowed() || r.isDirv2Exit()))
 					{
 						suitableServerFingerprints.put(r.getFingerprint(), r);
 					}
@@ -444,15 +436,13 @@ public class CircuitAdmin
 				x.removeAll(suitableServerFingerprints);
 				x.addAll(excludedServerFingerprints);
 				// now select one of them
-				route[i] = directory.selectRandomNode(
-						validRoutersByFingerprint, x, rankingInfluenceIndex, sp.isFastRoute(), sp.isStableRoute());
+				route[i] = directory.selectRandomNode(validRoutersByFingerprint, x, rankingInfluenceIndex, sp.isFastRoute(), sp.isStableRoute());
 
 			}
 			else
 			{
-				route[i] = directory.selectRandomNode(
-						validRoutersByFingerprint, excludedServerFingerprints,
-						rankingInfluenceIndex, sp.isFastRoute(), sp.isStableRoute());
+				route[i] = directory.selectRandomNode(validRoutersByFingerprint, excludedServerFingerprints,
+				                                      rankingInfluenceIndex, sp.isFastRoute(), sp.isStableRoute());
 			}
 
 			if (route[i] == null)
@@ -477,8 +467,7 @@ public class CircuitAdmin
 
 		if (i > 0)
 		{
-			final RouterImpl[] aRoute = createNewRoute(directory, sp,
-					proposedRoute, excludedServerFingerprints, route, i - 1, -1);
+			final RouterImpl[] aRoute = createNewRoute(directory, sp, proposedRoute, excludedServerFingerprints, route, i - 1, -1);
 			if (aRoute == null)
 			{
 
@@ -496,8 +485,8 @@ public class CircuitAdmin
 					return null;
 				}
 				route = createNewRoute(directory, sp, proposedRoute,
-						previousExcludedServerFingerprints, route, i,
-						maxIterations);
+				                       previousExcludedServerFingerprints, route, i,
+				                       maxIterations);
 
 			}
 			else
@@ -633,7 +622,7 @@ public class CircuitAdmin
 		// reuse hosts that are required due to TCPStreamProperties
 		if (sp.getRouteFingerprints() != null)
 		{
-			for (int i = 0; (i < sp.getRouteFingerprints().length) && (i < customRoute.length); ++i)
+			for (int i = 0; i < sp.getRouteFingerprints().length && i < customRoute.length; ++i)
 			{
 				customRoute[i] = sp.getRouteFingerprints()[i];
 			}

@@ -83,7 +83,7 @@ public class CellDestroy extends Cell
 	 */
 	public static String getReason(final int reason)
 	{
-		if ((reason < 0) || (reason >= REASON_TO_STRING.length))
+		if (reason < 0 || reason >= REASON_TO_STRING.length)
 		{
 			return "[" + reason + "]";
 		}
@@ -91,7 +91,7 @@ public class CellDestroy extends Cell
 	}
 
 	/**
-	 * @return the reason from the paload as string
+	 * @return the reason from the payload as string
 	 */
 	public String getReason()
 	{

@@ -28,21 +28,19 @@ import org.silvertunnel_ng.netlib.api.NetSocket;
 
 public class DataNetSocketWrapper implements DataNetSocket
 {
-	/** wrapped object */
+	/** wrapped object. */
 	NetSocket netSocket;
 
 	private final DataInputStream dis;
 	private final DataOutputStream dos;
 
-	public DataNetSocketWrapper(NetSocket netSocket) throws IOException
+	public DataNetSocketWrapper(final NetSocket netSocket) throws IOException
 	{
 		final InputStream is = netSocket.getInputStream();
 		final OutputStream os = netSocket.getOutputStream();
 
-		this.dis = (is instanceof DataInputStream) ? (DataInputStream) is
-				: new DataInputStream(is);
-		this.dos = (os instanceof DataOutputStream) ? (DataOutputStream) os
-				: new DataOutputStream(os);
+		this.dis = is instanceof DataInputStream ? (DataInputStream) is : new DataInputStream(is);
+		this.dos = os instanceof DataOutputStream ? (DataOutputStream) os : new DataOutputStream(os);
 		this.netSocket = netSocket;
 	}
 

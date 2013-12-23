@@ -282,9 +282,9 @@ public class Node
 		// check if derived key data is equal to bytes 128-147 of data[]
 		
 		boolean equal = true;
-		for (int i = 0; equal && (i < DIGEST_LEN); ++i)
+		for (int i = 0; equal && i < DIGEST_LEN; ++i)
 		{
-			equal = (keyData[i] == data[dhYBytes.length + i]);
+			equal = keyData[i] == data[dhYBytes.length + i];
 		}
 		// is there some error in the key data?
 		if (!equal)

@@ -196,7 +196,7 @@ public class JvmGlobalUtil
 			{
 				Thread.sleep(Math.max(
 						0,
-						(NameServiceGlobalUtil.getCacheTimeoutMillis() - (time2 - time1))));
+						NameServiceGlobalUtil.getCacheTimeoutMillis() - (time2 - time1)));
 			}
 			catch (final InterruptedException e)
 			{

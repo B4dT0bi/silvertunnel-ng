@@ -106,7 +106,7 @@ public final class HiddenServiceClient
 		// get a copy from the rendezvous service descriptor
 		//
 		RendezvousServiceDescriptor sd = HiddenServiceDescriptorCache.getInstance().get(z);
-		if (sd == null || (!sd.isPublicationTimeValid()))
+		if (sd == null || !sd.isPublicationTimeValid())
 		{
 			// no valid entry in cache: retrieve a fresh one
 			sd = rendezvousServiceDescriptorService.loadRendezvousServiceDescriptorFromDirectory(z, directory, torNetLayer);

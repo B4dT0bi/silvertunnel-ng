@@ -30,7 +30,7 @@ import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 public class DirectoryService
 {
 	/**
-	 * checks whether the given circuit is compatible to the given restrictions
+	 * checks whether the given circuit is compatible to the given restrictions.
 	 * 
 	 * @param circ
 	 *            a circuit
@@ -39,9 +39,11 @@ public class DirectoryService
 	 * @param forHiddenService
 	 * @return the boolean result
 	 */
-	public static boolean isCompatible(Directory directory, Circuit circ,
-			TCPStreamProperties sp, boolean forHiddenService)
-			throws TorException
+	public static boolean isCompatible(final Directory directory, 
+	                                   final Circuit circ,
+	                                   final TCPStreamProperties sp, 
+	                                   final boolean forHiddenService)
+	                                		   throws TorException
 	{
 		final RouterImpl[] routeCopy = new RouterImpl[circ.getRouteNodes().length];
 		for (int i = 0; i < circ.getRouteNodes().length; ++i)
@@ -54,22 +56,19 @@ public class DirectoryService
 			// smth else
 			if (circ.getStreamHistory() == null)
 			{
-				if ((circ.getStreams() == null)
-						|| ((circ.getStreams().size() == 1)
-								&& (circ.getServiceDescriptor() != null) && (sp
-									.getHostname().contains(circ
-								.getServiceDescriptor().getURL()))))
+				if (circ.getStreams() == null
+						|| (circ.getStreams().size() == 1
+								&& circ.getServiceDescriptor() != null 
+								&& sp.getHostname().contains(circ.getServiceDescriptor().getURL())))
 				{
-					return directory.isCompatible(routeCopy, sp,
-							forHiddenService);
+					return directory.isCompatible(routeCopy, sp, forHiddenService);
 				}
 			}
 		}
 		else
 		{
 			// check for exit policies of last node
-			if ((circ.getServiceDescriptor() == null)
-					&& (!circ.isUsedByHiddenServiceToConnectToIntroductionPoint()))
+			if (circ.getServiceDescriptor() == null && !circ.isUsedByHiddenServiceToConnectToIntroductionPoint())
 			{
 				return directory.isCompatible(routeCopy, sp, forHiddenService);
 			}

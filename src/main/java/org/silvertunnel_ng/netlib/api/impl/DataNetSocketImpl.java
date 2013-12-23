@@ -29,12 +29,10 @@ public class DataNetSocketImpl implements DataNetSocket
 	private final DataInputStream is;
 	private final DataOutputStream os;
 
-	public DataNetSocketImpl(InputStream is, OutputStream os)
+	public DataNetSocketImpl(final InputStream is, final OutputStream os)
 	{
-		this.is = (is instanceof DataInputStream) ? (DataInputStream) is
-				: new DataInputStream(is);
-		this.os = (os instanceof DataOutputStream) ? (DataOutputStream) os
-				: new DataOutputStream(os);
+		this.is = is instanceof DataInputStream ? (DataInputStream) is : new DataInputStream(is);
+		this.os = os instanceof DataOutputStream ? (DataOutputStream) os : new DataOutputStream(os);
 	}
 
 	@Override

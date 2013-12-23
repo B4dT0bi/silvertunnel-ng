@@ -179,7 +179,7 @@ class TorBackgroundMgmtThread extends Thread
 			for (final Circuit c : tls.getCircuits())
 			{
 				// check if this circuit needs a keep-alive-packet
-				if ((c.isEstablished())	&& (currentTimeMillis - c.getLastCell() > CIRCUITS_KEEP_ALIVE_INTERVAL_S * MILLISEC))
+				if (c.isEstablished()	&& currentTimeMillis - c.getLastCell() > CIRCUITS_KEEP_ALIVE_INTERVAL_S * MILLISEC)
 				{
 					if (LOG.isDebugEnabled())
 					{
@@ -191,11 +191,11 @@ class TorBackgroundMgmtThread extends Thread
 				for (final Stream streamX : c.getStreams().values())
 				{
 					final TCPStream stream = (TCPStream) streamX;
-					if ((stream.isEstablished())
-							&& (!stream.isClosed())
-							&& (currentTimeMillis
+					if (stream.isEstablished()
+							&& !stream.isClosed()
+							&& currentTimeMillis
 									- stream.getLastCellSentDate() > STREAMS_KEEP_ALIVE_INTERVAL_S
-									* MILLISEC))
+									* MILLISEC)
 					{
 						if (LOG.isDebugEnabled())
 						{
@@ -265,7 +265,7 @@ class TorBackgroundMgmtThread extends Thread
 				{
 					final TCPStream s = (TCPStream) streamX;
 					final long diff = (currentTimeMillis - s.getLastAction()) / MILLISEC;
-					if ((!s.isEstablished()) || s.isClosed())
+					if (!s.isEstablished() || s.isClosed())
 					{
 						if (diff > (2 * TorConfig.queueTimeoutStreamBuildup))
 						{
@@ -286,7 +286,7 @@ class TorBackgroundMgmtThread extends Thread
 				}
 				// check if circuit is establishing but doesn't had any action
 				// for a longer period of time
-				if ((!c.isEstablished()) && (!c.isClosed()))
+				if (!c.isEstablished() && !c.isClosed())
 				{
 					if ((currentTimeMillis - c.getLastAction()) / MILLISEC > (2 * TorConfig.queueTimeoutCircuit))
 					{
