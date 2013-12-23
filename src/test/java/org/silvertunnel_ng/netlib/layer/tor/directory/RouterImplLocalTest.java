@@ -137,7 +137,6 @@ public final class RouterImplLocalTest
 		assertFalse(testObject.isDirv2Stable());
 		assertFalse(testObject.isDirv2V2dir());
 		assertFalse(testObject.isDirv2Valid());
-		assertEquals(173, testObject.getExitpolicy().length);
 	}
 	/**
 	 * Test method if it is possible to write a parsed Router to a file using {@link ObjectOutputStream}.

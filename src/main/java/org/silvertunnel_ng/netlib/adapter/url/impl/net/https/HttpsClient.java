@@ -193,7 +193,7 @@ final class HttpsClient extends HttpClient implements
 		if (useCache)
 		{
 			/* see if one's already around */
-			ret = (HttpsClient) kac.get(url, lowerNetLayer);
+			ret = (HttpsClient) KAC.get(url, lowerNetLayer);
 			if (ret != null)
 			{
 				ret.cachedHttpClient = true;
@@ -315,7 +315,7 @@ final class HttpsClient extends HttpClient implements
 	@Override
 	public void closeIdleConnection()
 	{
-		final HttpClient http = kac.get(url, lowerNetLayer);
+		final HttpClient http = KAC.get(url, lowerNetLayer);
 		if (http != null)
 		{
 			http.closeServer();

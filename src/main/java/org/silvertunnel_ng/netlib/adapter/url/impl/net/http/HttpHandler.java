@@ -38,30 +38,29 @@ public class HttpHandler extends Handler
 
 	/**
 	 * TcpipNetLayer compatible layer; for class HttpsURLConnection: TLSNetLayer
-	 * compatible layer
+	 * compatible layer.
 	 */
 	protected NetLayer netLayer;
 
 	/**
-	 * Create an instance
+	 * Create an instance.
 	 * 
 	 * @param netLayer
 	 *            use this layer for network connections; should be compatible
 	 *            with TcpipNetLayer; if null then prevent network connections
 	 */
-	public HttpHandler(NetLayer netLayer)
+	public HttpHandler(final NetLayer netLayer)
 	{
 		this.netLayer = netLayer;
 	}
 
 	@Override
-	public/* TODO: was protected */java.net.URLConnection openConnection(URL u,
-			Proxy p) throws IOException
+	public/* TODO: was protected */java.net.URLConnection openConnection(final URL u, final Proxy p) throws IOException
 	{
 		return new HttpURLConnection(netLayer, u, p, this);
 	}
 
-	public void setNetLayer(NetLayer netLayer)
+	public void setNetLayer(final NetLayer netLayer)
 	{
 		this.netLayer = netLayer;
 	}
@@ -75,7 +74,7 @@ public class HttpHandler extends Handler
 	 * @return an <code>InetAddress</code> representing the host IP address.
 	 */
 	@Override
-	protected synchronized InetAddress getHostAddress(URL u)
+	protected synchronized InetAddress getHostAddress(final URL u)
 	{
 		LOG.info("HttpHandler.getHostAddress(): do not determine correct address for security reasons - return null");
 
@@ -97,24 +96,24 @@ public class HttpHandler extends Handler
 	/**
 	 * Compares the host components of two URLs.
 	 * 
-	 * @param u1
+	 * @param url1
 	 *            the URL of the first host to compare
-	 * @param u2
+	 * @param url2
 	 *            the URL of the second host to compare
 	 * @return <tt>true</tt> if and only if they are equal, <tt>false</tt>
 	 *         otherwise.
 	 */
 	@Override
-	protected boolean hostsEqual(URL u1, URL u2)
+	protected boolean hostsEqual(final URL url1, final URL url2)
 	{
 		// if both have host names, compare them
-		if (u1.getHost() != null && u2.getHost() != null)
+		if (url1.getHost() != null && url2.getHost() != null)
 		{
-			return u1.getHost().equalsIgnoreCase(u2.getHost());
+			return url1.getHost().equalsIgnoreCase(url2.getHost());
 		}
 		else
 		{
-			return u1.getHost() == null && u2.getHost() == null;
+			return url1.getHost() == null && url2.getHost() == null;
 		}
 	}
 }

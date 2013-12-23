@@ -96,13 +96,13 @@ public class HttpUtilRemoteTest
 		netSocket.close();
 	}
 
+	private static final String DATA_TO_POST = "Das sind die\nPost\nDaten";
+	private static final String EXPECTED_RESPONSE = "<postedData>" + DATA_TO_POST + "</postedData>";
+	private static final long TIMEOUT_MS = 3000;
+
 	@Test(timeOut = 15000)
 	public void testPostRequest() throws Exception
 	{
-		final String DATA_TO_POST = "Das sind die\nPost\nDaten";
-		final String EXPECTED_RESPONSE = "<postedData>" + DATA_TO_POST
-				+ "</postedData>";
-		final long TIMEOUT_MS = 3000;
 
 		// prepare request
 		final URL url = new URL(POSTTEST_URL);

@@ -975,12 +975,6 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 	}
 
 	@Override
-	public RouterExitPolicy[] getExitpolicy()
-	{
-		return exitpolicy;
-	}
-
-	@Override
 	public String getContact()
 	{
 		return contact;

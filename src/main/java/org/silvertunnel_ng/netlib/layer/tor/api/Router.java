@@ -63,8 +63,6 @@ public interface Router
 
 	RSAPublicKey getSigningKey();
 
-	RouterExitPolicy[] getExitpolicy();
-
 	String getContact();
 
 	Set<Fingerprint> getFamily();

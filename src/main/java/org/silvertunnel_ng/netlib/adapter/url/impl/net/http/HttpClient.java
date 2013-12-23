@@ -53,49 +53,50 @@ public class HttpClient extends NetworkClient
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(HttpClient.class);
-	// whether this httpclient comes from the cache
+	/** whether this httpclient comes from the cache. */
 	protected boolean cachedHttpClient = false;
 
 	private boolean inCache;
 
 	protected CookieHandler cookieHandler;
 
-	// Http requests we send
+	/** Http requests we send. */
 	MessageHeader requests;
 
-	// Http data we send with the headers
+	/** Http data we send with the headers. */
 	PosterOutputStream poster = null;
 
-	// if we've had one io error
+	/** if we've had one io error. */
 	boolean failedOnce = false;
 
-	/** Response code for CONTINUE */
+	/** Response code for CONTINUE. */
 	private static final int HTTP_CONTINUE = 100;
 
-	/** Default port number for http */
+	/** Default port number for http. */
 	protected static final int DEFAULT_HTTP_PORT = 80;
 
-	/** return default port number (subclasses may override) */
+	/** return default port number (subclasses may override). */
 	protected int getDefaultPort()
 	{
 		return DEFAULT_HTTP_PORT;
 	}
 
 	// target host, port for the URL
-	protected String host;
-	protected int port;
+	private String host;
+	private int port;
 
-	/* where we cache currently open, persistent connections */
-	protected static KeepAliveCache kac = new KeepAliveCache();
+	/** where we cache currently open, persistent connections. */
+	protected static final KeepAliveCache KAC = new KeepAliveCache();
 
 	private static boolean keepAliveProp = true;
 
-	// retryPostProp is true by default so as to preserve behavior
-	// from previous releases.
+	/** retryPostProp is true by default so as to preserve behavior from previous releases. */
 	private static boolean retryPostProp = true;
 
-	volatile boolean keepingAlive = false; /* this is a keep-alive connection */
-	int keepAliveConnections = -1; /* number of keep-alives left */
+	/** this is a keep-alive connection. */
+	private volatile boolean keepingAlive = false;
+	/** number of keep-alives left. */
+	private int keepAliveConnections = -1; 
 
 	/**
 	 * Idle timeout value, in milliseconds. Zero means infinity, iff
@@ -105,9 +106,9 @@ public class HttpClient extends NetworkClient
 	 * connection after 5 sec. So we have to hard code our effective timeout to
 	 * 4 sec for the case where we're using a proxy. *SIGH*
 	 */
-	int keepAliveTimeout = 0;
+	private int keepAliveTimeout = 0;
 
-	/** whether the response is to be cached */
+	/** whether the response is to be cached. */
 	private CacheRequest cacheRequest = null;
 
 	/** Url being fetched. */
@@ -216,7 +217,7 @@ public class HttpClient extends NetworkClient
 	 * @return
 	 * @throws IOException
 	 */
-	public static HttpClient New(NetLayer lowerNetLayer, URL url)
+	public static HttpClient New(final NetLayer lowerNetLayer, final URL url)
 			throws IOException
 	{
 		return HttpClient.New(lowerNetLayer, url, -1, true);
@@ -231,8 +232,7 @@ public class HttpClient extends NetworkClient
 	 * @return
 	 * @throws IOException
 	 */
-	public static HttpClient New(NetLayer lowerNetLayer, URL url,
-			boolean useCache) throws IOException
+	public static HttpClient New(final NetLayer lowerNetLayer, final URL url, final boolean useCache) throws IOException
 	{
 		return HttpClient.New(lowerNetLayer, url, -1, useCache);
 	}
@@ -247,8 +247,7 @@ public class HttpClient extends NetworkClient
 	 * @return
 	 * @throws IOException
 	 */
-	public static HttpClient New(NetLayer lowerNetLayer, URL url, int to,
-			boolean useCache) throws IOException
+	public static HttpClient New(final NetLayer lowerNetLayer, final URL url, final int to, final boolean useCache) throws IOException
 	{
 		final Proxy p = Proxy.NO_PROXY;
 
@@ -256,7 +255,7 @@ public class HttpClient extends NetworkClient
 		/* see if one's already around */
 		if (useCache)
 		{
-			ret = kac.get(url, null);
+			ret = KAC.get(url, null);
 			if (ret != null)
 			{
 				if ((ret.proxy != null && ret.proxy.equals(p))
@@ -339,7 +338,7 @@ public class HttpClient extends NetworkClient
 			return;
 		}
 		inCache = true;
-		kac.put(url, null, this);
+		KAC.put(url, null, this);
 	}
 
 	protected boolean isInKeepAliveCache()
@@ -352,7 +351,7 @@ public class HttpClient extends NetworkClient
 	 */
 	public void closeIdleConnection()
 	{
-		final HttpClient http = kac.get(url, null);
+		final HttpClient http = KAC.get(url, null);
 		if (http != null)
 		{
 			http.closeServer();
@@ -365,7 +364,7 @@ public class HttpClient extends NetworkClient
 	 * parseHTTP(). That's why this method is overidden from the superclass.
 	 */
 	@Override
-	public void openServer(String server, int port) throws IOException
+	public void openServer(final String server, final int port) throws IOException
 	{
 		serverSocket = doConnect(server, port);
 		try
@@ -469,15 +468,14 @@ public class HttpClient extends NetworkClient
 	 * @deprecated
 	 */
 	@Deprecated
-	public void writeRequests(MessageHeader head)
+	public void writeRequests(final MessageHeader head)
 	{
 		requests = head;
 		requests.print(serverOutput);
 		serverOutput.flush();
 	}
 
-	public void writeRequests(MessageHeader head, PosterOutputStream pos)
-			throws IOException
+	public void writeRequests(final MessageHeader head, final PosterOutputStream pos) throws IOException
 	{
 		requests = head;
 		requests.print(serverOutput);
@@ -494,8 +492,9 @@ public class HttpClient extends NetworkClient
 	 * like: "HTTP/1.0 <number> comment\r\n".
 	 */
 
-	public boolean parseHTTP(MessageHeader responses, ProgressSource pi,
-			HttpURLConnection httpuc) throws IOException
+	public boolean parseHTTP(final MessageHeader responses, 
+	                         final ProgressSource pi,
+	                         final HttpURLConnection httpuc) throws IOException
 	{
 		/*
 		 * If "HTTP/*" is found in the beginning, return true. Let
@@ -549,7 +548,7 @@ public class HttpClient extends NetworkClient
 
 	}
 
-	public int setTimeout(int timeout) throws SocketException
+	public int setTimeout(final int timeout) throws SocketException
 	{
 		// int old = serverSocket.getSoTimeout ();
 		// serverSocket.setSoTimeout (timeout);
@@ -557,8 +556,9 @@ public class HttpClient extends NetworkClient
 		return -1;
 	}
 
-	private boolean parseHTTPHeader(MessageHeader responses, ProgressSource pi,
-			HttpURLConnection httpuc) throws IOException
+	private boolean parseHTTPHeader(final MessageHeader responses, 
+	                                final ProgressSource pi,
+	                                final HttpURLConnection httpuc) throws IOException
 	{
 		/*
 		 * If "HTTP/*" is found in the beginning, return true. Let
@@ -638,10 +638,8 @@ public class HttpClient extends NetworkClient
 					{
 						/* default should be larger in case of proxy */
 						final boolean usingProxy = false;
-						keepAliveConnections = p.findInt("max", usingProxy ? 50
-								: 5);
-						keepAliveTimeout = p.findInt("timeout", usingProxy ? 60
-								: 5);
+						keepAliveConnections = p.findInt("max", usingProxy ? 50 : 5);
+						keepAliveTimeout = p.findInt("timeout", usingProxy ? 60	: 5);
 					}
 				}
 				else if (b[7] != '0')
@@ -891,7 +889,7 @@ public class HttpClient extends NetworkClient
 		return getHttpKeepAliveSet() && keepingAlive;
 	}
 
-	public void setCacheRequest(CacheRequest cacheRequest)
+	public void setCacheRequest(final CacheRequest cacheRequest)
 	{
 		this.cacheRequest = cacheRequest;
 	}
@@ -908,7 +906,7 @@ public class HttpClient extends NetworkClient
 		// close the fd.
 	}
 
-	public void setDoNotRetry(boolean value)
+	public void setDoNotRetry(final boolean value)
 	{
 		// failedOnce is used to determine if a request should be retried.
 		failedOnce = value;

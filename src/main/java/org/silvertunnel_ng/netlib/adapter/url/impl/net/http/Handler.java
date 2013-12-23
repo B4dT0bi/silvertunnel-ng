@@ -46,20 +46,20 @@ public class Handler extends java.net.URLStreamHandler
 		proxyPort = -1;
 	}
 
-	public Handler(String proxy, int port)
+	public Handler(final String proxy, final int port)
 	{
 		this.proxy = proxy;
 		this.proxyPort = port;
 	}
 
 	@Override
-	protected java.net.URLConnection openConnection(URL u) throws IOException
+	protected java.net.URLConnection openConnection(final URL u) throws IOException
 	{
 		return openConnection(u, null);
 	}
 
 	@Override
-	protected java.net.URLConnection openConnection(URL u, Proxy p)
+	protected java.net.URLConnection openConnection(final URL u, final Proxy p)
 			throws IOException
 	{
 		LOG.warn("Handler.openConnection(URL u, Proxy p): not implemented - must be overwritten");
