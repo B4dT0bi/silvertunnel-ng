@@ -41,18 +41,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpVersion;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.NetSocket;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
-import org.silvertunnel_ng.netlib.util.HttpUtil;
 import org.silvertunnel_ng.netlib.layer.tor.util.Util;
+import org.silvertunnel_ng.netlib.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,8 +71,8 @@ public class HttpClientUtil
 	private static final Logger LOG = LoggerFactory.getLogger(HttpClientUtil.class);
 
 	private static SchemeRegistry supportedSchemes;
-	private static ClientConnectionManager connMgr;
-	private static HttpParams params = new BasicHttpParams();
+//	private static ClientConnectionManager connMgr;
+//	private static HttpParams params = new BasicHttpParams();
 
 	private static NetLayer lowerNetLayer;
 
@@ -95,7 +93,7 @@ public class HttpClientUtil
 			HttpProtocolParams.setContentCharset(httpParams, Util.UTF8);
 			HttpProtocolParams.setUseExpectContinue(httpParams, true);
 
-			connMgr = new ThreadSafeClientConnManager(httpParams, supportedSchemes);
+//			connMgr = new ThreadSafeClientConnManager(httpParams, supportedSchemes);
 
 		}
 		catch (final Exception e)
@@ -106,7 +104,7 @@ public class HttpClientUtil
 
 	public static InputStream simpleAction(final URL url) throws IOException
 	{
-		final int port = (url.getPort() < 0) ? 80 : url.getPort();
+		final int port = url.getPort() < 0 ? 80 : url.getPort();
 		final TcpipNetAddress httpServerNetAddress = new TcpipNetAddress(url.getHost(), port);
 		final Map<String, Object> localProperties = new HashMap<String, Object>();
 		final NetSocket lowerLayerNetSocket = lowerNetLayer.createNetSocket(localProperties, /* localAddress */null, httpServerNetAddress);
@@ -122,7 +120,7 @@ public class HttpClientUtil
 
 	public static byte[] simpleBytesAction(final URL url) throws IOException
 	{
-		final int port = (url.getPort() < 0) ? 80 : url.getPort();
+		final int port = url.getPort() < 0 ? 80 : url.getPort();
 		final TcpipNetAddress httpServerNetAddress = new TcpipNetAddress(url.getHost(), port);
 		final Map<String, Object> localProperties = new HashMap<String, Object>();
 		final NetSocket lowerLayerNetSocket = lowerNetLayer.createNetSocket(localProperties, /* localAddress */null, httpServerNetAddress);

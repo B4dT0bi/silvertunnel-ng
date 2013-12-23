@@ -71,8 +71,7 @@ public class NetlibSocketFactory implements SocketFactory // TODO : use SchemeSo
 	@Override
 	public Socket createSocket() throws IOException
 	{
-		return new NetSocket2Socket(
-				new MockNetSocket(new byte[0], WAIT_ENDLESS));
+		return new NetSocket2Socket(new MockNetSocket(new byte[0], WAIT_ENDLESS));
 	}
 
 	/**
@@ -80,8 +79,12 @@ public class NetlibSocketFactory implements SocketFactory // TODO : use SchemeSo
 	 *            will be ignored; can be null
 	 */
 	@Override
-	public Socket connectSocket(Socket sock, String host, int port,
-			InetAddress localAddress, int localPort, HttpParams params)
+	public Socket connectSocket(final Socket sock, 
+	                            final String host, 
+	                            final int port,
+	                            final InetAddress localAddress, 
+	                            int localPort, 
+	                            final HttpParams params)
 			throws IOException
 	{
 
@@ -95,7 +98,7 @@ public class NetlibSocketFactory implements SocketFactory // TODO : use SchemeSo
 		}
 
 		TcpipNetAddress localNetAddress = null;
-		if ((localAddress != null) || (localPort > 0))
+		if (localAddress != null || localPort > 0)
 		{
 			// we need to bind explicitly
 			if (localPort < 0)

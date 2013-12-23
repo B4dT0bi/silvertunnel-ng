@@ -20,8 +20,6 @@
 
 package com.maxmind.geoip;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 // TODO : implement GeoIP2 from MaxMind via maven
 /**
  * Encapsulates metadata about the GeoIP database. The database has a date, is a
@@ -47,7 +45,7 @@ import org.slf4j.LoggerFactory;
 public class DatabaseInfo
 {
 	/** */
-	private static final Logger LOG = LoggerFactory.getLogger(DatabaseInfo.class);
+//	private static final Logger LOG = LoggerFactory.getLogger(DatabaseInfo.class);
 	public static final int COUNTRY_EDITION = 1;
 	public static final int REGION_EDITION_REV0 = 7;
 	public static final int REGION_EDITION_REV1 = 3;
