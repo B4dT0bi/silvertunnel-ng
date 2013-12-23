@@ -23,9 +23,7 @@ import java.net.SocketImplFactory;
 
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.impl.NetSocket2SocketImpl;
-//TODO : disclaimer and rename to silvertunnelng
 /**
- * 
  * See class SocketUtil.
  * 
  * @author hapke

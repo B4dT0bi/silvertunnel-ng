@@ -111,8 +111,7 @@ public class SocketGlobalUtil
 	 *             if initSocketImplFactory() was not called before calling this
 	 *             method
 	 */
-	public static synchronized void setNetLayerUsedBySocketImplFactory(
-			final NetLayer netLayer) throws IllegalStateException
+	public static synchronized void setNetLayerUsedBySocketImplFactory(final NetLayer netLayer) throws IllegalStateException
 	{
 		if (netlibSocketImplFactory == null)
 		{

@@ -82,8 +82,7 @@ class NameServiceNetlibAdapter implements NameServiceNetlibGenericAdapter
 		LOG.info("getHostByAddr(ip={})", Arrays.toString(ip));
 
 		// action
-		final String[] result = netAddressNameService
-				.getNamesByAddress(new IpNetAddress(ip));
+		final String[] result = netAddressNameService.getNamesByAddress(new IpNetAddress(ip));
 
 		// return single value/best matching result
 		return result[0];
@@ -95,8 +94,7 @@ class NameServiceNetlibAdapter implements NameServiceNetlibGenericAdapter
 	 *      Attention: This method is needed for Java 1.6 or higher only
 	 */
 	@Override
-	public InetAddress[] lookupAllHostAddrJava6(final String name)
-			throws UnknownHostException
+	public InetAddress[] lookupAllHostAddrJava6(final String name) throws UnknownHostException
 	{
 		String netAddressNS = "unknown";
 		if (netAddressNameService.getClass().equals(SwitchingNetAddressNameService.class))
@@ -106,15 +104,13 @@ class NameServiceNetlibAdapter implements NameServiceNetlibGenericAdapter
 		LOG.info("InetAddress[] lookupAllHostAddrJava6(name={} netAddressNameService={})", name, netAddressNS);
 
 		// action
-		final NetAddress[] result = netAddressNameService
-				.getAddressesByName(name);
+		final NetAddress[] result = netAddressNameService.getAddressesByName(name);
 
 		// convert result to return format
 		final InetAddress[] resultFinal = new InetAddress[result.length];
 		for (int i = 0; i < result.length; i++)
 		{
-			resultFinal[i] = ((IpNetAddress) result[i])
-					.getIpaddressAsInetAddress();
+			resultFinal[i] = ((IpNetAddress) result[i]).getIpaddressAsInetAddress();
 		}
 
 		return resultFinal;

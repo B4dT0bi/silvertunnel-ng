@@ -41,7 +41,7 @@ class InvalidSocketImpl extends SocketImpl
 	}
 
 	@Override
-	protected void accept(SocketImpl s) throws IOException
+	protected void accept(final SocketImpl s) throws IOException
 	{
 		// TODO Auto-generated method stub
 		notImplemented();
@@ -56,7 +56,7 @@ class InvalidSocketImpl extends SocketImpl
 	}
 
 	@Override
-	protected void bind(InetAddress host, int port) throws IOException
+	protected void bind(final InetAddress host, final int port) throws IOException
 	{
 		// TODO Auto-generated method stub
 		notImplemented();
@@ -72,7 +72,7 @@ class InvalidSocketImpl extends SocketImpl
 	}
 
 	@Override
-	protected void connect(String host, int port) throws IOException
+	protected void connect(final String host, final int port) throws IOException
 	{
 		// TODO Auto-generated method stub
 		notImplemented();
@@ -80,7 +80,7 @@ class InvalidSocketImpl extends SocketImpl
 	}
 
 	@Override
-	protected void connect(InetAddress address, int port) throws IOException
+	protected void connect(final InetAddress address, final int port) throws IOException
 	{
 		// TODO Auto-generated method stub
 		notImplemented();
@@ -88,8 +88,7 @@ class InvalidSocketImpl extends SocketImpl
 	}
 
 	@Override
-	protected void connect(SocketAddress address, int timeout)
-			throws IOException
+	protected void connect(final SocketAddress address, final int timeout) throws IOException
 	{
 		// TODO Auto-generated method stub
 		notImplemented();
@@ -97,7 +96,7 @@ class InvalidSocketImpl extends SocketImpl
 	}
 
 	@Override
-	protected void create(boolean stream) throws IOException
+	protected void create(final boolean stream) throws IOException
 	{
 		// TODO Auto-generated method stub
 		notImplemented();
@@ -121,7 +120,7 @@ class InvalidSocketImpl extends SocketImpl
 	}
 
 	@Override
-	protected void listen(int backlog) throws IOException
+	protected void listen(final int backlog) throws IOException
 	{
 		// TODO Auto-generated method stub
 		notImplemented();
@@ -129,7 +128,7 @@ class InvalidSocketImpl extends SocketImpl
 	}
 
 	@Override
-	protected void sendUrgentData(int data) throws IOException
+	protected void sendUrgentData(final int data) throws IOException
 	{
 		// TODO Auto-generated method stub
 		notImplemented();
@@ -137,7 +136,7 @@ class InvalidSocketImpl extends SocketImpl
 	}
 
 	@Override
-	public Object getOption(int arg0) throws SocketException
+	public Object getOption(final int arg0) throws SocketException
 	{
 		// TODO Auto-generated method stub
 		notImplemented();
@@ -145,7 +144,7 @@ class InvalidSocketImpl extends SocketImpl
 	}
 
 	@Override
-	public void setOption(int arg0, Object arg1) throws SocketException
+	public void setOption(final int arg0, final Object arg1) throws SocketException
 	{
 		// TODO Auto-generated method stub
 		notImplemented();

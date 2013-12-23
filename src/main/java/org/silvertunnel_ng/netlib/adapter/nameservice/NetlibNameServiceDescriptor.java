@@ -80,8 +80,7 @@ public class NetlibNameServiceDescriptor implements NameServiceDescriptor
 			LOG.info("NetlibNameServiceDescriptor#static called");
 
 			NetAddressNameService firstNetAddressNameService = null;
-			final String firstNetAddressNameServiceName = System
-					.getProperty("org.silvertunnel_ng.netlib.nameservice");
+			final String firstNetAddressNameServiceName = System.getProperty("org.silvertunnel_ng.netlib.nameservice");
 			if (firstNetAddressNameServiceName != null)
 			{
 				try
@@ -105,8 +104,7 @@ public class NetlibNameServiceDescriptor implements NameServiceDescriptor
 
 			// create switcher to be able to change the
 			// NetAddressNameServiceName later
-			switchingNetAddressNameService = new SwitchingNetAddressNameService(
-					firstNetAddressNameService);
+			switchingNetAddressNameService = new SwitchingNetAddressNameService(firstNetAddressNameService);
 
 			// initialize name service provider
 			// if (JavaVersion.getJavaVersion()==JavaVersion.JAVA_1_5) {
@@ -115,8 +113,7 @@ public class NetlibNameServiceDescriptor implements NameServiceDescriptor
 			// NameServiceNetlibAdapter(switchingNetAddressNameService));
 			// } else {
 			// adapter compatible with Java 1.6 or higher
-			nameService = new NameServiceNetlibJava6(
-					new NameServiceNetlibAdapter(switchingNetAddressNameService));
+			nameService = new NameServiceNetlibJava6(new NameServiceNetlibAdapter(switchingNetAddressNameService));
 			// }
 
 		}
@@ -134,7 +131,7 @@ public class NetlibNameServiceDescriptor implements NameServiceDescriptor
 	@Override
 	public String getType()
 	{
-		LOG.info("NetlibNameServiceDescriptor.getType() called");
+		LOG.debug("NetlibNameServiceDescriptor.getType() called");
 		return "dns";
 	}
 
@@ -146,7 +143,7 @@ public class NetlibNameServiceDescriptor implements NameServiceDescriptor
 	@Override
 	public String getProviderName()
 	{
-		LOG.info("NetlibNameServiceDescriptor.getProviderName() called");
+		LOG.debug("NetlibNameServiceDescriptor.getProviderName() called");
 		return DNS_PROVIDER_NAME;
 	}
 
@@ -159,7 +156,7 @@ public class NetlibNameServiceDescriptor implements NameServiceDescriptor
 	@Override
 	public NameService createNameService()
 	{
-		LOG.info("NetlibNameServiceDescriptor.createNameService() called");
+		LOG.debug("NetlibNameServiceDescriptor.createNameService() called");
 		return nameService;
 	}
 

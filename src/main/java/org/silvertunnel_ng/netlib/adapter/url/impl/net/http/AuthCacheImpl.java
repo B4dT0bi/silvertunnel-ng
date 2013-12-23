@@ -51,7 +51,7 @@ public class AuthCacheImpl implements AuthCache
 	// is the path field of AuthenticationInfo
 
 	@Override
-	public synchronized void put(String pkey, AuthCacheValue value)
+	public synchronized void put(final String pkey, final AuthCacheValue value)
 	{
 		LinkedList list = (LinkedList) hashtable.get(pkey);
 		final String skey = value.getPath();
@@ -102,8 +102,7 @@ public class AuthCacheImpl implements AuthCache
 	}
 
 	@Override
-	public synchronized void remove(final String pkey,
-			final AuthCacheValue entry)
+	public synchronized void remove(final String pkey, final AuthCacheValue entry)
 	{
 		final LinkedList list = (LinkedList) hashtable.get(pkey);
 		if (list == null)

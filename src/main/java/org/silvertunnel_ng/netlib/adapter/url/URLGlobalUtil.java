@@ -79,12 +79,9 @@ public class URLGlobalUtil
 	 */
 	public static synchronized void initURLStreamHandlerFactory()
 	{
-		final NetLayer tcpipNetLayer = NetFactory.getInstance()
-				.getNetLayerById(NetLayerIDs.NOP);
-		final NetLayer tlsNetLayer = NetFactory.getInstance().getNetLayerById(
-				NetLayerIDs.NOP);
-		final NetlibURLStreamHandlerFactory factory = new NetlibURLStreamHandlerFactory(
-				tcpipNetLayer, tlsNetLayer, false);
+		final NetLayer tcpipNetLayer = NetFactory.getInstance().getNetLayerById(NetLayerIDs.NOP);
+		final NetLayer tlsNetLayer = NetFactory.getInstance().getNetLayerById(NetLayerIDs.NOP);
+		final NetlibURLStreamHandlerFactory factory = new NetlibURLStreamHandlerFactory(tcpipNetLayer, tlsNetLayer, false);
 
 		initURLStreamHandlerFactory(factory);
 	}
@@ -101,8 +98,7 @@ public class URLGlobalUtil
 	 * @param factory
 	 *            use this factory if possible
 	 */
-	public static synchronized void initURLStreamHandlerFactory(
-			final NetlibURLStreamHandlerFactory factory)
+	public static synchronized void initURLStreamHandlerFactory(final NetlibURLStreamHandlerFactory factory)
 	{
 		//
 		// preparation of the work
@@ -163,19 +159,16 @@ public class URLGlobalUtil
 	 *             if initURLStreamHandlerFactory() was not called before
 	 *             calling this method
 	 */
-	public static synchronized void setNetLayerUsedByURLStreamHandlerFactory(
-			final NetLayer tcpipNetLayer, final NetLayer tlsNetLayer)
+	public static synchronized void setNetLayerUsedByURLStreamHandlerFactory(final NetLayer tcpipNetLayer, final NetLayer tlsNetLayer)
 			throws IllegalStateException
 	{
 		if (netlibURLStreamHandlerFactory == null)
 		{
-			throw new IllegalStateException(
-					"initURLStreamHandlerFactory() must be called first (but was not)");
+			throw new IllegalStateException("initURLStreamHandlerFactory() must be called first (but was not)");
 		}
 
 		// action
-		netlibURLStreamHandlerFactory.setNetLayerForHttpHttpsFtp(tcpipNetLayer,
-				tlsNetLayer);
+		netlibURLStreamHandlerFactory.setNetLayerForHttpHttpsFtp(tcpipNetLayer,	tlsNetLayer);
 	}
 
 	/**
@@ -190,10 +183,8 @@ public class URLGlobalUtil
 	 *             if initURLStreamHandlerFactory() was not called before
 	 *             calling this method
 	 */
-	public static synchronized void setNetLayerUsedByURLStreamHandlerFactory(
-			final NetLayer tcpipNetLayer) throws IllegalStateException
+	public static synchronized void setNetLayerUsedByURLStreamHandlerFactory(final NetLayer tcpipNetLayer) throws IllegalStateException
 	{
-		setNetLayerUsedByURLStreamHandlerFactory(tcpipNetLayer,
-				new TLSNetLayer(tcpipNetLayer));
+		setNetLayerUsedByURLStreamHandlerFactory(tcpipNetLayer,	new TLSNetLayer(tcpipNetLayer));
 	}
 }

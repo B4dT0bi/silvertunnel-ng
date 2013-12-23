@@ -45,8 +45,7 @@ public class NameServiceNetlibJava6 implements NameService
 	 *            all method calls will be forwarded to this
 	 *            nameServiceNetlibGenericAdapter
 	 */
-	public NameServiceNetlibJava6(
-			NameServiceNetlibGenericAdapter nameServiceNetlibGenericAdapter)
+	public NameServiceNetlibJava6(final NameServiceNetlibGenericAdapter nameServiceNetlibGenericAdapter)
 	{
 		this.nameServiceNetlibGenericAdapter = nameServiceNetlibGenericAdapter;
 	}
@@ -55,7 +54,7 @@ public class NameServiceNetlibJava6 implements NameService
 	 * @see sun.net.spi.nameservice.NameService#getHostByAddr(byte[])
 	 */
 	@Override
-	public String getHostByAddr(byte[] ip) throws UnknownHostException
+	public String getHostByAddr(final byte[] ip) throws UnknownHostException
 	{
 		return nameServiceNetlibGenericAdapter.getHostByAddr(ip);
 	}
@@ -66,8 +65,7 @@ public class NameServiceNetlibJava6 implements NameService
 	 *      Attention: This method is needed for Java 1.6 or higher only
 	 */
 	@Override
-	public InetAddress[] lookupAllHostAddr(String name)
-			throws UnknownHostException
+	public InetAddress[] lookupAllHostAddr(final String name) throws UnknownHostException
 	{
 		return nameServiceNetlibGenericAdapter.lookupAllHostAddrJava6(name);
 	}

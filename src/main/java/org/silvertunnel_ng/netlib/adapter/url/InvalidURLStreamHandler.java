@@ -23,26 +23,23 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-//TODO : disclaimer and rename to silvertunnelng
 /**
  * URLStreamHandler that does not allow connections.
  * 
  * @author hapke
  */
-public class InvalidURLStreamHandler extends URLStreamHandler
+public final class InvalidURLStreamHandler extends URLStreamHandler
 {
 
 	@Override
 	protected URLConnection openConnection(final URL u) throws IOException
 	{
-		throw new UnsupportedOperationException(
-				"openConnection(): not allowed, url=" + u);
+		throw new UnsupportedOperationException("openConnection(): not allowed, url=" + u);
 	}
 
 	@Override
 	protected synchronized InetAddress getHostAddress(final URL u)
 	{
-		throw new UnsupportedOperationException(
-				"getHostAddress(): not allowed, url=" + u);
+		throw new UnsupportedOperationException("getHostAddress(): not allowed, url=" + u);
 	}
 }

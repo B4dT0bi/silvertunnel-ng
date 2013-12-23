@@ -217,9 +217,12 @@ abstract class AuthenticationInfo extends AuthCacheValue implements Cloneable
 	/** The shortest path from the URL we authenticated against. */
 	String path;
 
-	/** Use this constructor only for proxy entries */
-	AuthenticationInfo(char type, char authType, String host, int port,
-			String realm)
+	/** Use this constructor only for proxy entries. */
+	AuthenticationInfo(final char type, 
+	                   final char authType, 
+	                   final String host, 
+	                   final int port,
+	                   final String realm)
 	{
 		this.type = type;
 		this.authType = authType;

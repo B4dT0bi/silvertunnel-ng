@@ -59,12 +59,13 @@ import java.util.Iterator;
 
 public class AuthenticationHeader
 {
-
-	MessageHeader rsp; // the response to be parsed
+	/** the response to be parsed. */
+	MessageHeader rsp;
 	HeaderParser preferred;
-	String preferredRaw; // raw Strings
-	String host = null; // the hostname for server,
-						// used in checking the availability of Negotiate
+	/** raw strings. */
+	String preferredRaw;
+	/** the hostname for server, used in checking the availability of Negotiate. */
+	String host = null;
 
 	static String authPref = null;
 
@@ -101,14 +102,14 @@ public class AuthenticationHeader
 			}
 		}
 	}
-
-	String hdrname; // Name of the header to look for
+	/** name of the header to look for. */
+	String hdrname;
 
 	/**
 	 * parse a set of authentication headers and choose the preferred scheme
-	 * that we support
+	 * that we support.
 	 */
-	public AuthenticationHeader(String hdrname, MessageHeader response)
+	public AuthenticationHeader(final String hdrname, final MessageHeader response)
 	{
 		rsp = response;
 		this.hdrname = hdrname;
@@ -118,10 +119,9 @@ public class AuthenticationHeader
 
 	/**
 	 * parse a set of authentication headers and choose the preferred scheme
-	 * that we support for a given host
+	 * that we support for a given host.
 	 */
-	public AuthenticationHeader(String hdrname, MessageHeader response,
-			String host)
+	public AuthenticationHeader(final String hdrname, final MessageHeader response, final String host)
 	{
 		this.host = host;
 		rsp = response;
@@ -133,7 +133,7 @@ public class AuthenticationHeader
 	/* we build up a map of scheme names mapped to SchemeMapValue objects */
 	static class SchemeMapValue
 	{
-		SchemeMapValue(HeaderParser h, String r)
+		SchemeMapValue(final HeaderParser h, final String r)
 		{
 			raw = r;
 			parser = h;
@@ -145,7 +145,7 @@ public class AuthenticationHeader
 
 	HashMap<String, SchemeMapValue> schemes;
 
-	/*
+	/**
 	 * Iterate through each header line, and then within each line. If multiple
 	 * entries exist for a particular scheme (unlikely) then the last one will
 	 * be used. The preferred scheme that we support will be used.

@@ -20,7 +20,6 @@ package org.silvertunnel_ng.netlib.adapter.socket;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-//TODO : disclaimer and rename to silvertunnelng
 /**
  * An object of this class is just not an instance of InetSocketAddress.
  * 

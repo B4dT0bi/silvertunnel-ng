@@ -22,9 +22,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
-//TODO : disclaimer and rename to silvertunnelng
 /**
- * 
  * See class SocketUtil.
  * 
  * @author hapke
@@ -36,8 +34,7 @@ class PatchedProxy extends Proxy
 	public PatchedProxy()
 	{
 		// address any port at any local address
-		super(Type.SOCKS, new InetSocketAddress((InetAddress) null,
-				SOCKS_DEFAULT_PORT));
+		super(Type.SOCKS, new InetSocketAddress((InetAddress) null, SOCKS_DEFAULT_PORT));
 	}
 	private static final String SOCKS_SOCKET_IMPL = "java.net.SocksSocketImpl";
 
@@ -69,5 +66,4 @@ class PatchedProxy extends Proxy
 			return new InvalidSocketAddress();
 		}
 	}
-
 }

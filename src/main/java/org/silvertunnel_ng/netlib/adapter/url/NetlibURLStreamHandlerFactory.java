@@ -28,7 +28,6 @@ import org.silvertunnel_ng.netlib.adapter.url.impl.net.https.HttpsHandler;
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.layer.tls.TLSNetLayer;
 
-//TODO : disclaimer and rename to silvertunnelng
 /**
  * 
  * See class UrlUtil.

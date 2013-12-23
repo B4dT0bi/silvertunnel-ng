@@ -70,14 +70,11 @@ public class URLUtil
 	 *                if an I/O exception occurs.
 	 * @see java.net.URL#openConnection()
 	 */
-	public static URLConnection openConnection(final URLStreamHandlerFactory factory,
-			final URL url) throws IOException
+	public static URLConnection openConnection(final URLStreamHandlerFactory factory, final URL url) throws IOException
 	{
 		LOG.info("openConnection start with url={}", url);
-		final URLStreamHandler handler = factory.createURLStreamHandler(url
-				.getProtocol());
-		final URLConnection result = ((HttpHandler) handler).openConnection(
-				url, null);
+		final URLStreamHandler handler = factory.createURLStreamHandler(url.getProtocol());
+		final URLConnection result = ((HttpHandler) handler).openConnection(url, null);
 		LOG.info("openConnection end with result={}", result);
 		return result;
 	}

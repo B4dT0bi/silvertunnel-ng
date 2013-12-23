@@ -19,7 +19,6 @@
 package org.silvertunnel_ng.netlib.adapter.socket;
 
 import java.net.InetSocketAddress;
-//TODO : disclaimer and rename to silvertunnelng
 /**
  * An object of this class delivers different addresses depending on the caller.
  * 

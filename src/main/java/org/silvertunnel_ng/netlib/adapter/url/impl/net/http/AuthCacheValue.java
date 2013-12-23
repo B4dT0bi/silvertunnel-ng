@@ -53,7 +53,7 @@ public abstract class AuthCacheValue implements Serializable
 	 */
 	protected static AuthCache cache = new AuthCacheImpl();
 
-	public static void setAuthCache(AuthCache map)
+	public static void setAuthCache(final AuthCache map)
 	{
 		cache = map;
 	}
@@ -67,32 +67,32 @@ public abstract class AuthCacheValue implements Serializable
 	abstract Type getAuthType();
 
 	/**
-	 * name of server/proxy
+	 * @return name of server/proxy.
 	 */
 	abstract String getHost();
 
 	/**
-	 * portnumber of server/proxy
+	 * @return portnumber of server/proxy.
 	 */
 	abstract int getPort();
 
 	/**
-	 * realm of authentication if known
+	 * @return realm of authentication if known.
 	 */
 	abstract String getRealm();
 
 	/**
-	 * root path of realm or the request path if the root is not known yet.
+	 * @return root path of realm or the request path if the root is not known yet.
 	 */
 	abstract String getPath();
 
 	/**
-	 * returns http or https
+	 * @return http or https.
 	 */
 	abstract String getProtocolScheme();
 
 	/**
-	 * the credentials associated with this authentication
+	 * @return the credentials associated with this authentication.
 	 */
 	abstract PasswordAuthentication credentials();
 }
