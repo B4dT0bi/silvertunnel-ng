@@ -27,14 +27,16 @@ import static org.testng.AssertJUnit.fail;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
+import org.silvertunnel_ng.netlib.tool.ByteUtils;
+import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
 import org.silvertunnel_ng.netlib.util.FileUtil;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -149,15 +151,46 @@ public final class RouterImplLocalTest
 	{
 		final RouterImpl testObject = new RouterImpl(descriptor);
 		FileOutputStream fileOutputStream = new FileOutputStream("router.test");
-		ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-		objectOutputStream.writeObject(testObject);
-		objectOutputStream.close();
+		fileOutputStream.write(testObject.toByteArray());
+		fileOutputStream.close();
 		
 		FileInputStream fileInputStream = new FileInputStream("router.test");
-		ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-		RouterImpl testObject2 = (RouterImpl) objectInputStream.readObject();
-		objectInputStream.close();
+		DynByteBuffer buffer = new DynByteBuffer(fileInputStream);
+		RouterImpl testObject2 = new RouterImpl(buffer);
 		assertEquals(testObject, testObject2);
+	}
+	/**
+	 * Test method if it is possible to write a parsed Router to a file using {@link ObjectOutputStream}.
+	 * @throws TorException 
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
+	 */
+	@Test
+	public void testWriteRoutersToFile() throws TorException, IOException, ClassNotFoundException
+	{
+		final Map<Fingerprint, RouterImpl> allrouters = RouterImpl.parseRouterDescriptors(descriptors);
+		assertNotNull(allrouters);
+		assertFalse(allrouters.isEmpty());
+		assertEquals(4648, allrouters.size());
+
+		FileOutputStream fileOutputStream = new FileOutputStream("routers.test");
+		fileOutputStream.write(ByteUtils.intToBytes(allrouters.size()));
+		for (RouterImpl router : allrouters.values())
+		{
+			fileOutputStream.write(router.toByteArray());
+		}
+		fileOutputStream.close();
+		
+		final Map<Fingerprint, RouterImpl> allrouters2 = new HashMap<Fingerprint, RouterImpl>();
+		FileInputStream fileInputStream = new FileInputStream("routers.test");
+		DynByteBuffer buffer = new DynByteBuffer(fileInputStream);
+		int count = buffer.getNextInt();
+		for (int i = 0; i < count; i++)
+		{
+			RouterImpl router = new RouterImpl(buffer);
+			allrouters2.put(router.getFingerprint(), router);
+		}
+		assertEquals(allrouters, allrouters2);
 	}
 	/**
 	 * Test method for

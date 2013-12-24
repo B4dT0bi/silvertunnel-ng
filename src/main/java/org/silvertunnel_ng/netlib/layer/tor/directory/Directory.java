@@ -55,8 +55,6 @@ package org.silvertunnel_ng.netlib.layer.tor.directory;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,6 +84,8 @@ import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.util.NetLayerStatusAdmin;
 import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
+import org.silvertunnel_ng.netlib.tool.ByteUtils;
+import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
 import org.silvertunnel_ng.netlib.tool.SimpleHttpClientCompressed;
 import org.silvertunnel_ng.netlib.util.StringStorage;
 import org.silvertunnel_ng.netlib.util.TempfileStringStorage;
@@ -583,12 +583,16 @@ public final class Directory
 			// write server descriptors to local cache
 			try
 			{
+				long startWriteCache = System.currentTimeMillis();
 				FileOutputStream fileOutputStream = new FileOutputStream(
 				                     TempfileStringStorage.getTempfileFile(DIRECTORY_CACHED_ROUTER_DESCRIPTORS));
-				ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-				objectOutputStream.writeObject(validRoutersByFingerprint);
-				objectOutputStream.close();
-				LOG.debug("wrote router descriptors to local cache");
+				fileOutputStream.write(ByteUtils.intToBytes(validRoutersByFingerprint.size()));
+				for (RouterImpl router : validRoutersByFingerprint.values())
+				{
+					fileOutputStream.write(router.toByteArray());
+				}
+				fileOutputStream.close();
+				LOG.debug("wrote router descriptors to local cache in {} ms", System.currentTimeMillis() - startWriteCache);
 			}
 			catch (Exception exception)
 			{
@@ -736,12 +740,18 @@ public final class Directory
 			// try to load from local cache
 			try
 			{
+				long startLoadCached = System.currentTimeMillis();
 				FileInputStream fileInputStream = new FileInputStream(
 				                           TempfileStringStorage.getTempfileFile(DIRECTORY_CACHED_ROUTER_DESCRIPTORS));
-				ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-				@SuppressWarnings("unchecked") // if it fails just skip and download the descriptors
-				final Map<Fingerprint, RouterImpl> parsedServers = (Map<Fingerprint, RouterImpl>) objectInputStream.readObject();
-				objectInputStream.close();
+				DynByteBuffer buffer = new DynByteBuffer(fileInputStream);
+				int count = buffer.getNextInt();
+				final Map<Fingerprint, RouterImpl> parsedServers = new HashMap<Fingerprint, RouterImpl>(count);
+				for (int i = 0; i < count; i++)
+				{
+					RouterImpl router = new RouterImpl(buffer);
+					parsedServers.put(router.getFingerprint(), router);
+				}
+				fileInputStream.close();
 				final Set<Fingerprint> fingerprintsOfRoutersToLoadCopy = new HashSet<Fingerprint>(fingerprintsOfRoutersToLoad);
 				for (final Fingerprint fingerprint : fingerprintsOfRoutersToLoadCopy)
 				{
@@ -754,7 +764,8 @@ public final class Directory
 						fingerprintsOfRoutersToLoad.remove(fingerprint);
 					}
 				}
-				LOG.debug("loaded {} routers from local cache", fingerprintsRouters.size());
+				LOG.debug("loaded {} routers from local cache in {} ms", 
+				          new Object[] {fingerprintsRouters.size(), System.currentTimeMillis() - startLoadCached});
 			}
 			catch (FileNotFoundException exception)
 			{

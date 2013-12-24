@@ -35,11 +35,9 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
-import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +50,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,12 +63,10 @@ import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.api.RouterExitPolicy;
-import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 import org.silvertunnel_ng.netlib.layer.tor.common.LookupServiceUtil;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encryption;
-import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.layer.tor.util.Util;
 import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
@@ -88,13 +83,8 @@ import org.slf4j.LoggerFactory;
  * @author hapke
  * @author Tobias Boese
  */
-public final class RouterImpl implements Router, Cloneable, Serializable
+public final class RouterImpl implements Router, Cloneable
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8605647987890472910L;
-
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(RouterImpl.class);
 
@@ -103,7 +93,7 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 	/** ip or hostname. */
 	private String hostname;
 	/** the resolved hostname. */
-	private InetAddress address;
+	private InetAddress address; // TODO : can we remove this?
 	/** country code where it is located. */
 	private String countryCode;
 
@@ -128,10 +118,8 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 	private int uptime;
 
 	private RSAPublicKey onionKey;
-	private RSAPrivateKey onionKeyPrivate;
 
 	private RSAPublicKey signingKey;
-	private RSAPrivateKey signingKeyPrivate;
 
 	private RouterExitPolicy[] exitpolicy;
 
@@ -149,15 +137,21 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 
 	// Additional information for V2-Directories
 	private long lastUpdate;
+	/** Router is an Authority. */
 	private boolean dirv2Authority = false;
+	/** Router is an exit-node. */
 	private boolean dirv2Exit = false;
+	/** Router is fast. */
 	private boolean dirv2Fast = false;
+	/** Router is a guard. */
 	private boolean dirv2Guard = false;
 	private boolean dirv2Named = false;
 	private boolean dirv2Stable = false;
 	private boolean dirv2Running = false;
 	private boolean dirv2Valid = false;
+	/** Router holds a copy of the Directory. */
 	private boolean dirv2V2dir = false;
+	/** Router holds Hidden Service Directory. */
 	private boolean dirv2HSDir = false;
 
 	/** internal Server-Ranking data. */
@@ -259,7 +253,163 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 		dirv2Valid = statusDescription.isValid();
 		dirv2HSDir = statusDescription.isHSDir();
 	}
-
+	/** this is used for binary de-/serialization. */
+	private static final byte CURRENT_BINARY_VERSION = 1;
+	/**
+	 * Parse a byte array containing information for a Router and creating a RouterImpl object.
+	 * @param buffer the {@link DynByteBuffer} which contains the data
+	 * @throws TorException if something went wrong during parsing
+	 */
+	protected RouterImpl(final DynByteBuffer buffer) throws TorException
+	{
+		if (buffer.getNextByte() != CURRENT_BINARY_VERSION)
+		{
+			throw new TorException("the saved binary version identifier doesnt match the current! Cannot parse the object.");
+		}
+		nickname = buffer.getNextString();
+		hostname = buffer.getNextString();
+		int len = buffer.getNextInt();
+		try
+		{
+			if (len == 0)
+			{
+				address = InetAddress.getByName(hostname);
+			}
+			else
+			{
+				address = InetAddress.getByAddress(buffer.getNextByteArray(len));
+			}
+		}
+		catch (UnknownHostException exception)
+		{
+			throw new TorException("error while parsing address field.", exception);
+		}
+		countryCode = buffer.getNextString();
+		orPort = buffer.getNextInt();
+		socksPort = buffer.getNextInt();
+		dirPort = buffer.getNextInt();
+		bandwidthAvg = buffer.getNextInt();
+		bandwidthBurst = buffer.getNextInt();
+		bandwidthObserved = buffer.getNextInt();
+		platform = buffer.getNextString();
+		published = buffer.getNextLong();
+		int count = buffer.getNextInt();
+		if (count == 0)
+		{
+			fingerprint = null;
+		}
+		else
+		{
+			fingerprint = new FingerprintImpl(buffer.getNextByteArray(count));
+		}
+		count = buffer.getNextInt();
+		if (count == 0)
+		{
+			v3ident = null;
+		}
+		else
+		{
+			v3ident = new FingerprintImpl(buffer.getNextByteArray(count));
+		}
+		uptime = buffer.getNextInt();
+		onionKey = Encryption.extractBinaryRSAKey(buffer.getNextByteArray());
+		signingKey = Encryption.extractBinaryRSAKey(buffer.getNextByteArray());
+		count = buffer.getNextInt();
+		if (count == 0)
+		{
+			exitpolicy = null;
+		}
+		else
+		{
+			exitpolicy = new RouterExitPolicy[count];
+			for (int i = 0; i < count; i++)
+			{
+				exitpolicy[i] = RouterExitPolicyImpl.parseFrom(buffer);
+			}
+		}
+		routerSignature = buffer.getNextByteArray();
+		contact = buffer.getNextString();
+		count = buffer.getNextInt();
+		family.clear();
+		if (count > 0)
+		{
+			for (int i = 0; i < count; i++)
+			{
+				family.add(new FingerprintImpl(buffer.getNextByteArray()));
+			}
+		}
+		validUntil = buffer.getNextLong();
+		lastUpdate = buffer.getNextLong();
+		dirv2Authority = buffer.getNextBoolean();
+		dirv2Exit = buffer.getNextBoolean();
+		dirv2Fast = buffer.getNextBoolean();
+		dirv2Guard = buffer.getNextBoolean();
+		dirv2Named = buffer.getNextBoolean();
+		dirv2Stable = buffer.getNextBoolean();
+		dirv2Running = buffer.getNextBoolean();
+		dirv2V2dir = buffer.getNextBoolean();
+		dirv2HSDir = buffer.getNextBoolean();
+		rankingIndex = buffer.getNextFloat();
+	}
+	/**
+	 * Store the information of this Router in a byte array. (Serialization)
+	 * @return a byte array containing all information about this router
+	 */
+	protected byte [] toByteArray()
+	{
+		DynByteBuffer buffer = new DynByteBuffer();
+		buffer.append(CURRENT_BINARY_VERSION);
+		buffer.append(nickname);
+		buffer.append(hostname);
+		buffer.append(address.getAddress(), true);
+		buffer.append(countryCode);
+		buffer.append(orPort);
+		buffer.append(socksPort);
+		buffer.append(dirPort);
+		buffer.append(bandwidthAvg);
+		buffer.append(bandwidthBurst);
+		buffer.append(bandwidthObserved);
+		buffer.append(platform);
+		buffer.append(published);
+		buffer.append(fingerprint.getBytes(), true);
+		if (v3ident == null)
+		{
+			buffer.append(0);
+		}
+		else
+		{
+			buffer.append(v3ident.getBytes(), true);
+		}
+		buffer.append(uptime);
+		buffer.append(Encryption.getPKCS1EncodingFromRSAPublicKey(onionKey), true);
+		buffer.append(Encryption.getPKCS1EncodingFromRSAPublicKey(signingKey), true);
+		buffer.append(exitpolicy.length);
+		for (RouterExitPolicy exitPolicy : exitpolicy)
+		{
+			buffer.append(((RouterExitPolicyImpl) exitPolicy).toByteArray(), false);
+		}
+		buffer.append(routerSignature, true);
+		buffer.append(contact);
+		buffer.append(family.size());
+		for (Fingerprint member : family)
+		{
+			buffer.append(member.getBytes(), true);
+		}
+		buffer.append(validUntil);
+		buffer.append(lastUpdate);
+		buffer.append(dirv2Authority);
+		buffer.append(dirv2Exit);
+		buffer.append(dirv2Fast);
+		buffer.append(dirv2Guard);
+		buffer.append(dirv2Named);
+		buffer.append(dirv2Stable);
+		buffer.append(dirv2Running);
+		buffer.append(dirv2V2dir);
+		buffer.append(dirv2HSDir);
+		buffer.append(rankingIndex);
+		
+		return buffer.toArray();
+	}
 	/**
 	 * Clone, but do not throw an exception.
 	 */
@@ -1100,14 +1250,12 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 		result = prime * result + (int) lastUpdate;
 		result = prime * result + ((nickname == null) ? 0 : nickname.hashCode());
 		result = prime * result + ((onionKey == null) ? 0 : onionKey.hashCode());
-		result = prime * result + ((onionKeyPrivate == null) ? 0 : onionKeyPrivate.hashCode());
 		result = prime * result + orPort;
 		result = prime * result + ((platform == null) ? 0 : platform.hashCode());
 		result = prime * result + (int) published;
 		result = prime * result + Float.floatToIntBits(rankingIndex);
 		result = prime * result + Arrays.hashCode(routerSignature);
 		result = prime * result + ((signingKey == null) ? 0 : signingKey.hashCode());
-		result = prime * result + ((signingKeyPrivate == null) ? 0 : signingKeyPrivate.hashCode());
 		result = prime * result + socksPort;
 		result = prime * result + uptime;
 		result = prime * result + ((v3ident == null) ? 0 : v3ident.hashCode());
@@ -1288,17 +1436,6 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 		{
 			return false;
 		}
-		if (onionKeyPrivate == null)
-		{
-			if (other.onionKeyPrivate != null)
-			{
-				return false;
-			}
-		}
-		else if (!Arrays.equals(onionKeyPrivate.getEncoded(), other.onionKeyPrivate.getEncoded()))
-		{
-			return false;
-		}
 		if (orPort != other.orPort)
 		{
 			return false;
@@ -1334,17 +1471,6 @@ public final class RouterImpl implements Router, Cloneable, Serializable
 			}
 		}
 		else if (!Arrays.equals(signingKey.getEncoded(), other.signingKey.getEncoded()))
-		{
-			return false;
-		}
-		if (signingKeyPrivate == null)
-		{
-			if (other.signingKeyPrivate != null)
-			{
-				return false;
-			}
-		}
-		else if (!Arrays.equals(signingKeyPrivate.getEncoded(), other.signingKeyPrivate.getEncoded()))
 		{
 			return false;
 		}

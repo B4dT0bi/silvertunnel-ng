@@ -266,5 +266,99 @@ public final class DynByteBufferTest
 		buffer.append(test, false);
 		assertEquals(test.length, buffer.getLength());
 	}
-
+	/**
+	 * test the int functionality.
+	 * Save int value.
+	 * Reset position.
+	 * Read int.
+	 */
+	@Test
+	public void testInt()
+	{
+		Random random = new Random();
+		for (int i = 0; i < 100000; i++)
+		{
+			int tmp = random.nextInt();
+			buffer.clear();
+			buffer.append(tmp);
+			buffer.resetPosition();
+			assertEquals(tmp, buffer.getNextInt());
+		}
+	}
+	/**
+	 * test the float functionality.
+	 * Save float value.
+	 * Reset position.
+	 * Read float.
+	 */
+	@Test
+	public void testFloat()
+	{
+		Random random = new Random();
+		for (int i = 0; i < 100000; i++)
+		{
+			float tmp = random.nextFloat();
+			buffer.clear();
+			buffer.append(tmp);
+			buffer.resetPosition();
+			assertEquals(tmp, buffer.getNextFloat());
+		}
+	}
+	/**
+	 * test the double functionality.
+	 * Save double value.
+	 * Reset position.
+	 * Read double.
+	 */
+	@Test
+	public void testDouble()
+	{
+		Random random = new Random();
+		for (int i = 0; i < 100000; i++)
+		{
+			double tmp = random.nextDouble();
+			buffer.clear();
+			buffer.append(tmp);
+			buffer.resetPosition();
+			assertEquals(tmp, buffer.getNextDouble());
+		}
+	}
+	/**
+	 * test the long functionality.
+	 * Save long value.
+	 * Reset position.
+	 * Read long.
+	 */
+	@Test
+	public void testLong()
+	{
+		Random random = new Random();
+		for (int i = 0; i < 100000; i++)
+		{
+			long tmp = random.nextLong();
+			buffer.clear();
+			buffer.append(tmp);
+			buffer.resetPosition();
+			assertEquals(tmp, buffer.getNextLong());
+		}
+	}
+	/**
+	 * test the boolean functionality.
+	 * Save boolean value.
+	 * Reset position.
+	 * Read boolean.
+	 */
+	@Test
+	public void testBoolean()
+	{
+		Random random = new Random();
+		for (int i = 0; i < 100000; i++)
+		{
+			boolean tmp = random.nextBoolean();
+			buffer.clear();
+			buffer.append(tmp);
+			buffer.resetPosition();
+			assertEquals(tmp, buffer.getNextBoolean());
+		}
+	}
 }

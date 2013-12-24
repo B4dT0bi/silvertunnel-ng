@@ -17,6 +17,9 @@
  */
 package org.silvertunnel_ng.netlib.tool;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * A dynamically growing byte buffer.
  * 
@@ -29,7 +32,8 @@ public class DynByteBuffer
 	private static final int DEFAULT_START_SIZE = 10000;
 	/** default increase size when buffer is too small. */
 	private static final int DEFAULT_INC_SIZE = 10000;
-
+	/** use the given byte buffer but when a write takes place copy the whole buffer. */
+	private boolean copyOnWrite = false;
 	/**
 	 * Dynamically growing byte buffer.
 	 */
@@ -47,6 +51,47 @@ public class DynByteBuffer
 	public DynByteBuffer(final byte[] data)
 	{
 		setBuffer(data);
+	}
+
+	/**
+	 * Dynamically growing byte buffer.
+	 * 
+	 * @param inputStream
+	 *            initial data read from an {@link InputStream}.
+	 * @throws IOException when something went wrong during read or close
+	 */
+	public DynByteBuffer(final InputStream inputStream) throws IOException
+	{
+		setSize(DEFAULT_START_SIZE);
+		init();
+		append(inputStream);
+		crrPosRead = 0;
+	}
+
+	/**
+	 * Dynamically growing byte buffer.
+	 * 
+	 * @param data
+	 *            initial data.
+	 * @param copyOnWrite if set to true it will copy the buffer only when modified
+	 */
+	public DynByteBuffer(final byte[] data, final boolean copyOnWrite)
+	{
+		setBuffer(data, copyOnWrite);
+	}
+
+	/**
+	 * Dynamically growing byte buffer.
+	 * 
+	 * @param data
+	 *            initial data.
+	 * @param copyOnWrite if set to true it will copy the buffer only when modified
+	 * @param initialOffset the initial offset
+	 */
+	public DynByteBuffer(final byte[] data, final boolean copyOnWrite, final int initialOffset)
+	{
+		setBuffer(data, copyOnWrite);
+		resetPosition(initialOffset);
 	}
 
 	/**
@@ -118,6 +163,7 @@ public class DynByteBuffer
 	 */
 	public final void append(final boolean value)
 	{
+		copyOnWrite();
 		if (length + 1 >= buffer.length)
 		{
 			increaseSize();
@@ -125,13 +171,29 @@ public class DynByteBuffer
 		buffer[length] = (byte) (value ? 1 : 0);
 		length++;
 	}
-
+	/**
+	 * This method checks wether we should make a copy of the buffer or if it is not needed.
+	 */
+	private void copyOnWrite()
+	{
+		if (copyOnWrite)
+		{
+			synchronized (buffer)
+			{
+				byte [] tmpBuffer = new byte[buffer.length];
+				System.arraycopy(buffer, 0, tmpBuffer, 0, buffer.length);
+				buffer = tmpBuffer;
+				copyOnWrite = false;
+			}
+		}
+	}
 	/**
 	 * @param value
 	 *            append a byte to the buffer.
 	 */
 	public final void append(final byte value)
 	{
+		copyOnWrite();
 		if (length + 1 >= buffer.length)
 		{
 			increaseSize();
@@ -150,6 +212,7 @@ public class DynByteBuffer
 	 */
 	public final void append(final byte[] array, final boolean saveLength)
 	{
+		copyOnWrite();
 		if (array == null)
 		{
 			if (saveLength)
@@ -177,6 +240,7 @@ public class DynByteBuffer
 	 */
 	public final void append(final byte[] array, final int offset)
 	{
+		copyOnWrite();
 		append(array, offset, array.length - offset);
 	}
 
@@ -190,9 +254,9 @@ public class DynByteBuffer
 	 * @param length
 	 *            the length to be copied
 	 */
-	public final void append(final byte[] array, final int offset,
-			final int length)
+	public final void append(final byte[] array, final int offset, final int length)
 	{
+		copyOnWrite();
 		if (offset + length > array.length)
 		{
 			throw new ArrayIndexOutOfBoundsException(length + offset);
@@ -247,7 +311,28 @@ public class DynByteBuffer
 	 */
 	public final void append(final int value)
 	{
+		copyOnWrite();
 		append(ByteUtils.intToBytes(value), false);
+	}
+
+	/**
+	 * @param value
+	 *            append a float to the byte buffer.
+	 */
+	public final void append(final float value)
+	{
+		copyOnWrite();
+		append(ByteUtils.intToBytes(Float.floatToIntBits(value)), false);
+	}
+
+	/**
+	 * @param value
+	 *            append a double to the byte buffer.
+	 */
+	public final void append(final double value)
+	{
+		copyOnWrite();
+		append(ByteUtils.longToBytes(Double.doubleToLongBits(value)), false);
 	}
 
 	/**
@@ -256,6 +341,7 @@ public class DynByteBuffer
 	 */
 	public final void append(final long value)
 	{
+		copyOnWrite();
 		append(ByteUtils.longToBytes(value), false);
 	}
 
@@ -265,6 +351,7 @@ public class DynByteBuffer
 	 */
 	public final void append(final Long value)
 	{
+		copyOnWrite();
 		append(ByteUtils.longToBytes(value.longValue()), false);
 	}
 
@@ -274,6 +361,7 @@ public class DynByteBuffer
 	 */
 	public final void append(final String value)
 	{
+		copyOnWrite();
 		if (value == null || value.isEmpty())
 		{
 			append(0);
@@ -325,7 +413,15 @@ public class DynByteBuffer
 	{
 		crrPosRead = pos;
 	}
-
+	/** 
+	 * Clears the buffer (resets length and read position to 0).
+	 * If you really want to delete the buffer content use setBuffer.
+	 */
+	public final void clear()
+	{
+		resetPosition();
+		length = 0;
+	}
 	/**
 	 * @return get the next data as int from the buffer.
 	 */
@@ -338,6 +434,22 @@ public class DynByteBuffer
 		int tmp = ByteUtils.bytesToInt(buffer, crrPosRead);
 		crrPosRead += 4;
 		return tmp;
+	}
+
+	/**
+	 * @return get the next data as float from the buffer.
+	 */
+	public final float getNextFloat()
+	{
+		return Float.intBitsToFloat(getNextInt());
+	}
+
+	/**
+	 * @return get the next data as double from the buffer.
+	 */
+	public final double getNextDouble()
+	{
+		return Double.longBitsToDouble(getNextLong());
 	}
 
 	/**
@@ -441,8 +553,41 @@ public class DynByteBuffer
 	 */
 	public final void setBuffer(final byte[] data)
 	{
-		buffer = new byte [data.length];
-		System.arraycopy(data, 0, buffer, 0, data.length);
+		setBuffer(data, false);
+	}
+	/**
+	 * Appends the data from the {@link InputStream} to the current buffer.
+	 * @param inputStream the {@link InputStream} to be read
+	 * @throws IOException when something went wrong during read or close
+	 */
+	public final void append(final InputStream inputStream) throws IOException
+	{
+		byte [] buf = new byte[2048];
+		int count;
+		while ((count = inputStream.read(buf)) > 0)
+		{
+			append(buf, 0, count);
+		}
+		inputStream.close();		
+	}
+	/**
+	 * Copy or use the given byte array as internal byte array.
+	 * @param data
+	 *            set the buffer to a new value.
+	 * @param copyOnWrite if set to true we will use the original byte array till it gets changed
+	 */
+	public final synchronized void setBuffer(final byte[] data, final boolean copyOnWrite)
+	{
+		if (!copyOnWrite)
+		{
+			buffer = new byte [data.length];
+			System.arraycopy(data, 0, buffer, 0, data.length);
+		}
+		else
+		{
+			buffer = data;
+			this.copyOnWrite = copyOnWrite;
+		}
 		length = data.length;
 		crrPosRead = 0;
 	}

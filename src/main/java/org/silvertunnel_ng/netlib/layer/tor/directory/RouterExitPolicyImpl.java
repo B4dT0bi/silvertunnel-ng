@@ -35,10 +35,9 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
-import java.io.Serializable;
-
 import org.silvertunnel_ng.netlib.layer.tor.api.RouterExitPolicy;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
+import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
 
 /**
  * Compound data structure for storing exit policies.
@@ -48,12 +47,8 @@ import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
  * @author hapke
  * @author Tobias Boese
  */
-public final class RouterExitPolicyImpl implements RouterExitPolicy, Cloneable, Serializable
+public final class RouterExitPolicyImpl implements RouterExitPolicy, Cloneable
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8729142704980213826L;
 	/** if false: reject. */
 	private final boolean accept;
 	private final long ip;
@@ -187,5 +182,33 @@ public final class RouterExitPolicyImpl implements RouterExitPolicy, Cloneable, 
 			return false;
 		}
 		return true;
+	}
+	/**
+	 * Create a new object out of a byte array.
+	 * @param data the byte array containing the binary representation of a {@link RouterExitPolicyImpl} object
+	 * @return a new {@link RouterExitPolicyImpl} object containing the information from the byte array
+	 */
+	protected static RouterExitPolicyImpl parseFrom(final DynByteBuffer data)
+	{
+		RouterExitPolicyImpl result = new RouterExitPolicyImpl(data.getNextBoolean(), 
+															   data.getNextLong(), 
+															   data.getNextLong(), 
+															   data.getNextInt(), 
+															   data.getNextInt());
+		return result;
+	}
+	/**
+	 * Serialize all members into a byte array.
+	 * @return a byte array containing the binary representation of this object.
+	 */
+	protected byte [] toByteArray()
+	{
+		DynByteBuffer buffer = new DynByteBuffer();
+		buffer.append(accept);
+		buffer.append(ip);
+		buffer.append(netmask);
+		buffer.append(loPort);
+		buffer.append(hiPort);
+		return buffer.toArray();
 	}
 }
