@@ -58,7 +58,11 @@ public final class FingerprintImpl implements Fingerprint, Cloneable, Serializab
 		}
 		setIdentityKey(DatatypeConverter.parseBase64Binary(b64fp));
 	}
-
+	
+	/**
+	 * Create an {@link Fingerprint} object by using the data directly from a byte array.
+	 * @param identityKey the byte array containing the identyKey
+	 */
 	public FingerprintImpl(final byte[] identityKey)
 	{
 		setIdentityKey(identityKey);
@@ -123,7 +127,7 @@ public final class FingerprintImpl implements Fingerprint, Cloneable, Serializab
 	@Override
 	public int hashCode()
 	{
-		return ((bytes[0] * 256) + bytes[1] * 256) + bytes[2];
+		return Arrays.hashCode(bytes);
 	}
 
 	@Override

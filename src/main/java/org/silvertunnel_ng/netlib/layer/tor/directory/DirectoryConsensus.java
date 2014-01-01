@@ -198,8 +198,8 @@ public class DirectoryConsensus
 			sinfo.setIp(m.group(6));
 			sinfo.setOrPort(Integer.parseInt(m.group(7)));
 			sinfo.setDirPort(Integer.parseInt(m.group(8)));
-			sinfo.setFlags(m.group(9));
-			if (sinfo.isRunning())
+			sinfo.setRouterFlags(m.group(9));
+			if (sinfo.getRouterFlags().isRunning())
 			{
 				getFingerprintsNetworkStatusDescriptors().put(sinfo.getFingerprint(), sinfo);
 			}

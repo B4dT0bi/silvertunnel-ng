@@ -23,6 +23,8 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 import java.util.Set;
 
+import org.silvertunnel_ng.netlib.layer.tor.directory.RouterFlags;
+
 /**
  * a compound data structure that keeps track of the static informations we have
  * about a single Tor server.
@@ -90,6 +92,12 @@ public interface Router
 	boolean isDirv2V2dir();
 	
 	boolean isExitNode();
+	
+	/**
+	 * Get the routerflags of a router (stable, valid, fast, etc).
+	 * @return a {@link RouterFlags} object
+	 */
+	RouterFlags getRouterFlags();
 
 	float getRankingIndex();
 }

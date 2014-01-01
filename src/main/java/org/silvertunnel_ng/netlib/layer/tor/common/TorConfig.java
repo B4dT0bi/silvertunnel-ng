@@ -54,7 +54,11 @@ package org.silvertunnel_ng.netlib.layer.tor.common;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.DatatypeConverter;
+
+import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.CircuitHistory;
+import org.silvertunnel_ng.netlib.layer.tor.directory.FingerprintImpl;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.util.SystemPropertiesHelper;
 import org.slf4j.Logger;
@@ -327,7 +331,8 @@ public final class TorConfig
 	private int intervalDirectoryRefresh = 5;
 
 	/**
-	 * @return the intervalDirectoryRefresh
+	 * Gets the amount of time to wait for a new Directory refresh check.
+	 * @return the intervalDirectoryRefresh in minutes
 	 */
 	public static int getIntervalDirectoryRefresh()
 	{
@@ -399,6 +404,8 @@ public final class TorConfig
 	private static final int MINIMUM_ROUTE_LENGTH = 2;
 	/** maximum allowed route length for creating a circuit. */
 	private static final int MAXIMUM_ROUTE_LENGTH = 8;
+	/** default route length for creating a circuit. */
+	private static final int DEFAULT_ROUTE_LENGTH = 3;
 
 	/**
 	 * minimum circuit path length. 
@@ -411,7 +418,7 @@ public final class TorConfig
 	 * 
 	 * default value : 3
 	 */
-	private int routeMinLength = 3;
+	private int routeMinLength = DEFAULT_ROUTE_LENGTH;
 
 	/**
 	 * @return get the minimum allowed route length for creating a circuit.
@@ -439,21 +446,18 @@ public final class TorConfig
 	{
 		if (length < MINIMUM_ROUTE_LENGTH)
 		{
-			LOG.warn("route length has to be at least "
-					+ MINIMUM_ROUTE_LENGTH + "!");
+			LOG.warn("route length has to be at least {}", MINIMUM_ROUTE_LENGTH);
 			return;
 		}
 		if (length > MAXIMUM_ROUTE_LENGTH)
 		{
-			LOG.warn("route length should not exceed "
-					+ MAXIMUM_ROUTE_LENGTH);
+			LOG.warn("route length should not exceed {}", MAXIMUM_ROUTE_LENGTH);
 			return;
 		}
 		if (length > getInstance().routeMaxLength)
 		{
-			LOG.info("setRouteMinLength: length ("
-					+ length
-					+ ") is smaller than current maxlen. Setting maxlen to given value.");
+			LOG.info("setRouteMinLength: length ({}) is smaller than current maxlen ({}). Setting maxlen to given value.", 
+			         new Object[]{length, getInstance().routeMaxLength});
 			getInstance().routeMaxLength = length;
 		}
 		getInstance().routeMinLength = length;
@@ -469,7 +473,7 @@ public final class TorConfig
 	 * <br><br>
 	 * default value : 3
 	 */
-	private int routeMaxLength = 3;
+	private int routeMaxLength = DEFAULT_ROUTE_LENGTH;
 
 	/**
 	 * @return get the minimum allowed route length for creating a circuit.
@@ -537,15 +541,12 @@ public final class TorConfig
 	 * 
 	 * @param percent
 	 *            the percentage as double (range : 0.0 - 100.0)
-	 * @throws TorException
-	 *             is thrown when an invalid value is chosen
 	 */
 	public static void setMinDescriptorsPercentage(final double percent)
-			throws TorException
 	{
 		if (percent < 0.0 || percent > 100.0) // check if it is in range
 		{
-			throw new TorException("invalid value for setMinDescriptorsPercentage");
+			LOG.warn("setMinDescriptorsPercentage: value {} out of range (0.0 - 100.0)", percent);
 		}
 		if (percent == 0.0)
 		{
@@ -605,7 +606,8 @@ public final class TorConfig
 
 	/**
 	 * True if there should be at most one router from one country (or block of
-	 * countries) on the path.
+	 * countries) on the path.<br>
+	 * Default : true
 	 */
 	private boolean routeUniqueCountry = true;
 
@@ -645,6 +647,7 @@ public final class TorConfig
 	 */
 	public static boolean isCountryAllowed(final String countryCode)
 	{
+		// when avoidedCountries is empty all Countries are allowed
 		if (getInstance().avoidedCountries.isEmpty())
 		{
 			return true;
@@ -680,13 +683,13 @@ public final class TorConfig
 		}
 	}
 	/** collection of fingerprints to be avoided. */
-	private Set<byte[]> avoidedNodeFingerprints = new HashSet<byte[]>();
+	private Set<Fingerprint> avoidedNodeFingerprints = new HashSet<Fingerprint>();
 
 	/**
 	 * @return get the {@link Set} of fingerprints which should be avoided in
 	 *         route creation.
 	 */
-	public static Set<byte[]> getAvoidedNodeFingerprints()
+	public static Set<Fingerprint> getAvoidedNodeFingerprints()
 	{
 		return getInstance().avoidedNodeFingerprints;
 	}
@@ -700,7 +703,29 @@ public final class TorConfig
 	 */
 	public static synchronized void setAvoidedNodeFingerprints(final Set<byte[]> fingerprints)
 	{
-		getInstance().avoidedNodeFingerprints = fingerprints;
+		getInstance().avoidedNodeFingerprints.clear();
+		for (byte [] fingerprint : fingerprints)
+		{
+			// TODO : check size of fingerprints
+			getInstance().avoidedNodeFingerprints.add(new FingerprintImpl(fingerprint));
+		}
+	}
+
+	/**
+	 * Set the list of avoided fingerprints. These fingerprint will be used to
+	 * check whether a connection to a specific router is allowed or not.
+	 * 
+	 * @param fingerprints
+	 *            a list of fingerprints in hex notation
+	 */
+	public static synchronized void setAvoidedNodeFingerprintsHex(final Set<String> fingerprints)
+	{
+		getInstance().avoidedNodeFingerprints.clear();
+		for (String fingerprint : fingerprints)
+		{
+			// TODO : check size of fingerprints
+			getInstance().avoidedNodeFingerprints.add(new FingerprintImpl(DatatypeConverter.parseHexBinary(fingerprint)));
+		}
 	}
 
 	/**
@@ -711,7 +736,20 @@ public final class TorConfig
 	 */
 	public static synchronized void addAvoidedNodeFingerprint(final byte[] fingerprint)
 	{
-		getInstance().avoidedNodeFingerprints.add(fingerprint);
+		// TODO : add check if size is correct
+		getInstance().avoidedNodeFingerprints.add(new FingerprintImpl(fingerprint));
+	}
+
+	/**
+	 * Add a fingerprint (in hex notation) to the set of avoided fingerprints.
+	 * 
+	 * @param hexFingerprint
+	 *            the fingerprint (in hex notation) which should be avoided
+	 */
+	public static synchronized void addAvoidedNodeFingerprint(final String hexFingerprint)
+	{
+		// TODO : add check if size is correct
+		getInstance().avoidedNodeFingerprints.add(new FingerprintImpl(DatatypeConverter.parseHexBinary(hexFingerprint)));
 	}
 
 	/** Path of the resource to the GeoIP DB. */
@@ -723,15 +761,14 @@ public final class TorConfig
 	 * 
 	 * Default : true
 	 */
-	private static boolean cacheHiddenServiceDescriptor = true;
+	private boolean cacheHiddenServiceDescriptor = true;
 	/** directory and Co. config */
 	public static final int MIN_NUMBER_OF_ROUTERS_IN_CONSENSUS = 50;
 	/**
 	 * the time span that a router description is valid (starting from its
 	 * publishing time).
 	 */
-	public static final long ROUTER_DESCRIPTION_VALID_PERIOD_MS = 1L * 24L
-			* 60L * 60L * 1000L;
+	public static final long ROUTER_DESCRIPTION_VALID_PERIOD_MS = 1L * 24L * 60L * 60L * 1000L;
 
 	/**
 	 * Try to load the TorConfig from System properties.
@@ -741,26 +778,20 @@ public final class TorConfig
 		try
 		{
 			// overwrite defaults if proper system properties are set
-			setMinimumIdleCircuits(SystemPropertiesHelper.getSystemProperty(
-					SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS,
-					getInstance().minimumIdleCircuits));
-			setRouteMinLength(SystemPropertiesHelper.getSystemProperty(
-					SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH,
-					getRouteMinLength()));
-			setRouteMaxLength(SystemPropertiesHelper.getSystemProperty(
-					SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH,
-					getRouteMaxLength()));
-			setCacheHiddenServiceDescriptor(SystemPropertiesHelper.getSystemProperty(
-					SYSTEMPROPERTY_TOR_CACHE_HS_DESCRIPTOR,
-					isCacheHiddenServiceDescriptor()));
-			maxAllowedSetupDurationMs = SystemPropertiesHelper.getSystemProperty(
-					SYSTEMPROPERTY_TOR_MAX_ALLOWED_SETUP_DURATION_MS,
-					(int) maxAllowedSetupDurationMs);
+			setMinimumIdleCircuits(SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS,
+			                                                                getInstance().minimumIdleCircuits));
+			setRouteMinLength(SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH,
+			                                                           getRouteMinLength()));
+			setRouteMaxLength(SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH,
+			                                                           getRouteMaxLength()));
+			setCacheHiddenServiceDescriptor(SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_CACHE_HS_DESCRIPTOR,
+			                                                                         isCacheHiddenServiceDescriptor()));
+			maxAllowedSetupDurationMs = SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_MAX_ALLOWED_SETUP_DURATION_MS,
+			                                                                     (int) maxAllowedSetupDurationMs);
 		}
 		catch (final Exception e)
 		{
-			LOG.error("config could not be loaded from properties",
-					e);
+			LOG.error("config could not be loaded from properties",	e);
 		}
 	}
 	// first load the config from System properties
@@ -777,7 +808,7 @@ public final class TorConfig
 	 */
 	public static boolean isCacheHiddenServiceDescriptor()
 	{
-		return cacheHiddenServiceDescriptor;
+		return getInstance().cacheHiddenServiceDescriptor;
 	}
 
 	/**
@@ -786,7 +817,7 @@ public final class TorConfig
 	 */
 	public static void setCacheHiddenServiceDescriptor(final boolean cacheHiddenServiceDescriptor)
 	{
-		TorConfig.cacheHiddenServiceDescriptor = cacheHiddenServiceDescriptor;
+		getInstance().cacheHiddenServiceDescriptor = cacheHiddenServiceDescriptor;
 	}
 	/**
 	 * Shall we save the Circuit history?
@@ -840,4 +871,23 @@ public final class TorConfig
 			getInstance().parallelCircuitBuilds = number;
 		}
 	}	
+	/**
+	 * Reset all configuration items to their default values.
+	 */
+	public static void reset()
+	{
+		TorConfig config = getInstance();
+		config.avoidedCountries.clear();
+		config.avoidedNodeFingerprints.clear();
+		config.cacheHiddenServiceDescriptor = true;
+		config.circuitClosesOnFailures = 3;
+		config.minimumIdleCircuits = 3;
+		config.parallelCircuitBuilds = 1;
+		config.routeMaxLength = DEFAULT_ROUTE_LENGTH;
+		config.routeMinLength = DEFAULT_ROUTE_LENGTH;
+		config.routeUniqueClassC = true;
+		config.routeUniqueCountry = true;
+		config.saveCircuitHistory = true;
+		config.veryAggressiveStreamBuilding = false;
+	}
 }

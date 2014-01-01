@@ -36,7 +36,9 @@ public final class DirectoryManagerThread extends Thread
 	/** time to wait between working loads in seconds. */
 	static final int INTERVAL_S = 3;
 
+	/** Are we still running? */
 	private boolean stopped = false;
+	/** Contains the Directory of Routers. */
 	private final Directory directory;
 	/** time stamp. */
 	private long currentTimeMillis;
@@ -46,8 +48,7 @@ public final class DirectoryManagerThread extends Thread
 	public DirectoryManagerThread(final Directory directory)
 	{
 		this.directory = directory;
-		dirNextUpdateTimeMillis = currentTimeMillis; // +
-														// TorConfig.intervalDirectoryRefresh*60*MILLISEC;
+		dirNextUpdateTimeMillis = currentTimeMillis;
 		setName(getClass().getName());
 		setDaemon(true);
 		start();
@@ -96,9 +97,11 @@ public final class DirectoryManagerThread extends Thread
 	// /////////////////////////////////////////////////////
 	// getters and setters
 	// /////////////////////////////////////////////////////
-
-	public void setStopped(final boolean stopped)
+	/**
+	 * Stop the Thread.
+	 */
+	public void setStopped()
 	{
-		this.stopped = stopped;
+		this.stopped = true;
 	}
 }

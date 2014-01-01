@@ -41,19 +41,12 @@ import java.security.MessageDigest;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -137,22 +130,9 @@ public final class RouterImpl implements Router, Cloneable
 
 	// Additional information for V2-Directories
 	private long lastUpdate;
-	/** Router is an Authority. */
-	private boolean dirv2Authority = false;
-	/** Router is an exit-node. */
-	private boolean dirv2Exit = false;
-	/** Router is fast. */
-	private boolean dirv2Fast = false;
-	/** Router is a guard. */
-	private boolean dirv2Guard = false;
-	private boolean dirv2Named = false;
-	private boolean dirv2Stable = false;
-	private boolean dirv2Running = false;
-	private boolean dirv2Valid = false;
-	/** Router holds a copy of the Directory. */
-	private boolean dirv2V2dir = false;
-	/** Router holds Hidden Service Directory. */
-	private boolean dirv2HSDir = false;
+
+	/** Router flags. */
+	private RouterFlags routerFlags = new RouterFlags();
 
 	/** internal Server-Ranking data. */
 	private float rankingIndex;
@@ -242,16 +222,7 @@ public final class RouterImpl implements Router, Cloneable
 	 */
 	void updateServerStatus(final RouterStatusDescription statusDescription)
 	{
-		dirv2Running = statusDescription.isRunning();
-		dirv2Exit = statusDescription.isExit() ? !statusDescription.isBadExit() : false;
-		dirv2Authority = statusDescription.isAuthority();
-		dirv2Fast = statusDescription.isFast();
-		dirv2Guard = statusDescription.isGuard();
-		dirv2Stable = statusDescription.isStable();
-		dirv2Named = statusDescription.isNamed();
-		dirv2V2dir = statusDescription.isV2Dir() ? !statusDescription.isBadDirectory() : false;
-		dirv2Valid = statusDescription.isValid();
-		dirv2HSDir = statusDescription.isHSDir();
+		routerFlags = statusDescription.getRouterFlags();
 	}
 	/** this is used for binary de-/serialization. */
 	private static final byte CURRENT_BINARY_VERSION = 1;
@@ -340,15 +311,7 @@ public final class RouterImpl implements Router, Cloneable
 		}
 		validUntil = buffer.getNextLong();
 		lastUpdate = buffer.getNextLong();
-		dirv2Authority = buffer.getNextBoolean();
-		dirv2Exit = buffer.getNextBoolean();
-		dirv2Fast = buffer.getNextBoolean();
-		dirv2Guard = buffer.getNextBoolean();
-		dirv2Named = buffer.getNextBoolean();
-		dirv2Stable = buffer.getNextBoolean();
-		dirv2Running = buffer.getNextBoolean();
-		dirv2V2dir = buffer.getNextBoolean();
-		dirv2HSDir = buffer.getNextBoolean();
+		routerFlags = new RouterFlags(buffer.getNextByteArray());
 		rankingIndex = buffer.getNextFloat();
 	}
 	/**
@@ -397,15 +360,7 @@ public final class RouterImpl implements Router, Cloneable
 		}
 		buffer.append(validUntil);
 		buffer.append(lastUpdate);
-		buffer.append(dirv2Authority);
-		buffer.append(dirv2Exit);
-		buffer.append(dirv2Fast);
-		buffer.append(dirv2Guard);
-		buffer.append(dirv2Named);
-		buffer.append(dirv2Stable);
-		buffer.append(dirv2Running);
-		buffer.append(dirv2V2dir);
-		buffer.append(dirv2HSDir);
+		buffer.append(routerFlags.toByteArray(), true);
 		buffer.append(rankingIndex);
 		
 		return buffer.toArray();
@@ -500,73 +455,11 @@ public final class RouterImpl implements Router, Cloneable
 			++nr;
 			epList.add(new RouterExitPolicyImpl(epAccept, epIp, epNetmask, epLoPort, epHiPort));
 		}
-
+		if (LOG.isDebugEnabled() && nr >= MAX_EXITPOLICY_ITEMS)
+		{
+			LOG.debug("Router has more than {} exitpolicy items", MAX_EXITPOLICY_ITEMS);
+		}
 		return (epList.toArray(new RouterExitPolicy[epList.size()]));
-	}
-
-	// split into single server descriptors
-	private static final Pattern ROUTER_DESCRIPTORS_PATTERN = Pattern.compile("^(router.*?END SIGNATURE-----)", Pattern.DOTALL + Pattern.MULTILINE + Pattern.CASE_INSENSITIVE
-			+ Pattern.UNIX_LINES);
-
-	/**
-	 * parse multiple router descriptors from one String.
-	 * 
-	 * @param routerDescriptors
-	 * @return the result; if multiple entries with the same fingerprint are in
-	 *         routerDescriptors, the last be be considered
-	 */
-	public static Map<Fingerprint, RouterImpl> parseRouterDescriptors(final String routerDescriptors)
-	{
-		final long timeStart = System.currentTimeMillis();
-		final Map<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>();
-
-		final Matcher m = ROUTER_DESCRIPTORS_PATTERN.matcher(routerDescriptors);
-
-		final ExecutorService executor = Executors.newFixedThreadPool(5); // TODO : make threadpool configurable
-		
-		final Collection<RouterParserCallable> allTasks = new ArrayList<RouterParserCallable>();
-
-		while (m.find())
-		{
-			allTasks.add(new RouterParserCallable(m.group(1)));
-		}
-		List<Future<RouterImpl>> results = null;
-		try
-		{
-			results = executor.invokeAll(allTasks);
-		}
-		catch (InterruptedException exception)
-		{
-			LOG.warn("error while parsing the router descriptors in parallel", exception);
-		}
-		if (results != null && !results.isEmpty())
-		{
-			for (Future<RouterImpl> item : results)
-			{
-				RouterImpl router = null;
-				try
-				{
-					router = item.get();
-				}
-				catch (InterruptedException exception)
-				{
-					LOG.warn("error while parsing the router descriptors in parallel", exception);
-				}
-				catch (ExecutionException exception)
-				{
-					LOG.warn("error while parsing the router descriptors in parallel", exception);
-				}
-				if (router != null)
-				{
-					result.put(router.getFingerprint(), router);
-				}
-			}
-		}
-		if (LOG.isDebugEnabled())
-		{
-			LOG.debug("RouterImpl.parseRouterDescriptors took " + (System.currentTimeMillis() - timeStart) + " ms");
-		}
-		return result;
 	}
 
 	/**
@@ -678,7 +571,7 @@ public final class RouterImpl implements Router, Cloneable
 							// TODO : add flag that router is hibernating (do not use it for building circuits)
 							break;
 						case HIDDEN_SERVICE_DIR:
-							dirv2HSDir = true;
+							routerFlags.setHSDir(true);
 							break;
 						case PROTOCOLS:
 							// TODO : implement
@@ -1151,55 +1044,55 @@ public final class RouterImpl implements Router, Cloneable
 	@Override
 	public boolean isDirv2Authority()
 	{
-		return dirv2Authority;
+		return routerFlags.isAuthority();
 	}
 
 	@Override
 	public boolean isDirv2Exit()
 	{
-		return dirv2Exit;
+		return routerFlags.isExit() && !routerFlags.isBadExit();
 	}
 
 	@Override
 	public boolean isDirv2Fast()
 	{
-		return dirv2Fast;
+		return routerFlags.isFast();
 	}
 
 	@Override
 	public boolean isDirv2Guard()
 	{
-		return dirv2Guard;
+		return routerFlags.isGuard();
 	}
 
 	@Override
 	public boolean isDirv2Named()
 	{
-		return dirv2Named;
+		return routerFlags.isNamed();
 	}
 
 	@Override
 	public boolean isDirv2Stable()
 	{
-		return dirv2Stable;
+		return routerFlags.isStable();
 	}
 
 	@Override
 	public boolean isDirv2Running()
 	{
-		return dirv2Running;
+		return routerFlags.isRunning();
 	}
 
 	@Override
 	public boolean isDirv2Valid()
 	{
-		return dirv2Valid;
+		return routerFlags.isValid();
 	}
 
 	@Override
 	public boolean isDirv2V2dir()
 	{
-		return dirv2V2dir;
+		return routerFlags.isV2Dir();
 	}
 
 	/**
@@ -1207,7 +1100,7 @@ public final class RouterImpl implements Router, Cloneable
 	 */
 	public boolean isDirv2HSDir()
 	{
-		return dirv2HSDir;
+		return routerFlags.isHSDir();
 	}
 
 	@Override
@@ -1233,16 +1126,7 @@ public final class RouterImpl implements Router, Cloneable
 		result = prime * result + ((contact == null) ? 0 : contact.hashCode());
 		result = prime * result + ((countryCode == null) ? 0 : countryCode.hashCode());
 		result = prime * result + dirPort;
-		result = prime * result + (dirv2Authority ? 1231 : 1237);
-		result = prime * result + (dirv2Exit ? 1231 : 1237);
-		result = prime * result + (dirv2Fast ? 1231 : 1237);
-		result = prime * result + (dirv2Guard ? 1231 : 1237);
-		result = prime * result + (dirv2HSDir ? 1231 : 1237);
-		result = prime * result + (dirv2Named ? 1231 : 1237);
-		result = prime * result + (dirv2Running ? 1231 : 1237);
-		result = prime * result + (dirv2Stable ? 1231 : 1237);
-		result = prime * result + (dirv2V2dir ? 1231 : 1237);
-		result = prime * result + (dirv2Valid ? 1231 : 1237);
+		result = prime * result + routerFlags.hashCode();
 		result = prime * result + Arrays.hashCode(exitpolicy);
 		result = prime * result + ((family == null) ? 0 : family.hashCode());
 		result = prime * result + ((fingerprint == null) ? 0 : fingerprint.hashCode());
@@ -1333,43 +1217,7 @@ public final class RouterImpl implements Router, Cloneable
 		{
 			return false;
 		}
-		if (dirv2Authority != other.dirv2Authority)
-		{
-			return false;
-		}
-		if (dirv2Exit != other.dirv2Exit)
-		{
-			return false;
-		}
-		if (dirv2Fast != other.dirv2Fast)
-		{
-			return false;
-		}
-		if (dirv2Guard != other.dirv2Guard)
-		{
-			return false;
-		}
-		if (dirv2HSDir != other.dirv2HSDir)
-		{
-			return false;
-		}
-		if (dirv2Named != other.dirv2Named)
-		{
-			return false;
-		}
-		if (dirv2Running != other.dirv2Running)
-		{
-			return false;
-		}
-		if (dirv2Stable != other.dirv2Stable)
-		{
-			return false;
-		}
-		if (dirv2V2dir != other.dirv2V2dir)
-		{
-			return false;
-		}
-		if (dirv2Valid != other.dirv2Valid)
+		if (!routerFlags.equals(other.routerFlags))
 		{
 			return false;
 		}
@@ -1498,5 +1346,11 @@ public final class RouterImpl implements Router, Cloneable
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public RouterFlags getRouterFlags()
+	{
+		return routerFlags;
 	}
 }

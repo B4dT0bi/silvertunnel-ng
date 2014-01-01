@@ -18,7 +18,6 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -44,156 +43,8 @@ public final class RouterStatusDescription
 	private String ip;
 	/** OR port and Dir Port. */
 	private int orPort, dirPort;
-	/** 
-	 * flag Running. 
-	 * "Running" if the router is currently usable
-	 */
-	private boolean running = false;
-	/** 
-	 * flag Authority.
-	 * "Authority" if the router is a directory authority.
-	 */
-	private boolean authority = false;
-	/**
-	 * "Exit" if the router is more useful for building general-purpose exit circuits than for relay circuits.  
-	 * The path building algorithm uses this flag; see path-spec.txt.
-	 */
-	private boolean exit = false;
-	/**
-	 * "BadExit" if the router is believed to be useless as an exit node 
-	 * (because its ISP censors it, because it is behind a restrictive proxy, or for some similar reason).
-	 */
-	private boolean badExit = false;
-	/**
-	 * "BadDirectory" if the router is believed to be useless as a directory cache 
-	 * (because its directory port isn't working, its bandwidth is always throttled, or for some similar reason).
-	 */
-	private boolean badDirectory = false;
-	/**
-	 * "Fast" if the router is suitable for high-bandwidth circuits.
-	 */
-	private boolean fast = false;
-	/**
-	 * "Guard" if the router is suitable for use as an entry guard.
-	 */
-	private boolean guard = false;
-	/**
-	 * "HSDir" if the router is considered a v2 hidden service directory.
-	 */
-	private boolean HSDir = false;
-	/**
-	 *  "Named" if the router's identity-nickname mapping is canonical, and this authority binds names.
-	 */
-	private boolean named = false;
-	/**
-	 * "Stable" if the router is suitable for long-lived circuits.
-	 */
-	private boolean stable = false;
-	/**
-	 * "Unnamed" if another router has bound the name used by this router, and this authority binds names.
-	 */
-	private boolean unnamed = false;
-	/** 
-	 * "Valid" if the router has been 'validated'.
-	 */
-	private boolean valid = false;
-	/**
-	 * "V2Dir" if the router implements the v2 directory protocol.
-	 */
-	private boolean v2Dir = false;
-	
-	private SecureRandom rnd = new SecureRandom();
-
-	/**
-	 * we have to judge from the server's flags which of the both should be
-	 * downloaded rather than the other. MAYBE one or both of them are already
-	 * in the HasMap this.torServers, but we can't rely on that.<br>
-	 * The flags are stored in the member variable "flags" and are currently:<br>
-	 * <tt>Authority, Exit, Fast, Guard, Named, Stable, Running, Valid, V2Dir</tt>
-	 * 
-	 * @param other
-	 *            the other descriptor, to which we compare this descriptor
-	 * @return true, if this one is better to download
-	 */
-	public boolean isBetterThan(final RouterStatusDescription other)
-	{
-		// do a fixed prioritizing: Running, Authority, Exit, Guard, Fast, Stable, Valid
-		if (running && !other.running)
-		{
-			return true;
-		}
-		if (other.running && !running)
-		{
-			return false;
-		}
-		if (authority && !other.authority)
-		{
-			return true;
-		}
-		if (other.authority && !authority)
-		{
-			return false;
-		}
-		if (exit && !other.exit)
-		{
-			return true;
-		}
-		if (other.exit && !exit)
-		{
-			return false;
-		}
-		if (guard && !other.guard)
-		{
-			return true;
-		}
-		if (other.guard && !guard)
-		{
-			return false;
-		}
-		if (fast && !other.fast)
-		{
-			return true;
-		}
-		if (!other.fast && !fast)
-		{
-			return false;
-		}
-		if (stable && !other.stable)
-		{
-			return true;
-		}
-		if (other.stable && !stable)
-		{
-			return false;
-		}
-		if (valid && !other.valid)
-		{
-			return true;
-		}
-		if (other.valid && !valid)
-		{
-			return false;
-		}
-		// finally - all (important) flags seem to be equal..
-		// download the one, that is fresher?
-		if (lastPublication.compareTo(other.lastPublication) < 0)
-		{
-			return true;
-		}
-		if (lastPublication.compareTo(other.lastPublication) > 0)
-		{
-			return false;
-		}
-		// choose by random
-		if (rnd != null)
-		{
-			return rnd.nextBoolean();
-		}
-
-		// say no, because experience tells that dir-servers tend to list
-		// important stuff first
-		return false;
-	}
+	/** Router flags. (stable, valid, running, etc)*/
+	private RouterFlags routerFlags;
 
 	// /////////////////////////////////////////////////////
 	// getters and setters
@@ -279,6 +130,10 @@ public final class RouterStatusDescription
 		this.orPort = orPort;
 	}
 
+	/**
+	 * Get Directory Port of relay. 0 if none is set.
+	 * @return the directory port of this router (int)
+	 */
 	public int getDirPort()
 	{
 		return dirPort;
@@ -287,135 +142,6 @@ public final class RouterStatusDescription
 	public void setDirPort(final int dirPort)
 	{
 		this.dirPort = dirPort;
-	}
-
-	public void setFlags(final String flags)
-	{
-		running = flags.contains("Running");
-		exit = flags.contains("Exit");
-		authority = flags.contains("Authority");
-		fast = flags.contains("Fast");
-		guard = flags.contains("Guard");
-		stable = flags.contains("Stable");
-		named = flags.contains("Named");
-		unnamed = flags.contains("Unnamed");
-		v2Dir = flags.contains("V2Dir");
-		valid = flags.contains("Valid");
-		HSDir = flags.contains("HSDir");
-		badDirectory = flags.contains("BadDirectory");
-		badExit = flags.contains("BadExit");
-	}
-
-	/**
-	 * @return the running
-	 */
-	public boolean isRunning()
-	{
-		return running;
-	}
-
-	/**
-	 * @return the authority
-	 */
-	public boolean isAuthority()
-	{
-		return authority;
-	}
-
-	/**
-	 * @return the exit
-	 */
-	public boolean isExit()
-	{
-		return exit;
-	}
-
-	/**
-	 * @return the badExit
-	 */
-	public boolean isBadExit()
-	{
-		return badExit;
-	}
-
-	/**
-	 * @return the badDirectory
-	 */
-	public boolean isBadDirectory()
-	{
-		return badDirectory;
-	}
-
-	/**
-	 * @return the fast
-	 */
-	public boolean isFast()
-	{
-		return fast;
-	}
-
-	/**
-	 * @return the guard
-	 */
-	public boolean isGuard()
-	{
-		return guard;
-	}
-
-	/**
-	 * @return the hSDir
-	 */
-	public boolean isHSDir()
-	{
-		return HSDir;
-	}
-
-	/**
-	 * @return the named
-	 */
-	public boolean isNamed()
-	{
-		return named;
-	}
-
-	/**
-	 * @return the stable
-	 */
-	public boolean isStable()
-	{
-		return stable;
-	}
-
-	/**
-	 * @return the unnamed
-	 */
-	public boolean isUnnamed()
-	{
-		return unnamed;
-	}
-
-	/**
-	 * @return the valid
-	 */
-	public boolean isValid()
-	{
-		return valid;
-	}
-
-	/**
-	 * @return the v2Dir
-	 */
-	public boolean isV2Dir()
-	{
-		return v2Dir;
-	}
-
-	/**
-	 * @return the rnd
-	 */
-	public SecureRandom getRnd()
-	{
-		return rnd;
 	}
 
 	/*
@@ -431,5 +157,28 @@ public final class RouterStatusDescription
 				+ Arrays.toString(digestDescriptor) + ", lastPublication="
 				+ lastPublication + ", ip=" + ip + ", orPort=" + orPort
 				+ ", dirPort=" + dirPort + "]";
+	}
+
+	/**
+	 * @return the routerFlags
+	 */
+	public RouterFlags getRouterFlags()
+	{
+		return routerFlags;
+	}
+
+	/**
+	 * @param routerFlags the routerFlags to set
+	 */
+	public void setRouterFlags(final RouterFlags routerFlags)
+	{
+		this.routerFlags = routerFlags;
+	}
+	/**
+	 * @param routerFlags the routerFlags to set
+	 */
+	public void setRouterFlags(final String routerFlags)
+	{
+		this.routerFlags = new RouterFlags(routerFlags);
 	}
 }

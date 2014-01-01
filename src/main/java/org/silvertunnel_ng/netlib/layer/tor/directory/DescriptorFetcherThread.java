@@ -46,6 +46,7 @@ class DescriptorFetcherThread extends Thread
 	DescriptorFetcherThread(final NetLayer lowerDirConnectionNetLayer)
 	{
 		this.lowerDirConnectionNetLayer = lowerDirConnectionNetLayer;
+		setDaemon(true);
 		this.start();
 	}
 
@@ -263,5 +264,4 @@ class DescriptorFetcherThread extends Thread
 	{
 		this.lowerDirConnectionNetLayer = lowerDirConnectionNetLayer;
 	}
-
 }

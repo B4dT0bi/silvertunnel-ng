@@ -141,13 +141,12 @@ public final class RouterImplLocalTest
 		assertFalse(testObject.isDirv2Valid());
 	}
 	/**
-	 * Test method if it is possible to write a parsed Router to a file using {@link ObjectOutputStream}.
+	 * Test method if it is possible to write a parsed Router to a file using own method.
 	 * @throws TorException 
 	 * @throws IOException 
-	 * @throws ClassNotFoundException 
 	 */
 	@Test
-	public void testWriteRouterToFile() throws TorException, IOException, ClassNotFoundException
+	public void testWriteRouterToFile() throws TorException, IOException
 	{
 		final RouterImpl testObject = new RouterImpl(descriptor);
 		FileOutputStream fileOutputStream = new FileOutputStream("router.test");
@@ -168,7 +167,8 @@ public final class RouterImplLocalTest
 	@Test
 	public void testWriteRoutersToFile() throws TorException, IOException, ClassNotFoundException
 	{
-		final Map<Fingerprint, RouterImpl> allrouters = RouterImpl.parseRouterDescriptors(descriptors);
+		Directory directory = new Directory(null, null, null);
+		final Map<Fingerprint, RouterImpl> allrouters = directory.parseRouterDescriptors(descriptors);
 		assertNotNull(allrouters);
 		assertFalse(allrouters.isEmpty());
 		assertEquals(4648, allrouters.size());
@@ -192,16 +192,6 @@ public final class RouterImplLocalTest
 		}
 		assertEquals(allrouters, allrouters2);
 	}
-	/**
-	 * Test method for
-	 * {@link RouterImpl#updateServerStatus(java.lang.String)}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testUpdateServerStatusString()
-	{
-		fail("Not yet implemented");
-	}
 
 	/**
 	 * Test method for
@@ -216,14 +206,15 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link RouterImpl#parseRouterDescriptors(String)}
+	 * {@link Directory#parseRouterDescriptors(String)}
 	 * .
 	 * @throws IOException when loading the example_server_descriptors from classpath didnt worked
 	 */
 	@Test
 	public void testParseRouterDescriptors() throws IOException
 	{
-		final Map<Fingerprint, RouterImpl> allrouters = RouterImpl.parseRouterDescriptors(descriptors);
+		Directory directory = new Directory(null, null, null);
+		final Map<Fingerprint, RouterImpl> allrouters = directory.parseRouterDescriptors(descriptors);
 		assertNotNull(allrouters);
 		assertFalse(allrouters.isEmpty());
 		assertEquals(4648, allrouters.size());
@@ -528,17 +519,6 @@ public final class RouterImplLocalTest
 
 	/**
 	 * Test method for
-	 * {@link RouterImpl#getExitpolicy()}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testGetExitpolicy()
-	{
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
 	 * {@link RouterImpl#getContact()}
 	 * .
 	 */
@@ -701,16 +681,4 @@ public final class RouterImplLocalTest
 	{
 		fail("Not yet implemented");
 	}
-
-	/**
-	 * Test method for
-	 * {@link RouterImpl#getRouterDescriptor()}
-	 * .
-	 */
-	@Test(enabled = false)
-	public void testGetRouterDescriptor()
-	{
-		fail("Not yet implemented");
-	}
-
 }

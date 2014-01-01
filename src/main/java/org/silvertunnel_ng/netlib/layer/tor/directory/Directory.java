@@ -69,6 +69,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.http.conn.util.InetAddressUtils;
@@ -114,8 +119,6 @@ public final class Directory
 	 * back and changing previous node.
 	 */
 	public static final int RETRIES_ON_RECURSIVE_ROUTE_BUILD = 10;
-	/** time intervals to poll descriptor fetchers for result in milliseconds. */
-	static final int FETCH_THREAD_QUERY_TIME_MS = 2000;
 
 	/** key to locally cache the authority key certificates. */
 	private static final String STORAGEKEY_AUTHORITY_KEY_CERTIFICATES_TXT = "authority-key-certificates.txt";
@@ -127,7 +130,7 @@ public final class Directory
 	/** local cache. */
 	private final StringStorage stringStorage;
 	/** lower layer network layer, e.g. TCP/IP to connect to directory servers. */
-	public NetLayer lowerDirConnectionNetLayer;
+	private NetLayer lowerDirConnectionNetLayer;
 	/**
 	 * collection of all valid Tor server. (all routers that are valid or were
 	 * valid in the past)
@@ -145,27 +148,6 @@ public final class Directory
 	 */
 	private Map<Fingerprint, RouterImpl> validRoutersByFingerprint = new HashMap<Fingerprint, RouterImpl>();
 	/**
-	 * a map of all routers which are exit nodes.
-	 */
-	private Map<Fingerprint, RouterImpl> routersWithExit = new HashMap<Fingerprint, RouterImpl>();
-	/**
-	 * map of routers with the guard flag.
-	 */
-	private Map<Fingerprint, RouterImpl> guardRouters = new HashMap<Fingerprint, RouterImpl>();
-	/**
-	 * map of routers with the fast flag for building fast-circuits.
-	 */
-	private Map<Fingerprint, RouterImpl> fastRouters = new HashMap<Fingerprint, RouterImpl>();
-	/**
-	 * map of routers with the stable flag for building stable-circuits.
-	 */
-	private Map<Fingerprint, RouterImpl> stableRouters = new HashMap<Fingerprint, RouterImpl>();
-	/**
-	 * map of routers with the stable and fast flag for building
-	 * stable&fast-circuits.
-	 */
-	private Map<Fingerprint, RouterImpl> stableAndFastRouters = new HashMap<Fingerprint, RouterImpl>();
-	/**
 	 * Map that has class C address as key, and a HashSet with fingerprints of
 	 * Nodes that have IP-Address of that class.
 	 */
@@ -177,6 +159,7 @@ public final class Directory
 	private final Map<String, HashSet<Fingerprint>> countryNeighbours;
 	/** HashSet excluded by config nodes. */
 	private final HashSet<Fingerprint> excludedNodesByConfig;
+	/** SecureRandom generator. */
 	private final SecureRandom rnd;
 
 	private volatile boolean updateRunning = false;
@@ -196,19 +179,12 @@ public final class Directory
 	                 final NetLayer lowerDirConnectionNetLayer, 
 					 final NetLayerStatusAdmin statusAdmin)
 	{
-		// initialization from network
-		// is done from background mgmt .. but should be done here a first time
-		// NOTE FROM LEXI: refreshListOfServers MUST NOT be called from here,
-		// but instead MUST be called from background mgmt
-		// refreshListOfServers();
-
 		// save parameters
 		this.stringStorage = stringStorage;
 		this.lowerDirConnectionNetLayer = lowerDirConnectionNetLayer;
 		this.statusAdmin = statusAdmin;
 
-		// configure special timeout parameters for download of directory
-		// information
+		// configure special timeout parameters for download of directory information
 		final ControlParameters cp = ControlParameters.createTypicalFileTransferParameters();
 		cp.setConnectTimeoutMillis(TorConfig.DIR_CONNECT_TIMEOUT_MILLIS);
 		cp.setOverallTimeoutMillis(TorConfig.DIR_OVERALL_TIMEOUT_MILLIS);
@@ -221,12 +197,7 @@ public final class Directory
 		addressNeighbours = new HashMap<String, HashSet<Fingerprint>>();
 		countryNeighbours = new HashMap<String, HashSet<Fingerprint>>();
 		rnd = new SecureRandom();
-		excludedNodesByConfig = new HashSet<Fingerprint>();
-		final Collection<byte[]> avoidedNodeFingerprints = TorConfig.getAvoidedNodeFingerprints();
-		for (final byte[] fingerprint : avoidedNodeFingerprints)
-		{
-			excludedNodesByConfig.add(new FingerprintImpl(fingerprint));
-		}
+		excludedNodesByConfig = new HashSet<Fingerprint>(TorConfig.getAvoidedNodeFingerprints());
 	}
 
 	/**
@@ -249,7 +220,7 @@ public final class Directory
 		}
 		neighbours.add(r.getFingerprint());
 
-		// add it to the country neighbours
+		// add it to the country neighbors
 		neighbours = countryNeighbours.get(r.getCountryCode());
 		if (neighbours == null)
 		{
@@ -355,7 +326,6 @@ public final class Directory
 			try
 			{
 				updateNetworkStatusNew();
-				// TODO old: updateNetworkStatusV3(v3Servers);
 				// Finish, if some nodes were found
 				if (isDirectoryReady())
 				{
@@ -376,15 +346,11 @@ public final class Directory
 			}
 		}
 	}
-
+	private final int MIN_LENGTH_OF_CONSENSUS_STR = 100;
 	/**
-	 * Get a V3 network-status consensus, parse it and initiate downloads of
-	 * missing descriptors.
-	 * 
-	 * @param v3Servers
-	 * @throws TorException
+	 * Update the DirectoryConsensus.
 	 */
-	private synchronized void updateNetworkStatusNew() throws TorException
+	private void updateDirectoryConsensus()
 	{
 		//
 		// handle consensus
@@ -410,7 +376,6 @@ public final class Directory
 			{
 				// first initialization: try to load consensus from cache
 				final String newDirectoryConsensusStr = stringStorage.get(STORAGEKEY_DIRECTORY_CACHED_CONSENSUS_TXT);
-				final int MIN_LENGTH_OF_CONSENSUS_STR = 100;
 				if (newDirectoryConsensusStr != null && newDirectoryConsensusStr.length() > MIN_LENGTH_OF_CONSENSUS_STR)
 				{
 					try
@@ -506,7 +471,13 @@ public final class Directory
 			LOG.error("no old or new directory consensus available");
 			return;
 		}
-
+	}
+	/**
+	 * Update the list of Routers.
+	 * @throws TorException
+	 */
+	private void updateRouterList() throws TorException
+	{
 		//
 		// update router descriptors
 		//
@@ -557,18 +528,13 @@ public final class Directory
 						newStableAndFastRouters.put(fingerprint, r);
 					}
 				}
-				if (networkStatusDescription.isRunning())
+				if (networkStatusDescription.getRouterFlags().isRunning())
 				{
 					newNumOfRunningRoutersInDirectoryConsensus++;
 				}
 			}
 			validRoutersByFingerprint = newValidRoutersByfingerprint;
-			setRoutersWithExit(newExitnodeRouters); 
 			// TODO : exchange to incremental updating the list (now we have to wait until all routers are parsed)
-			setFastRouters(newFastRouters);
-			setStableRouters(newStableRouters);
-			setStableAndFastRouters(newStableAndFastRouters);
-			setGuardRouters(newGuardRouters);
 			numOfRunningRoutersInDirectoryConsensus = newNumOfRunningRoutersInDirectoryConsensus;
 
 			if (LOG.isDebugEnabled())
@@ -598,9 +564,21 @@ public final class Directory
 			{
 				LOG.warn("Could not cache routers due to exception {}", exception, exception);
 			}
-		}
+		}		
+	}
+	/**
+	 * Get a V3 network-status consensus, parse it and initiate downloads of
+	 * missing descriptors.
+	 *
+	 * @throws TorException
+	 */
+	private synchronized void updateNetworkStatusNew() throws TorException
+	{
+		updateDirectoryConsensus();
+		updateRouterList();
 	}
 
+	private final int MIN_LENGTH_OF_AUTHORITY_KEY_CERTS_STR = 100;
 	private AuthorityKeyCertificates getAuthorityKeyCertificates()
 	{
 		// get now+1 day
@@ -613,7 +591,6 @@ public final class Directory
 			// cache first
 			LOG.debug("getAuthorityKeyCertificates(): try to load from local cache ...");
 			final String authorityKeyCertificatesStr = stringStorage.get(STORAGEKEY_AUTHORITY_KEY_CERTIFICATES_TXT);
-			final int MIN_LENGTH_OF_AUTHORITY_KEY_CERTS_STR = 100;
 			if (authorityKeyCertificatesStr != null && authorityKeyCertificatesStr.length() > MIN_LENGTH_OF_AUTHORITY_KEY_CERTS_STR)
 			{
 				// parse loaded result
@@ -701,6 +678,75 @@ public final class Directory
 
 		return authorityKeyCertificates;
 	}
+	
+	/** split into single server descriptors. */
+	private static final Pattern ROUTER_DESCRIPTORS_PATTERN = Pattern.compile("^(router.*?END SIGNATURE-----)", 
+	                                                                          Pattern.DOTALL 
+	                                                                        + Pattern.MULTILINE 
+	                                                                        + Pattern.CASE_INSENSITIVE
+	                                                                        + Pattern.UNIX_LINES);
+
+	/**
+	 * parse multiple router descriptors from one String.
+	 * 
+	 * @param routerDescriptors
+	 * @return the result; if multiple entries with the same fingerprint are in
+	 *         routerDescriptors, the last will be considered
+	 */
+	protected Map<Fingerprint, RouterImpl> parseRouterDescriptors(final String routerDescriptors)
+	{
+		final long timeStart = System.currentTimeMillis();
+		final Map<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>();
+
+		final Matcher m = ROUTER_DESCRIPTORS_PATTERN.matcher(routerDescriptors);
+
+		final ExecutorService executor = Executors.newFixedThreadPool(5); // TODO : make threadpool configurable
+		
+		final Collection<RouterParserCallable> allTasks = new ArrayList<RouterParserCallable>();
+
+		while (m.find())
+		{
+			allTasks.add(new RouterParserCallable(m.group(1)));
+		}
+		List<Future<RouterImpl>> results = null;
+		try
+		{
+			results = executor.invokeAll(allTasks);
+		}
+		catch (InterruptedException exception)
+		{
+			LOG.warn("error while parsing the router descriptors in parallel", exception);
+		}
+		if (results != null && !results.isEmpty())
+		{
+			for (Future<RouterImpl> item : results)
+			{
+				RouterImpl router = null;
+				try
+				{
+					router = item.get();
+				}
+				catch (InterruptedException exception)
+				{
+					LOG.warn("error while parsing the router descriptors in parallel", exception);
+				}
+				catch (ExecutionException exception)
+				{
+					LOG.warn("error while parsing the router descriptors in parallel", exception);
+				}
+				if (router != null)
+				{
+					result.put(router.getFingerprint(), router);
+				}
+			}
+		}
+		if (LOG.isDebugEnabled())
+		{
+			LOG.debug("parseRouterDescriptors took " + (System.currentTimeMillis() - timeStart) + " ms");
+		}
+		return result;
+	}
+	
 	private static final int ALL_DESCRIPTORS_STR_MIN_LEN = 1000;
 	private static final int TRHESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPIONS = 50;
 
@@ -806,7 +852,7 @@ public final class Directory
 				// split into single server descriptors
 				if (allDescriptors != null && allDescriptors.length() >= ALL_DESCRIPTORS_STR_MIN_LEN)
 				{
-					final Map<Fingerprint, RouterImpl> parsedServers = RouterImpl.parseRouterDescriptors(allDescriptors);
+					final Map<Fingerprint, RouterImpl> parsedServers = parseRouterDescriptors(allDescriptors);
 					int attempts = 0;
 					for (final Fingerprint fingerprint : fingerprintsOfRoutersToLoad)
 					{
@@ -1117,7 +1163,7 @@ public final class Directory
 	 * @return three consecutive routers that are hidden service directories
 	 *         with router.fingerprint>f
 	 */
-	public Collection<RouterImpl> getThreeHiddenDirectoryServersWithFingerpringGreaterThan(final Fingerprint f)
+	public Collection<RouterImpl> getThreeHiddenDirectoryServersWithFingerprintGreaterThan(final Fingerprint f)
 	{
 		final RouterImpl[] routers = getValidHiddenDirectoryServersOrderedByFingerprint();
 
@@ -1188,16 +1234,10 @@ public final class Directory
 		}
 	}
 
-	public NetLayer getLowerDirConnectionNetLayer()
-	{
-		return lowerDirConnectionNetLayer;
-	}
-
-	public void setLowerDirConnectionNetLayer(final NetLayer lowerDirConnectionNetLayer)
-	{
-		this.lowerDirConnectionNetLayer = lowerDirConnectionNetLayer;
-	}
-
+	/**
+	 * Get Map with all Routers which are valid and not excluded by Config.
+	 * @return a Map with valid routers
+	 */
 	public Map<Fingerprint, RouterImpl> getValidRoutersByFingerprint()
 	{
 		HashMap<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>(validRoutersByFingerprint);
@@ -1212,104 +1252,32 @@ public final class Directory
 		return result;
 	}
 
-	public void setValidRoutersByFingerprint(final Map<Fingerprint, RouterImpl> validRoutersByFingerprint)
-	{
-		this.validRoutersByFingerprint = validRoutersByFingerprint;
-	}
-
 	/**
-	 * @return the routersWithExit
+	 * Get Map with all Routers which are valid and not excluded by Config and matches the given flags.
+	 * @return a Map with valid routers
 	 */
-	public Map<Fingerprint, RouterImpl> getRoutersWithExit()
+	public Map<Fingerprint, RouterImpl> getValidRoutersByFlags(final RouterFlags flags)
 	{
-		HashMap<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>(routersWithExit);
+		HashMap<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>(validRoutersByFingerprint);
 		Iterator<Entry<Fingerprint, RouterImpl>>itRouter = result.entrySet().iterator();
 		while (itRouter.hasNext())
 		{
-			if (!TorConfig.isCountryAllowed(itRouter.next().getValue().getCountryCode()))
+			RouterImpl router = itRouter.next().getValue();
+			if (!TorConfig.isCountryAllowed(router.getCountryCode()))
 			{
 				itRouter.remove();
+			}
+			else
+			{
+				if (!router.getRouterFlags().match(flags))
+				{
+					itRouter.remove();
+				}
 			}
 		}
 		return result;
 	}
 
-	/**
-	 * @param routersWithExit
-	 *            the routersWithExit to set
-	 */
-	public void setRoutersWithExit(final Map<Fingerprint, RouterImpl> routersWithExit)
-	{
-		this.routersWithExit = routersWithExit;
-	}
-
-	/**
-	 * @return the fastRouters
-	 */
-	public Map<Fingerprint, RouterImpl> getFastRouters()
-	{
-		return fastRouters;
-	}
-
-	/**
-	 * @param fastRouters
-	 *            the fastRouters to set
-	 */
-	public void setFastRouters(Map<Fingerprint, RouterImpl> fastRouters)
-	{
-		this.fastRouters = fastRouters;
-	}
-
-	/**
-	 * @return the stableRouters
-	 */
-	public Map<Fingerprint, RouterImpl> getStableRouters()
-	{
-		return stableRouters;
-	}
-
-	/**
-	 * @param stableRouters
-	 *            the stableRouters to set
-	 */
-	public void setStableRouters(Map<Fingerprint, RouterImpl> stableRouters)
-	{
-		this.stableRouters = stableRouters;
-	}
-
-	/**
-	 * @return the stableAndFastRouters
-	 */
-	public Map<Fingerprint, RouterImpl> getStableAndFastRouters()
-	{
-		return stableAndFastRouters;
-	}
-
-	/**
-	 * @param stableAndFastRouters
-	 *            the stableAndFastRouters to set
-	 */
-	public void setStableAndFastRouters(final Map<Fingerprint, RouterImpl> stableAndFastRouters)
-	{
-		this.stableAndFastRouters = stableAndFastRouters;
-	}
-
-	/**
-	 * @return the guardRouters
-	 */
-	public Map<Fingerprint, RouterImpl> getGuardRouters()
-	{
-		return guardRouters;
-	}
-
-	/**
-	 * @param guardRouters
-	 *            the guardRouters to set
-	 */
-	public void setGuardRouters(final Map<Fingerprint, RouterImpl> guardRouters)
-	{
-		this.guardRouters = guardRouters;
-	}
 	/**
 	 * Is the requested destination a dir router?
 	 * @param sp {@link TCPStreamProperties} containing the destination infos

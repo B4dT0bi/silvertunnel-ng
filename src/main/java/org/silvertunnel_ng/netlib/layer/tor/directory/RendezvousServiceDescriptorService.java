@@ -137,7 +137,7 @@ public class RendezvousServiceDescriptorService
 
 				// try the routers/hidden service directory servers that are
 				// responsible for the descriptorId
-				final Collection<RouterImpl> routers = directory.getThreeHiddenDirectoryServersWithFingerpringGreaterThan(descriptorIdAsFingerprint);
+				final Collection<RouterImpl> routers = directory.getThreeHiddenDirectoryServersWithFingerprintGreaterThan(descriptorIdAsFingerprint);
 				for (final RouterImpl r : routers)
 				{
 					TcpipNetAddress dirAddress = r.getDirAddress();
@@ -224,7 +224,7 @@ public class RendezvousServiceDescriptorService
 				// try to post the descriptor to hidden service directory
 				// servers that are responsible for the descriptorId -
 				// do it in parallel
-				final Collection<RouterImpl> routers = directory.getThreeHiddenDirectoryServersWithFingerpringGreaterThan(descriptorIdAsFingerprint);
+				final Collection<RouterImpl> routers = directory.getThreeHiddenDirectoryServersWithFingerprintGreaterThan(descriptorIdAsFingerprint);
 				for (final RouterImpl ro : routers)
 				{
 					final RouterImpl r = ro;

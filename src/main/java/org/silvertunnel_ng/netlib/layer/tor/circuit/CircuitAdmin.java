@@ -54,6 +54,7 @@ import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorEventService;
 import org.silvertunnel_ng.netlib.layer.tor.directory.Directory;
+import org.silvertunnel_ng.netlib.layer.tor.directory.RouterFlags;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
@@ -397,8 +398,17 @@ public class CircuitAdmin
 
 				// determine suitable servers
 				final Map<Fingerprint, RouterImpl> suitableServerFingerprints = new HashMap<Fingerprint, RouterImpl>();
-				//for (final RouterImpl r : validRoutersByFingerprint.values())
-				for (final RouterImpl r : directory.getRoutersWithExit().values())
+				RouterFlags flags = new RouterFlags();
+				if (sp.isFastRoute())
+				{
+					flags.setFast(true);
+				}
+				if (sp.isStableRoute())
+				{
+					flags.setStable(true);
+				}
+				flags.setExit(true);
+				for (final RouterImpl r : directory.getValidRoutersByFlags(flags).values())
 				{
 					// exit server must be trusted
 					if (r.exitPolicyAccepts(sp.getAddr(), sp.getPort()) && (sp.isUntrustedExitAllowed() || r.isDirv2Exit()))

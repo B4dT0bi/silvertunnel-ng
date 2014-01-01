@@ -321,7 +321,7 @@ class TorBackgroundMgmtThread extends Thread
 	public void close()
 	{
 		// stop sub-thread
-		directoryManagerThread.setStopped(true);
+		directoryManagerThread.setStopped();
 		directoryManagerThread.interrupt();
 		// stop this thread
 		this.stopped = true;
