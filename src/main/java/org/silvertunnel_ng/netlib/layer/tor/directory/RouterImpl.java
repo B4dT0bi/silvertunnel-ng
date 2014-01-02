@@ -137,9 +137,9 @@ public final class RouterImpl implements Router, Cloneable
 	/** internal Server-Ranking data. */
 	private float rankingIndex;
 	/** see updateServerRanking(). */
-	private static final int highBandwidth = 2097152;
+	private static final int HIGH_BANDWIDTH = 2097152;
 	/** see updateServerRanking(). */
-	private static final float alpha = 0.6f;
+	private static final float ALPHA = 0.6f;
 	/**
 	 * coefficient to decrease server ranking if the server fails to respond in
 	 * time.
@@ -706,8 +706,8 @@ public final class RouterImpl implements Router, Cloneable
 	 */
 	private void updateServerRanking()
 	{
-		final float rankingFromDirectory = (Math.min(1, uptime / 86400) + Math.min(1, (bandwidthAvg * alpha + bandwidthObserved * (1 - alpha))
-				/ highBandwidth)) / 2; // 86400 is uptime of 24h
+		final float rankingFromDirectory = (Math.min(1, uptime / 86400) + Math.min(1, (bandwidthAvg * ALPHA + bandwidthObserved * (1 - ALPHA))
+				/ HIGH_BANDWIDTH)) / 2; // 86400 is uptime of 24h
 		// build over-all ranking from old value (if available) and new
 		if (rankingIndex < 0)
 		{

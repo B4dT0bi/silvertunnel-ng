@@ -34,7 +34,7 @@ public class NetSocket2Socket extends Socket
 {
 	private final NetSocket2SocketImpl netSocket2SocketImpl;
 
-	public NetSocket2Socket(NetSocket netSocket) throws IOException
+	public NetSocket2Socket(final NetSocket netSocket) throws IOException
 	{
 		this(new NetSocket2SocketImpl(netSocket));
 
@@ -46,8 +46,7 @@ public class NetSocket2Socket extends Socket
 		connect(new InetSocketAddress(dummyInetAddress, dummyPort));
 	}
 
-	private NetSocket2Socket(NetSocket2SocketImpl netSocket2SocketImpl)
-			throws IOException
+	private NetSocket2Socket(final NetSocket2SocketImpl netSocket2SocketImpl) throws IOException
 	{
 		super(netSocket2SocketImpl);
 		this.netSocket2SocketImpl = netSocket2SocketImpl;
@@ -58,7 +57,7 @@ public class NetSocket2Socket extends Socket
 	 * 
 	 * @param netSocket
 	 */
-	public void setNetSocket(NetSocket newNetSocket)
+	public void setNetSocket(final NetSocket newNetSocket)
 	{
 		netSocket2SocketImpl.setNetSocket(newNetSocket);
 	}

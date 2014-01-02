@@ -184,7 +184,7 @@ public class ProgressSource
 		progress = latestProgress;
 		expected = expectedProgress;
 
-		if (connected() == false)
+		if (!connected())
 		{
 			state = State.CONNECTED;
 		}

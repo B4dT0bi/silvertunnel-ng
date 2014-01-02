@@ -230,25 +230,25 @@ public class HeaderParser
 		return findValue(key, null);
 	}
 
-	public String findValue(String k, String Default)
+	public String findValue(String key, String defaultValue)
 	{
-		if (k == null)
+		if (key == null)
 		{
-			return Default;
+			return defaultValue;
 		}
-		k = k.toLowerCase();
+		key = key.toLowerCase();
 		for (int i = 0; i < asize; ++i)
 		{
 			if (tab[i][0] == null)
 			{
-				return Default;
+				return defaultValue;
 			}
-			else if (k.equals(tab[i][0]))
+			else if (key.equals(tab[i][0]))
 			{
 				return tab[i][1];
 			}
 		}
-		return Default;
+		return defaultValue;
 	}
 
 	class ParserIterator implements Iterator<Object>

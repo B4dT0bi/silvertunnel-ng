@@ -132,15 +132,15 @@ public final class TorRemoteTest extends TorRemoteAbstractTest
 
 	private static final String BEGIN = "Begin";
 	private static final String END = "enD";
-	private static final byte[] HTTPTEST_TESTFILE_CONTENT_testfile100000bytes = ByteArrayUtil.getByteArray(	BEGIN,
+	private static final byte[] HTTPTEST_TESTFILE_CONTENT_100_KBYTES = ByteArrayUtil.getByteArray(	BEGIN,
 																											100000 - BEGIN.length() - END.length(),
 																											END);
-	private static final byte[] HTTPTEST_TESTFILE_CONTENT_testfile1000000bytes = ByteArrayUtil
-			.concatByteArrays(	HTTPTEST_TESTFILE_CONTENT_testfile100000bytes, HTTPTEST_TESTFILE_CONTENT_testfile100000bytes,
-								HTTPTEST_TESTFILE_CONTENT_testfile100000bytes, HTTPTEST_TESTFILE_CONTENT_testfile100000bytes,
-								HTTPTEST_TESTFILE_CONTENT_testfile100000bytes, HTTPTEST_TESTFILE_CONTENT_testfile100000bytes,
-								HTTPTEST_TESTFILE_CONTENT_testfile100000bytes, HTTPTEST_TESTFILE_CONTENT_testfile100000bytes,
-								HTTPTEST_TESTFILE_CONTENT_testfile100000bytes, HTTPTEST_TESTFILE_CONTENT_testfile100000bytes);
+	private static final byte[] HTTPTEST_TESTFILE_CONTENT_1_MBYTE = ByteArrayUtil
+			.concatByteArrays(	HTTPTEST_TESTFILE_CONTENT_100_KBYTES, HTTPTEST_TESTFILE_CONTENT_100_KBYTES,
+								HTTPTEST_TESTFILE_CONTENT_100_KBYTES, HTTPTEST_TESTFILE_CONTENT_100_KBYTES,
+								HTTPTEST_TESTFILE_CONTENT_100_KBYTES, HTTPTEST_TESTFILE_CONTENT_100_KBYTES,
+								HTTPTEST_TESTFILE_CONTENT_100_KBYTES, HTTPTEST_TESTFILE_CONTENT_100_KBYTES,
+								HTTPTEST_TESTFILE_CONTENT_100_KBYTES, HTTPTEST_TESTFILE_CONTENT_100_KBYTES);
 
 	/**
 	 * Download 100KB and check the speed.
@@ -158,7 +158,7 @@ public final class TorRemoteTest extends TorRemoteAbstractTest
 		HttpUtil.getInstance();
 		// communicate with the remote side
 		final byte[] httpResponse = HttpUtil.get(topSocket, HttpUtil.HTTPTEST_SERVER_NETADDRESS, "/httptest/testfile100000bytes.bin", 20000);
-		AssertJUnit.assertArrayEquals(HTTPTEST_TESTFILE_CONTENT_testfile100000bytes, httpResponse);
+		AssertJUnit.assertArrayEquals(HTTPTEST_TESTFILE_CONTENT_100_KBYTES, httpResponse);
 		topSocket.close();
 	}
 
@@ -178,7 +178,7 @@ public final class TorRemoteTest extends TorRemoteAbstractTest
 		HttpUtil.getInstance();
 		// communicate with the remote side
 		final byte[] httpResponse = HttpUtil.get(topSocket, HttpUtil.HTTPTEST_SERVER_NETADDRESS, "/httptest/testfile1000000bytes.bin", 100000);
-		AssertJUnit.assertArrayEquals(HTTPTEST_TESTFILE_CONTENT_testfile1000000bytes, httpResponse);
+		AssertJUnit.assertArrayEquals(HTTPTEST_TESTFILE_CONTENT_1_MBYTE, httpResponse);
 		topSocket.close();
 	}
 

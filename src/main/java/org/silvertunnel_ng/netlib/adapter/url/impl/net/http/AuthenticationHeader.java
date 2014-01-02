@@ -262,7 +262,7 @@ public class AuthenticationHeader
 	}
 
 	/**
-	 * return the name of the preferred scheme
+	 * return the name of the preferred scheme.
 	 */
 	public String scheme()
 	{

@@ -177,7 +177,7 @@ public class CheckNetConnectivity
 		return test1Result && test2Result && test3Result && test4Result;
 	}
 
-	private static final void print(String s)
+	private static void print(final String s)
 	{
 		System.out.println(s);
 	}

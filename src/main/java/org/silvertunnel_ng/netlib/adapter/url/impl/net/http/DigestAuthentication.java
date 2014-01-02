@@ -48,9 +48,9 @@ class DigestAuthentication extends AuthenticationInfo
 	private static final long serialVersionUID = 100L;
 
 	// import static sun.net.www.protocol.http.HttpURLConnection.HTTP_CONNECT;
-	static String HTTP_CONNECT = "CONNECT";
+	protected static final String HTTP_CONNECT = "CONNECT";
 
-	static final char DIGEST_AUTH = 'D';
+	protected static final char DIGEST_AUTH = 'D';
 
 	private String authMethod;
 

@@ -53,9 +53,9 @@ import javax.xml.bind.DatatypeConverter;
  */
 public class Encoding
 {
-
+	/** allowed hex characters. */
 	private static final String HEX_CHARS = "0123456789abcdef";
-	private static String[] HEX_LOOKUP = { "00", "01", "02", "03", "04", "05",
+	private static final String[] HEX_LOOKUP = { "00", "01", "02", "03", "04", "05",
 			"06", "07", "08", "09", "0a", "0b", "0c", "0d", "0e", "0f", "10",
 			"11", "12", "13", "14", "15", "16", "17", "18", "19", "1a", "1b",
 			"1c", "1d", "1e", "1f", "20", "21", "22", "23", "24", "25", "26",
@@ -112,10 +112,8 @@ public class Encoding
 															// '~', 'DEL'
 	};
 
-	private static final Pattern HIDDENADDRESS_X_PATTERN = Parsing
-			.compileRegexPattern("(.*?)\\.");
-	private static final Pattern HIDDENADDRESS_Y_PATTERN = Parsing
-			.compileRegexPattern("(.*?)\\.");
+	private static final Pattern HIDDENADDRESS_X_PATTERN = Parsing.compileRegexPattern("(.*?)\\.");
+	private static final Pattern HIDDENADDRESS_Y_PATTERN = Parsing.compileRegexPattern("(.*?)\\.");
 
 	/**
 	 * Converts a byte array to hex string.

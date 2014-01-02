@@ -505,8 +505,8 @@ public final class Circuit
 		// determine rendezvous point router,
 		// try both byte order variants - TODO: find the correct way
 		final TcpipNetAddress rendezvousPointTcpipNetAddress1 = new TcpipNetAddress(rendezvousPointAddress, rendezvousPointPort);
-		final RouterImpl rendezvousServer1 = directory.getValidRouterByIpAddressAndOnionPort(	rendezvousPointTcpipNetAddress1.getIpNetAddress(),
-																								rendezvousPointTcpipNetAddress1.getPort());
+		final RouterImpl rendezvousServer1 = directory.getValidRouterByIpAddressAndOnionPort(rendezvousPointTcpipNetAddress1.getIpNetAddress(),
+																							 rendezvousPointTcpipNetAddress1.getPort());
 		if (LOG.isDebugEnabled())
 		{
 			LOG.debug("rendezvousServer1=" + rendezvousServer1);
@@ -518,8 +518,8 @@ public final class Circuit
 		rendezvousPointAddress2[2] = rendezvousPointAddress[1];
 		rendezvousPointAddress2[3] = rendezvousPointAddress[0];
 		final TcpipNetAddress rendezvousPointTcpipNetAddress2 = new TcpipNetAddress(rendezvousPointAddress2, rendezvousPointPort);
-		final RouterImpl rendezvousServer2 = directory.getValidRouterByIpAddressAndOnionPort(	rendezvousPointTcpipNetAddress2.getIpNetAddress(),
-																								rendezvousPointTcpipNetAddress2.getPort());
+		final RouterImpl rendezvousServer2 = directory.getValidRouterByIpAddressAndOnionPort(rendezvousPointTcpipNetAddress2.getIpNetAddress(),
+																							 rendezvousPointTcpipNetAddress2.getPort());
 		if (LOG.isDebugEnabled())
 		{
 			LOG.debug("rendezvousServer2=" + rendezvousServer2);

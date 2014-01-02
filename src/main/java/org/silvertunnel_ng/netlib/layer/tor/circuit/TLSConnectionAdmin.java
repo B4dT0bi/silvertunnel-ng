@@ -66,7 +66,7 @@ public final class TLSConnectionAdmin
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TLSConnectionAdmin.class);
 
-	final static SecureRandom rnd = new SecureRandom();
+	protected static final SecureRandom RANDOM = new SecureRandom();
 
 	/** key=fingerprint, value=connection to this router */
 	private final Map<Fingerprint, WeakReference<TLSConnection>> connectionMap = Collections

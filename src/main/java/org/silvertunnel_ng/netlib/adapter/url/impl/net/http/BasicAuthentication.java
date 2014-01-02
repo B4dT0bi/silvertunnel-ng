@@ -57,7 +57,7 @@ class BasicAuthentication extends AuthenticationInfo
 	String auth;
 
 	/**
-	 * Create a BasicAuthentication
+	 * Create a BasicAuthentication.
 	 */
 	public BasicAuthentication(boolean isProxy, String host, int port,
 			String realm, PasswordAuthentication pw)
@@ -222,7 +222,7 @@ class BasicAuthentication extends AuthenticationInfo
 
 	/**
 	 * For Basic Authentication, there is no security information in the
-	 * response
+	 * response.
 	 */
 	@Override
 	void checkResponse(String header, String method, URL url)

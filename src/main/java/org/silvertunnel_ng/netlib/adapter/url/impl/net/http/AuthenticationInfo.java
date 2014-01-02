@@ -394,7 +394,7 @@ abstract class AuthenticationInfo extends AuthCacheValue implements Cloneable
 	}
 
 	/**
-	 * Add this authentication to the cache
+	 * Add this authentication to the cache.
 	 */
 	void addToCache()
 	{
@@ -419,7 +419,7 @@ abstract class AuthenticationInfo extends AuthCacheValue implements Cloneable
 	}
 
 	/**
-	 * Remove this authentication from the cache
+	 * Remove this authentication from the cache.
 	 */
 	void removeFromCache()
 	{
@@ -481,7 +481,7 @@ abstract class AuthenticationInfo extends AuthCacheValue implements Cloneable
 
 	/**
 	 * Check for any expected authentication information in the response from
-	 * the server
+	 * the server.
 	 */
 	abstract void checkResponse(String header, String method, URL url)
 			throws IOException;

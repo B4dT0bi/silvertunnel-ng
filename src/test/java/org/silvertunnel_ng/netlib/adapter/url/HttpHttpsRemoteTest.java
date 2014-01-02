@@ -66,19 +66,16 @@ public class HttpHttpsRemoteTest
 
 		// create lower layer (TCP/IP)
 		final NetLayer tcpipNetLayer = new TcpipNetLayer();
-		loggingTcpipNetLayer = new LoggingNetLayer(tcpipNetLayer,
-				"upper tcpip  ");
+		loggingTcpipNetLayer = new LoggingNetLayer(tcpipNetLayer, "upper tcpip  ");
 
 		// create lower layer (TLS)
 		final NetLayer tcpipNetLayer2 = new TcpipNetLayer();
-		final NetLayer loggingTcpipNetLayer2 = new LoggingNetLayer(
-				tcpipNetLayer2, "upper tcpip(tls)  ");
+		final NetLayer loggingTcpipNetLayer2 = new LoggingNetLayer(tcpipNetLayer2, "upper tcpip(tls)  ");
 		final NetLayer tlsNetLayer = new TLSNetLayer(loggingTcpipNetLayer2);
 		loggingTlsNetLayer = new LoggingNetLayer(tlsNetLayer, "upper tls  ");
 
 		// select the NetSocket implementation
-		URLGlobalUtil.setNetLayerUsedByURLStreamHandlerFactory(
-				loggingTcpipNetLayer, loggingTlsNetLayer);
+		URLGlobalUtil.setNetLayerUsedByURLStreamHandlerFactory(loggingTcpipNetLayer, loggingTlsNetLayer);
 		LOG.info("------------------------------------------------------------------------------------------------");
 	}
 
@@ -92,12 +89,9 @@ public class HttpHttpsRemoteTest
 	public void tearDown() throws Exception
 	{
 		// select the NetSocket implementation
-		final NetLayer tcpipNetLayer = NetFactory.getInstance()
-				.getNetLayerById(NetLayerIDs.TCPIP);
-		final NetLayer tlsNetLayer = NetFactory.getInstance().getNetLayerById(
-				NetLayerIDs.TLS_OVER_TCPIP);
-		URLGlobalUtil.setNetLayerUsedByURLStreamHandlerFactory(tcpipNetLayer,
-				tlsNetLayer);
+		final NetLayer tcpipNetLayer = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TCPIP);
+		final NetLayer tlsNetLayer = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TLS_OVER_TCPIP);
+		URLGlobalUtil.setNetLayerUsedByURLStreamHandlerFactory(tcpipNetLayer, tlsNetLayer);
 	}
 
 	@Test(timeOut = 100009999)
@@ -112,8 +106,7 @@ public class HttpHttpsRemoteTest
 		// receive and check HTTP response
 		final InputStream responseIs = urlConnection.getInputStream();
 		checkResponse(responseIs);
-		final long connectionCount = loggingTcpipNetLayer
-				.getConnectionEstablisedCounter() - connectionCountStart;
+		final long connectionCount = loggingTcpipNetLayer.getConnectionEstablisedCounter() - connectionCountStart;
 		assertEquals(
 				"wrong number of established connections (via logging layer) during test",
 				1, connectionCount);
@@ -124,8 +117,7 @@ public class HttpHttpsRemoteTest
 	public void testClientHttpHeaders() throws Exception
 	{
 		// action
-		final long connectionCountStart = loggingTcpipNetLayer
-				.getConnectionEstablisedCounter();
+		final long connectionCountStart = loggingTcpipNetLayer.getConnectionEstablisedCounter();
 		final String urlStr = "http://www.xhaus.com/headers";
 		final URL url = new URL(urlStr);
 		final URLConnection urlConnection = url.openConnection();
@@ -133,8 +125,7 @@ public class HttpHttpsRemoteTest
 		// receive and check HTTP response
 		final InputStream responseIs = urlConnection.getInputStream();
 		checkResponse(responseIs);
-		final long connectionCount = loggingTcpipNetLayer
-				.getConnectionEstablisedCounter() - connectionCountStart;
+		final long connectionCount = loggingTcpipNetLayer.getConnectionEstablisedCounter() - connectionCountStart;
 		assertEquals(
 				"wrong number of established connections (via logging layer) during test",
 				1, connectionCount);
@@ -144,8 +135,7 @@ public class HttpHttpsRemoteTest
 	public void testHttps() throws Exception
 	{
 		// action
-		final long connectionCountStart = loggingTlsNetLayer
-				.getConnectionEstablisedCounter();
+		final long connectionCountStart = loggingTlsNetLayer.getConnectionEstablisedCounter();
 		final String urlStr = "https://www.gmx.net/";
 		final URL url = new URL(urlStr);
 		final URLConnection urlConnection = url.openConnection();
@@ -175,12 +165,11 @@ public class HttpHttpsRemoteTest
 	// helper methods
 	// /////////////////////////////////////////////////////
 
-	private void checkResponse(InputStream is) throws Exception
+	private void checkResponse(final InputStream is) throws Exception
 	{
 		// read result/response data
 		final int MAX_BUFFER_SIZE = 100000;
-		final byte[] resultBuffer = ByteArrayUtil.readDataFromInputStream(
-				MAX_BUFFER_SIZE, is);
+		final byte[] resultBuffer = ByteArrayUtil.readDataFromInputStream(MAX_BUFFER_SIZE, is);
 		if (resultBuffer.length >= MAX_BUFFER_SIZE)
 		{
 			LOG.info("result buffer is full");

@@ -135,7 +135,7 @@ public final class DirectoryConsensusLocalTest
 	 * 
 	 * @throws Exception
 	 */
-	@Test (expectedExceptions=TorException.class)
+	@Test (expectedExceptions = TorException.class)
 	public void testParsingConsensusWithoutSignatures() throws Exception
 	{
 		// read

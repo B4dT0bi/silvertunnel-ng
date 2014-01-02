@@ -60,11 +60,11 @@ public class NetSocket2SocketImpl extends SocketImpl
 	 */
 	private NetLayer netLayer;
 
-	private final int DEFAULT_INPUTSTREAM_TIMEOUT = 60000;
+	private static final int DEFAULT_INPUTSTREAM_TIMEOUT = 60000;
 	private int inputStreamTimeout = DEFAULT_INPUTSTREAM_TIMEOUT;
-	private final Boolean DEFAULT_TCP_NODELAY = true; // false;
+	private static final Boolean DEFAULT_TCP_NODELAY = true; // false;
 	private Boolean tcpNodelay = DEFAULT_TCP_NODELAY;
-	private final Integer DEFAULT_SO_LINGER = 0;
+	private static final Integer DEFAULT_SO_LINGER = 0;
 	private Integer soLinger = DEFAULT_SO_LINGER;
 
 	private SocketTimeoutInputStream inputStream;

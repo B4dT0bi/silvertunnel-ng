@@ -78,17 +78,14 @@ public class TLSNetLayer implements NetLayer
 		final String[] enabledCipherSuites = PropertiesUtil.getAsStringArray(
 				localProperties, ENABLES_CIPHER_SUITES, null);
 
-		final Object keyManagersObj = PropertiesUtil.getAsObject(
-				localProperties, KEY_MANAGERS, null);
+		final Object keyManagersObj = PropertiesUtil.getAsObject(localProperties, KEY_MANAGERS, null);
 		KeyManager[] keyManagers = null;
-		if ((keyManagersObj != null)
-				&& (keyManagersObj instanceof KeyManager[]))
+		if ((keyManagersObj != null) && (keyManagersObj instanceof KeyManager[]))
 		{
 			keyManagers = (KeyManager[]) keyManagersObj;
 		}
 
-		final Object trustManagersObj = PropertiesUtil.getAsObject(
-				localProperties, TRUST_MANAGERS, null);
+		final Object trustManagersObj = PropertiesUtil.getAsObject(localProperties, TRUST_MANAGERS, null);
 		TrustManager[] trustManagers = null;
 		if ((trustManagersObj != null)
 				&& (trustManagersObj instanceof TrustManager[]))
@@ -97,24 +94,25 @@ public class TLSNetLayer implements NetLayer
 		}
 
 		// create TLS/SSL session
-		final boolean AUTO_CLOSE_TRUE = true;
 		TcpipNetAddress tcpidRemoteAddress = null;
-		if ((remoteAddress != null)
-				&& (remoteAddress instanceof TcpipNetAddress))
+		if ((remoteAddress != null) && (remoteAddress instanceof TcpipNetAddress))
 		{
 			tcpidRemoteAddress = (TcpipNetAddress) remoteAddress;
 		}
 		final NetSocket higherLayerSocket = TLSNetSocketUtil.createTLSSocket(
-				lowerLayerSocket, tcpidRemoteAddress, AUTO_CLOSE_TRUE,
-				enabledCipherSuites, keyManagers, trustManagers);
+				lowerLayerSocket, 
+				tcpidRemoteAddress, 
+				true, // auto close
+				enabledCipherSuites, 
+				keyManagers, 
+				trustManagers);
 
 		return higherLayerSocket;
 	}
 
 	/** @see NetLayer#createNetServerSocket(Map, NetAddress) */
 	@Override
-	public NetServerSocket createNetServerSocket(
-			Map<String, Object> properties, NetAddress localListenAddress)
+	public NetServerSocket createNetServerSocket(final Map<String, Object> properties, final NetAddress localListenAddress)
 	{
 		throw new UnsupportedOperationException();
 	}

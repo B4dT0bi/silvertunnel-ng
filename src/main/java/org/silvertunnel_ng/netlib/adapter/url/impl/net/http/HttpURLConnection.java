@@ -74,7 +74,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 	/** */
 	private static final org.slf4j.Logger LOG = LoggerFactory.getLogger("sun.net.www.protocol.http.HttpURLConnection");
 
-	static String HTTP_CONNECT = "CONNECT";
+	protected static final String HTTP_CONNECT = "CONNECT";
 
 	static final String version;
 	public static final String userAgent;

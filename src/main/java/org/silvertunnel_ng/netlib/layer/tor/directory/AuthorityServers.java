@@ -86,7 +86,7 @@ public class AuthorityServers
 	 * "Couldn't parse internal dirserver line %s", dirservers[i]); } } }
 	 */
 
-	private static final String[] rawData = {
+	private static final String[] RAW_DATA = {
 			"moria1 orport=9101 no-v2 "
 					+ "v3ident=D586D18309DED4CD6D57C18FDB97EFA96D330566 "
 					+ "128.31.0.39:9131 9695 DFC3 5FFE B861 329B 9F1A B04C 4639 7020 CE31",
@@ -162,7 +162,7 @@ public class AuthorityServers
 	{
 		final Collection<RouterImpl> result = new ArrayList<RouterImpl>();
 		// try to parse the separate authority server entries
-		for (final String singleRawData : rawData)
+		for (final String singleRawData : RAW_DATA)
 		{
 			// one server
 			try

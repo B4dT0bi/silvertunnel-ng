@@ -15,9 +15,9 @@ import java.util.List;
 public class ASN1Parser
 {
 
-	private final static int ASN1_TAG_SEQUENCE = 16;
-	private final static int ASN1_TAG_INTEGER = 2;
-	private final static int ASN1_TAG_BITSTRING = 3;
+	private static final int ASN1_TAG_SEQUENCE = 16;
+	private static final int ASN1_TAG_INTEGER = 2;
+	private static final int ASN1_TAG_BITSTRING = 3;
 
 	static interface ASN1Object
 	{

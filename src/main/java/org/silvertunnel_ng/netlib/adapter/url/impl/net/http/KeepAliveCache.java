@@ -428,7 +428,7 @@ class KeepAliveKey
 	@Override
 	public boolean equals(final Object obj)
 	{
-		if ((obj instanceof KeepAliveKey) == false)
+		if (!(obj instanceof KeepAliveKey))
 		{
 			return false;
 		}

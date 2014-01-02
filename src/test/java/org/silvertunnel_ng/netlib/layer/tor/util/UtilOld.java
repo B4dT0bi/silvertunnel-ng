@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper method for Tor.
+ * Helper method for Tor. (this is only used for verifying the new UtcParser.)
  * 
  * @author hapke
  * @author Tobias Boese
@@ -51,7 +51,7 @@ public final class UtilOld
 	 * 
 	 * After executing utcTimestampDateFormat is initialized.
 	 */
-	private synchronized static void initUtcTimestampIfNeeded()
+	private static synchronized void initUtcTimestampIfNeeded()
 	{
 		if (utcTimestampDateFormat == null)
 		{

@@ -67,7 +67,7 @@ public class AuthorityKeyCertificatesLocalTest
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(AuthorityKeyCertificatesLocalTest.class);
 
-	private static Date DATE_20091231 = Util.parseUtcTimestamp("2009-12-31 00:00:00");
+	private static final Date DATE_20091231 = Util.parseUtcTimestamp("2009-12-31 00:00:00");
 
 	@BeforeClass
 	public static void setUpClass() throws Exception

@@ -218,7 +218,7 @@ public class TLSConnection
 			// consider
 			// the MSB as long as we are in client mode (see main-tor-spec.txt,
 			// Section 5.1)
-			newId = TLSConnectionAdmin.rnd.nextInt() & 0xffff; // & 0x7fff;
+			newId = TLSConnectionAdmin.RANDOM.nextInt() & 0xffff; // & 0x7fff;
 
 			if (circuitMap.containsKey(Integer.valueOf(newId)))
 			{

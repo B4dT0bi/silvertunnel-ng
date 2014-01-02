@@ -21,8 +21,10 @@ import org.silvertunnel_ng.netlib.layer.tor.util.ASN1Parser.ASN1Sequence;
 
 public class RSAKeyEncoder
 {
-	private final static String HEADER = "-----BEGIN RSA PUBLIC KEY-----";
-	private final static String FOOTER = "-----END RSA PUBLIC KEY-----";
+	/** RSA Public key header. */
+	private static final String HEADER = "-----BEGIN RSA PUBLIC KEY-----";
+	/** RSA Public key footer. */
+	private static final String FOOTER = "-----END RSA PUBLIC KEY-----";
 
 	private final ASN1Parser asn1Parser = new ASN1Parser();
 
