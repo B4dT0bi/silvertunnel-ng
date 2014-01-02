@@ -282,6 +282,9 @@ public final class RouterFlagsLocalTest
 		
 		assertEquals(flags, flags2);
 	}
+	/**
+	 * Testing all possibilities of all flags.
+	 */
 	@Test
 	public void testAllFlags()
 	{
@@ -337,7 +340,7 @@ public final class RouterFlagsLocalTest
 		{
 			list[pos] = false;
 		}
-		else if (list[pos] == false)
+		else if (!list[pos])
 		{
 			list[pos] = true;
 		}

@@ -50,9 +50,12 @@ public final class ByteUtils
 	 */
 	public static byte[] longToBytes(final long value)
 	{
-		longBuffer.clear();
-		longBuffer.putLong(value);
-		return longBuffer.array();
+		synchronized (longBuffer)
+		{
+			longBuffer.clear();
+			longBuffer.putLong(value);
+			return longBuffer.array();			
+		}
 	}
 
 	/**
@@ -78,10 +81,13 @@ public final class ByteUtils
 	 */
 	public static long bytesToLong(final byte[] value, final int offset)
 	{
-		longBuffer.clear();
-		longBuffer.put(value, offset, 8);
-		longBuffer.flip();
-		return longBuffer.getLong();
+		synchronized (longBuffer) 
+		{
+			longBuffer.clear();
+			longBuffer.put(value, offset, 8);
+			longBuffer.flip();
+			return longBuffer.getLong();
+		}
 	}
 
 	/**
@@ -93,13 +99,16 @@ public final class ByteUtils
 	 */
 	public static byte[] intToBytes(final int value)
 	{
-		intBuffer.clear();
-		intBuffer.putInt(value);
-		return intBuffer.array();
+		synchronized (intBuffer) 
+		{
+			intBuffer.clear();
+			intBuffer.putInt(value);
+			return intBuffer.array();
+		}
 	}
 
 	/**
-	 * Converts a byte array to a int value.
+	 * Converts a byte array to an int value.
 	 * 
 	 * @param value
 	 *            the byte array
@@ -109,9 +118,78 @@ public final class ByteUtils
 	 */
 	public static int bytesToInt(final byte[] value, final int offset)
 	{
-		intBuffer.clear();
-		intBuffer.put(value, offset, 4);
-		intBuffer.flip();
-		return intBuffer.getInt();
+		synchronized (intBuffer) 
+		{
+			intBuffer.clear();
+			intBuffer.put(value, offset, 4);
+			intBuffer.flip();
+			return intBuffer.getInt();
+		}
+	}
+	/**
+	 * Extract the Booleans from a byte. 
+	 * (which have been saved with getByteFromBooleans)
+	 * 
+	 * @param data the byte containing the information about the Booleans
+	 * @return an array of 4 Booleans
+	 */
+	public static Boolean [] getBooleansFromByte(final byte data)
+	{
+		short tmp = (short) (data & 0xff);
+		Boolean [] result = new Boolean[4];
+		result[0] = (tmp & 0x03) == 0x02 ? null : (tmp & 0x03) == 0x01;
+		result[1] = (tmp & 0x0c) == 0x08 ? null : (tmp & 0x0c) == 0x04;
+		result[2] = (tmp & 0x30) == 0x20 ? null : (tmp & 0x30) == 0x10;
+		result[3] = (tmp & 0xc0) == 0x80 ? null : (tmp & 0xc0) == 0x40;
+		return result;
+	}
+	/**
+	 * Convert max. 4 Boolean values to a byte.
+	 * 
+	 * For saving 1 Boolean value 2 bits are used.
+	 * 00 = false
+	 * 01 = true
+	 * 10 = null
+	 * 
+	 * @param value (mandatory) Boolean value
+	 * @param optValues (optional) Boolean values (max. 3)
+	 * @return a byte
+	 */
+	public static byte getByteFromBooleans(final Boolean value, final Boolean ... optValues)
+	{
+		int result = 0;
+		if (value == null)
+		{
+			result += 0x02; // 0b00000010
+		}
+		else if (value)
+		{
+			result += 0x01; // 0b00000001
+		}
+		if (optValues.length < 1 || optValues[0] == null)
+		{
+			result += 0x08; // 0b00001000
+		}
+		else if (optValues[0])
+		{
+			result += 0x04; // 0b00000100 
+		}
+		if (optValues.length < 2 || optValues[1] == null)
+		{
+			result += 0x20; // 0b00100000
+		}
+		else if (optValues[1])
+		{
+			result += 0x10; // 0b00010000
+		}
+		if (optValues.length < 3 || optValues[2] == null)
+		{
+			result += 0x80; // 0b10000000
+		}
+		else if (optValues[2])
+		{
+			result += 0x40; // 0b01000000
+		}
+		return (byte) result;
 	}
 }

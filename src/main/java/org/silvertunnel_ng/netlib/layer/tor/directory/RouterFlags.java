@@ -17,6 +17,8 @@
  */
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
+import org.silvertunnel_ng.netlib.tool.ByteUtils;
+
 
 /**
  * RouterFlags are used for determining the Status of the router (eg. Running, Stable, Fast, etc)
@@ -124,22 +126,22 @@ public final class RouterFlags
 	 */
 	public RouterFlags(final byte [] data)
 	{
-		Boolean [] flags1 = getValue(data[0]);
+		Boolean [] flags1 = ByteUtils.getBooleansFromByte(data[0]);
 		running = flags1[0];
 		exit = flags1[1];
 		authority = flags1[2];
 		fast = flags1[3];
-		Boolean [] flags2 = getValue(data[1]);
+		Boolean [] flags2 = ByteUtils.getBooleansFromByte(data[1]);
 		guard = flags2[0];
 		stable = flags2[1];
 		named = flags2[2];
 		unnamed = flags2[3];
-		Boolean [] flags3 = getValue(data[2]);
+		Boolean [] flags3 = ByteUtils.getBooleansFromByte(data[2]);
 		v2Dir = flags3[0];
 		valid = flags3[1];
 		hSDir = flags3[2];
 		badDirectory = flags3[3];
-		Boolean [] flags4 = getValue(data[3]);
+		Boolean [] flags4 = ByteUtils.getBooleansFromByte(data[3]);
 		badExit = flags4[0];
 	}
 	/**
@@ -169,70 +171,11 @@ public final class RouterFlags
 	protected byte [] toByteArray()
 	{
 		byte [] result = new byte[4];
-		result[0] = getValue(running, exit, authority, fast);
-		result[1] = getValue(guard, stable, named, unnamed);
-		result[2] = getValue(v2Dir, valid, hSDir, badDirectory);
-		result[3] = getValue(badExit);
+		result[0] = ByteUtils.getByteFromBooleans(running, exit, authority, fast);
+		result[1] = ByteUtils.getByteFromBooleans(guard, stable, named, unnamed);
+		result[2] = ByteUtils.getByteFromBooleans(v2Dir, valid, hSDir, badDirectory);
+		result[3] = ByteUtils.getByteFromBooleans(badExit);
 		return result;
-	}
-	private Boolean [] getValue(final byte data)
-	{
-		short tmp = (short) (data & 0xff);
-		Boolean [] result = new Boolean[4];
-		result[0] = (tmp & 0x03) == 0x02 ? null : (tmp & 0x03) == 0x01;
-		result[1] = (tmp & 0x0c) == 0x08 ? null : (tmp & 0x0c) == 0x04;
-		result[2] = (tmp & 0x30) == 0x20 ? null : (tmp & 0x30) == 0x10;
-		result[3] = (tmp & 0xc0) == 0x80 ? null : (tmp & 0xc0) == 0x70;
-		return result;
-	}
-	/**
-	 * Convert the given Boolean values to a byte.
-	 * 
-	 * For saving 1 Boolean value 2 bits are used.
-	 * 00 = false
-	 * 01 = true
-	 * 10 = null
-	 * 
-	 * @param value mandatory Boolean value
-	 * @param optValues optional Boolean values (max. 3)
-	 * @return a byte
-	 */
-	private byte getValue(final Boolean value, final Boolean ... optValues)
-	{
-		int result = 0;
-		if (value == null)
-		{
-			result += 0x02; // 0b00000010
-		}
-		else if (value)
-		{
-			result += 0x01; // 0b00000001
-		}
-		if (optValues.length < 1 || optValues[0] == null)
-		{
-			result += 0x08; // 0b00001000
-		}
-		else if (optValues[0])
-		{
-			result += 0x04; // 0b00000100 
-		}
-		if (optValues.length < 2 || optValues[1] == null)
-		{
-			result += 0x20; // 0b00100000
-		}
-		else if (optValues[1])
-		{
-			result += 0x10; // 0b00010000
-		}
-		if (optValues.length < 3 || optValues[2] == null)
-		{
-			result += 0x80;
-		}
-		else if (optValues[2])
-		{
-			result += 0x70; 
-		}
-		return (byte) result;
 	}
 	/**
 	 * @return the running as Boolean (can also be null)
@@ -750,7 +693,7 @@ public final class RouterFlags
 			buffer.append(IDENTIFIER_DIRECTORY);
 			buffer.append(' ');
 		}
-		return buffer.toString();
+		return buffer.toString().trim();
 	}
 	/** Identifier for Authority. */
 	private static final String IDENTIFIER_AUTHORITY = "Authority";
