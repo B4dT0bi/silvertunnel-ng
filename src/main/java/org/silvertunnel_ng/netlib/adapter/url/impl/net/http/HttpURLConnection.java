@@ -1511,7 +1511,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 				}
 				catch (final Exception exc)
 				{
-					LOG.debug("got Exception while parsing content-length : {}", exc, exc);
+//					LOG.debug("got Exception while parsing content-length : {}", exc, exc);
 				}
 				
 

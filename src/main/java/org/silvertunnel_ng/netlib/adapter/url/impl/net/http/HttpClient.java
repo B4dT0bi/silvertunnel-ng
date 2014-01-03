@@ -779,7 +779,8 @@ public class HttpClient extends NetworkClient
 			}
 			catch (final Exception e)
 			{
-				LOG.debug("got Exception while trying to retrieve content-length value: {}", e, e);
+				cl = -1;
+//				LOG.debug("got Exception while trying to retrieve content-length value: {}", e, e);
 			}
 
 			final String requestLine = requests.getKey(0);
