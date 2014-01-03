@@ -50,12 +50,27 @@ public final class RouterFlagsLocalTest
 		assertNull(flags.getFast());
 		assertNull(flags.getGuard());
 		assertNull(flags.getHSDir());
+		assertNull(flags.getHibernating());
 		assertNull(flags.getNamed());
 		assertNull(flags.getRunning());
 		assertNull(flags.getStable());
 		assertNull(flags.getUnnamed());
 		assertNull(flags.getV2Dir());
 		assertNull(flags.getValid());
+		assertFalse(flags.isAuthority());
+		assertFalse(flags.isBadDirectory());
+		assertFalse(flags.isBadExit());
+		assertFalse(flags.isExit());
+		assertFalse(flags.isFast());
+		assertFalse(flags.isGuard());
+		assertFalse(flags.isHSDir());
+		assertFalse(flags.isHibernating());
+		assertFalse(flags.isNamed());
+		assertFalse(flags.isRunning());
+		assertFalse(flags.isStable());
+		assertFalse(flags.isUnnamed());
+		assertFalse(flags.isV2Dir());
+		assertFalse(flags.isValid());
 	}
 
 	/**
@@ -73,6 +88,7 @@ public final class RouterFlagsLocalTest
 		assertNotNull(flags.getFast());
 		assertNotNull(flags.getGuard());
 		assertNotNull(flags.getHSDir());
+		assertNotNull(flags.getHibernating());
 		assertNotNull(flags.getNamed());
 		assertNotNull(flags.getRunning());
 		assertNotNull(flags.getStable());
@@ -86,6 +102,7 @@ public final class RouterFlagsLocalTest
 		assertTrue(flags.getFast());
 		assertTrue(flags.getGuard());
 		assertTrue(flags.getHSDir());
+		assertTrue(flags.getHibernating());
 		assertTrue(flags.getNamed());
 		assertTrue(flags.getRunning());
 		assertTrue(flags.getStable());
@@ -109,6 +126,7 @@ public final class RouterFlagsLocalTest
 		assertNotNull(flags.getFast());
 		assertNotNull(flags.getGuard());
 		assertNotNull(flags.getHSDir());
+		assertNotNull(flags.getHibernating());
 		assertNotNull(flags.getNamed());
 		assertNotNull(flags.getRunning());
 		assertNotNull(flags.getStable());
@@ -122,6 +140,7 @@ public final class RouterFlagsLocalTest
 		assertFalse(flags.getFast());
 		assertFalse(flags.getGuard());
 		assertFalse(flags.getHSDir());
+		assertFalse(flags.getHibernating());
 		assertFalse(flags.getNamed());
 		assertFalse(flags.getRunning());
 		assertFalse(flags.getStable());
@@ -151,6 +170,7 @@ public final class RouterFlagsLocalTest
 		assertNotNull(flagExit.getUnnamed());
 		assertNotNull(flagExit.getV2Dir());
 		assertNotNull(flagExit.getValid());
+		assertNull(flagExit.getHibernating());
 		assertFalse(flagExit.getAuthority());
 		assertFalse(flagExit.getBadDirectory());
 		assertFalse(flagExit.getBadExit());
@@ -187,6 +207,7 @@ public final class RouterFlagsLocalTest
 		assertNotNull(flag.getUnnamed());
 		assertNotNull(flag.getV2Dir());
 		assertNotNull(flag.getValid());
+		assertNull(flag.getHibernating());
 		assertTrue(flag.getAuthority());
 		assertFalse(flag.getBadDirectory());
 		assertFalse(flag.getBadExit());
@@ -223,6 +244,7 @@ public final class RouterFlagsLocalTest
 		assertNotNull(flag.getUnnamed());
 		assertNotNull(flag.getV2Dir());
 		assertNotNull(flag.getValid());
+		assertNull(flag.getHibernating());
 		assertFalse(flag.getAuthority());
 		assertFalse(flag.getBadDirectory());
 		assertFalse(flag.getBadExit());
@@ -254,6 +276,7 @@ public final class RouterFlagsLocalTest
 		assertNull(flags.getFast());
 		assertNull(flags.getGuard());
 		assertNull(flags.getHSDir());
+		assertNull(flags.getHibernating());
 		assertNull(flags.getNamed());
 		assertNull(flags.getRunning());
 		assertNull(flags.getStable());
@@ -273,6 +296,7 @@ public final class RouterFlagsLocalTest
 		assertNull(flags2.getFast());
 		assertNull(flags2.getGuard());
 		assertNull(flags2.getHSDir());
+		assertNull(flags2.getHibernating());
 		assertNull(flags2.getNamed());
 		assertNull(flags2.getRunning());
 		assertNull(flags2.getStable());
@@ -288,7 +312,7 @@ public final class RouterFlagsLocalTest
 	@Test
 	public void testAllFlags()
 	{
-		Boolean [] list = new Boolean [13]; // we have 13 flags to test
+		Boolean [] list = new Boolean [14]; // we have 14 flags to test
 		shiftBoolean(list, 0);
 		while (!isNull(list))
 		{
@@ -306,6 +330,7 @@ public final class RouterFlagsLocalTest
 			flags1.setUnnamed(list[10]);
 			flags1.setV2Dir(list[11]);
 			flags1.setValid(list[12]);
+			flags1.setHibernating(list[13]);
 			
 			RouterFlags flags2 = new RouterFlags(flags1.toByteArray());
 			assertEquals(flags1, flags2);

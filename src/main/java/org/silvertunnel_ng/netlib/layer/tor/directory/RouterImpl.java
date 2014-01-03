@@ -568,7 +568,7 @@ public final class RouterImpl implements Router, Cloneable
 								}
 							}
 						case HIBERNATING:
-							// TODO : add flag that router is hibernating (do not use it for building circuits)
+							routerFlags.setHibernating(true);
 							break;
 						case HIDDEN_SERVICE_DIR:
 							routerFlags.setHSDir(true);
@@ -817,11 +817,14 @@ public final class RouterImpl implements Router, Cloneable
 	@Override
 	public boolean isExitNode()
 	{
-		for (RouterExitPolicy singleExitPolicy : exitpolicy)
+		if (!routerFlags.isBadExit() && routerFlags.isExit())
 		{
-			if (singleExitPolicy.isAccept())
+			for (RouterExitPolicy singleExitPolicy : exitpolicy)
 			{
-				return true;
+				if (singleExitPolicy.isAccept())
+				{
+					return true;
+				}
 			}
 		}
 		return false;
@@ -1080,7 +1083,7 @@ public final class RouterImpl implements Router, Cloneable
 	@Override
 	public boolean isDirv2Running()
 	{
-		return routerFlags.isRunning();
+		return routerFlags.isRunning() && !routerFlags.isHibernating();
 	}
 
 	@Override

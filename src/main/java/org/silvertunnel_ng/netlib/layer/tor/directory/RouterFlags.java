@@ -84,7 +84,10 @@ public final class RouterFlags
 	 * "V2Dir" if the router implements the v2 directory protocol.
 	 */
 	private Boolean v2Dir = null;
-	
+	/**
+	 * If the Router is currently hibernating we should not use it.
+	 */
+	private Boolean hibernating = null;
 	/**
 	 * Standard Constructor.
 	 * All values are set to null.
@@ -111,6 +114,7 @@ public final class RouterFlags
 		hSDir = initialValue;
 		badDirectory = initialValue;
 		badExit = initialValue;
+		hibernating = initialValue;
 	}
 	/**
 	 * Set the flags by parsing a given string.
@@ -143,6 +147,7 @@ public final class RouterFlags
 		badDirectory = flags3[3];
 		Boolean [] flags4 = ByteUtils.getBooleansFromByte(data[3]);
 		badExit = flags4[0];
+		hibernating = flags4[1];
 	}
 	/**
 	 * Set all flags by given flags as string.
@@ -174,7 +179,7 @@ public final class RouterFlags
 		result[0] = ByteUtils.getByteFromBooleans(running, exit, authority, fast);
 		result[1] = ByteUtils.getByteFromBooleans(guard, stable, named, unnamed);
 		result[2] = ByteUtils.getByteFromBooleans(v2Dir, valid, hSDir, badDirectory);
-		result[3] = ByteUtils.getByteFromBooleans(badExit);
+		result[3] = ByteUtils.getByteFromBooleans(badExit, hibernating);
 		return result;
 	}
 	/**
@@ -197,6 +202,27 @@ public final class RouterFlags
 	public void setRunning(final Boolean running)
 	{
 		this.running = running;
+	}
+	/**
+	 * @return the hibernating as Boolean (can also be null)
+	 */
+	public Boolean getHibernating()
+	{
+		return hibernating;
+	}
+	/**
+	 * @return is the router currently hibernating? (will return false if not set)
+	 */
+	public boolean isHibernating()
+	{
+		return hibernating == null ? false : hibernating;
+	}
+	/**
+	 * @param hibernating the hibernating to set
+	 */
+	public void setHibernating(final Boolean hibernating)
+	{
+		this.hibernating = hibernating;
 	}
 	/**
 	 * @return the authority as Boolean (can also be null if not set)
@@ -471,6 +497,7 @@ public final class RouterFlags
 		result = prime * result + ((unnamed == null) ? 0 : unnamed.hashCode());
 		result = prime * result + ((v2Dir == null) ? 0 : v2Dir.hashCode());
 		result = prime * result + ((valid == null) ? 0 : valid.hashCode());
+		result = prime * result + ((hibernating == null) ? 0 : hibernating.hashCode());
 		return result;
 	}
 	/* (non-Javadoc)
@@ -544,6 +571,10 @@ public final class RouterFlags
 		{
 			return false;
 		}
+		if (!equals(hibernating, other.hibernating))
+		{
+			return false;
+		}
 		return true;
 	}
 	private boolean equals(final Boolean bool1, final Boolean bool2)
@@ -608,6 +639,10 @@ public final class RouterFlags
 		{
 			return false;
 		}
+		if (!match(ruleFlags.getHibernating(), getHibernating()))
+		{
+			return false;
+		}
 		return true;
 	}
 	/**
@@ -656,6 +691,11 @@ public final class RouterFlags
 		if (isGuard())
 		{
 			buffer.append(IDENTIFIER_GUARD);
+			buffer.append(' ');
+		}
+		if (isHibernating())
+		{
+			buffer.append(IDENTIFIER_HIBERNATING);
 			buffer.append(' ');
 		}
 		if (isHSDir())
@@ -717,6 +757,8 @@ public final class RouterFlags
 	private static final String IDENTIFIER_VALID = "Valid";
 	/** Identifier for HSDir. */
 	private static final String IDENTIFIER_HIDDENSERVICE_DIRECTORY = "HSDir";
+	/** Identifier for Hibernating. */
+	private static final String IDENTIFIER_HIBERNATING = "Hibernating";
 	/** Identifier for BadDirectory. */
 	private static final String IDENTIFIER_BAD_DIRECTORY = "BadDirectory";
 	/** Identifier for BadExit. */
