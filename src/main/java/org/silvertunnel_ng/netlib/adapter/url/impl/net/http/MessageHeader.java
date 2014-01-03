@@ -138,7 +138,7 @@ public class MessageHeader
 	{
 		for (int i = nkeys; --i >= 0;)
 		{
-			if ((keys[i] == key) || (key != null && key.equalsIgnoreCase(keys[i])))
+			if (key.equals(keys[i]) || (key != null && key.equalsIgnoreCase(keys[i])))
 			{
 				return i;
 			}
@@ -176,10 +176,10 @@ public class MessageHeader
 	 *          }
 	 * </pre>
 	 */
-	public synchronized String findNextValue(String k, String v)
+	public synchronized String findNextValue(String key, String value)
 	{
 		boolean foundV = false;
-		if (k == null)
+		if (key == null)
 		{
 			for (int i = nkeys; --i >= 0;)
 			{
@@ -189,7 +189,7 @@ public class MessageHeader
 					{
 						return values[i];
 					}
-					else if (values[i] == v)
+					else if (value.equals(values[i]))
 					{
 						foundV = true;
 					}
@@ -200,13 +200,13 @@ public class MessageHeader
 		{
 			for (int i = nkeys; --i >= 0;)
 			{
-				if (k.equalsIgnoreCase(keys[i]))
+				if (key.equalsIgnoreCase(keys[i]))
 				{
 					if (foundV)
 					{
 						return values[i];
 					}
-					else if (values[i] == v)
+					else if (value.equals(values[i]))
 					{
 						foundV = true;
 					}

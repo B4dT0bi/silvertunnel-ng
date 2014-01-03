@@ -136,8 +136,7 @@ public class IpNetAddress implements NetAddress
 	 * @throws IllegalArgumentException
 	 *             if the argument could not be parsed or is invalid
 	 */
-	public IpNetAddress(final InetAddress inetAddress)
-			throws IllegalArgumentException
+	public IpNetAddress(final InetAddress inetAddress) throws IllegalArgumentException
 	{
 		if (inetAddress != null)
 		{
@@ -153,8 +152,7 @@ public class IpNetAddress implements NetAddress
 			}
 			else
 			{
-				throw new IllegalArgumentException("invalid inet address="
-						+ inetAddress);
+				throw new IllegalArgumentException("invalid inet address=" + inetAddress);
 			}
 		}
 	}
