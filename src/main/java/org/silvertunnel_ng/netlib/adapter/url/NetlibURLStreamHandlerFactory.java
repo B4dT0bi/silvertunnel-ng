@@ -38,7 +38,7 @@ public class NetlibURLStreamHandlerFactory implements URLStreamHandlerFactory
 {
 	private static final String PROTOCOL_HTTP = "http";
 	private static final String PROTOCOL_HTTPS = "https";
-	private static final String PROTOCOL_FTP = "ftp";
+//	private static final String PROTOCOL_FTP = "ftp";
 
 	/**
 	 * key=protocol (lower case) value=handler of the protocol, inclusive

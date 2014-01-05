@@ -42,7 +42,7 @@ package com.maxmind.geoip;
  * @see com.maxmind.geoip.LookupService#getDatabaseInfo()
  * @author Matt Tucker
  */
-public class DatabaseInfo
+public final class DatabaseInfo
 {
 	/** */
 //	private static final Logger LOG = LoggerFactory.getLogger(DatabaseInfo.class);

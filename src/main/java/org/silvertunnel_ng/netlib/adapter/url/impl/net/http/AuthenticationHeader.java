@@ -133,10 +133,10 @@ public class AuthenticationHeader
 	/* we build up a map of scheme names mapped to SchemeMapValue objects */
 	static class SchemeMapValue
 	{
-		SchemeMapValue(final HeaderParser h, final String r)
+		SchemeMapValue(final HeaderParser headerParser, final String rawValue)
 		{
-			raw = r;
-			parser = h;
+			raw = rawValue;
+			parser = headerParser;
 		}
 
 		String raw;
@@ -156,17 +156,17 @@ public class AuthenticationHeader
 		while (iter.hasNext())
 		{
 			final String raw = iter.next();
-			final HeaderParser hp = new HeaderParser(raw);
-			final Iterator<Object> keys = hp.keys();
+			final HeaderParser headerParser = new HeaderParser(raw);
+			final Iterator<Object> keys = headerParser.keys();
 			int i, lastSchemeIndex;
 			for (i = 0, lastSchemeIndex = -1; keys.hasNext(); i++)
 			{
 				keys.next();
-				if (hp.findValue(i) == null)
+				if (headerParser.findValue(i) == null)
 				{ /* found a scheme name */
 					if (lastSchemeIndex != -1)
 					{
-						final HeaderParser hpn = hp.subsequence(
+						final HeaderParser hpn = headerParser.subsequence(
 								lastSchemeIndex, i);
 						final String scheme = hpn.findKey(0);
 						schemes.put(scheme, new SchemeMapValue(hpn, raw));
@@ -176,7 +176,7 @@ public class AuthenticationHeader
 			}
 			if (i > lastSchemeIndex)
 			{
-				final HeaderParser hpn = hp.subsequence(lastSchemeIndex, i);
+				final HeaderParser hpn = headerParser.subsequence(lastSchemeIndex, i);
 				final String scheme = hpn.findKey(0);
 				schemes.put(scheme, new SchemeMapValue(hpn, raw));
 			}
@@ -186,11 +186,11 @@ public class AuthenticationHeader
 		 * choose the best of them, the order is negotiate -> kerberos -> digest
 		 * -> ntlm -> basic
 		 */
-		SchemeMapValue v = null;
-		if (authPref == null || (v = schemes.get(authPref)) == null)
+		SchemeMapValue schemeMapValue = null;
+		if (authPref == null || (schemeMapValue = schemes.get(authPref)) == null)
 		{
 
-			if (v == null)
+			if (schemeMapValue == null)
 			{
 				SchemeMapValue tmp = schemes.get("negotiate");
 				if (tmp != null)
@@ -201,11 +201,11 @@ public class AuthenticationHeader
 					{
 						tmp = null;
 					}
-					v = tmp;
+					schemeMapValue = tmp;
 				}
 			}
 
-			if (v == null)
+			if (schemeMapValue == null)
 			{
 				SchemeMapValue tmp = schemes.get("kerberos");
 				if (tmp != null)
@@ -228,25 +228,25 @@ public class AuthenticationHeader
 					{
 						tmp = null;
 					}
-					v = tmp;
+					schemeMapValue = tmp;
 				}
 			}
 
-			if (v == null)
+			if (schemeMapValue == null)
 			{
-				if ((v = schemes.get("digest")) == null)
+				if ((schemeMapValue = schemes.get("digest")) == null)
 				{
-					if (((v = schemes.get("ntlm")) == null))
+					if (((schemeMapValue = schemes.get("ntlm")) == null))
 					{
-						v = schemes.get("basic");
+						schemeMapValue = schemes.get("basic");
 					}
 				}
 			}
 		}
-		if (v != null)
+		if (schemeMapValue != null)
 		{
-			preferred = v.parser;
-			preferredRaw = v.raw;
+			preferred = schemeMapValue.parser;
+			preferredRaw = schemeMapValue.raw;
 		}
 	}
 

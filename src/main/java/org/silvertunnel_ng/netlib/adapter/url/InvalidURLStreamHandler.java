@@ -32,14 +32,14 @@ public final class InvalidURLStreamHandler extends URLStreamHandler
 {
 
 	@Override
-	protected URLConnection openConnection(final URL u) throws IOException
+	protected URLConnection openConnection(final URL url) throws IOException
 	{
-		throw new UnsupportedOperationException("openConnection(): not allowed, url=" + u);
+		throw new UnsupportedOperationException("openConnection(): not allowed, url=" + url);
 	}
 
 	@Override
-	protected synchronized InetAddress getHostAddress(final URL u)
+	protected /*synchronized*/ InetAddress getHostAddress(final URL url)
 	{
-		throw new UnsupportedOperationException("getHostAddress(): not allowed, url=" + u);
+		throw new UnsupportedOperationException("getHostAddress(): not allowed, url=" + url);
 	}
 }
