@@ -59,7 +59,6 @@ import javax.xml.bind.DatatypeConverter;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.CircuitHistory;
 import org.silvertunnel_ng.netlib.layer.tor.directory.FingerprintImpl;
-import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.util.SystemPropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,14 +132,14 @@ public final class TorConfig
 	private static final int MAXIMUM_IDLE_CIRCUITS = 20; // TODO : verify this value
 	/**
 	 * How many circuit should be idling ?
-	 * 
+	 * <br><br>
 	 * recommended value : 3 
 	 * maximum value : 20 // TODO : verify or set a good max value
-	 * 
+	 * <br><br>
 	 * if this value is 0 then tor will only open circuits when a connection is
 	 * needed, but in this case the connection will take longer as the circuit
 	 * needs to be built first.
-	 * 
+	 * <br><br>
 	 * default value : 3
 	 */
 	private int minimumIdleCircuits = 3;
@@ -155,9 +154,9 @@ public final class TorConfig
 
 	/**
 	 * Set the amount of connect retries.
-	 * 
+	 * <br><br>
 	 * Should be a value higher than 0
-	 * 
+	 * <br><br>
 	 * @param retries
 	 *            max retry count for a connection
 	 */
@@ -185,7 +184,7 @@ public final class TorConfig
 
 	/**
 	 * Set the amount of reconnects for a circuit.
-	 * 
+	 * <br><br>
 	 * Should be a value higher than 0
 	 * 
 	 * @param reconnects
@@ -275,7 +274,7 @@ public final class TorConfig
 
 	/**
 	 * How many stream failures are allowed till we close the Circuit?
-	 * 
+	 * <br><br>
 	 * default : 3
 	 */
 	private int circuitClosesOnFailures = 3;
@@ -291,7 +290,7 @@ public final class TorConfig
 
 	/**
 	 * How many stream failures are allowed till we close the Circuit?
-	 *
+	 *<br><br>
 	 * default : 3
 	 * 
 	 * @param circuitClosesOnFailures the circuitClosesOnFailures to set
@@ -370,7 +369,7 @@ public final class TorConfig
 
 	// Security parameters
 	/** How many streams are allowed in one Circuit? */
-	private int streamsPerCircuit = 50;
+	private int streamsPerCircuit = 50; // TODO : set it to 65500 (near max) but implement a new method for getting new identity first
 	/**
 	 * How many streams are allowed in one Circuit?
 	 * 
@@ -391,6 +390,10 @@ public final class TorConfig
 		{
 			LOG.error("it is not allowed to set the number of streams in a circuit lower than 1!");
 		}
+		else if (streams >= 65536)
+		{
+			LOG.error("the maximum allowed number of streams per circuit is 2^16 = 65536");
+		}
 		else
 		{
 			LOG.debug("setting streamsPerCircuit from {} to {}", new Object[] {getInstance().streamsPerCircuit, streams});
@@ -409,13 +412,13 @@ public final class TorConfig
 
 	/**
 	 * minimum circuit path length. 
-	 * 
-	 * recommended value : 3 
-	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) 
+	 * <br><br>
+	 * recommended value : 3 <br>
+	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt)<br> 
 	 * using a value of 2 is only good for a simple IP obfuscation,
 	 * for more security a value of at least 3 is recommended
 	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
-	 * 
+	 * <br><br>
 	 * default value : 3
 	 */
 	private int routeMinLength = DEFAULT_ROUTE_LENGTH;
