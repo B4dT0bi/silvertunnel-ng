@@ -746,9 +746,10 @@ public final class Directory
 		}
 		return result;
 	}
-	
+	/** Minimum length of the descriptors. */
 	private static final int ALL_DESCRIPTORS_STR_MIN_LEN = 1000;
-	private static final int TRHESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPIONS = 50;
+	/** How many routers are allowed to be fetched separately? */
+	private static final int THRESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPTORS = DescriptorFetcher.MAXIMUM_ALLOWED_DIGESTS;
 
 	/**
 	 * Trigger download of missing descriptors from directory caches.
@@ -826,9 +827,9 @@ public final class Directory
 		// load from directory server
 		LOG.debug("load {} routers from dir server(s) - start", fingerprintsOfRoutersToLoad.size());
 		int successes = 0;
-		if (fingerprintsOfRoutersToLoad.size() <= TRHESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPIONS)
+		if (fingerprintsOfRoutersToLoad.size() <= THRESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPTORS)
 		{
-			// load the descriptions separately
+			// load the descriptors separately
 			// TODO: implement it
 			final int attempts = fingerprintsOfRoutersToLoad.size();
 			LOG.debug("loaded {} of {} missing routers from directory server(s) with multiple requests", successes, attempts);
@@ -847,7 +848,7 @@ public final class Directory
 					// cannot be used as directory server
 					continue;
 				}
-				allDescriptors = DescriptorFetcherThread.downloadAllDescriptors(directoryServer, lowerDirConnectionNetLayer);
+				allDescriptors = DescriptorFetcher.downloadAllDescriptors(directoryServer, lowerDirConnectionNetLayer);
 
 				// split into single server descriptors
 				if (allDescriptors != null && allDescriptors.length() >= ALL_DESCRIPTORS_STR_MIN_LEN)
@@ -861,7 +862,7 @@ public final class Directory
 						attempts++;
 						if (r != null)
 						{
-							// found search descriptor
+							// found searched descriptor
 							fingerprintsRouters.put(fingerprint, r);
 							successes++;
 						}

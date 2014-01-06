@@ -194,7 +194,7 @@ public class DirectoryConsensus
 			sinfo.setNickname(m.group(1));
 			sinfo.setFingerprint(m.group(2));
 			sinfo.setDigestDescriptor(m.group(3));
-			sinfo.setLastPublication(Util.parseUtcTimestamp(m.group(4) + " " + m.group(5)));
+			sinfo.setLastPublication(Util.parseUtcTimestampAsLong(m.group(4) + " " + m.group(5)));
 			sinfo.setIp(m.group(6));
 			sinfo.setOrPort(Integer.parseInt(m.group(7)));
 			sinfo.setDirPort(Integer.parseInt(m.group(8)));
@@ -244,7 +244,7 @@ public class DirectoryConsensus
 	 *            the current time
 	 * @return true=valid; false otherwise
 	 */
-	private final boolean isValidDate(final Date now)
+	private boolean isValidDate(final Date now)
 	{
 		// check time stamps
 		if (validAfter == null || validAfter.after(now))

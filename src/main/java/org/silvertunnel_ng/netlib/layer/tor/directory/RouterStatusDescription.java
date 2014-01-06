@@ -37,8 +37,12 @@ public final class RouterStatusDescription
 	private String nickname;
 	/** {@link Fingerprint} of the router. */
 	private Fingerprint fingerprint;
-	private byte[] digestDescriptor;
-	private Date lastPublication;
+	/** "Digest" is a hash of its most recent descriptor as signed (that is, not including the signature), encoded in base64. */
+	private byte [] digestDescriptor;
+	/**
+	 * "Publication" is the publication time of its most recent descriptor.
+	 */
+	private long lastPublication;
 	/** IP address of the router. */
 	private String ip;
 	/** OR port and Dir Port. */
@@ -50,6 +54,10 @@ public final class RouterStatusDescription
 	// getters and setters
 	// /////////////////////////////////////////////////////
 
+	/**
+	 * Get the Routers nickname.
+	 * @return the nickname of the router as string
+	 */
 	public String getNickname()
 	{
 		return nickname;
@@ -85,6 +93,20 @@ public final class RouterStatusDescription
 		return digestDescriptor;
 	}
 
+	/**
+	 * Get the descriptor digest in hex notation.
+	 * @return a string containing the hexnotation of the descriptor digest
+	 */
+	public String getDigestDescriptorAsHex()
+	{
+		return DatatypeConverter.printHexBinary(digestDescriptor).toUpperCase();
+	}
+
+	/**
+	 * Set the descriptor digest by passing the base64 encoded value.
+	 * 
+	 * @param digestDescriptorBase64 the descriptor digest in base64 encoding
+	 */
 	public void setDigestDescriptor(final String digestDescriptorBase64)
 	{
 		String base64 = digestDescriptorBase64;
@@ -99,13 +121,13 @@ public final class RouterStatusDescription
 	{
 		this.digestDescriptor = digestDescriptor;
 	}
-
-	public Date getLastPublication()
+	
+	public long getLastPublication()
 	{
 		return lastPublication;
 	}
 
-	public void setLastPublication(final Date lastPublication)
+	public void setLastPublication(final long lastPublication)
 	{
 		this.lastPublication = lastPublication;
 	}
@@ -139,6 +161,10 @@ public final class RouterStatusDescription
 		return dirPort;
 	}
 
+	/**
+	 * Get Directory Port of relay. 0 if none is set.
+	 * @param dirPort the directory port of this router (int)
+	 */
 	public void setDirPort(final int dirPort)
 	{
 		this.dirPort = dirPort;
