@@ -59,9 +59,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.CircuitHistory;
 import org.silvertunnel_ng.netlib.layer.tor.directory.FingerprintImpl;
-import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.util.SystemPropertiesHelper;
-import org.silvertunnel_ng.netlib.util.TempfileStringStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 // TODO : implement bridge connect
