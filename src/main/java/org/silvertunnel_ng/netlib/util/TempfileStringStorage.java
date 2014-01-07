@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,14 +38,13 @@ public final class TempfileStringStorage implements StringStorage
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TempfileStringStorage.class);
 
-	private static final String TEMPDIR = System.getProperty("java.io.tmpdir");
 	private static final Pattern KEY_PATTERN = Pattern
 			.compile("[a-z0-9\\_\\-\\.]+");
 	private static final String FILENAME_PREFIX = "st-";
 
 	static
 	{
-		LOG.debug("TempfileStringStorage directory={}", TEMPDIR);
+		LOG.debug("TempfileStringStorage directory={}", TorConfig.getTempDirectory());
 	}
 
 	private static TempfileStringStorage instance = new TempfileStringStorage();
@@ -154,6 +154,6 @@ public final class TempfileStringStorage implements StringStorage
 		// do not use: File.createTempFile(prefix, "");
 		// it add the process id to the file name
 		// which prevents file exchange between multiple startups
-		return new File(TEMPDIR, prefix);
+		return new File(TorConfig.getTempDirectory(), prefix);
 	}
 }

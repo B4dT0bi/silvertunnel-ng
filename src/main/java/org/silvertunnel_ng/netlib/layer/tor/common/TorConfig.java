@@ -61,6 +61,7 @@ import org.silvertunnel_ng.netlib.layer.tor.circuit.CircuitHistory;
 import org.silvertunnel_ng.netlib.layer.tor.directory.FingerprintImpl;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.util.SystemPropertiesHelper;
+import org.silvertunnel_ng.netlib.util.TempfileStringStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 // TODO : implement bridge connect
@@ -928,5 +929,27 @@ public final class TorConfig
 		{
 			config.longLivedPorts.add(tmp);
 		}
+		config.tempDirectory = System.getProperty("java.io.tmpdir");
+	}
+	/**
+	 * Temporary directory where SilverTunnel-NG saves its temp files.
+	 * e.g. caches, hiddenservice descriptors, etc
+	 */
+	private String tempDirectory;
+	/**
+	 * Set the temporary Directory which should be used by SilverTunnel-NG.
+	 * @param directory the directory where to save the temp files
+	 */
+	public static void setTempDirectory(final String directory)
+	{
+		getInstance().tempDirectory = directory;
+	}
+	/**
+	 * Get the temporary Directory which should be used for temp files.
+	 * @return a directory path
+	 */
+	public static String getTempDirectory()
+	{
+		return getInstance().tempDirectory;
 	}
 }
