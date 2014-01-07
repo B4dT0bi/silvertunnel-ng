@@ -38,9 +38,7 @@ public final class TempfileStringStorage implements StringStorage
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TempfileStringStorage.class);
 
-	private static final Pattern KEY_PATTERN = Pattern
-			.compile("[a-z0-9\\_\\-\\.]+");
-	private static final String FILENAME_PREFIX = "st-";
+	private static final Pattern KEY_PATTERN = Pattern.compile("[a-z0-9\\_\\-\\.]+");
 
 	static
 	{
@@ -149,7 +147,7 @@ public final class TempfileStringStorage implements StringStorage
 	 */
 	public static File getTempfileFile(final String key) throws IOException
 	{
-		final String prefix = FILENAME_PREFIX + key;
+		final String prefix = TorConfig.FILENAME_PREFIX + key;
 
 		// do not use: File.createTempFile(prefix, "");
 		// it add the process id to the file name

@@ -952,4 +952,6 @@ public final class TorConfig
 	{
 		return getInstance().tempDirectory;
 	}
+	/** prefix used for tempfiles. */
+	public static final String FILENAME_PREFIX = "st-";
 }
