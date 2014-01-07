@@ -403,7 +403,7 @@ public final class TorConfig
 
 	// Security parameters
 	/** How many streams are allowed in one Circuit? */
-	private int streamsPerCircuit = 50;
+	private int streamsPerCircuit = 65535;
 	/**
 	 * How many streams are allowed in one Circuit?
 	 * 

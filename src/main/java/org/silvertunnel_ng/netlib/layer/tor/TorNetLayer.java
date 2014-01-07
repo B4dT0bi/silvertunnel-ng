@@ -38,6 +38,7 @@ package org.silvertunnel_ng.netlib.layer.tor;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,6 +55,7 @@ import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.control.ControlNetLayer;
 import org.silvertunnel_ng.netlib.layer.control.ControlParameters;
 import org.silvertunnel_ng.netlib.layer.tor.api.Router;
+import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 import org.silvertunnel_ng.netlib.layer.tor.clientimpl.Tor;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
@@ -297,5 +299,22 @@ public class TorNetLayer implements NetLayer
 	{
 		waitUntilReady();
 		return tor.getValidTorRouters();
+	}
+	/**
+	 * This will change the Tor identity by closing all open circuits.
+	 * <br>
+	 * This will force the TorNetLayer to build up new Circuits and therefore the "user" gets a new IP address.
+	 */
+	public final void changeIdentity()
+	{
+		Iterator<Circuit> itCircuits = tor.getCurrentCircuits().iterator();
+		while (itCircuits.hasNext())
+		{
+			Circuit circuit = itCircuits.next();
+			if (circuit != null && !circuit.isUnused() && !circuit.isClosed())
+			{
+				circuit.close(false);
+			}
+		}
 	}
 }
