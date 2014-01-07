@@ -71,13 +71,7 @@ public final class TorHiddenServiceClientRemotePerformanceTest extends TorRemote
 		// tests.
 		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH, "2");
 		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH, "2");
-		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS, "1"); // just
-																						// 2
-																						// initial
-																						// circuit
-																						// for
-																						// faster
-																						// tests
+		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS, "1"); 
 		TorConfig.reloadConfigFromProperties();
 	}
 
