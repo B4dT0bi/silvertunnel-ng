@@ -64,6 +64,7 @@ import org.silvertunnel_ng.netlib.util.SystemPropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 // TODO : implement bridge connect
+// TODO : implement ExcludeSingleHopRelays (torrc)
 /**
  * Global configuration of TorNetLayer.
  * 
@@ -89,8 +90,40 @@ public final class TorConfig
 	 * How long should we wait before trying the first connects?
 	 */
 	private int startupDelaySeconds = 20;
-
-
+	/**
+	 * Default list of "long-lived" ports listed in path-spec 2.2. a circuit needs to be
+	 * "stable" for these ports. 
+	 */
+	private static final int[] DEFAULT_LONG_LIVED_PORTS = { 21, 22, 706, 1863, 5050, 5190, 5222, 5223, 6667, 6697, 8300 };
+	/**
+	 * List of "long-lived" ports listed in path-spec 2.2. a circuit needs to be
+	 * "stable" for these ports. 
+	 */
+	private Set<Integer> longLivedPorts = new HashSet<Integer>();
+	/**
+	 * Add a port to the long lived ports list.
+	 * @param port the port to be added
+	 */
+	public static void addLongLivedPort(final int port)
+	{
+		getInstance().longLivedPorts.add(port);
+	}
+	/**
+	 * Set the list of long lived ports to the given list.
+	 * @param list the list containing the long lived ports
+	 */
+	public static void setLongLivedPorts(final Set<Integer> list)
+	{
+		getInstance().longLivedPorts = list;
+	}
+	/**
+	 * Get the list of long lived ports.
+	 * @return a Set of long lived ports.
+	 */
+	public static Set<Integer> getLongLivedPorts()
+	{
+		return getInstance().longLivedPorts;
+	}
 	/** @return get an instance of {@link TorConfig}. */
 	private static synchronized TorConfig getInstance()
 	{
@@ -797,6 +830,7 @@ public final class TorConfig
 	// first load the config from System properties
 	static
 	{
+		reset();
 		reloadConfigFromProperties();		
 	}
 	private TorConfig()
@@ -889,5 +923,10 @@ public final class TorConfig
 		config.routeUniqueCountry = true;
 		config.saveCircuitHistory = true;
 		config.veryAggressiveStreamBuilding = false;
+		config.longLivedPorts.clear();
+		for (int tmp : DEFAULT_LONG_LIVED_PORTS)
+		{
+			config.longLivedPorts.add(tmp);
+		}
 	}
 }
