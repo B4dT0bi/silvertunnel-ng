@@ -144,6 +144,7 @@ public class CircuitAdmin
 		}
 		try
 		{
+			LOG.debug("executing {} tasks", allTasks.size());
 			return executor.invokeAny(allTasks);
 		}
 		catch (InterruptedException exception)
