@@ -172,13 +172,12 @@ public final class RouterImpl implements Router, Cloneable
 	 * Special constructor for hidden service: Faked server in
 	 * connectToHidden().
 	 * 
-	 * @param pk
-	 * @throws TorException
+	 * @param publicKey {@link RSAPublicKey} used as onionKey
 	 */
-	public RouterImpl(final RSAPublicKey pk) throws TorException
+	public RouterImpl(final RSAPublicKey publicKey)
 	{
 		init();
-		onionKey = pk;
+		onionKey = publicKey;
 		// this.countryCode =
 		// LookupServiceUtil.getCountryCodeOfIpAddress(this.address);
 		this.countryCode = "--";
@@ -187,6 +186,12 @@ public final class RouterImpl implements Router, Cloneable
 	/**
 	 * takes input data and initializes the server object with it. A router
 	 * descriptor and a signature will be automatically generated.
+	 * 
+	 * @param nickname Nickname of the Router
+	 * @param address the IP address of this router
+	 * @param orPort the OR port of this router
+	 * @param dirPort the directory port of this router (if none then set it to 0)
+	 * 
 	 */
 	RouterImpl(final String nickname, 
 	           final InetAddress address, 
@@ -194,7 +199,6 @@ public final class RouterImpl implements Router, Cloneable
 	           final int dirPort, 
 	           final Fingerprint v3ident, 
 	           final Fingerprint fingerprint)
-				throws TorException
 	{
 		// Set member variables.
 		this.nickname = nickname;
@@ -313,6 +317,7 @@ public final class RouterImpl implements Router, Cloneable
 		lastUpdate = buffer.getNextLong();
 		routerFlags = new RouterFlags(buffer.getNextByteArray());
 		rankingIndex = buffer.getNextFloat();
+		// TODO : add signature check
 	}
 	/**
 	 * Store the information of this Router in a byte array. (Serialization)
