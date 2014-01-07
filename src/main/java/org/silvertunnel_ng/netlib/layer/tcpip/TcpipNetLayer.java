@@ -48,12 +48,14 @@ import org.silvertunnel_ng.netlib.adapter.socket.SocketGlobalUtil;
  * maximum length of the server queue (int)
  * 
  * @author hapke
+ * @author Tobias Boese
  */
 public class TcpipNetLayer implements NetLayer
 {
 	public static final String BACKLOG = "TcpipNetLayer.backlog";
 	public static final String TIMEOUT_IN_MS = "TcpipNetLayer.timeoutInMs";
-
+	/** default time to wait till timeout. */
+	private static final int DEFAULT_TIMEOUT = 5000;
 	static
 	{
 		// trigger silvertunnel-ng.org Netlib start logging
@@ -80,19 +82,15 @@ public class TcpipNetLayer implements NetLayer
 		final TcpipNetAddress r = (TcpipNetAddress) remoteAddress;
 
 		// read (optional) properties
-		final int TIMEOUT_IN_MS_UNLIMITED = 0;
-		final Integer timeoutInMs = PropertiesUtil.getAsInteger(
-				localProperties, TIMEOUT_IN_MS, TIMEOUT_IN_MS_UNLIMITED);
+		final Integer timeoutInMs = PropertiesUtil.getAsInteger(localProperties, TIMEOUT_IN_MS, DEFAULT_TIMEOUT);
 
 		// create connection and open socket
 		final Socket socket = SocketGlobalUtil.createOriginalSocket();
 		if (r.getIpaddress() != null)
 		{
 			// use IP address (preferred over host name)
-			final InetAddress remoteInetAddress = InetAddress.getByAddress(r
-					.getIpaddress());
-			final InetSocketAddress remoteInetSocketAddress = new InetSocketAddress(
-					remoteInetAddress, r.getPort());
+			final InetAddress remoteInetAddress = InetAddress.getByAddress(r.getIpaddress());
+			final InetSocketAddress remoteInetSocketAddress = new InetSocketAddress(remoteInetAddress, r.getPort());
 			socket.connect(remoteInetSocketAddress, timeoutInMs);
 		}
 		else
@@ -116,8 +114,8 @@ public class TcpipNetLayer implements NetLayer
 	 * 
 	 * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
 	 */
-	public NetSocket createNetSocket(NetAddress localAddress,
-			NetAddress remoteAddress) throws IOException
+	public NetSocket createNetSocket(final NetAddress localAddress,
+									 final NetAddress remoteAddress) throws IOException
 	{
 		final TcpipNetAddress r = (TcpipNetAddress) remoteAddress;
 
@@ -126,8 +124,7 @@ public class TcpipNetLayer implements NetLayer
 		if (r.getIpaddress() != null)
 		{
 			// use IP address (preferred over host name)
-			final InetAddress inetAddress = InetAddress.getByAddress(r
-					.getIpaddress());
+			final InetAddress inetAddress = InetAddress.getByAddress(r.getIpaddress());
 			socket = new Socket(inetAddress, r.getPort());
 		}
 		else
@@ -149,8 +146,7 @@ public class TcpipNetLayer implements NetLayer
 		final TcpipNetAddress l = (TcpipNetAddress) localListenAddress;
 
 		// read (optional) properties
-		final Long backlogL = PropertiesUtil.getAsLong(properties, BACKLOG,
-				null);
+		final Long backlogL = PropertiesUtil.getAsLong(properties, BACKLOG, null);
 		final int backlog = (backlogL == null) ? 0 : backlogL.intValue();
 
 		// open server socket
@@ -192,8 +188,7 @@ public class TcpipNetLayer implements NetLayer
 		if (netAddressNameService == null)
 		{
 			// create a new instance
-			netAddressNameService = new CachingNetAddressNameService(
-					new DefaultIpNetAddressNameService());
+			netAddressNameService = new CachingNetAddressNameService(new DefaultIpNetAddressNameService());
 		}
 
 		return netAddressNameService;
