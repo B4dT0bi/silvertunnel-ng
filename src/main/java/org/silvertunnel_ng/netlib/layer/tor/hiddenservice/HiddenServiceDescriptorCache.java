@@ -35,11 +35,17 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.hiddenservice;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RendezvousServiceDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class takes care of caching the Hiddenservice descriptors.
@@ -49,11 +55,12 @@ import org.silvertunnel_ng.netlib.layer.tor.directory.RendezvousServiceDescripto
  */
 public final class HiddenServiceDescriptorCache
 {
-
+	/** class logger. */
+	private static final Logger LOG = LoggerFactory.getLogger(HiddenServiceDescriptorCache.class);
 	/**
 	 * 
 	 */
-	public HiddenServiceDescriptorCache()
+	private HiddenServiceDescriptorCache()
 	{
 	}
 	/** instance of {@link HiddenServiceDescriptorCache}.*/
@@ -85,7 +92,21 @@ public final class HiddenServiceDescriptorCache
 		cachedRendezvousServiceDescriptors.clear();
 		if (TorConfig.isCacheHiddenServiceDescriptor())
 		{
-			// TODO : implement loading from disk
+			try
+			{
+				FileInputStream fileInputStream = new FileInputStream(TorConfig.getTempDirectory() 
+						   											+ "\\"
+						   											+ TorConfig.FILENAME_PREFIX
+						   											+ "hidden_service_descriptor.cache");
+				ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+				cachedRendezvousServiceDescriptors = (Map<String, RendezvousServiceDescriptor>) objectInputStream.readObject();
+				objectInputStream.close();
+						   							
+			}
+			catch (Exception exception)
+			{
+				LOG.warn("could not load cached descriptors because of exception", exception);
+			}
 		}
 	}
 	/**
@@ -97,7 +118,21 @@ public final class HiddenServiceDescriptorCache
 		{
 			return; // dont save cache to disk
 		}
-		// TODO : implement saving to disk using path from TorConfig
+		LOG.debug("saving {} cached hiddenservice descriptors to disk", cachedRendezvousServiceDescriptors.size());
+		try
+		{
+			FileOutputStream fileOutputStream = new FileOutputStream(TorConfig.getTempDirectory() 
+																   + "\\"
+																   + TorConfig.FILENAME_PREFIX
+					                                               + "hidden_service_descriptor.cache");
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+			objectOutputStream.writeObject(cachedRendezvousServiceDescriptors);
+			objectOutputStream.close();
+		}
+		catch (Exception exception)
+		{
+			LOG.warn("cant save hiddenservice descriptor cache due to exception", exception);
+		}
 	}
 	/**
 	 * Add a {@link RendezvousServiceDescriptor} to the cache.
@@ -106,7 +141,9 @@ public final class HiddenServiceDescriptorCache
 	 */
 	public void put(final String z, final RendezvousServiceDescriptor descriptor)
 	{
+		LOG.debug("adding {} to cache", z);
 		cachedRendezvousServiceDescriptors.put(z, descriptor);
+		saveCacheToDisk();
 	}
 	/**
 	 * Try to get a cached {@link RendezvousServiceDescriptor}.
@@ -123,8 +160,15 @@ public final class HiddenServiceDescriptorCache
 		}
 		if (result.isPublicationTimeValid())
 		{
+			LOG.debug("found cached descriptor for {}", z);
 			return result; // valid so return it
 		}
-		return null; // not valid anymore
+		//not valid anymore so remove it
+		LOG.debug("removing {} because its too old", z);
+		synchronized (cachedRendezvousServiceDescriptors) 
+		{
+			cachedRendezvousServiceDescriptors.remove(z);
+		}
+		return null;
 	}
 }
