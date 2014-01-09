@@ -75,7 +75,8 @@ public final class SimpleHttpClientCompressed
 
 	/** protocol to be used. */
 	private static final String PROTOCOL_HTTP = "http";
-
+	/** Buffer size for receive. */
+	private static final int BUFFER_SIZE = 512000;
 	/**
 	 * Execute HTTP GET request.
 	 * 
@@ -143,8 +144,8 @@ public final class SimpleHttpClientCompressed
 			}
 			
 			in = new InflaterInputStream(conn.getInputStream());
-			final DynByteBuffer byteBuffer = new DynByteBuffer(conn.getContentLengthLong());
-			final byte[] buffer = new byte[512000];
+			final DynByteBuffer byteBuffer = new DynByteBuffer(BUFFER_SIZE);
+			final byte[] buffer = new byte[BUFFER_SIZE];
 			int count;
 			while ((count = in.read(buffer)) > 0)
 			{
