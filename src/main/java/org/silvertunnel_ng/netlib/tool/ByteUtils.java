@@ -135,8 +135,8 @@ public final class ByteUtils
 	 */
 	public static Boolean [] getBooleansFromByte(final byte data)
 	{
-		short tmp = (short) (data & 0xff);
-		Boolean [] result = new Boolean[4];
+		final int tmp = (int) (data & 0xff);
+		final Boolean [] result = new Boolean[4];
 		result[0] = (tmp & 0x03) == 0x02 ? null : (tmp & 0x03) == 0x01;
 		result[1] = (tmp & 0x0c) == 0x08 ? null : (tmp & 0x0c) == 0x04;
 		result[2] = (tmp & 0x30) == 0x20 ? null : (tmp & 0x30) == 0x10;
