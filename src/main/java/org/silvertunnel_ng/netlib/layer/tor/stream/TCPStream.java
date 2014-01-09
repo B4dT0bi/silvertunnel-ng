@@ -607,7 +607,6 @@ public class TCPStream implements Stream, NetSocket
 				streamLevelFlowControlSend += STREAM_LEVEL_FLOW_INCREMENT;
 				waitForSendme.notifyAll();
 				LOG.debug("got RELAY_SENDME cell, increasing stream {} flow send window to {}", getId(), streamLevelFlowControlRecv);
-				// TODO : ignore SENDME cells from now on?
 			}
 		}
 		queue.add(cell);

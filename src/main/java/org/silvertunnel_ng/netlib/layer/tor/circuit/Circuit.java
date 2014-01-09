@@ -1297,7 +1297,6 @@ public final class Circuit
 				circuitFlowSend += CIRCUIT_LEVEL_FLOW_RECV_INC;
 				waitForSendMe.notifyAll();
 				LOG.debug("got RELAY_SENDME cell, increasing circuit flow send window to {}", circuitFlowSend);
-				// TODO : ignore SENDME cells from now on?
 			}
 		}
 		queue.add(cell);
