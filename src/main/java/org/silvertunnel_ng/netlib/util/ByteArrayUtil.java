@@ -30,8 +30,9 @@ import org.slf4j.LoggerFactory;
  * Utilities to handle input streams, output streams and byte arrays.
  * 
  * @author hapke
+ * @author Tobias Boese
  */
-public class ByteArrayUtil
+public final class ByteArrayUtil
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(ByteArrayUtil.class);
@@ -41,15 +42,15 @@ public class ByteArrayUtil
 	/**
 	 * Interpret the byte array as chars as far as possible.
 	 * 
-	 * @param b
-	 * @return
+	 * @param byteArray the byte array which should be converted
+	 * @return a human readable string 
 	 */
-	public static String showAsString(byte[] b)
+	public static String showAsString(final byte[] byteArray)
 	{
-		final StringBuffer result = new StringBuffer(b.length);
-		for (int i = 0; i < b.length; i++)
+		final StringBuffer result = new StringBuffer(byteArray.length);
+		for (int i = 0; i < byteArray.length; i++)
 		{
-			result.append(asChar(b[i]));
+			result.append(asChar(byteArray[i]));
 		}
 		return result.toString();
 	}
@@ -57,15 +58,15 @@ public class ByteArrayUtil
 	/**
 	 * Interpret the byte array as chars as far as possible.
 	 * 
-	 * @param b
-	 * @return
+	 * @param byteArray the byte array which should be converted.
+	 * @return a string showing the content of the given byte array
 	 */
-	public static String showAsStringDetails(byte[] b)
+	public static String showAsStringDetails(final byte[] byteArray)
 	{
-		final StringBuffer result = new StringBuffer(b.length);
-		for (int i = 0; i < b.length; i++)
+		final StringBuffer result = new StringBuffer(byteArray.length);
+		for (int i = 0; i < byteArray.length; i++)
 		{
-			result.append(asCharDetail(b[i]));
+			result.append(asCharDetail(byteArray[i]));
 		}
 		return result.toString();
 	}
@@ -113,12 +114,10 @@ public class ByteArrayUtil
 			}
 
 			// concat the parts
-			final byte[] result = new byte[prefix.length + middle.length
-					+ suffix.length];
+			final byte[] result = new byte[prefix.length + middle.length + suffix.length];
 			System.arraycopy(prefix, 0, result, 0, prefix.length);
 			System.arraycopy(middle, 0, result, prefix.length, middle.length);
-			System.arraycopy(suffix, 0, result, prefix.length + middle.length,
-					suffix.length);
+			System.arraycopy(suffix, 0, result, prefix.length + middle.length, suffix.length);
 			return result;
 
 		}
@@ -135,7 +134,7 @@ public class ByteArrayUtil
 	 */
 	public static char asChar(final byte b)
 	{
-		if (b < ' ' || b > 127)
+		if (b < ' ' || (b & 0xFF) > 127)
 		{
 			return SPECIAL_CHAR;
 		}
@@ -154,11 +153,10 @@ public class ByteArrayUtil
 	 */
 	public static String asCharDetail(final byte b)
 	{
-		if (b < ' ' || b > 127)
+		if (b < ' ' || (b & 0xFF) > 127)
 		{
 			// add hex value (always two digits)
-			final int i = b < 0 ? 256 + b : b;
-			final String hex = Integer.toHexString(i);
+			final String hex = Integer.toHexString(b & 0xFF);
 			if (hex.length() < 2)
 			{
 				return SPECIAL_CHAR + "0" + hex;
@@ -212,6 +210,11 @@ public class ByteArrayUtil
 		return result;
 	}
 
+	/**
+	 * Concatenate given byte arrays to one byte array.
+	 * @param input 1..x byte array which should be concatenated
+	 * @return a concatenated byte array containing all the inputs
+	 */
 	public static byte[] concatByteArrays(final byte[]... input)
 	{
 		// determine full length
