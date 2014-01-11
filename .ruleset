@@ -77,7 +77,6 @@
    <rule ref="rulesets/java/controversial.xml/DontImportSun"/>
    <rule ref="rulesets/java/controversial.xml/NullAssignment"/>
    <rule ref="rulesets/java/controversial.xml/OneDeclarationPerLine"/>
-   <rule ref="rulesets/java/controversial.xml/OnlyOneReturn"/>
    <rule ref="rulesets/java/controversial.xml/SuspiciousOctalEscape"/>
    <rule ref="rulesets/java/controversial.xml/UnnecessaryConstructor"/>
    <rule ref="rulesets/java/controversial.xml/UseConcurrentHashMap"/>
