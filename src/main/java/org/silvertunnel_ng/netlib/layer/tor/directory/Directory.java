@@ -1039,7 +1039,7 @@ public final class Directory
 		while (it.hasNext())
 		{
 			myServer = it.next();
-			if ((!listOfExcludedRouters.contains(myServer.getNickname())) && myServer.isDirv2Running())
+			if ((!listOfExcludedRouters.contains(myServer.getFingerprint())) && myServer.isDirv2Running())
 			{
 				rankingSum += myServer.getRefinedRankingIndex(rankingInfluenceIndex);
 			}
@@ -1051,7 +1051,7 @@ public final class Directory
 		while (it.hasNext())
 		{
 			myServer = it.next();
-			if ((!listOfExcludedRouters.contains(myServer.getNickname())) && myServer.isDirv2Running())
+			if ((!listOfExcludedRouters.contains(myServer.getFingerprint())) && myServer.isDirv2Running())
 			{
 				serverRandom -= myServer.getRefinedRankingIndex(rankingInfluenceIndex);
 				if (serverRandom <= 0)

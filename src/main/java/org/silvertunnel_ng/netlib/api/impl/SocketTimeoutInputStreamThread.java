@@ -52,7 +52,7 @@ class SocketTimeoutInputStreamThread extends Thread
 		setDaemon(true);
 	}
 
-	private static final String createThreadName()
+	private static synchronized String createThreadName()
 	{
 		return Thread.currentThread().getName()
 				+ " - SocketTimeoutInputStreamThread (created="

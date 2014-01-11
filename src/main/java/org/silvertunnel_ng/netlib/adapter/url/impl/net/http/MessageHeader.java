@@ -136,11 +136,14 @@ public class MessageHeader
 	 */
 	public synchronized int getKeyPos(final String key)
 	{
-		for (int i = nkeys; --i >= 0;)
+		if (key != null)
 		{
-			if (key.equals(keys[i]) || (key != null && key.equalsIgnoreCase(keys[i])))
+			for (int i = nkeys; --i >= 0;)
 			{
-				return i;
+				if (key.equalsIgnoreCase(keys[i]))
+				{
+					return i;
+				}
 			}
 		}
 		return -1;
