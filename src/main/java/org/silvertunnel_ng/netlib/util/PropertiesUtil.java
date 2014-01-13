@@ -16,7 +16,7 @@
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.silvertunnel_ng.netlib.api.impl;
+package org.silvertunnel_ng.netlib.util;
 
 import java.util.Map;
 

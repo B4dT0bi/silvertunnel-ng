@@ -34,9 +34,10 @@ public final class RouterParserCallable implements Callable<RouterImpl>
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(RouterParserCallable.class);
 	/** the router descriptor. */
-	private String descriptor;
+	private final transient String descriptor;
 	/**
-	 * A Callable which will parse a given router descriptor and returning the RouterImpl.
+	 * A Callable which will parse a given router descriptor 
+	 * and returning the RouterImpl.
 	 * @param descriptor the router descriptor
 	 */
 	public RouterParserCallable(final String descriptor)
@@ -45,7 +46,7 @@ public final class RouterParserCallable implements Callable<RouterImpl>
 	}
 
 	@Override
-	public RouterImpl call() throws Exception
+	public RouterImpl call() throws TorException
 	{
 		try
 		{
@@ -55,10 +56,6 @@ public final class RouterParserCallable implements Callable<RouterImpl>
 		catch (final TorException e)
 		{
 			LOG.info("got TorException while parsing RouterDescriptor", e);
-		}
-		catch (final Exception e)
-		{
-			LOG.info("unexpected exception", e);
 		}
 		return null;
 	}

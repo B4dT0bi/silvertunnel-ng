@@ -57,7 +57,7 @@ public class SocksClientNetLayer implements NetLayer
 	 * @param lowerNetLayer
 	 *            layer that is or forwards to a Socks5 server
 	 */
-	public SocksClientNetLayer(NetLayer lowerNetLayer)
+	public SocksClientNetLayer(final NetLayer lowerNetLayer)
 	{
 		this.lowerNetLayer = lowerNetLayer;
 	}
@@ -70,32 +70,30 @@ public class SocksClientNetLayer implements NetLayer
 	 * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
 	 */
 	@Override
-	public NetSocket createNetSocket(Map<String, Object> localProperties,
-			NetAddress localAddress, NetAddress remoteAddress)
+	public NetSocket createNetSocket(final Map<String, Object> localProperties,
+									 final NetAddress localAddress, 
+									 final NetAddress remoteAddress)
 			throws IOException
 	{
 		// create connection to socks server
 		final DataNetSocket socksServerSocket = new DataNetSocketWrapper(
 				lowerNetLayer.createNetSocket((Map<String, Object>) null,
 						(NetAddress) null, (NetAddress) null));
-		final DataOutputStream socksOut = socksServerSocket
-				.getDataOutputStream();
+		final DataOutputStream socksOut = socksServerSocket.getDataOutputStream();
 		final DataInputStream socksIn = socksServerSocket.getDataInputStream();
 
 		//
 		// socks negotiation (via socks server)
 		//
 		final byte[] request1 = getByteArray(0x05, 0x01, /* auth method: */0x00);
-		final byte[] expectedResponse1 = getByteArray(0x05, /* auth method: */
-				0x00);
+		final byte[] expectedResponse1 = getByteArray(0x05, /* auth method: */0x00);
 		socksOut.write(request1);
 		socksOut.flush();
 		final byte[] response1 = new byte[expectedResponse1.length];
 		socksIn.readFully(response1);
 		if (!Arrays.equals(expectedResponse1, response1))
 		{
-			throw new IOException(
-					"could not create connection: socks negotiation failed");
+			throw new IOException("could not create connection: socks negotiation failed");
 		}
 
 		//
@@ -123,8 +121,7 @@ public class SocksClientNetLayer implements NetLayer
 			request2[i++] = 0x05;
 			request2[i++] = /* TCP client: */0x01;
 			request2[i++] = 0x00;
-			request2[i++] = (byte) ((addressLen == 4) ? /* IPv4 */0x01
-					: /* IPv6 */0x04);
+			request2[i++] = (byte) ((addressLen == 4) ? /* IPv4 */0x01 : /* IPv6 */0x04);
 			for (int j = 0; j < addressLen;)
 			{
 				request2[i++] = ra.getIpaddress()[j++];
@@ -136,8 +133,7 @@ public class SocksClientNetLayer implements NetLayer
 			final int nameLen = ra.getHostname().length();
 			if (nameLen > 255)
 			{
-				throw new IllegalArgumentException(
-						"name too long in remoteAddress=" + remoteAddress);
+				throw new IllegalArgumentException("name too long in remoteAddress=" + remoteAddress);
 			}
 			request2 = new byte[4 + 1 + nameLen + 2];
 			request2[i++] = 0x05;
@@ -153,8 +149,7 @@ public class SocksClientNetLayer implements NetLayer
 		}
 		else
 		{
-			throw new IllegalArgumentException("invalid remoteAddress="
-					+ remoteAddress);
+			throw new IllegalArgumentException("invalid remoteAddress=" + remoteAddress);
 		}
 		// append port number to 2nd request
 		request2[i++] = (byte) (ra.getPort() / 256);
@@ -211,18 +206,12 @@ public class SocksClientNetLayer implements NetLayer
 		//
 		// copy the streams
 		//
-		final DataNetSocketPair dataNetSocketPair = DataNetSocketUtil
-				.createDataNetSocketPair();
-		final DataNetSocket higherLayerSocketExported = dataNetSocketPair
-				.getSocket();
-		final DataNetSocket higherLayerSocketInternallyUsed = dataNetSocketPair
-				.getInvertedSocked();
-		final DataInputStream higherIn = higherLayerSocketInternallyUsed
-				.getDataInputStream();
-		final DataOutputStream higherOut = higherLayerSocketInternallyUsed
-				.getDataOutputStream();
-		InterconnectUtil.relayNonBlocking(higherIn, socksOut, socksIn,
-				higherOut, BUFFER_SIZE);
+		final DataNetSocketPair dataNetSocketPair = DataNetSocketUtil.createDataNetSocketPair();
+		final DataNetSocket higherLayerSocketExported = dataNetSocketPair.getSocket();
+		final DataNetSocket higherLayerSocketInternallyUsed = dataNetSocketPair.getInvertedSocked();
+		final DataInputStream higherIn = higherLayerSocketInternallyUsed.getDataInputStream();
+		final DataOutputStream higherOut = higherLayerSocketInternallyUsed.getDataOutputStream();
+		InterconnectUtil.relayNonBlocking(higherIn, socksOut, socksIn, higherOut, BUFFER_SIZE);
 
 		// result: the new higher layer socket
 		return higherLayerSocketExported;
@@ -236,8 +225,8 @@ public class SocksClientNetLayer implements NetLayer
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public NetServerSocket createNetServerSocket(
-			Map<String, Object> properties, NetAddress localListenAddress)
+	public NetServerSocket createNetServerSocket(final Map<String, Object> properties, 
+												 final NetAddress localListenAddress)
 	{
 		throw new UnsupportedOperationException();
 	}

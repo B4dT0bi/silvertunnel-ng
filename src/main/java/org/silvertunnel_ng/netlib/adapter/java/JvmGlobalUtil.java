@@ -54,11 +54,17 @@ import org.slf4j.LoggerFactory;
  * @author hapke
  * @author Tobias Boese
  */
-public class JvmGlobalUtil
+public final class JvmGlobalUtil
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(JvmGlobalUtil.class);
-
+	/**
+	 * Prevent instantiation.
+	 */
+	private JvmGlobalUtil()
+	{
+		
+	}
 	/**
 	 * Initialize the redirection. Set lower services NopNetLayer and
 	 * NopNetAddressNameService (similar to method setNopNet()). The lower

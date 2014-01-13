@@ -70,11 +70,9 @@ public class SocksServerNetLayerFactory implements NetLayerFactory
 			{
 				// create a new netLayer instance
 				final NetLayer tcpipNetLayer = new TcpipNetLayer();
-				final NetLayer loggingTcpipNetLayer = new LoggingNetLayer(
-						tcpipNetLayer, "upper tcpip  ");
+				final NetLayer loggingTcpipNetLayer = new LoggingNetLayer(tcpipNetLayer, "upper tcpip  ");
 
-				final NetLayer socksProxyNetLayer = new SocksServerNetLayer(
-						loggingTcpipNetLayer);
+				final NetLayer socksProxyNetLayer = new SocksServerNetLayer(loggingTcpipNetLayer);
 
 				netLayer = socksProxyNetLayer;
 			}

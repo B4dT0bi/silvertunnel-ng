@@ -31,8 +31,8 @@ import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.NetLayerStatus;
 import org.silvertunnel_ng.netlib.api.NetServerSocket;
 import org.silvertunnel_ng.netlib.api.NetSocket;
-import org.silvertunnel_ng.netlib.api.impl.PropertiesUtil;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
+import org.silvertunnel_ng.netlib.util.PropertiesUtil;
 
 /**
  * TLS/SSL transport layer protocol implementation.
@@ -51,15 +51,16 @@ public class TLSNetLayer implements NetLayer
 
 	private final NetLayer lowerNetLayer;
 
-	public TLSNetLayer(NetLayer lowerNetLayer)
+	public TLSNetLayer(final NetLayer lowerNetLayer)
 	{
 		this.lowerNetLayer = lowerNetLayer;
 	}
 
 	/** @see NetLayer#createNetSocket(Map, NetAddress, NetAddress) */
 	@Override
-	public NetSocket createNetSocket(Map<String, Object> localProperties,
-			NetAddress localAddress, NetAddress remoteAddress)
+	public NetSocket createNetSocket(final Map<String, Object> localProperties,
+									 final NetAddress localAddress, 
+									 final NetAddress remoteAddress)
 			throws IOException
 	{
 		// create lower layer socket
@@ -75,20 +76,18 @@ public class TLSNetLayer implements NetLayer
 				lowerLayerProperties, localAddress, remoteAddress);
 
 		// read (optional) properties
-		final String[] enabledCipherSuites = PropertiesUtil.getAsStringArray(
-				localProperties, ENABLES_CIPHER_SUITES, null);
+		final String[] enabledCipherSuites = PropertiesUtil.getAsStringArray(localProperties, ENABLES_CIPHER_SUITES, null);
 
 		final Object keyManagersObj = PropertiesUtil.getAsObject(localProperties, KEY_MANAGERS, null);
 		KeyManager[] keyManagers = null;
-		if ((keyManagersObj != null) && (keyManagersObj instanceof KeyManager[]))
+		if (keyManagersObj != null && keyManagersObj instanceof KeyManager[])
 		{
 			keyManagers = (KeyManager[]) keyManagersObj;
 		}
 
 		final Object trustManagersObj = PropertiesUtil.getAsObject(localProperties, TRUST_MANAGERS, null);
 		TrustManager[] trustManagers = null;
-		if ((trustManagersObj != null)
-				&& (trustManagersObj instanceof TrustManager[]))
+		if (trustManagersObj != null && trustManagersObj instanceof TrustManager[])
 		{
 			trustManagers = (TrustManager[]) trustManagersObj;
 		}

@@ -55,7 +55,7 @@ public class SocksServerNetSession implements Runnable
 
 	private DataNetSocket higherLayerSocketExported;
 
-	/** inverted version of higherLayerSocketExported */
+	/** inverted version of higherLayerSocketExported. */
 	private DataNetSocket higherLayerSocketInternallyUsed;
 
 	private DataNetSocket lowerLayerSocket;
@@ -65,14 +65,15 @@ public class SocksServerNetSession implements Runnable
 	private DataInputStream lowerIn;
 	private DataOutputStream lowerOut;
 
-	/** maximum length, compatible wit Tor cell payload length */
+	/** maximum length, compatible with Tor cell payload length. */
 	static final int BUFFER_SIZE = 498;
 
 	private static long id;
 
-	public SocksServerNetSession(NetLayer lowerNetLayer,
-			Map<String, Object> localProperties, NetAddress localAddress,
-			NetAddress remoteAddress)
+	public SocksServerNetSession(final NetLayer lowerNetLayer,
+								 final Map<String, Object> localProperties, 
+								 final NetAddress localAddress,
+								 final NetAddress remoteAddress)
 	{
 		this.lowerNetLayer = lowerNetLayer;
 	}
@@ -81,13 +82,11 @@ public class SocksServerNetSession implements Runnable
 	{
 		if (higherLayerSocketExported != null)
 		{
-			throw new IllegalStateException(
-					"cannot create multiple sockets for one session");
+			throw new IllegalStateException("cannot create multiple sockets for one session");
 		}
 
 		// create new socket
-		final DataNetSocketPair dataNetSocketPair = DataNetSocketUtil
-				.createDataNetSocketPair();
+		final DataNetSocketPair dataNetSocketPair = DataNetSocketUtil.createDataNetSocketPair();
 		higherLayerSocketExported = dataNetSocketPair.getSocket();
 		higherLayerSocketInternallyUsed = dataNetSocketPair.getInvertedSocked();
 
@@ -195,8 +194,7 @@ public class SocksServerNetSession implements Runnable
 			socksIn.readFully(command);
 			if (command[0] != 5)
 			{
-				throw new Exception(
-						"why the f*** does the client change its version number?");
+				throw new Exception("why the f*** does the client change its version number?");
 			}
 			if (command[1] != 1)
 			{
@@ -271,14 +269,12 @@ public class SocksServerNetSession implements Runnable
 			socksOut.flush();
 
 			// create lower layer connection
-			lowerLayerSocket = new DataNetSocketWrapper(
-					lowerNetLayer.createNetSocket(null, null, remoteAddress));
+			lowerLayerSocket = new DataNetSocketWrapper(lowerNetLayer.createNetSocket(null, null, remoteAddress));
 			lowerIn = lowerLayerSocket.getDataInputStream();
 			lowerOut = lowerLayerSocket.getDataOutputStream();
 
 			// copy the rest of the streams
-			InterconnectUtil.relay(socksIn, lowerOut, lowerIn, socksOut,
-					BUFFER_SIZE);
+			InterconnectUtil.relay(socksIn, lowerOut, lowerIn, socksOut, BUFFER_SIZE);
 
 			LOG.debug("processSocks5Connection(): end");
 
@@ -295,8 +291,7 @@ public class SocksServerNetSession implements Runnable
 
 	private void processSocks4Connection()
 	{
-		throw new UnsupportedOperationException(
-				"socks4 is currently not supported");
+		throw new UnsupportedOperationException("socks4 is currently not supported");
 		/*
 		 * TODO Logger.logStream(Logger.VERBOSE,
 		 * "SocksConnection.socks4(): start");
@@ -339,7 +334,6 @@ public class SocksServerNetSession implements Runnable
 	protected static synchronized String createUniqueThreadName()
 	{
 		id++;
-		return SocksServerNetSession.class.getName() + id + "-"
-				+ Thread.currentThread().getName();
+		return SocksServerNetSession.class.getName() + id + "-" + Thread.currentThread().getName();
 	}
 }

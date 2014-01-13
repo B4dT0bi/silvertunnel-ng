@@ -45,7 +45,7 @@ public class SocksServerNetLayer implements NetLayer
 	 *            layer that should be compatible to TcpipNetLayer, i.e. it
 	 *            should accept TcpipNetAddress objects to create sockets
 	 */
-	public SocksServerNetLayer(NetLayer lowerNetLayer)
+	public SocksServerNetLayer(final NetLayer lowerNetLayer)
 	{
 		this.lowerNetLayer = lowerNetLayer;
 	}
@@ -64,8 +64,9 @@ public class SocksServerNetLayer implements NetLayer
 	 *            will be ignored
 	 */
 	@Override
-	public NetSocket createNetSocket(Map<String, Object> localProperties,
-			NetAddress localAddress, NetAddress remoteAddress)
+	public NetSocket createNetSocket(final Map<String, Object> localProperties,
+									 final NetAddress localAddress, 
+									 final NetAddress remoteAddress)
 			throws IOException
 	{
 		return new SocksServerNetSession(lowerNetLayer, localProperties,
@@ -80,8 +81,8 @@ public class SocksServerNetLayer implements NetLayer
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public NetServerSocket createNetServerSocket(
-			Map<String, Object> properties, NetAddress localListenAddress)
+	public NetServerSocket createNetServerSocket(final Map<String, Object> properties, 
+												 final NetAddress localListenAddress)
 	{
 		throw new UnsupportedOperationException();
 	}

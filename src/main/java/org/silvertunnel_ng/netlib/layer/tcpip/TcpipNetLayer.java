@@ -32,13 +32,13 @@ import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.NetLayerStatus;
 import org.silvertunnel_ng.netlib.api.NetServerSocket;
 import org.silvertunnel_ng.netlib.api.NetSocket;
-import org.silvertunnel_ng.netlib.api.impl.PropertiesUtil;
 import org.silvertunnel_ng.netlib.api.impl.ServerSocket2NetServerSocket;
 import org.silvertunnel_ng.netlib.api.impl.Socket2NetSocket;
 import org.silvertunnel_ng.netlib.api.service.NetlibVersion;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.nameservice.cache.CachingNetAddressNameService;
 import org.silvertunnel_ng.netlib.nameservice.inetaddressimpl.DefaultIpNetAddressNameService;
+import org.silvertunnel_ng.netlib.util.PropertiesUtil;
 import org.silvertunnel_ng.netlib.adapter.socket.SocketGlobalUtil;
 
 /**
@@ -75,8 +75,9 @@ public class TcpipNetLayer implements NetLayer
 
 	/** @see NetLayer#createNetSocket(Map, NetAddress, NetAddress) */
 	@Override
-	public NetSocket createNetSocket(Map<String, Object> localProperties,
-			NetAddress localAddress, NetAddress remoteAddress)
+	public NetSocket createNetSocket(final Map<String, Object> localProperties,
+									 final NetAddress localAddress, 
+									 final NetAddress remoteAddress)
 			throws IOException
 	{
 		final TcpipNetAddress r = (TcpipNetAddress) remoteAddress;
@@ -139,8 +140,8 @@ public class TcpipNetLayer implements NetLayer
 
 	/** @see NetLayer#createNetServerSocket(Map, NetAddress) */
 	@Override
-	public NetServerSocket createNetServerSocket(
-			Map<String, Object> properties, NetAddress localListenAddress)
+	public NetServerSocket createNetServerSocket(final Map<String, Object> properties, 
+												 final NetAddress localListenAddress)
 			throws IOException
 	{
 		final TcpipNetAddress l = (TcpipNetAddress) localListenAddress;

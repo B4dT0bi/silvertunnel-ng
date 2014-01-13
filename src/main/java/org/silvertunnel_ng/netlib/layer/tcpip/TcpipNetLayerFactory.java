@@ -74,8 +74,7 @@ public final class TcpipNetLayerFactory implements NetLayerFactory
 			{
 				// create a new netLayer instance
 				final NetLayer tcpipNetLayer = new TcpipNetLayer();
-				final NetLayer loggingTcpipNetLayer = new LoggingNetLayer(
-						tcpipNetLayer, "upper tcpip  ");
+				final NetLayer loggingTcpipNetLayer = new LoggingNetLayer(tcpipNetLayer, "upper tcpip  ");
 				netLayer = loggingTcpipNetLayer;
 			}
 			return netLayer;
