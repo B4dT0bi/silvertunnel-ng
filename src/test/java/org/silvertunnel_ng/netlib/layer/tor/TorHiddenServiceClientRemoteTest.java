@@ -59,7 +59,18 @@ public final class TorHiddenServiceClientRemoteTest extends TorRemoteAbstractTes
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TorHiddenServiceClientRemoteTest.class);
+	/** onion address of Tor Directory. */
+	private static final String TOR_DIRECTORY_HOSTNAME = "dppmfxaacucguzpc.onion";
+	/** onion address of Tor's example hidden service. */
+	private static final String TOR_EXAMPLE_HOSTNAME = "duskgytldkxiuqc6.onion";
+	/** onion address of SilverTunnel-NG's test hidden service. */
+	private static final String SILVERTUNNEL_HOSTNAME = "h6hk2h7fnr66d4o3.onion";
+	/** onion address of WikiLeaks. */
+	private static final String WIKILEAKS_HOSTNAME = "gaddbiwdftapglkq.onion";
 
+	/**
+	 * Setup SilverTunnel-NG Netlib.
+	 */
 	@BeforeClass
 	public void setUp()
 	{
@@ -67,13 +78,7 @@ public final class TorHiddenServiceClientRemoteTest extends TorRemoteAbstractTes
 		// tests.
 		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH, "2");
 		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH, "2");
-		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS, "2"); // just
-																						// 2
-																						// initial
-																						// circuit
-																						// for
-																						// faster
-																						// tests
+		System.setProperty(TorConfig.SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS, "2");
 		TorConfig.reloadConfigFromProperties();
 	}
 
@@ -85,37 +90,32 @@ public final class TorHiddenServiceClientRemoteTest extends TorRemoteAbstractTes
 		// class
 		super.initializeTor();
 	}
-
-	@Test(timeOut = 60000, dependsOnMethods = { "initializeTor" })
-	public void testAccessToTorsExampleOnionDomain() throws Exception
+	/**
+	 * Open a connection to the given hidden service and read the whole content.
+	 * @param onionAddress the *.onion address
+	 * @param port the port
+	 * @return a string containing the http response body
+	 * @throws Exception in case of error
+	 */
+	private String openHiddenService(final String onionAddress, final int port) throws Exception
 	{
-		final String TORCHECK_HOSTNAME = "duskgytldkxiuqc6.onion";
-		final TcpipNetAddress TORCHECK_NETADDRESS = new TcpipNetAddress(TORCHECK_HOSTNAME, 80);
-		// final String TORCHECK_HOSTNAME = "pev3fvr4qjgh63go.onion";
-		// final TcpipNetAddress TORCHECK_NETADDRESS = new
-		// TcpipNetAddress(TORCHECK_HOSTNAME, 2203);
-
+		final TcpipNetAddress netAddress = new TcpipNetAddress(onionAddress, port);
+		String result = "";
 		// create connection
 		NetSocket topSocket = null;
 		try
 		{
 			topSocket = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TOR_OVER_TLS_OVER_TCPIP)
-					.createNetSocket(null, null, TORCHECK_NETADDRESS);
+					.createNetSocket(null, null, netAddress);
 
 			HttpUtil.getInstance();
 			// communicate with the remote side
-			final byte[] httpResponse = HttpUtil.get(topSocket, TORCHECK_NETADDRESS, "/", 10000);
+			final byte[] httpResponse = HttpUtil.get(topSocket, netAddress, "/", 10000);
 			String httpResponseStr = ByteArrayUtil.showAsString(httpResponse);
 			LOG.info("http response body: " + httpResponseStr);
 
 			// make the httpResponseStr readable in HTML reports
-			httpResponseStr = removeHtmlTags(httpResponseStr);
-
-			// check result
-			if (!httpResponseStr.contains("This is the example page for Tor's"))
-			{
-				fail("did not get correct response of hidden service, response body=" + httpResponseStr);
-			}
+			result = removeHtmlTags(httpResponseStr);
 		}
 		finally
 		{
@@ -123,43 +123,33 @@ public final class TorHiddenServiceClientRemoteTest extends TorRemoteAbstractTes
 			{
 				topSocket.close();
 			}
+		}
+		return result;
+	}
+
+	/**
+	 * Access Tor's example hidden service.
+	 * @throws Exception
+	 */
+	@Test(timeOut = 60000, dependsOnMethods = { "initializeTor" })
+	public void testAccessToTorsExampleOnionDomain() throws Exception
+	{
+		String httpResponseStr = openHiddenService(TOR_EXAMPLE_HOSTNAME, 80);
+		// check result
+		if (!httpResponseStr.contains("This is the example page for Tor's"))
+		{
+			fail("did not get correct response of hidden service, response body=" + httpResponseStr);
 		}
 	}
 
 	@Test(timeOut = 60000, dependsOnMethods = { "initializeTor" })
 	public void testAccessToSilvertunnelOnionDomain() throws Exception
 	{
-		final String TORCHECK_HOSTNAME = "h6hk2h7fnr66d4o3.onion";
-		final TcpipNetAddress TORCHECK_NETADDRESS = new TcpipNetAddress(TORCHECK_HOSTNAME, 80);
-
-		// create connection
-		NetSocket topSocket = null;
-		try
+		String httpResponseStr = openHiddenService(SILVERTUNNEL_HOSTNAME, 80);
+		// check result
+		if (!httpResponseStr.contains("httptest works."))
 		{
-			topSocket = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TOR_OVER_TLS_OVER_TCPIP)
-					.createNetSocket(null, null, TORCHECK_NETADDRESS);
-
-			HttpUtil.getInstance();
-			// communicate with the remote side
-			final byte[] httpResponse = HttpUtil.get(topSocket, TORCHECK_NETADDRESS, "/", 10000);
-			String httpResponseStr = ByteArrayUtil.showAsString(httpResponse);
-			LOG.info("http response body: " + httpResponseStr);
-
-			// make the httpResponseStr readable in HTML reports
-			httpResponseStr = removeHtmlTags(httpResponseStr);
-
-			// check result
-			if (!httpResponseStr.contains("httptest works."))
-			{
-				fail("did not get correct response of hidden service, response body=" + httpResponseStr);
-			}
-		}
-		finally
-		{
-			if (topSocket != null)
-			{
-				topSocket.close();
-			}
+			fail("did not get correct response of hidden service, response body=" + httpResponseStr);
 		}
 	}
 
@@ -167,116 +157,27 @@ public final class TorHiddenServiceClientRemoteTest extends TorRemoteAbstractTes
 	@Test(timeOut = 60000, dependsOnMethods = { "initializeTor" }, enabled = false)
 	public void testAccessToWikileaksOnionDomain() throws Exception
 	{
-		final String TORCHECK_HOSTNAME = "gaddbiwdftapglkq.onion";
-		final TcpipNetAddress TORCHECK_NETADDRESS = new TcpipNetAddress(TORCHECK_HOSTNAME, 80);
-
-		// create connection
-		NetSocket topSocket = null;
-		try
+		String httpResponseStr = openHiddenService(WIKILEAKS_HOSTNAME, 80);
+		// check result
+		final String SUCCESS_STR = "Click here to make a secure submission";
+		if (!httpResponseStr.contains(SUCCESS_STR))
 		{
-			topSocket = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TOR_OVER_TLS_OVER_TCPIP)
-					.createNetSocket(null, null, TORCHECK_NETADDRESS);
-
-			HttpUtil.getInstance();
-			// communicate with the remote side
-			final byte[] httpResponse = HttpUtil.get(topSocket, TORCHECK_NETADDRESS, "/", 10000);
-			String httpResponseStr = ByteArrayUtil.showAsString(httpResponse);
-			LOG.info("http response body: " + httpResponseStr);
-
-			// make the httpResponseStr readable in HTML reports
-			httpResponseStr = removeHtmlTags(httpResponseStr);
-
-			// check result
-			final String SUCCESS_STR = "Click here to make a secure submission";
-			if (!httpResponseStr.contains(SUCCESS_STR))
-			{
-				fail("did not get correct response of hidden service, response body=" + httpResponseStr);
-			}
-		}
-		finally
-		{
-			if (topSocket != null)
-			{
-				topSocket.close();
-			}
+			fail("did not get correct response of hidden service, response body=" + httpResponseStr);
 		}
 	}
-
-	@Test(timeOut = 60000, dependsOnMethods = { "initializeTor" })
+	/**
+	 * Access Tor Directory via Hidden Service.
+	 * Test is currently disabled as service is currently not available.
+	 * @throws Exception
+	 */
+	@Test(timeOut = 60000, dependsOnMethods = { "initializeTor" }, enabled = false)
 	public void testAccessToTORDirectoryOnionDomain() throws Exception
 	{
-		final String TORCHECK_HOSTNAME = "dppmfxaacucguzpc.onion";
-		final TcpipNetAddress TORCHECK_NETADDRESS = new TcpipNetAddress(TORCHECK_HOSTNAME, 80);
-
-		// create connection
-		NetSocket topSocket = null;
-		try
+		String httpResponseStr = openHiddenService(TOR_DIRECTORY_HOSTNAME, 80);
+		// check result
+		if (!httpResponseStr.contains("TORDIR - Link List"))
 		{
-			topSocket = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TOR_OVER_TLS_OVER_TCPIP)
-					.createNetSocket(null, null, TORCHECK_NETADDRESS);
-
-			HttpUtil.getInstance();
-			// communicate with the remote side
-			final byte[] httpResponse = HttpUtil.get(topSocket, TORCHECK_NETADDRESS, "/", 10000);
-			String httpResponseStr = ByteArrayUtil.showAsString(httpResponse);
-			LOG.info("http response body: " + httpResponseStr);
-
-			// make the httpResponseStr readable in HTML reports
-			httpResponseStr = removeHtmlTags(httpResponseStr);
-
-			// check result
-			final String SUCCESS_STR = "TORDIR - Link List";
-			if (!httpResponseStr.contains(SUCCESS_STR))
-			{
-				fail("did not get correct response of hidden service, response body=" + httpResponseStr);
-			}
-		}
-		finally
-		{
-			if (topSocket != null)
-			{
-				topSocket.close();
-			}
-		}
-	}
-
-	// @Ignore(value =
-	// "this service is just a test service and only temporarily available")
-	@Test(timeOut = 60000, dependsOnMethods = { "initializeTor" }, enabled = false)
-	public void testAccessToSTHiddenServiceOnionDomain() throws Exception
-	{
-		final String TORCHECK_HOSTNAME = "4xuwatxuqzfnqjuz.onion";
-		final TcpipNetAddress TORCHECK_NETADDRESS = new TcpipNetAddress(TORCHECK_HOSTNAME, 80);
-
-		// create connection
-		NetSocket topSocket = null;
-		try
-		{
-			topSocket = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TOR_OVER_TLS_OVER_TCPIP)
-					.createNetSocket(null, null, TORCHECK_NETADDRESS);
-
-			HttpUtil.getInstance();
-			// communicate with the remote side
-			final byte[] httpResponse = HttpUtil.get(topSocket, TORCHECK_NETADDRESS, "/", 10000);
-			String httpResponseStr = ByteArrayUtil.showAsString(httpResponse);
-			LOG.info("http response body: " + httpResponseStr);
-
-			// make the httpResponseStr readable in HTML reports
-			httpResponseStr = removeHtmlTags(httpResponseStr);
-
-			// check result
-			final String SUCCESS_STR = "Speziell f&uuml;r kleine und mittlere Unternehmen sowie f&uuml;r Privatpersonen";
-			if (!httpResponseStr.contains(SUCCESS_STR))
-			{
-				fail("did not get correct response of hidden service, response body=" + httpResponseStr);
-			}
-		}
-		finally
-		{
-			if (topSocket != null)
-			{
-				topSocket.close();
-			}
+			fail("did not get correct response of hidden service, response body=" + httpResponseStr);
 		}
 	}
 }
