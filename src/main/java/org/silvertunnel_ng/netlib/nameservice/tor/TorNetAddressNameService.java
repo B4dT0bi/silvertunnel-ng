@@ -41,6 +41,7 @@ public class TorNetAddressNameService implements NetAddressNameService
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TorNetAddressNameService.class);
 
+	/** {@link Tor} instance used for communications. */
 	private final Tor tor;
 
 	/**
@@ -64,8 +65,7 @@ public class TorNetAddressNameService implements NetAddressNameService
 
 	/** @see NetAddressNameService#getAddressesByName(String) */
 	@Override
-	public NetAddress[] getAddressesByName(final String hostname)
-			throws UnknownHostException
+	public NetAddress[] getAddressesByName(final String hostname) throws UnknownHostException
 	{
 		try
 		{
@@ -83,8 +83,7 @@ public class TorNetAddressNameService implements NetAddressNameService
 		}
 		catch (final IOException e)
 		{
-			final UnknownHostException e2 = new UnknownHostException(
-					"Error with hostname=" + hostname);
+			final UnknownHostException e2 = new UnknownHostException("Error with hostname=" + hostname);
 			e2.initCause(e);
 			throw e2;
 		}
@@ -92,8 +91,7 @@ public class TorNetAddressNameService implements NetAddressNameService
 
 	/** @see NetAddressNameService#getNamesByAddress(NetAddress) */
 	@Override
-	public String[] getNamesByAddress(final NetAddress netAddress)
-			throws UnknownHostException
+	public String[] getNamesByAddress(final NetAddress netAddress) throws UnknownHostException
 	{
 		try
 		{
@@ -114,8 +112,7 @@ public class TorNetAddressNameService implements NetAddressNameService
 			else
 			{
 				// error
-				throw new UnknownHostException("Invalid type of netAddress="
-						+ netAddress);
+				throw new UnknownHostException("Invalid type of netAddress=" + netAddress);
 			}
 
 		}
@@ -126,8 +123,7 @@ public class TorNetAddressNameService implements NetAddressNameService
 		}
 		catch (final IOException e)
 		{
-			final UnknownHostException e2 = new UnknownHostException(
-					"Error with netAddress=" + netAddress);
+			final UnknownHostException e2 = new UnknownHostException("Error with netAddress=" + netAddress);
 			e2.initCause(e);
 			throw e2;
 		}
@@ -143,20 +139,16 @@ public class TorNetAddressNameService implements NetAddressNameService
 	 */
 	private void checkNetlibTorLoop() throws UnknownHostException
 	{
-		final UnknownHostException e = new UnknownHostException(
-				"Netlib Tor call cycle / dead lock prevented");
+		final UnknownHostException e = new UnknownHostException("Netlib Tor call cycle / dead lock prevented");
 		for (final StackTraceElement ste : e.getStackTrace())
 		{
-			if (ste.getClassName().startsWith(
-					"org.silvertunnel_ng.netlib.layer.tor."))
+			if (ste.getClassName().startsWith("org.silvertunnel_ng.netlib.layer.tor."))
 			{
 				// this is a loop / call cycle / dead lock - stop here and throw
 				// the exception to avoid blocking
 				if (LOG.isDebugEnabled())
 				{
-					LOG.debug(
-							"Netlib Tor call cycle / dead lock prevented - right now",
-							e);
+					LOG.debug("Netlib Tor call cycle / dead lock prevented - right now", e);
 				}
 				else
 				{
