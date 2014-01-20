@@ -53,6 +53,13 @@ import javax.xml.bind.DatatypeConverter;
  */
 public class Encoding
 {
+	/**
+	 * Prevent instantiation.
+	 */
+	private Encoding()
+	{
+		
+	}
 	/** allowed hex characters. */
 	private static final String HEX_CHARS = "0123456789abcdef";
 	private static final String[] HEX_LOOKUP = { "00", "01", "02", "03", "04", "05",
@@ -525,7 +532,7 @@ public class Encoding
 		y = Parsing.parseStringByRE(z, HIDDENADDRESS_Y_PATTERN, "");
 		z = z.replaceFirst(y + "\\.", "");
 
-		if (y == "")
+		if (y.isEmpty())
 		{
 			y = x;
 			x = "";

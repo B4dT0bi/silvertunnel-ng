@@ -248,8 +248,7 @@ public class HttpUtil
 					// disable keep-alive
 					+ "Connection: close\r\n" + "\r\n";
 			final byte[] requestBytes1 = request.getBytes(Util.UTF8);
-			final byte[] requestBytes = ByteArrayUtil.concatByteArrays(
-					requestBytes1, dataToPost);
+			final byte[] requestBytes = ByteArrayUtil.concatByteArrays(requestBytes1, dataToPost);
 
 			// TODO - remove?:
 			LOG.info("httpServerNetAddress=" + httpServerNetAddress + " with request=" + new String(requestBytes, Util.UTF8));
@@ -268,7 +267,7 @@ public class HttpUtil
 				}
 				catch (final Exception e)
 				{
-					LOG.debug("response=" + response);
+					LOG.debug("response={}", Arrays.toString(response));
 				}
 			}
 
