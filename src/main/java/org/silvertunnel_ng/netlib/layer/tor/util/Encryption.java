@@ -74,7 +74,6 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
-import javax.xml.bind.DatatypeConverter;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OutputStream;
@@ -88,9 +87,10 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.jce.provider.JCERSAPrivateCrtKey;
 import org.bouncycastle.jce.provider.JCERSAPrivateKey;
 import org.bouncycastle.jce.provider.JCERSAPublicKey;
-import org.bouncycastle.openssl.PEMReader;
-import org.bouncycastle.openssl.PEMWriter;
+import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.io.pem.PemReader;
+import org.bouncycastle.util.io.pem.PemWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -406,8 +406,8 @@ public class Encryption
 		try
 		{
 			// parse
-			final PEMReader reader = new PEMReader(new StringReader(s));
-			final Object o = reader.readObject();
+			final PemReader reader = new PemReader(new StringReader(s));
+			final Object o = reader.readPemObject();
 			reader.close();
 			// check types
 			if (!(o instanceof KeyPair))
@@ -450,12 +450,12 @@ public class Encryption
 	public static String getPEMStringFromRSAKeyPair(final RSAKeyPair rsaKeyPair)
 	{
 		final StringWriter pemStrWriter = new StringWriter();
-		final PEMWriter pemWriter = new PEMWriter(pemStrWriter);
+		final PemWriter pemWriter = new PemWriter(pemStrWriter);
 		try
 		{
 			final KeyPair keyPair = new KeyPair(rsaKeyPair.getPublic(), rsaKeyPair.getPrivate());
 			// pemWriter.writeObject(keyPair);
-			pemWriter.writeObject(keyPair.getPrivate());
+			pemWriter.writeObject(new JcaMiscPEMGenerator(keyPair.getPrivate()));
 			// pemWriter.flush();
 			pemWriter.close();
 
