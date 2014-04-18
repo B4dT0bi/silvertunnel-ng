@@ -56,13 +56,13 @@ public class EncryptionLocalTest
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(EncryptionLocalTest.class);
 
-	@Test(timeOut = 5000)
+	@Test(timeOut = 50000)
 	public void testExtractRSAKeyPair() throws Exception
 	{
 		// parse private key from PEM
 		final String privateKeyPEM = FileUtil.readFileFromClasspath(TorNetLayerUtilLocalTest.EXAMPLE_PRIVATE_KEY_PEM_PATH);
 		final RSAKeyPair keyPair = Encryption.extractRSAKeyPair(privateKeyPEM);
-		assertNotNull("could not parse prive key from PEM format", keyPair);
+		assertNotNull("could not parse privat key from PEM format", keyPair);
 
 		// check the the public part of the key is as expected
 		final String z = RendezvousServiceDescriptorUtil.calculateZFromPublicKey(keyPair.getPublic());
@@ -79,6 +79,7 @@ public class EncryptionLocalTest
 		String privateKeyPEM = FileUtil.readFileFromClasspath(TorNetLayerUtilLocalTest.EXAMPLE_PRIVATE_KEY_PEM_PATH);
 		final RSAKeyPair keyPair = Encryption.extractRSAKeyPair(privateKeyPEM);
 
+		assertNotNull("extractRSAKeyPair didnt worked (return should be not null)", keyPair);
 		LOG.info("keyPair=" + keyPair);
 
 		// convert private key to PEM and compare with original PEM
