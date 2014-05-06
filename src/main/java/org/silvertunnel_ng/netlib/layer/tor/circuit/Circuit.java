@@ -316,7 +316,7 @@ public final class Circuit
 						LOG.debug("Circuit: sending create cell to " + routeServers[0].getNickname());
 					}
 					routeNodes = new Node[routeServers.length];
-					if (TorConfig.USE_CREATE_FAST_CELLS)
+					if (TorConfig.useCreateFastCells())
 					{
 						createFast(routeServers[0]);
 					}

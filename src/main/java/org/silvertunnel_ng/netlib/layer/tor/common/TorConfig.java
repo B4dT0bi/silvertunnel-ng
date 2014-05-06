@@ -64,6 +64,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 // TODO : implement bridge connect
 // TODO : implement ExcludeSingleHopRelays (torrc)
+
 /**
  * Global configuration of TorNetLayer.
  * 
@@ -73,8 +74,7 @@ import org.slf4j.LoggerFactory;
  * @author hapke
  * @author Tobias Boese
  */
-public final class TorConfig
-{
+public final class TorConfig {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TorConfig.class);
 
@@ -82,7 +82,26 @@ public final class TorConfig
 	private static TorConfig instance;
 
 	/** Use Create_Fast Cells instead of normal Create Cells? */
-	public static final boolean USE_CREATE_FAST_CELLS = true;
+	private boolean useCreateFastCells = true;
+
+	/**
+	 * @return Use Create_Fast Cells instead of normal Create Cells?
+	 */
+	public static boolean useCreateFastCells() {
+		return getInstance().useCreateFastCells;
+	}
+
+	/**
+	 * Should we use Create_Fast cells instead of normal create cells?
+	 * 
+	 * @param useIt
+	 *            boolean, true for create_fast cells (default) and false for
+	 *            normal create cells
+	 */
+	public static void setUseCreateFastCells(final boolean useIt) {
+		getInstance().useCreateFastCells = useIt;
+	}
+
 	/**
 	 * Startup delay in seconds.
 	 * 
@@ -90,44 +109,48 @@ public final class TorConfig
 	 */
 	private int startupDelaySeconds = 20;
 	/**
-	 * Default list of "long-lived" ports listed in path-spec 2.2. a circuit needs to be
-	 * "stable" for these ports. 
+	 * Default list of "long-lived" ports listed in path-spec 2.2. a circuit
+	 * needs to be "stable" for these ports.
 	 */
 	private static final int[] DEFAULT_LONG_LIVED_PORTS = { 21, 22, 706, 1863, 5050, 5190, 5222, 5223, 6667, 6697, 8300 };
 	/**
 	 * List of "long-lived" ports listed in path-spec 2.2. a circuit needs to be
-	 * "stable" for these ports. 
+	 * "stable" for these ports.
 	 */
 	private Set<Integer> longLivedPorts = new HashSet<Integer>();
+
 	/**
 	 * Add a port to the long lived ports list.
-	 * @param port the port to be added
+	 * 
+	 * @param port
+	 *            the port to be added
 	 */
-	public static void addLongLivedPort(final int port)
-	{
+	public static void addLongLivedPort(final int port) {
 		getInstance().longLivedPorts.add(port);
 	}
+
 	/**
 	 * Set the list of long lived ports to the given list.
-	 * @param list the list containing the long lived ports
+	 * 
+	 * @param list
+	 *            the list containing the long lived ports
 	 */
-	public static void setLongLivedPorts(final Set<Integer> list)
-	{
+	public static void setLongLivedPorts(final Set<Integer> list) {
 		getInstance().longLivedPorts = list;
 	}
+
 	/**
 	 * Get the list of long lived ports.
+	 * 
 	 * @return a Set of long lived ports.
 	 */
-	public static Set<Integer> getLongLivedPorts()
-	{
+	public static Set<Integer> getLongLivedPorts() {
 		return getInstance().longLivedPorts;
 	}
+
 	/** @return get an instance of {@link TorConfig}. */
-	private static synchronized TorConfig getInstance()
-	{
-		if (instance == null)
-		{
+	private static synchronized TorConfig getInstance() {
+		if (instance == null) {
 			instance = new TorConfig();
 		}
 		return instance;
@@ -138,8 +161,7 @@ public final class TorConfig
 	 * 
 	 * @return the startup delay in seconds.
 	 */
-	public static int getStartupDelay()
-	{
+	public static int getStartupDelay() {
 		return getInstance().startupDelaySeconds;
 	}
 
@@ -149,8 +171,7 @@ public final class TorConfig
 	 * @param delay
 	 *            the startup delay in seconds.
 	 */
-	public static void setStartupDelay(final int delay)
-	{
+	public static void setStartupDelay(final int delay) {
 		getInstance().startupDelaySeconds = delay;
 	}
 
@@ -162,17 +183,18 @@ public final class TorConfig
 	public static int retriesStreamBuildup = 5;
 
 	/** How many circuits should be allowed for idling as max? */
-	private static final int MAXIMUM_IDLE_CIRCUITS = 20; // TODO : verify this value
+	private static final int MAXIMUM_IDLE_CIRCUITS = 20; // TODO : verify this
+															// value
 	/**
-	 * How many circuit should be idling ?
-	 * <br><br>
-	 * recommended value : 3 
-	 * maximum value : 20 // TODO : verify or set a good max value
-	 * <br><br>
+	 * How many circuit should be idling ? <br>
+	 * <br>
+	 * recommended value : 3 maximum value : 20 // TODO : verify or set a good
+	 * max value <br>
+	 * <br>
 	 * if this value is 0 then tor will only open circuits when a connection is
 	 * needed, but in this case the connection will take longer as the circuit
-	 * needs to be built first.
-	 * <br><br>
+	 * needs to be built first. <br>
+	 * <br>
 	 * default value : 3
 	 */
 	private int minimumIdleCircuits = 3;
@@ -180,28 +202,25 @@ public final class TorConfig
 	/**
 	 * @return get the amount of retries for establishing a connection.
 	 */
-	public static int getRetriesConnect()
-	{
+	public static int getRetriesConnect() {
 		return getInstance().retriesConnect;
 	}
 
 	/**
-	 * Set the amount of connect retries.
-	 * <br><br>
-	 * Should be a value higher than 0
-	 * <br><br>
+	 * Set the amount of connect retries. <br>
+	 * <br>
+	 * Should be a value higher than 0 <br>
+	 * <br>
+	 * 
 	 * @param retries
 	 *            max retry count for a connection
 	 */
-	public static void setRetriesConnect(final int retries)
-	{
-		if (retries <= 0)
-		{
+	public static void setRetriesConnect(final int retries) {
+		if (retries <= 0) {
 			LOG.warn("setRetriesConnect : wrong value for retriesConnect found!");
 			return; // keep the old value
 		}
-		if (retries > 20)
-		{
+		if (retries > 20) {
 			LOG.warn("setRetriesConnect : number of retries could be to high.");
 		}
 		getInstance().retriesConnect = retries;
@@ -210,28 +229,24 @@ public final class TorConfig
 	/**
 	 * @return get the amount of retries for reconnecting a circuit.
 	 */
-	public static int getReconnectCircuit()
-	{
+	public static int getReconnectCircuit() {
 		return getInstance().reconnectCircuit;
 	}
 
 	/**
-	 * Set the amount of reconnects for a circuit.
-	 * <br><br>
+	 * Set the amount of reconnects for a circuit. <br>
+	 * <br>
 	 * Should be a value higher than 0
 	 * 
 	 * @param reconnects
 	 *            max reconnects for a circuit
 	 */
-	public static void setReconnectCircuit(final int reconnects)
-	{
-		if (reconnects <= 0)
-		{
+	public static void setReconnectCircuit(final int reconnects) {
+		if (reconnects <= 0) {
 			LOG.warn("setReconnectCircuit : wrong value for reconnectCircuit found!");
 			return; // keep the old value
 		}
-		if (reconnects > 10)
-		{
+		if (reconnects > 10) {
 			LOG.warn("setReconnectCircuit : number of reconnects could be to high.");
 		}
 		getInstance().reconnectCircuit = reconnects;
@@ -240,23 +255,22 @@ public final class TorConfig
 	/**
 	 * @return get the number of minimum idle circuits.
 	 */
-	public static int getMinimumIdleCircuits()
-	{
+	public static int getMinimumIdleCircuits() {
 		return getInstance().minimumIdleCircuits;
 	}
 
 	/**
-	 * Set the minimum number of idling circuits.
-	 * <br><br>
-	 * recommended value : 3<br> 
-	 * maximum value : 20 // TODO : verify or set a good max value
-	 * <br><br>
+	 * Set the minimum number of idling circuits. <br>
+	 * <br>
+	 * recommended value : 3<br>
+	 * maximum value : 20 // TODO : verify or set a good max value <br>
+	 * <br>
 	 * if this value is 0 then tor will only open circuits when a connection is
 	 * needed, but in this case the connection will take longer as the circuit
-	 * needs to be built first.
-	 * <br><br>
-	 * default value : 3
-	 * <br><br>
+	 * needs to be built first. <br>
+	 * <br>
+	 * default value : 3 <br>
+	 * <br>
 	 * if the value is not allowed (< 0 or > MAXIMUM_IDLE_CIRCUITS) the value
 	 * will be either set to 0 or to MAXIMUM_IDLE_CIRCUITS and a warning will be
 	 * logged.
@@ -264,18 +278,13 @@ public final class TorConfig
 	 * @param nrOfCircuits
 	 *            the minimum number of idling circuits
 	 */
-	public static void setMinimumIdleCircuits(final int nrOfCircuits)
-	{
-		if (nrOfCircuits < 0)
-		{
+	public static void setMinimumIdleCircuits(final int nrOfCircuits) {
+		if (nrOfCircuits < 0) {
 			LOG.warn("setMinimumIdleCircuits : value should not be lower than 0. setting minimumIdleCircuits to 0!");
 			setMinimumIdleCircuits(0);
 		}
-		if (nrOfCircuits > MAXIMUM_IDLE_CIRCUITS)
-		{
-			LOG.warn("setMinimumIdleCircuits : value should not be greater than "
-					+ MAXIMUM_IDLE_CIRCUITS
-					+ ". setting minimumIdleCircuits to "
+		if (nrOfCircuits > MAXIMUM_IDLE_CIRCUITS) {
+			LOG.warn("setMinimumIdleCircuits : value should not be greater than " + MAXIMUM_IDLE_CIRCUITS + ". setting minimumIdleCircuits to "
 					+ MAXIMUM_IDLE_CIRCUITS + "!");
 			setMinimumIdleCircuits(MAXIMUM_IDLE_CIRCUITS);
 		}
@@ -285,51 +294,46 @@ public final class TorConfig
 	/** prefix for System properties. */
 	public static final String SYSTEMPROPERTY_TOR_PREFIX = "silvertunnel-ng.tor.";
 	/** identifier for System properties. */
-	public static final String SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS = SYSTEMPROPERTY_TOR_PREFIX
-			+ "minimumIdleCircuits";
+	public static final String SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS = SYSTEMPROPERTY_TOR_PREFIX + "minimumIdleCircuits";
 	/** identifier for min. Route length System property. */
-	public static final String SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH = SYSTEMPROPERTY_TOR_PREFIX
-			+ "minimumRouteLength";
+	public static final String SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH = SYSTEMPROPERTY_TOR_PREFIX + "minimumRouteLength";
 	/** identifier for max. Route length System property. */
-	public static final String SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH = SYSTEMPROPERTY_TOR_PREFIX
-			+ "maximumRouteLength";
+	public static final String SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH = SYSTEMPROPERTY_TOR_PREFIX + "maximumRouteLength";
 	/** identifier for System property @see caching Hidden service descriptor. */
-	public static final String SYSTEMPROPERTY_TOR_CACHE_HS_DESCRIPTOR = SYSTEMPROPERTY_TOR_PREFIX
-			+ "cacheHiddenServiceDescriptor";
+	public static final String SYSTEMPROPERTY_TOR_CACHE_HS_DESCRIPTOR = SYSTEMPROPERTY_TOR_PREFIX + "cacheHiddenServiceDescriptor";
 	/** identifier for System properties. */
-	public static final String SYSTEMPROPERTY_TOR_MAX_ALLOWED_SETUP_DURATION_MS = SYSTEMPROPERTY_TOR_PREFIX
-			+ "maxAllowedSetupDurationMs";
-	
+	public static final String SYSTEMPROPERTY_TOR_MAX_ALLOWED_SETUP_DURATION_MS = SYSTEMPROPERTY_TOR_PREFIX + "maxAllowedSetupDurationMs";
+
 	public static int queueTimeoutCircuit = 10; // was 20
 	public static int queueTimeoutResolve = 5; // was 10
 	/* TODO was: 11 */
 	public static int queueTimeoutStreamBuildup = 5;
 
 	/**
-	 * How many stream failures are allowed till we close the Circuit?
-	 * <br><br>
+	 * How many stream failures are allowed till we close the Circuit? <br>
+	 * <br>
 	 * default : 3
 	 */
 	private int circuitClosesOnFailures = 3;
+
 	/**
 	 * How many stream failures are allowed till we close the Circuit?
-
+	 * 
 	 * @return the circuitClosesOnFailures
 	 */
-	public static int getCircuitClosesOnFailures()
-	{
+	public static int getCircuitClosesOnFailures() {
 		return getInstance().circuitClosesOnFailures;
 	}
 
 	/**
-	 * How many stream failures are allowed till we close the Circuit?
-	 * <br><br>
+	 * How many stream failures are allowed till we close the Circuit? <br>
+	 * <br>
 	 * default : 3
 	 * 
-	 * @param circuitClosesOnFailures the circuitClosesOnFailures to set
+	 * @param circuitClosesOnFailures
+	 *            the circuitClosesOnFailures to set
 	 */
-	public static void setCircuitClosesOnFailures(final int circuitClosesOnFailures)
-	{
+	public static void setCircuitClosesOnFailures(final int circuitClosesOnFailures) {
 		getInstance().circuitClosesOnFailures = circuitClosesOnFailures;
 	}
 
@@ -345,16 +349,15 @@ public final class TorConfig
 	/**
 	 * @return the veryAggressiveStreamBuilding
 	 */
-	public static boolean isVeryAggressiveStreamBuilding()
-	{
+	public static boolean isVeryAggressiveStreamBuilding() {
 		return getInstance().veryAggressiveStreamBuilding;
 	}
 
 	/**
-	 * @param veryAggressiveStreamBuilding the veryAggressiveStreamBuilding to set
+	 * @param veryAggressiveStreamBuilding
+	 *            the veryAggressiveStreamBuilding to set
 	 */
-	public static void setVeryAggressiveStreamBuilding(final boolean veryAggressiveStreamBuilding)
-	{
+	public static void setVeryAggressiveStreamBuilding(final boolean veryAggressiveStreamBuilding) {
 		getInstance().veryAggressiveStreamBuilding = veryAggressiveStreamBuilding;
 	}
 
@@ -364,18 +367,18 @@ public final class TorConfig
 
 	/**
 	 * Gets the amount of time to wait for a new Directory refresh check.
+	 * 
 	 * @return the intervalDirectoryRefresh in minutes
 	 */
-	public static int getIntervalDirectoryRefresh()
-	{
+	public static int getIntervalDirectoryRefresh() {
 		return getInstance().intervalDirectoryRefresh;
 	}
 
 	/**
-	 * @param intervalDirectoryRefresh the intervalDirectoryRefresh to set
+	 * @param intervalDirectoryRefresh
+	 *            the intervalDirectoryRefresh to set
 	 */
-	public static void setIntervalDirectoryRefresh(final int intervalDirectoryRefresh)
-	{
+	public static void setIntervalDirectoryRefresh(final int intervalDirectoryRefresh) {
 		getInstance().intervalDirectoryRefresh = intervalDirectoryRefresh;
 	}
 
@@ -403,36 +406,33 @@ public final class TorConfig
 	// Security parameters
 	/** How many streams are allowed in one Circuit? */
 	private int streamsPerCircuit = 65535;
+
 	/**
 	 * How many streams are allowed in one Circuit?
 	 * 
 	 * @return the number of allowed streams
 	 */
-	public static int getStreamsPerCircuit()
-	{
+	public static int getStreamsPerCircuit() {
 		return getInstance().streamsPerCircuit;
 	}
+
 	/**
 	 * Set the maximum allowed streams per circuit.
 	 * 
-	 * @param streams the number of streams allowed in one circuit
+	 * @param streams
+	 *            the number of streams allowed in one circuit
 	 */
-	public static void setStreamsPerCircuit(final int streams)
-	{
-		if (streams <= 0)
-		{
+	public static void setStreamsPerCircuit(final int streams) {
+		if (streams <= 0) {
 			LOG.error("it is not allowed to set the number of streams in a circuit lower than 1!");
-		}
-		else if (streams >= 65536)
-		{
+		} else if (streams >= 65536) {
 			LOG.error("the maximum allowed number of streams per circuit is 2^16 = 65536");
-		}
-		else
-		{
-			LOG.debug("setting streamsPerCircuit from {} to {}", new Object[] {getInstance().streamsPerCircuit, streams});
+		} else {
+			LOG.debug("setting streamsPerCircuit from {} to {}", new Object[] { getInstance().streamsPerCircuit, streams });
 			getInstance().streamsPerCircuit = streams;
 		}
 	}
+
 	/** see Server.getRefinedRankingIndex. */
 	public static float rankingIndexEffect = 0.9f;
 
@@ -444,14 +444,17 @@ public final class TorConfig
 	private static final int DEFAULT_ROUTE_LENGTH = 3;
 
 	/**
-	 * minimum circuit path length. 
-	 * <br><br>
+	 * minimum circuit path length. <br>
+	 * <br>
 	 * recommended value : 3 <br>
-	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt)<br> 
-	 * using a value of 2 is only good for a simple IP obfuscation,
-	 * for more security a value of at least 3 is recommended
-	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
-	 * <br><br>
+	 * minimum value : 2 (see
+	 * https://gitweb.torproject.org/torspec.git/blob/HEAD
+	 * :/proposals/115-two-hop-paths.txt)<br>
+	 * using a value of 2 is only good for a simple IP obfuscation, for more
+	 * security a value of at least 3 is recommended maximum value : 8 (see
+	 * https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-
+	 * infinite-circuits.txt for details) <br>
+	 * <br>
 	 * default value : 3
 	 */
 	private int routeMinLength = DEFAULT_ROUTE_LENGTH;
@@ -459,18 +462,22 @@ public final class TorConfig
 	/**
 	 * @return get the minimum allowed route length for creating a circuit.
 	 */
-	public static int getRouteMinLength()
-	{
+	public static int getRouteMinLength() {
 		return getInstance().routeMinLength;
 	}
 
 	/**
-	 * set the minimum circuit path length. 
-	 * <br><br>
-	 * recommended value : 3<br> 
-	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a simple IP
-	 * obfuscation, for more security a value of at least 3 is recommended<br>
-	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)<br>
+	 * set the minimum circuit path length. <br>
+	 * <br>
+	 * recommended value : 3<br>
+	 * minimum value : 2 (see
+	 * https://gitweb.torproject.org/torspec.git/blob/HEAD
+	 * :/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a
+	 * simple IP obfuscation, for more security a value of at least 3 is
+	 * recommended<br>
+	 * maximum value : 8 (see
+	 * https://gitweb.torproject.org/torspec.git/blob/HEAD
+	 * :/proposals/110-avoid-infinite-circuits.txt for details)<br>
 	 * <br>
 	 * default value : 3<br>
 	 * 
@@ -478,35 +485,36 @@ public final class TorConfig
 	 *            the desired minimum length Logs a message as WARNING in case
 	 *            of wrong value
 	 */
-	public static void setRouteMinLength(final int length)
-	{
-		if (length < MINIMUM_ROUTE_LENGTH)
-		{
+	public static void setRouteMinLength(final int length) {
+		if (length < MINIMUM_ROUTE_LENGTH) {
 			LOG.warn("route length has to be at least {}", MINIMUM_ROUTE_LENGTH);
 			return;
 		}
-		if (length > MAXIMUM_ROUTE_LENGTH)
-		{
+		if (length > MAXIMUM_ROUTE_LENGTH) {
 			LOG.warn("route length should not exceed {}", MAXIMUM_ROUTE_LENGTH);
 			return;
 		}
-		if (length > getInstance().routeMaxLength)
-		{
-			LOG.info("setRouteMinLength: length ({}) is smaller than current maxlen ({}). Setting maxlen to given value.", 
-			         new Object[]{length, getInstance().routeMaxLength});
+		if (length > getInstance().routeMaxLength) {
+			LOG.info("setRouteMinLength: length ({}) is smaller than current maxlen ({}). Setting maxlen to given value.", new Object[] { length,
+					getInstance().routeMaxLength });
 			getInstance().routeMaxLength = length;
 		}
 		getInstance().routeMinLength = length;
 	}
 
 	/**
-	 * maximum circuit path length. 
-	 * <br><br>
-	 * recommended value : 3<br> 
-	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a simple IP obfuscation,
-	 * for more security a value of at least 3 is recommended<br> 
-	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
-	 * <br><br>
+	 * maximum circuit path length. <br>
+	 * <br>
+	 * recommended value : 3<br>
+	 * minimum value : 2 (see
+	 * https://gitweb.torproject.org/torspec.git/blob/HEAD
+	 * :/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a
+	 * simple IP obfuscation, for more security a value of at least 3 is
+	 * recommended<br>
+	 * maximum value : 8 (see
+	 * https://gitweb.torproject.org/torspec.git/blob/HEAD
+	 * :/proposals/110-avoid-infinite-circuits.txt for details) <br>
+	 * <br>
 	 * default value : 3
 	 */
 	private int routeMaxLength = DEFAULT_ROUTE_LENGTH;
@@ -514,42 +522,40 @@ public final class TorConfig
 	/**
 	 * @return get the minimum allowed route length for creating a circuit.
 	 */
-	public static int getRouteMaxLength()
-	{
+	public static int getRouteMaxLength() {
 		return getInstance().routeMaxLength;
 	}
 
 	/**
-	 * set the maximum circuit path length. 
-	 * <br><br>
-	 * recommended value : 3<br> 
-	 * minimum value : 2 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a simple IP
-	 * obfuscation, for more security a value of at least 3 is recommended<br>
-	 * maximum value : 8 (see https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/110-avoid-infinite-circuits.txt for details)
-	 * <br><br>
+	 * set the maximum circuit path length. <br>
+	 * <br>
+	 * recommended value : 3<br>
+	 * minimum value : 2 (see
+	 * https://gitweb.torproject.org/torspec.git/blob/HEAD
+	 * :/proposals/115-two-hop-paths.txt) using a value of 2 is only good for a
+	 * simple IP obfuscation, for more security a value of at least 3 is
+	 * recommended<br>
+	 * maximum value : 8 (see
+	 * https://gitweb.torproject.org/torspec.git/blob/HEAD
+	 * :/proposals/110-avoid-infinite-circuits.txt for details) <br>
+	 * <br>
 	 * default value : 3
 	 * 
 	 * @param length
 	 *            the desired maximum length LOGs a warning in case of a wrong
 	 *            value and keep the old value
 	 */
-	public static void setRouteMaxLength(final int length)
-	{
-		if (length < MINIMUM_ROUTE_LENGTH)
-		{
+	public static void setRouteMaxLength(final int length) {
+		if (length < MINIMUM_ROUTE_LENGTH) {
 			LOG.warn("route length has to be at least " + MINIMUM_ROUTE_LENGTH + "!");
 			return;
 		}
-		if (length > MAXIMUM_ROUTE_LENGTH)
-		{
+		if (length > MAXIMUM_ROUTE_LENGTH) {
 			LOG.warn("route length should not exceed " + MAXIMUM_ROUTE_LENGTH);
 			return;
 		}
-		if (length < getInstance().routeMinLength)
-		{
-			LOG.info("setRouteMaxLength: length ("
-					+ length
-					+ ") is smaller than current minlen. Setting minlen to given value.");
+		if (length < getInstance().routeMinLength) {
+			LOG.info("setRouteMaxLength: length (" + length + ") is smaller than current minlen. Setting minlen to given value.");
 			getInstance().routeMinLength = length;
 		}
 		getInstance().routeMaxLength = length;
@@ -564,8 +570,7 @@ public final class TorConfig
 	/**
 	 * @return get minDescriptorsPercentage
 	 */
-	public static double getMinDescriptorsPercentage()
-	{
+	public static double getMinDescriptorsPercentage() {
 		return getInstance().minDescriptorsPercentage;
 	}
 
@@ -578,14 +583,12 @@ public final class TorConfig
 	 * @param percent
 	 *            the percentage as double (range : 0.0 - 100.0)
 	 */
-	public static void setMinDescriptorsPercentage(final double percent)
-	{
+	public static void setMinDescriptorsPercentage(final double percent) {
 		if (percent < 0.0 || percent > 100.0) // check if it is in range
 		{
 			LOG.warn("setMinDescriptorsPercentage: value {} out of range (0.0 - 100.0)", percent);
 		}
-		if (percent == 0.0)
-		{
+		if (percent == 0.0) {
 			LOG.warn("setMinDescriptorsPercentage: setting this value to 0 is discouraged");
 		}
 		getInstance().minDescriptorsPercentage = percent;
@@ -601,18 +604,15 @@ public final class TorConfig
 	 * @param minDescriptors
 	 *            if set to null the Standard will be used.
 	 */
-	public static void setMinDescriptors(final Integer minDescriptors)
-	{
+	public static void setMinDescriptors(final Integer minDescriptors) {
 		getInstance().minDescriptors = minDescriptors;
 	}
 
 	/**
 	 * @return Wait at most until this number of descriptors is known.
 	 */
-	public static int getMinDescriptors()
-	{
-		if (getInstance().minDescriptors == null)
-		{
+	public static int getMinDescriptors() {
+		if (getInstance().minDescriptors == null) {
 			return 10 * getInstance().routeMinLength;
 		}
 		return getInstance().minDescriptors;
@@ -624,8 +624,7 @@ public final class TorConfig
 	/**
 	 * @return true if there shouldn't be two class C addresses on the route.
 	 */
-	public static boolean isRouteUniqueClassC()
-	{
+	public static boolean isRouteUniqueClassC() {
 		return getInstance().routeUniqueClassC;
 	}
 
@@ -635,8 +634,7 @@ public final class TorConfig
 	 * @param value
 	 *            true = unique, false = other Class C addresses are allowed
 	 */
-	public static void setRouteUniqueClassC(final boolean value)
-	{
+	public static void setRouteUniqueClassC(final boolean value) {
 		getInstance().routeUniqueClassC = value;
 	}
 
@@ -650,8 +648,7 @@ public final class TorConfig
 	/**
 	 * @return the routeUniqueCountry
 	 */
-	public static boolean isRouteUniqueCountry()
-	{
+	public static boolean isRouteUniqueCountry() {
 		return getInstance().routeUniqueCountry;
 	}
 
@@ -662,8 +659,7 @@ public final class TorConfig
 	 * @param routeUniqueCountry
 	 *            the routeUniqueCountry to set
 	 */
-	public static void setRouteUniqueCountry(final boolean routeUniqueCountry)
-	{
+	public static void setRouteUniqueCountry(final boolean routeUniqueCountry) {
 		getInstance().routeUniqueCountry = routeUniqueCountry;
 	}
 
@@ -675,49 +671,53 @@ public final class TorConfig
 	 * circuits.
 	 */
 	private Set<String> avoidedCountries = new HashSet<String>();
+
 	/**
-	 * Check if the specified Country is allowed to be used for Circuit building.
+	 * Check if the specified Country is allowed to be used for Circuit
+	 * building.
 	 * 
-	 * @param countryCode the country code to be checked
+	 * @param countryCode
+	 *            the country code to be checked
 	 * @return true if it is allowed to connect to, false if not
 	 */
-	public static boolean isCountryAllowed(final String countryCode)
-	{
+	public static boolean isCountryAllowed(final String countryCode) {
 		// when avoidedCountries is empty all Countries are allowed
-		if (getInstance().avoidedCountries.isEmpty())
-		{
+		if (getInstance().avoidedCountries.isEmpty()) {
 			return true;
 		}
-		if (getInstance().avoidedCountries.contains(countryCode))
-		{
+		if (getInstance().avoidedCountries.contains(countryCode)) {
 			return false;
 		}
 		return true;
 	}
+
 	/**
 	 * Set the avoided countries.
-	 * @param countryCodes a set of country codes to be avoided.
+	 * 
+	 * @param countryCodes
+	 *            a set of country codes to be avoided.
 	 */
-	public static synchronized void setCountryAllowed(final Set<String> countryCodes)
-	{
+	public static synchronized void setCountryAllowed(final Set<String> countryCodes) {
 		getInstance().avoidedCountries = countryCodes;
 	}
+
 	/**
 	 * Allow a specified country or avoid it.
-	 * @param countryCode the country code
-	 * @param allowed if set to true we will allow connections to this country, if set to false we will avoid a connection
+	 * 
+	 * @param countryCode
+	 *            the country code
+	 * @param allowed
+	 *            if set to true we will allow connections to this country, if
+	 *            set to false we will avoid a connection
 	 */
-	public static synchronized void setCountryAllowed(final String countryCode, final boolean allowed)
-	{
-		if (allowed)
-		{
+	public static synchronized void setCountryAllowed(final String countryCode, final boolean allowed) {
+		if (allowed) {
 			getInstance().avoidedCountries.remove(countryCode);
-		}
-		else
-		{
+		} else {
 			getInstance().avoidedCountries.add(countryCode);
 		}
 	}
+
 	/** collection of fingerprints to be avoided. */
 	private Set<Fingerprint> avoidedNodeFingerprints = new HashSet<Fingerprint>();
 
@@ -725,8 +725,7 @@ public final class TorConfig
 	 * @return get the {@link Set} of fingerprints which should be avoided in
 	 *         route creation.
 	 */
-	public static Set<Fingerprint> getAvoidedNodeFingerprints()
-	{
+	public static Set<Fingerprint> getAvoidedNodeFingerprints() {
 		return getInstance().avoidedNodeFingerprints;
 	}
 
@@ -737,11 +736,9 @@ public final class TorConfig
 	 * @param fingerprints
 	 *            a list of fingerprints
 	 */
-	public static synchronized void setAvoidedNodeFingerprints(final Set<byte[]> fingerprints)
-	{
+	public static synchronized void setAvoidedNodeFingerprints(final Set<byte[]> fingerprints) {
 		getInstance().avoidedNodeFingerprints.clear();
-		for (byte [] fingerprint : fingerprints)
-		{
+		for (byte[] fingerprint : fingerprints) {
 			// TODO : check size of fingerprints
 			getInstance().avoidedNodeFingerprints.add(new FingerprintImpl(fingerprint));
 		}
@@ -754,11 +751,9 @@ public final class TorConfig
 	 * @param fingerprints
 	 *            a list of fingerprints in hex notation
 	 */
-	public static synchronized void setAvoidedNodeFingerprintsHex(final Set<String> fingerprints)
-	{
+	public static synchronized void setAvoidedNodeFingerprintsHex(final Set<String> fingerprints) {
 		getInstance().avoidedNodeFingerprints.clear();
-		for (String fingerprint : fingerprints)
-		{
+		for (String fingerprint : fingerprints) {
 			// TODO : check size of fingerprints
 			getInstance().avoidedNodeFingerprints.add(new FingerprintImpl(DatatypeConverter.parseHexBinary(fingerprint)));
 		}
@@ -770,8 +765,7 @@ public final class TorConfig
 	 * @param fingerprint
 	 *            the fingerprint which should be avoided
 	 */
-	public static synchronized void addAvoidedNodeFingerprint(final byte[] fingerprint)
-	{
+	public static synchronized void addAvoidedNodeFingerprint(final byte[] fingerprint) {
 		// TODO : add check if size is correct
 		getInstance().avoidedNodeFingerprints.add(new FingerprintImpl(fingerprint));
 	}
@@ -782,8 +776,7 @@ public final class TorConfig
 	 * @param hexFingerprint
 	 *            the fingerprint (in hex notation) which should be avoided
 	 */
-	public static synchronized void addAvoidedNodeFingerprint(final String hexFingerprint)
-	{
+	public static synchronized void addAvoidedNodeFingerprint(final String hexFingerprint) {
 		// TODO : add check if size is correct
 		getInstance().avoidedNodeFingerprints.add(new FingerprintImpl(DatatypeConverter.parseHexBinary(hexFingerprint)));
 	}
@@ -809,42 +802,35 @@ public final class TorConfig
 	/**
 	 * Try to load the TorConfig from System properties.
 	 */
-	public static void reloadConfigFromProperties()
-	{
-		try
-		{
+	public static void reloadConfigFromProperties() {
+		try {
 			// overwrite defaults if proper system properties are set
 			setMinimumIdleCircuits(SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_MINIMUM_IDLE_CIRCUITS,
-			                                                                getInstance().minimumIdleCircuits));
-			setRouteMinLength(SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH,
-			                                                           getRouteMinLength()));
-			setRouteMaxLength(SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH,
-			                                                           getRouteMaxLength()));
+					getInstance().minimumIdleCircuits));
+			setRouteMinLength(SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_MINIMUM_ROUTE_LENGTH, getRouteMinLength()));
+			setRouteMaxLength(SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_MAXIMUM_ROUTE_LENGTH, getRouteMaxLength()));
 			setCacheHiddenServiceDescriptor(SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_CACHE_HS_DESCRIPTOR,
-			                                                                         isCacheHiddenServiceDescriptor()));
+					isCacheHiddenServiceDescriptor()));
 			maxAllowedSetupDurationMs = SystemPropertiesHelper.getSystemProperty(SYSTEMPROPERTY_TOR_MAX_ALLOWED_SETUP_DURATION_MS,
-			                                                                     (int) maxAllowedSetupDurationMs);
-		}
-		catch (final Exception e)
-		{
-			LOG.error("config could not be loaded from properties",	e);
+					(int) maxAllowedSetupDurationMs);
+		} catch (final Exception e) {
+			LOG.error("config could not be loaded from properties", e);
 		}
 	}
+
 	// first load the config from System properties
-	static
-	{
+	static {
 		reset();
-		reloadConfigFromProperties();		
+		reloadConfigFromProperties();
 	}
-	private TorConfig()
-	{
+
+	private TorConfig() {
 	}
 
 	/**
 	 * @return the cacheHiddenServiceDescriptor
 	 */
-	public static boolean isCacheHiddenServiceDescriptor()
-	{
+	public static boolean isCacheHiddenServiceDescriptor() {
 		return getInstance().cacheHiddenServiceDescriptor;
 	}
 
@@ -852,67 +838,70 @@ public final class TorConfig
 	 * @param cacheHiddenServiceDescriptor
 	 *            the cacheHiddenServiceDescriptor to set
 	 */
-	public static void setCacheHiddenServiceDescriptor(final boolean cacheHiddenServiceDescriptor)
-	{
+	public static void setCacheHiddenServiceDescriptor(final boolean cacheHiddenServiceDescriptor) {
 		getInstance().cacheHiddenServiceDescriptor = cacheHiddenServiceDescriptor;
 	}
+
 	/**
 	 * Shall we save the Circuit history?
+	 * 
 	 * @see CircuitHistory
 	 * 
 	 * @return true if we save the history for later use.
 	 */
-	public static boolean isSaveCircuitHistory() 
-	{
+	public static boolean isSaveCircuitHistory() {
 		return getInstance().saveCircuitHistory;
 	}
+
 	/**
 	 * Shall we save the Circuit history?
-	 * @param saveCircuitHistory true if we save the history
+	 * 
+	 * @param saveCircuitHistory
+	 *            true if we save the history
 	 */
-	public void setSaveCircuitHistory(final boolean saveCircuitHistory) 
-	{
+	public void setSaveCircuitHistory(final boolean saveCircuitHistory) {
 		getInstance().saveCircuitHistory = saveCircuitHistory;
 	}
 
 	/**
 	 * Shall we save the Circuit history?
+	 * 
 	 * @see CircuitHistory
 	 */
 	private boolean saveCircuitHistory = true;
-	
+
 	/**
 	 * How many parallel running tasks should we spawn for creating a circuit?
 	 */
 	private int parallelCircuitBuilds = 1;
+
 	/**
 	 * How many parallel running tasks should we spawn for creating a circuit?
+	 * 
 	 * @return the number of allowed parallel tasks for creating a circuit
 	 */
-	public static int getParallelCircuitBuilds()
-	{
+	public static int getParallelCircuitBuilds() {
 		return getInstance().parallelCircuitBuilds;
 	}
+
 	/**
 	 * How many parallel running tasks should we spawn for creating a circuit?
-	 * @param number the number of allowed parallel tasks for creating a circuit
+	 * 
+	 * @param number
+	 *            the number of allowed parallel tasks for creating a circuit
 	 */
-	public static void setParallelCircuitBuilds(final int number)
-	{
-		if (number < 1)
-		{
+	public static void setParallelCircuitBuilds(final int number) {
+		if (number < 1) {
 			LOG.error("setParallelCircuitBuilds should not be less than 1");
-		}
-		else
-		{
+		} else {
 			getInstance().parallelCircuitBuilds = number;
 		}
-	}	
+	}
+
 	/**
 	 * Reset all configuration items to their default values.
 	 */
-	public static void reset()
-	{
+	public static void reset() {
 		TorConfig config = getInstance();
 		config.avoidedCountries.clear();
 		config.avoidedNodeFingerprints.clear();
@@ -927,33 +916,37 @@ public final class TorConfig
 		config.saveCircuitHistory = true;
 		config.veryAggressiveStreamBuilding = false;
 		config.longLivedPorts.clear();
-		for (int tmp : DEFAULT_LONG_LIVED_PORTS)
-		{
+		for (int tmp : DEFAULT_LONG_LIVED_PORTS) {
 			config.longLivedPorts.add(tmp);
 		}
 		config.tempDirectory = System.getProperty("java.io.tmpdir");
 	}
+
 	/**
-	 * Temporary directory where SilverTunnel-NG saves its temp files.
-	 * e.g. caches, hiddenservice descriptors, etc
+	 * Temporary directory where SilverTunnel-NG saves its temp files. e.g.
+	 * caches, hiddenservice descriptors, etc
 	 */
 	private String tempDirectory;
+
 	/**
 	 * Set the temporary Directory which should be used by SilverTunnel-NG.
-	 * @param directory the directory where to save the temp files
+	 * 
+	 * @param directory
+	 *            the directory where to save the temp files
 	 */
-	public static void setTempDirectory(final String directory)
-	{
+	public static void setTempDirectory(final String directory) {
 		getInstance().tempDirectory = directory;
 	}
+
 	/**
 	 * Get the temporary Directory which should be used for temp files.
+	 * 
 	 * @return a directory path
 	 */
-	public static String getTempDirectory()
-	{
+	public static String getTempDirectory() {
 		return getInstance().tempDirectory;
 	}
+
 	/** prefix used for tempfiles. */
 	public static final String FILENAME_PREFIX = "st-";
 }
