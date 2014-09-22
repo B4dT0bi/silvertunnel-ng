@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.junit.AfterClass;
 import org.silvertunnel_ng.netlib.adapter.nameservice.NameServiceGlobalUtil;
 import org.silvertunnel_ng.netlib.api.NetFactory;
 import org.silvertunnel_ng.netlib.api.NetLayer;
@@ -37,6 +36,7 @@ import org.silvertunnel_ng.netlib.layer.tls.TLSRemoteTest;
 import org.silvertunnel_ng.netlib.util.ByteArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

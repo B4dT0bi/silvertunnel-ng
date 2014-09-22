@@ -75,6 +75,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipException;
 
 import org.apache.http.conn.util.InetAddressUtils;
 import org.silvertunnel_ng.netlib.api.NetLayer;
@@ -91,6 +92,7 @@ import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.tool.ByteUtils;
 import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
+import org.silvertunnel_ng.netlib.tool.SimpleHttpClient;
 import org.silvertunnel_ng.netlib.tool.SimpleHttpClientCompressed;
 import org.silvertunnel_ng.netlib.util.StringStorage;
 import org.silvertunnel_ng.netlib.util.TempfileStringStorage;
@@ -434,8 +436,17 @@ public final class Directory
 					{
 						// TODO : implement https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/139-conditional-consensus-download.txt download network status from server
 						final String path = "/tor/status-vote/current/consensus";
-						final String newDirectoryConsensusStr = SimpleHttpClientCompressed.getInstance().get(lowerDirConnectionNetLayer,
-																												dirRouter.getDirAddress(), path);
+
+						String newDirectoryConsensusStr;
+                        try
+                        {
+                            newDirectoryConsensusStr = SimpleHttpClientCompressed.getInstance().get(lowerDirConnectionNetLayer, dirRouter.getDirAddress(), path);
+                        }
+                        catch (ZipException e)
+                        {
+                            LOG.debug("got ZipException while downloading DirectoryConsensus trying to fetch it uncompressed.");
+                            newDirectoryConsensusStr = SimpleHttpClient.getInstance().get(lowerDirConnectionNetLayer, dirRouter.getDirAddress(), path);
+                        }
 
 						// Parse the document
 						newDirectoryConsensus = new DirectoryConsensus(newDirectoryConsensusStr, authorityKeyCertificates, now);
@@ -639,8 +650,15 @@ public final class Directory
 				{
 					final TcpipNetAddress hostAndPort = new TcpipNetAddress(authServerIpAndPort);
 					final String path = "/tor/keys/all";
-					httpResponse = SimpleHttpClientCompressed.getInstance().get(lowerDirConnectionNetLayer, hostAndPort, path);
-
+                    try
+                    {
+                        httpResponse = SimpleHttpClientCompressed.getInstance().get(lowerDirConnectionNetLayer, hostAndPort, path);
+                    }
+                    catch (ZipException e)
+                    {
+                        LOG.debug("got ZipException trying to get data uncompressed");
+                        httpResponse = SimpleHttpClient.getInstance().get(lowerDirConnectionNetLayer, hostAndPort, path);
+                    }
 					// parse loaded result
 					final AuthorityKeyCertificates newAuthorityKeyCertificates = new AuthorityKeyCertificates(httpResponse, minValidUntil);
 
