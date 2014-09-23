@@ -19,6 +19,7 @@
 package org.silvertunnel_ng.netlib.tool;
 
 import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 import org.silvertunnel_ng.netlib.api.NetFactory;
 import org.silvertunnel_ng.netlib.api.NetLayer;
@@ -53,7 +54,7 @@ public class SimpleHttpClientCompressedRemoteTest
 		final NetLayer netLayer = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TCPIP);
 		final String httpResponse = SimpleHttpClientCompressed.getInstance().get(netLayer, HTTPTEST_SERVER_NETADDRESS, PATH1);
 		assertNotNull(httpResponse);
-		//LOG.info(httpResponse);
+        assertTrue("could not find token published inside the response\n" + httpResponse, httpResponse.contains("published"));
 	}
 
 	@Test(timeOut = 50000)
@@ -65,6 +66,6 @@ public class SimpleHttpClientCompressedRemoteTest
 
 		// check response
 		assertNotNull(httpResponse);
-		//LOG.info(httpResponse);
+        assertTrue("could not find token Tor inside the response\n" + httpResponse, httpResponse.contains("Tor"));
 	}
 }
