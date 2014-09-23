@@ -62,12 +62,12 @@ public final class TorExitHostnameRemoteTest extends TorRemoteAbstractTest
 	// "11A0239FC6668705F68842811318B669C636F86E";
 	// private static final String OUR_EXITNODE_IP = "62.113.219.3";
 
-	// our exit node: chaoscomputerclub30
-	// parameters found with: grep -A 9 chaoscomputerclub30
+	// our exit node: chaoscomputerclub18
+	// parameters found with: grep -A 9 chaoscomputerclub18
 	// /tmp/st-directory-cached-router-descriptors.txt
 	//TODO : this test fails sometimes (maybe exitnode is under heavy load/ressource limit/hibernation/etc) try to make this test more stable
-	private static final String OUR_EXITNODE_HEX_DIGEST = "0936672091AD02665560F0C8B09B890A98590BE2";
-	private static final String OUR_EXITNODE_IP = "77.244.254.230";
+	private static final String OUR_EXITNODE_HEX_DIGEST = "48B1B47BD189B86EFD67D93AB6904DAEFFE81B82";
+	private static final String OUR_EXITNODE_IP = "31.172.30.1";
 	@BeforeClass
 	public static void setUp()
 	{
