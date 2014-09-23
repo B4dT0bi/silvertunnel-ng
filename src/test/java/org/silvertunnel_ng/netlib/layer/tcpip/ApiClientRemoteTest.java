@@ -37,6 +37,7 @@ package org.silvertunnel_ng.netlib.layer.tcpip;
 
 import static org.silvertunnel_ng.netlib.util.HttpUtil.HTTPTEST_SERVER_NETADDRESS;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.net.Socket;
 
@@ -101,8 +102,13 @@ public final class ApiClientRemoteTest
 
 		// read (result) data
 		final byte[] resultBuffer = new byte[10000];
-		final int len = top.getInputStream().read(resultBuffer);
+        int len = top.getInputStream().read(resultBuffer);
 		String result = new String(resultBuffer).substring(0, len);
+        if (!result.contains("<response>")) {
+            len = top.getInputStream().read(resultBuffer);
+            result = new String(resultBuffer).substring(0, len);
+        }
+        assertTrue("result does not contain <response> tag\n" + result, result.contains("<response>"));
 		result = result.substring(result.indexOf("<response>"));
 		// close connection
 		top.close();
