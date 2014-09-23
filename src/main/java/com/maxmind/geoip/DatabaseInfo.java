@@ -39,7 +39,6 @@ package com.maxmind.geoip;
  * longitude, ISP, and organization information.
  * </ul>
  * 
- * @see com.maxmind.geoip.LookupService#getDatabaseInfo()
  * @author Matt Tucker
  */
 public final class DatabaseInfo

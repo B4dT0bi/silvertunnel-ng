@@ -50,9 +50,9 @@ public class Cache<K, V> implements Map<K, V>
 	 * Create a new cache instance.
 	 * 
 	 * @param timeToLiveSeconds
-	 *            <0 means unlimited time to live, 0 means no caching
+	 *            &lt;0 means unlimited time to live, 0 means no caching
 	 * @param maxElements
-	 *            >=1
+	 *            &gt;=1
 	 */
 	public Cache(final int maxElements, final int timeToLiveSeconds)
 	{

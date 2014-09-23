@@ -87,7 +87,7 @@ public class NetFactory implements NetLayerFactory
 		netLayerRepository.clear();
 	}
 	/**
-	 * @see NetLayerFactory#getNetLayerById(String)
+	 * @see NetLayerFactory#getNetLayerById(org.silvertunnel_ng.netlib.api.NetLayerIDs)
 	 */
 	@Override
 	public synchronized NetLayer getNetLayerById(final NetLayerIDs netLayerId)

@@ -149,7 +149,7 @@ public class SwitchingNetLayer implements NetLayer
 	/**
 	 * Create a server connection.
 	 * 
-	 * @param localProperties
+	 * @param properties
 	 *            e.g. property "backlog"; can also be used to handle a
 	 *            "security profile"; is optional and can be null
 	 * @param localListenAddress

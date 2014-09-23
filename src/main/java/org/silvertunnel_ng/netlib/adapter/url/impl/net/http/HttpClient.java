@@ -489,7 +489,7 @@ public class HttpClient extends NetworkClient
 
 	/**
 	 * Parse the first line of the HTTP request. It usually looks something
-	 * like: "HTTP/1.0 <number> comment\r\n".
+	 * like: "HTTP/1.0 &lt;number&gt; comment\r\n".
 	 */
 
 	public boolean parseHTTP(final MessageHeader responses, 

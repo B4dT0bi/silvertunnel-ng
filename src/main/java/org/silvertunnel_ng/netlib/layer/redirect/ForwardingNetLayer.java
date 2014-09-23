@@ -45,7 +45,7 @@ public class ForwardingNetLayer implements NetLayer
 	 * Forward all connections the the layer and address specified here.
 	 * 
 	 * @param lowerNetLayer
-	 * @param lowerLayerNetAddress
+	 * @param lowerNetLayerLocalAddress
 	 */
 	public ForwardingNetLayer(NetLayer lowerNetLayer,
 			Map<String, Object> lowerNetLayerLocalProperties,

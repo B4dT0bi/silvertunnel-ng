@@ -57,7 +57,7 @@ public class NopNetAddressNameService implements NetAddressNameService
 		}
 	}
 
-	/** @see NetAddressNameService#getNames */
+	/** @see NetAddressNameService#getNamesByAddress(org.silvertunnel_ng.netlib.api.NetAddress)  */
 	@Override
 	public String[] getNamesByAddress(NetAddress address)
 			throws UnknownHostException

@@ -90,10 +90,10 @@ public class MockNetAddressNameService implements NetAddressNameService
 	/**
 	 * Initialize this name service.
 	 * 
-	 * @param name2AddressMapping
+	 * @param name2AddressesMapping
 	 *            mapping used by method getAddresses(); Map, keys, values and
 	 *            value array elements may not be null
-	 * @param address2NameMapping
+	 * @param address2NamesMapping
 	 *            mapping used by method getNames(); Map, keys, values and value
 	 *            array elements may not be null
 	 * @param details

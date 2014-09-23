@@ -35,7 +35,6 @@ public class ControlOutputStream extends OutputStream
 
 	/**
 	 * 
-	 * @param os
 	 * @param timeControlNetSocket
 	 */
 	protected ControlOutputStream(final OutputStream lowerLevelOutputStream,

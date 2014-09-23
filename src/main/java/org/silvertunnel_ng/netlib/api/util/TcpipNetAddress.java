@@ -102,8 +102,8 @@ public class TcpipNetAddress implements NetAddress
 	 * The port part is mandatory. The address/name part is optional with
 	 * default "0.0.0.0".
 	 * 
-	 * Examples: 80 -> IPv4 address 0.0.0.0 and port 80 127.0.0.1:80 -> IPv4
-	 * address 127.0.0.1 and port 80 [::1/128]:80 -> IPv6 address ::1/128 and
+	 * Examples: 80 -&gt; IPv4 address 0.0.0.0 and port 80 127.0.0.1:80 -&gt; IPv4
+	 * address 127.0.0.1 and port 80 [::1/128]:80 -&gt; IPv6 address ::1/128 and
 	 * port 80 (not yet implemented)
 	 * 
 	 * @param hostnameOrIpaddressAndTcpPort

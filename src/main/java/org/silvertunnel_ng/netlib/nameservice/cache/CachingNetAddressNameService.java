@@ -84,8 +84,8 @@ public class CachingNetAddressNameService implements NetAddressNameService
 	 * @param lowerNetAddressNameService
 	 *            service to retrieve non-cached entries
 	 * @param maxElementsInCache
-	 *            >0
-	 * @param boolean isNameCaseSensitive should be false for DNS caching
+	 *            &gt;0
+	 * @param isNameCaseSensitive should be false for DNS caching
 	 * @param cacheTtlSeconds
 	 *            cache time-to-live in seconds = caching period of resolved
 	 *            queries; -1=cache forever if possible; 0=do not cache at all
@@ -162,7 +162,7 @@ public class CachingNetAddressNameService implements NetAddressNameService
 		}
 	}
 
-	/** @see NetAddressNameService#getNames */
+	/** @see NetAddressNameService#getNamesByAddress(org.silvertunnel_ng.netlib.api.NetAddress)  */
 	@Override
 	public String[] getNamesByAddress(NetAddress address)
 			throws UnknownHostException

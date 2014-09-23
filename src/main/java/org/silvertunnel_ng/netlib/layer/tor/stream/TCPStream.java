@@ -274,8 +274,6 @@ public class TCPStream implements Stream, NetSocket
 	 * 
 	 * @param circuit
 	 *            the circuit to build the stream through
-	 * @param sp
-	 *            the host etc. to connect to
 	 * @see Tor
 	 * @see Circuit
 	 * @see TCPStreamProperties

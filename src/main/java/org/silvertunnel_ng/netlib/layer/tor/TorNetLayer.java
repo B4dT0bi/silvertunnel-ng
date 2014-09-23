@@ -249,8 +249,6 @@ public class TorNetLayer implements NetLayer
 	/**
 	 * Wait (block the current thread) until the Tor net layer is up and ready
 	 * or a configured timeout comes up.
-	 * 
-	 * @see ExtendedNetLayer#waitUntilReady()
 	 */
 	@Override
 	public void waitUntilReady()
@@ -268,8 +266,6 @@ public class TorNetLayer implements NetLayer
 	}
 
 	/**
-	 * @see ExtendedNetLayer#getNetAddressNameService()
-	 * 
 	 * @return a TorNetAddressNameService instance
 	 */
 	@Override

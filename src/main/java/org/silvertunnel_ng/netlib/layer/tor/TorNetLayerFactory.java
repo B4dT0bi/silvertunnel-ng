@@ -63,7 +63,7 @@ public class TorNetLayerFactory implements NetLayerFactory
 	private NetLayer socksOverTorNetLayer;
 
 	/**
-	 * @see NetLayerFactory#getNetLayerById(String)
+	 * @see NetLayerFactory#getNetLayerById(org.silvertunnel_ng.netlib.api.NetLayerIDs)
 	 * 
 	 * @param netLayerId valid netLayerId (check {@link NetLayerIDs})
 	 * @return the requested NetLayer if found; null if not found; it is not

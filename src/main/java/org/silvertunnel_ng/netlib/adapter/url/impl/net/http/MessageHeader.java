@@ -508,7 +508,7 @@ public class MessageHeader
 
 	/**
 	 * Convert a message-id string to canonical form (strips off leading and
-	 * trailing <>s.)
+	 * trailing &lt;&gt;s.)
 	 */
 	public static String canonicalID(final String id)
 	{

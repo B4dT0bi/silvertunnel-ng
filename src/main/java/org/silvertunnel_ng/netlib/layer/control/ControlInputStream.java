@@ -35,7 +35,6 @@ public class ControlInputStream extends InputStream
 
 	/**
 	 * 
-	 * @param os
 	 * @param timeControlNetSocket
 	 */
 	protected ControlInputStream(final InputStream lowerLevelInputStream,

@@ -1180,7 +1180,7 @@ public final class Directory
 	 * @param f
 	 *            hidden service descriptor id fingerprint
 	 * @return three consecutive routers that are hidden service directories
-	 *         with router.fingerprint>f
+	 *         with router.fingerprint&gt;f
 	 */
 	public Collection<RouterImpl> getThreeHiddenDirectoryServersWithFingerprintGreaterThan(final Fingerprint f)
 	{

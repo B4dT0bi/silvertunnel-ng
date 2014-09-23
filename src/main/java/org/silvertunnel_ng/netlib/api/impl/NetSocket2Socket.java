@@ -26,7 +26,7 @@ import java.net.Socket;
 import org.silvertunnel_ng.netlib.api.NetSocket;
 
 /**
- * Wrapper NetSocket -> Socket.
+ * Wrapper NetSocket -&gt; Socket.
  * 
  * @author hapke
  */
@@ -55,7 +55,7 @@ public class NetSocket2Socket extends Socket
 	/**
 	 * Change the NetSocket used by this object.
 	 * 
-	 * @param netSocket
+	 * @param newNetSocket
 	 */
 	public void setNetSocket(final NetSocket newNetSocket)
 	{

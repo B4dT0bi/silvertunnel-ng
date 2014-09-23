@@ -67,7 +67,7 @@ public class IpNetAddress implements NetAddress
 	/**
 	 * Create a new object based on a String.
 	 * 
-	 * Examples: 127.0.0.1 -> IPv4 address 127.0.0.1 [::1/128] -> IPv6 address
+	 * Examples: 127.0.0.1 -&gt; IPv4 address 127.0.0.1 [::1/128] -&gt; IPv6 address
 	 * ::1/128 (not yet implemented)
 	 * 
 	 * @param ipAddressStr

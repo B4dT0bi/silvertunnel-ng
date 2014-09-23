@@ -148,6 +148,7 @@ public final class LookupService
 	 * 
 	 * @param databaseFile
 	 *            String representation of the database file.
+     * @param maxDatabaseFile maximum size of memory used for caching the file
 	 * @throws java.io.IOException
 	 *             if an error occurred creating the lookup service from the
 	 *             database file.

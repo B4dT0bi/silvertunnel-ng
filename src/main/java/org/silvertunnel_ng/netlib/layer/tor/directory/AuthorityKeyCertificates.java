@@ -84,12 +84,10 @@ public class AuthorityKeyCertificates
 	 * 
 	 * Only official Tor authorities will be considered.
 	 * 
-	 * @param authorityKeyCertificateStr
+	 * @param authorityKeyCertificatesStr
 	 *            string encoded authority dir key certificate version 3
 	 * @param minValidUntil
 	 *            ignore entries with dirKeyExpires older than minValidUntil
-	 * @param allowedAuthorityKeyIdentFingerprints
-	 *            ignore entries with fingerprints not in this collection
 	 */
 	public AuthorityKeyCertificates(String authorityKeyCertificatesStr,
 			Date minValidUntil) throws TorException
@@ -102,7 +100,7 @@ public class AuthorityKeyCertificates
 	 * Extracts all relevant information from the authority key certificate and
 	 * saves it in the member variables.
 	 * 
-	 * @param authorityKeyCertificateStr
+	 * @param authorityKeyCertificatesStr
 	 *            string encoded authority dir key certificate version 3
 	 * @param minValidUntil
 	 *            ignore entries with dirKeyExpires older than minValidUntil
@@ -207,7 +205,7 @@ public class AuthorityKeyCertificates
 	/**
 	 * Get the AuthorityKeyCertificate of a identity/fingerprint.
 	 * 
-	 * @param fingerprintBytes
+	 * @param identityKeyFingerprint
 	 * @return the certificate; null if no matching certificate found
 	 */
 	public AuthorityKeyCertificate getCertByFingerprints(

@@ -61,7 +61,7 @@ public class SwitchingNetAddressNameService implements NetAddressNameService
 	 * lowerNetAddressNameService can be exchanged later by calling the method
 	 * setLowerNetAddressNameService().
 	 * 
-	 * @param lowerNetLayer
+	 * @param lowerNetAddressNameService
 	 */
 	public SwitchingNetAddressNameService(final NetAddressNameService lowerNetAddressNameService)
 	{

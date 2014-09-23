@@ -58,7 +58,7 @@ public class ConditionalNetAddressNameService implements NetAddressNameService
 	}
 
 	/**
-	 * @see NetAddressNameService#getNames
+	 * @see NetAddressNameService#getNamesByAddress(org.silvertunnel_ng.netlib.api.NetAddress)
 	 * 
 	 * @param address
 	 *            IP address to lookup

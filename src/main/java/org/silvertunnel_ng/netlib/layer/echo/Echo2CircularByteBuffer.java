@@ -35,8 +35,8 @@ import java.nio.BufferOverflowException;
  * <p>
  * This class is thread safe.
  * 
- * @see CircularCharBuffer
- * @see CircularObjectBuffer
+ * see CircularCharBuffer
+ * see CircularObjectBuffer
  * 
  * @author Stephen Ostermiller
  *         http://ostermiller.org/contact.pl?regarding=Java+Utilities

@@ -271,7 +271,7 @@ public final class TorConfig {
 	 * <br>
 	 * default value : 3 <br>
 	 * <br>
-	 * if the value is not allowed (< 0 or > MAXIMUM_IDLE_CIRCUITS) the value
+	 * if the value is not allowed (&lt; 0 or &gt; MAXIMUM_IDLE_CIRCUITS) the value
 	 * will be either set to 0 or to MAXIMUM_IDLE_CIRCUITS and a warning will be
 	 * logged.
 	 * 

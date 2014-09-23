@@ -196,7 +196,7 @@ public class ControlNetSocket implements NetSocket
 	 * If the socket must be closed because of risen limit then this method
 	 * throws the stored exception - intended to be forwarded to the streams.
 	 * 
-	 * @param interruptedIOException
+	 * @throws InterruptedIOException
 	 */
 	protected void throwInterruptedIOExceptionIfNecessary()
 			throws InterruptedIOException

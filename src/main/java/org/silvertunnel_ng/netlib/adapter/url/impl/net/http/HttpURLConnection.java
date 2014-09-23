@@ -2799,7 +2799,6 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 	 *            <code>accept</code>").
 	 * @param value
 	 *            the value associated with it.
-	 * @see #getRequestProperties(java.lang.String)
 	 * @since 1.4
 	 */
 	@Override
@@ -2912,7 +2911,6 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 	 * @throws IllegalArgumentException
 	 *             if the timeout parameter is negative
 	 * 
-	 * @see java.net.URLConnectiongetReadTimeout()
 	 * @see java.io.InputStream#read()
 	 * @since 1.5
 	 */

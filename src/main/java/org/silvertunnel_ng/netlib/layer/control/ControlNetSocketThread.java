@@ -160,7 +160,6 @@ public class ControlNetSocketThread extends Thread
 	 * 
 	 * @param socket
 	 * @param parameters
-	 * @param now
 	 * @return error message: null=no timeout text=timeout with this text
 	 */
 	private String checkSingleSocketOnce(final ControlNetSocket socket,

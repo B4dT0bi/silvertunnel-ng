@@ -100,7 +100,7 @@ public class MockNetLayer implements NetLayer
 	 * Different responses are possible for different destination addresses.
 	 * 
 	 * @param responsePerDestinationAddress
-	 *            mapping: destination address->response
+	 *            mapping: destination address-&gt;response
 	 * @param allowMultipleSessionsForOneAddress
 	 *            true=multiple session are allowed for one destination address
 	 *            (all use the same response)

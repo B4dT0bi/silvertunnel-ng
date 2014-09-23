@@ -49,7 +49,7 @@ public interface HiddenServicePortInstance
 	HiddenServiceInstance getHiddenServiceInstance();
 
 	/**
-	 * @return HiddenServiceInstance that belongs to this object
+	 * @param hiddenServiceInstance that belongs to this object
 	 */
 	void setHiddenServiceInstance(HiddenServiceInstance hiddenServiceInstance);
 }

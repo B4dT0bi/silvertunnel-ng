@@ -73,9 +73,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Logic to handle Service Descriptors of hidden services.
  * 
- * @see https
+ * see https
  *      ://www.torproject.org/doc/design-paper/tor-design.html#sec:rendezvous
- * @see http 
+ * see http
  *      ://gitweb.torproject.org/tor.git?a=blob_plain;hb=HEAD;f=doc/spec/rend
  *      -spec.txt
  * 

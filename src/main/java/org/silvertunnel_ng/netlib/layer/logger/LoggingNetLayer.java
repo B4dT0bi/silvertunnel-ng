@@ -68,10 +68,6 @@ public class LoggingNetLayer implements NetLayer
 	 * summaryLogLevel=Level.FINE detailLogLevel=Level.FINER
 	 * 
 	 * @param lowerNetLayer
-	 * @param logLevel
-	 * @param logContent
-	 *            true=log detailed content of all traffic; false=log summary
-	 *            information only
 	 * @param loggingPrefix
 	 *            String that is always logged
 	 */

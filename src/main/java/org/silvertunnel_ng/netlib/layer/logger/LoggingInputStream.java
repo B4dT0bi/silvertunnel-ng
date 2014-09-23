@@ -33,7 +33,6 @@ public class LoggingInputStream extends FilterInputStream
 
 	/**
 	 * 
-	 * @param os
 	 * @param bufferedLogger
 	 */
 	protected LoggingInputStream(InputStream is, BufferedLogger bufferedLogger)

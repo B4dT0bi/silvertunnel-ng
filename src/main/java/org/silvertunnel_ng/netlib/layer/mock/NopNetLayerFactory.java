@@ -53,7 +53,7 @@ public class NopNetLayerFactory implements NetLayerFactory
 	private NetLayer netLayer;
 
 	/**
-	 * @see NetLayerFactory#getNetLayerById(String)
+	 * @see NetLayerFactory#getNetLayerById(org.silvertunnel_ng.netlib.api.NetLayerIDs)
 	 * 
 	 * @param netLayerId valid netLayerId (check {@link NetLayerIDs})
 	 * @return the requested NetLayer if found; null if not found; it is not

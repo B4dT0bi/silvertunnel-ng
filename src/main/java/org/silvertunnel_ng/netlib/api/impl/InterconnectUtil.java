@@ -56,7 +56,7 @@ public class InterconnectUtil
 	}
 
 	/**
-	 * Copy two streams: in1->out1 and in2->out2.
+	 * Copy two streams: in1-&gt;out1 and in2-&gt;out2.
 	 * 
 	 * The method blocks until all the streams are closed.
 	 * 
@@ -78,7 +78,7 @@ public class InterconnectUtil
 	}
 
 	/**
-	 * Copy two streams: in1->out1 and in2->out2.
+	 * Copy two streams: in1-&gt;out1 and in2-&gt;out2.
 	 * 
 	 * The method doesn't block. All operations are done in two extra threads.
 	 * 
@@ -109,7 +109,7 @@ public class InterconnectUtil
 	}
 
 	/**
-	 * Copy two streams: in1->out1 and in2->out2.
+	 * Copy two streams: in1-&gt;out1 and in2-&gt;out2.
 	 * 
 	 * The method blocks until all the streams are closed.
 	 * 
@@ -202,7 +202,7 @@ public class InterconnectUtil
 	}
 
 	/**
-	 * Copy two streams: in1->out1 and in2->out2.
+	 * Copy two streams: in1-&gt;out1 and in2-&gt;out2.
 	 * 
 	 * The method blocks until all the streams are closed.
 	 * 

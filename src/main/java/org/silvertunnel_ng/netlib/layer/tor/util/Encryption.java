@@ -213,7 +213,7 @@ public class Encryption
 	 * checks signature of PKCS1-padded SHA1 hash of the input
 	 * 
 	 * Hint: A different implementation of this method can be found in the svn
-	 * history revision<=229.
+	 * history revision&lt;=229.
 	 * 
 	 * @param signature
 	 *            signature to check
@@ -616,11 +616,11 @@ public class Encryption
 	/**
 	 * encrypt data with asymmetric key. create asymmetrical encrypted data:<br>
 	 * <ul>
-	 * <li>OAEP padding [42 bytes] (RSA-encrypted)
-	 * <li>Symmetric key [16 bytes] FIXME: we assume that we ALWAYS need this
-	 * <li>First part of data [70 bytes]
-	 * <li>Second part of data [x-70 bytes] (Symmetrically encrypted)
-	 * <ul>
+	 * <li>OAEP padding [42 bytes] (RSA-encrypted)</li>
+	 * <li>Symmetric key [16 bytes] FIXME: we assume that we ALWAYS need this</li>
+	 * <li>First part of data [70 bytes]</li>
+	 * <li>Second part of data [x-70 bytes] (Symmetrically encrypted)</li>
+	 * </ul>
 	 * encrypt and store in result
 	 * 
 	 * @param pub
@@ -651,11 +651,11 @@ public class Encryption
 	/**
 	 * decrypt data with asymmetric key. create asymmetrically encrypted data:<br>
 	 * <ul>
-	 * <li>OAEP padding [42 bytes] (RSA-encrypted)
-	 * <li>Symmetric key [16 bytes]
-	 * <li>First part of data [70 bytes]
-	 * <li>Second part of data [x-70 bytes] (Symmetrically encrypted)
-	 * <ul>
+	 * <li>OAEP padding [42 bytes] (RSA-encrypted)</li>
+	 * <li>Symmetric key [16 bytes]</li>
+	 * <li>First part of data [70 bytes]</li>
+	 * <li>Second part of data [x-70 bytes] (Symmetrically encrypted)</li>
+	 * </ul>
 	 * encrypt and store in result
 	 * 
 	 * @param priv

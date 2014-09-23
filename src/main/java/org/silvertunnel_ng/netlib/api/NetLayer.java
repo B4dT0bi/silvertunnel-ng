@@ -24,8 +24,7 @@ import java.util.Map;
 /**
  * Every separate network protocol/layer implements the NetLayer interface.
  * 
- * See {@link http
- * ://sourceforge.net/apps/trac/silvertunnel/wiki/NetlibGenericApi#NetLayer}
+ * See {link http://sourceforge.net/apps/trac/silvertunnel/wiki/NetlibGenericApi#NetLayer}
  * 
  * @author hapke
  */
@@ -44,7 +43,7 @@ public interface NetLayer
 	 *            address
 	 * @return a new NetSocket, not null
 	 * 
-	 * @thrown UnsupportedOperationException if not available or not allowed for
+	 * @throws UnsupportedOperationException if not available or not allowed for
 	 *         this NetLayer instance
 	 * @throws IOException
 	 *             in the case of any other error
@@ -65,7 +64,7 @@ public interface NetLayer
 	 *            address
 	 * @return a new NetServerSocket, not null
 	 * 
-	 * @thrown UnsupportedOperationException if not available or not allowed for
+	 * @throws UnsupportedOperationException if not available or not allowed for
 	 *         this NetLayer instance
 	 * @throws IOException
 	 *             in the case of any other error
@@ -90,7 +89,7 @@ public interface NetLayer
 	 * Depending on the implementation, this method can close open
 	 * Net(Server)Sockets that
 	 * 
-	 * @thrown UnsupportedOperationException if not available or not allowed for
+	 * @throws UnsupportedOperationException if not available or not allowed for
 	 *         this NetLayer instance
 	 * @throws IOException
 	 *             in the case of any other error
@@ -101,7 +100,7 @@ public interface NetLayer
 	 * @return the NetAddressNameService instance that belongs to this NetLayer
 	 *         instance.
 	 * 
-	 * @thrown UnsupportedOperationException if not available or not allowed for
+	 * @throws UnsupportedOperationException if not available or not allowed for
 	 *         this NetLayer instance
 	 */
 	NetAddressNameService getNetAddressNameService();

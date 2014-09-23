@@ -48,12 +48,12 @@ import sun.net.spi.nameservice.NameServiceDescriptor;
  * returns references to it. Intended for use by java.net.InetAddress static
  * initializer.
  * 
- * This class assigns the name of this name service provider: "dns" ->
+ * This class assigns the name of this name service provider: "dns" -&gt;
  * "NetlibNameService" -- which is "dns,NetlibNameService".
  * 
  * Thanks to Roman Kuzmik for its article
- * 
- * @link http://rkuzmik.blogspot.com/2006/08/local-managed-dns-java_11.html
+ *
+ * link http://rkuzmik.blogspot.com/2006/08/local-managed-dns-java_11.html
  * 
  * @author hapke
  * @author Tobias Boese

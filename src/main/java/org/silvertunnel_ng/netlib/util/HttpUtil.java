@@ -152,7 +152,7 @@ public class HttpUtil
 	 * Execute a simple HTTP 1.1 request and provide the response body as
 	 * InputStream. The response header is not part of the returned InputStream.
 	 * 
-	 * @param lowerLayer
+	 * @param lowerLayerNetSocket
 	 * @param httpServerNetAddress
 	 * @param pathOnHttpServer
 	 * @param timeoutInMs
@@ -173,7 +173,7 @@ public class HttpUtil
 	/**
 	 * Execute a simple HTTP 1.1 request and read the response.
 	 * 
-	 * @param lowerLayer
+	 * @param lowerLayerNetSocket
 	 * @param httpServerNetAddress
 	 * @param pathOnHttpServer
 	 * @param timeoutInMs
@@ -225,7 +225,7 @@ public class HttpUtil
 	/**
 	 * Execute a simple HTTP 1.1 post and read the response.
 	 * 
-	 * @param lowerLayer
+	 * @param lowerLayerNetSocket
 	 * @param httpServerNetAddress
 	 * @param pathOnHttpServer
 	 * @param timeoutInMs
@@ -283,7 +283,7 @@ public class HttpUtil
 	/**
 	 * Execute a simple HTTP 1.1 get or post request and read the response.
 	 * 
-	 * @param lowerLayer
+	 * @param lowerLayerNetSocket
 	 * @param httpServerNetAddress
 	 * @param pathOnHttpServer
 	 * @param timeoutInMs

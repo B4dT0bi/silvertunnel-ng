@@ -85,7 +85,7 @@ public final class TCPStreamProperties
 	/** are we connecting to a dir server? */
 	private boolean connectToDirServer = false;
 	/**
-	 * p = [0..1] 0 -> select hosts completely randomly 1 -> select hosts with
+	 * p = [0..1] 0 -&gt; select hosts completely randomly 1 -&gt; select hosts with
 	 * good uptime/bandwidth with higher prob.
 	 */
 	private float rankingInfluenceIndex;
@@ -232,8 +232,8 @@ public final class TCPStreamProperties
 	// /////////////////////////////////////////////////////
 
 	/**
-	 * @return rankingInfluenceIndex = [0..1] 0 -> select hosts completely
-	 *         randomly 1 -> select hosts with good uptime/bandwidth with higher
+	 * @return rankingInfluenceIndex = [0..1] 0 -&gt; select hosts completely
+	 *         randomly 1 -&gt; select hosts with good uptime/bandwidth with higher
 	 *         prob.
 	 */
 	public float getRankingInfluenceIndex()
@@ -243,7 +243,7 @@ public final class TCPStreamProperties
 
 	/**
 	 * @param rankingInfluenceIndex
-	 *            = [0..1] 0 -> select hosts completely randomly 1 -> select
+	 *            = [0..1] 0 -&gt; select hosts completely randomly 1 -&gt; select
 	 *            hosts with good uptime/bandwidth with higher prob.
 	 */
 	public void setRankingInfluenceIndex(final float rankingInfluenceIndex)

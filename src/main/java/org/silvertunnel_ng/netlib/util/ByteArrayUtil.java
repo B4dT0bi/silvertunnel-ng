@@ -94,7 +94,7 @@ public final class ByteArrayUtil
 	 * @param prefixStr
 	 *            not null
 	 * @param numOfBytesInTheMiddle
-	 *            >=0
+	 *            &gt;=0
 	 * @param suffixStr
 	 *            not null
 	 * @return the described byte array; not null
@@ -177,7 +177,7 @@ public final class ByteArrayUtil
 	 * 
 	 * @param maxResultSize
 	 * @param is
-	 * @return the bytes read (length<=maxResultSize).
+	 * @return the bytes read (length&lt;=maxResultSize).
 	 */
 	public static byte[] readDataFromInputStream(final int maxResultSize,
 			final InputStream is) throws IOException

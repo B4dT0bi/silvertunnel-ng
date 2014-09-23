@@ -247,7 +247,7 @@ public class DefaultIpNetAddressNameService implements NetAddressNameService
 	}
 
 	/**
-	 * @see NetAddressNameService#getNames
+	 * @see NetAddressNameService#getNamesByAddress(org.silvertunnel_ng.netlib.api.NetAddress)
 	 * 
 	 * @param ipaddress
 	 *            IP address to lookup
