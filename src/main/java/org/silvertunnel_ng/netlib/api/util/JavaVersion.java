@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public enum JavaVersion
 {
-	JAVA_1_5("JAVA_1_5"), JAVA_1_6("JAVA_1_6"), JAVA_1_7("JAVA_1_7"), UNKNOWN(
+	JAVA_1_5("JAVA_1_5"), JAVA_1_6("JAVA_1_6"), JAVA_1_7("JAVA_1_7"), JAVA_1_8("JAVA_1_8"), UNKNOWN(
 			"UNKNOWN");
 
 	private final String title;
@@ -66,10 +66,14 @@ public enum JavaVersion
 			{
 				javaVersion = JavaVersion.JAVA_1_6;
 			}
-			else if ("1.7".equals(jv))
-			{
-				javaVersion = JavaVersion.JAVA_1_7;
-			}
+            else if ("1.7".equals(jv))
+            {
+                javaVersion = JavaVersion.JAVA_1_7;
+            }
+            else if ("1.8".equals(jv))
+            {
+                javaVersion = JavaVersion.JAVA_1_8;
+            }
 			else
 			{
 				javaVersion = JavaVersion.UNKNOWN;
