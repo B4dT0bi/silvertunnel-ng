@@ -19,748 +19,512 @@ package org.silvertunnel_ng.netlib.layer.tor.directory;
 
 import org.silvertunnel_ng.netlib.tool.ByteUtils;
 
+import java.util.BitSet;
+
 
 /**
  * RouterFlags are used for determining the Status of the router (eg. Running, Stable, Fast, etc)
- * 
+ *
  * @author Tobias Boese
  */
-public final class RouterFlags
-{
-	/** 
-	 * flag Running. 
-	 * "Running" if the router is currently usable
-	 */
-	private Boolean running = null;
-	/** 
-	 * flag Authority.
-	 * "Authority" if the router is a directory authority.
-	 */
-	private Boolean authority = null;
-	/**
-	 * "Exit" if the router is more useful for building general-purpose exit circuits than for relay circuits.  
-	 * The path building algorithm uses this flag; see path-spec.txt.
-	 */
-	private Boolean exit = null;
-	/**
-	 * "BadExit" if the router is believed to be useless as an exit node 
-	 * (because its ISP censors it, because it is behind a restrictive proxy, or for some similar reason).
-	 */
-	private Boolean badExit = null;
-	/**
-	 * "BadDirectory" if the router is believed to be useless as a directory cache 
-	 * (because its directory port isn't working, its bandwidth is always throttled, or for some similar reason).
-	 */
-	private Boolean badDirectory = null;
-	/**
-	 * "Fast" if the router is suitable for high-bandwidth circuits.
-	 */
-	private Boolean fast = null;
-	/**
-	 * "Guard" if the router is suitable for use as an entry guard.
-	 */
-	private Boolean guard = null;
-	/**
-	 * "HSDir" if the router is considered a v2 hidden service directory.
-	 */
-	private Boolean hSDir = null;
-	/**
-	 *  "Named" if the router's identity-nickname mapping is canonical, and this authority binds names.
-	 */
-	private Boolean named = null;
-	/**
-	 * "Stable" if the router is suitable for long-lived circuits.
-	 */
-	private Boolean stable = null;
-	/**
-	 * "Unnamed" if another router has bound the name used by this router, and this authority binds names.
-	 */
-	private Boolean unnamed = null;
-	/** 
-	 * "Valid" if the router has been 'validated'.
-	 */
-	private Boolean valid = null;
-	/**
-	 * "V2Dir" if the router implements the v2 directory protocol.
-	 */
-	private Boolean v2Dir = null;
-	/**
-	 * If the Router is currently hibernating we should not use it.
-	 */
-	private Boolean hibernating = null;
-	/**
-	 * Standard Constructor.
-	 * All values are set to null.
-	 */
-	public RouterFlags()
-	{
-	}
-	/**
-	 * Initialize all values with the given initial value.
-	 * @param initialValue the initial value used for setting all members.
-	 */
-	public RouterFlags(final Boolean initialValue)
-	{
-		running = initialValue;
-		exit = initialValue;
-		authority = initialValue;
-		fast = initialValue;
-		guard = initialValue;
-		stable = initialValue;
-		named = initialValue;
-		unnamed = initialValue;
-		v2Dir = initialValue;
-		valid = initialValue;
-		hSDir = initialValue;
-		badDirectory = initialValue;
-		badExit = initialValue;
-		hibernating = initialValue;
-	}
-	/**
-	 * Set the flags by parsing a given string.
-	 * @param flags the String which contains the set flags. All other flags are set to false.
-	 */
-	public RouterFlags(final String flags)
-	{
-		setAllFlags(flags);
-	}
-	/**
-	 * Set the flags by parsing a given byte array.
-	 * @param data the byte array which contains the flags.
-	 */
-	public RouterFlags(final byte [] data)
-	{
-		Boolean [] flags1 = ByteUtils.getBooleansFromByte(data[0]);
-		running = flags1[0];
-		exit = flags1[1];
-		authority = flags1[2];
-		fast = flags1[3];
-		Boolean [] flags2 = ByteUtils.getBooleansFromByte(data[1]);
-		guard = flags2[0];
-		stable = flags2[1];
-		named = flags2[2];
-		unnamed = flags2[3];
-		Boolean [] flags3 = ByteUtils.getBooleansFromByte(data[2]);
-		v2Dir = flags3[0];
-		valid = flags3[1];
-		hSDir = flags3[2];
-		badDirectory = flags3[3];
-		Boolean [] flags4 = ByteUtils.getBooleansFromByte(data[3]);
-		badExit = flags4[0];
-		hibernating = flags4[1];
-	}
-	/**
-	 * Set all flags by given flags as string.
-	 * @param flags the flags as string
-	 */
-	public void setAllFlags(final String flags)
-	{
-		running = flags.contains(IDENTIFIER_RUNNING);
-		exit = flags.contains(IDENTIFIER_EXIT);
-		authority = flags.contains(IDENTIFIER_AUTHORITY);
-		fast = flags.contains(IDENTIFIER_FAST);
-		guard = flags.contains(IDENTIFIER_GUARD);
-		stable = flags.contains(IDENTIFIER_STABLE);
-		named = flags.contains(IDENTIFIER_NAMED);
-		unnamed = flags.contains(IDENTIFIER_UNNAMED);
-		v2Dir = flags.contains(IDENTIFIER_DIRECTORY);
-		valid = flags.contains(IDENTIFIER_VALID);
-		hSDir = flags.contains(IDENTIFIER_HIDDENSERVICE_DIRECTORY);
-		badDirectory = flags.contains(IDENTIFIER_BAD_DIRECTORY);
-		badExit = flags.contains(IDENTIFIER_BAD_EXIT);
-	}
-	/**
-	 * Convert the RouterFlags to a byte array.
-	 * @return a byte array containing the RouterFlag information.
-	 */
-	protected byte [] toByteArray()
-	{
-		byte [] result = new byte[4];
-		result[0] = ByteUtils.getByteFromBooleans(running, exit, authority, fast);
-		result[1] = ByteUtils.getByteFromBooleans(guard, stable, named, unnamed);
-		result[2] = ByteUtils.getByteFromBooleans(v2Dir, valid, hSDir, badDirectory);
-		result[3] = ByteUtils.getByteFromBooleans(badExit, hibernating);
-		return result;
-	}
-	/**
-	 * @return the running as Boolean (can also be null)
-	 */
-	public Boolean getRunning()
-	{
-		return running;
-	}
-	/**
-	 * @return the running as boolean (will return false if not set)
-	 */
-	public boolean isRunning()
-	{
-		return running == null ? false : running;
-	}
-	/**
-	 * @param running the running to set
-	 */
-	public void setRunning(final Boolean running)
-	{
-		this.running = running;
-	}
-	/**
-	 * @return the hibernating as Boolean (can also be null)
-	 */
-	public Boolean getHibernating()
-	{
-		return hibernating;
-	}
-	/**
-	 * @return is the router currently hibernating? (will return false if not set)
-	 */
-	public boolean isHibernating()
-	{
-		return hibernating == null ? false : hibernating;
-	}
-	/**
-	 * @param hibernating the hibernating to set
-	 */
-	public void setHibernating(final Boolean hibernating)
-	{
-		this.hibernating = hibernating;
-	}
-	/**
-	 * @return the authority as Boolean (can also be null if not set)
-	 */
-	public Boolean getAuthority()
-	{
-		return authority;
-	}
-	/**
-	 * @return the authority as boolean (will return false if not set)
-	 */
-	public boolean isAuthority()
-	{
-		return authority == null ? false : authority;
-	}
-	/**
-	 * @param authority the authority to set
-	 */
-	public void setAuthority(final Boolean authority)
-	{
-		this.authority = authority;
-	}
-	/**
-	 * @return the exit as Boolean (can be null)
-	 */
-	public Boolean getExit()
-	{
-		return exit;
-	}
-	/**
-	 * @return the exit as boolean (will return false if not set)
-	 */
-	public boolean isExit()
-	{
-		return exit == null ? false : exit;
-	}
-	/**
-	 * @param exit the exit to set
-	 */
-	public void setExit(final Boolean exit)
-	{
-		this.exit = exit;
-	}
-	/**
-	 * @return the badExit as Boolean (can be null)
-	 */
-	public Boolean getBadExit()
-	{
-		return badExit;
-	}
-	/**
-	 * @return the badExit as boolean (will return false if not set)
-	 */
-	public boolean isBadExit()
-	{
-		return badExit == null ? false : badExit;
-	}
-	/**
-	 * @param badExit the badExit to set
-	 */
-	public void setBadExit(final Boolean badExit)
-	{
-		this.badExit = badExit;
-	}
-	/**
-	 * @return the badDirectory as Boolean (can be null)
-	 */
-	public Boolean getBadDirectory()
-	{
-		return badDirectory;
-	}
-	/**
-	 * @return the badDirectory as boolean (will return false if not set)
-	 */
-	public boolean isBadDirectory()
-	{
-		return badDirectory == null ? false : badDirectory;
-	}
-	/**
-	 * @param badDirectory the badDirectory to set
-	 */
-	public void setBadDirectory(final Boolean badDirectory)
-	{
-		this.badDirectory = badDirectory;
-	}
-	/**
-	 * @return the fast as Boolean (can be null)
-	 */
-	public Boolean getFast()
-	{
-		return fast;
-	}
-	/**
-	 * @return the fast as boolean (will return false if not set)
-	 */
-	public boolean isFast()
-	{
-		return fast == null ? false : fast;
-	}
-	/**
-	 * @param fast the fast to set
-	 */
-	public void setFast(final Boolean fast)
-	{
-		this.fast = fast;
-	}
-	/**
-	 * @return the guard as Boolean (can be null)
-	 */
-	public Boolean getGuard()
-	{
-		return guard;
-	}
-	/**
-	 * @return the guard as boolean (will return false if not set)
-	 */
-	public boolean isGuard()
-	{
-		return guard == null ? false : guard;
-	}
-	/**
-	 * @param guard the guard to set
-	 */
-	public void setGuard(final Boolean guard)
-	{
-		this.guard = guard;
-	}
-	/**
-	 * @return the hSDir as Boolean (can be null)
-	 */
-	public Boolean getHSDir()
-	{
-		return hSDir;
-	}
-	/**
-	 * @return the hSDir as boolean (will return false if not set)
-	 */
-	public boolean isHSDir()
-	{
-		return hSDir == null ? false : hSDir;
-	}
-	/**
-	 * @param hSDir the hSDir to set
-	 */
-	public void setHSDir(final Boolean hSDir)
-	{
-		this.hSDir = hSDir;
-	}
-	/**
-	 * @return the named as Boolean (can be null)
-	 */
-	public Boolean getNamed()
-	{
-		return named;
-	}
-	/**
-	 * @return the named as boolean (will return false if not set)
-	 */
-	public boolean isNamed()
-	{
-		return named == null ? false : named;
-	}
-	/**
-	 * @param named the named to set
-	 */
-	public void setNamed(final Boolean named)
-	{
-		this.named = named;
-	}
-	/**
-	 * @return the stable as Boolean (can be null)
-	 */
-	public Boolean getStable()
-	{
-		return stable;
-	}
-	/**
-	 * @return the stable as boolean (will return false if not set)
-	 */
-	public boolean isStable()
-	{
-		return stable == null ? false : stable;
-	}
-	/**
-	 * @param stable the stable to set
-	 */
-	public void setStable(final Boolean stable)
-	{
-		this.stable = stable;
-	}
-	/**
-	 * @return the unnamed as Boolean (can be null)
-	 */
-	public Boolean getUnnamed()
-	{
-		return unnamed;
-	}
-	/**
-	 * @return the unnamed as boolean (will return false if not set)
-	 */
-	public boolean isUnnamed()
-	{
-		return unnamed == null ? false : unnamed;
-	}
-	/**
-	 * @param unnamed the unnamed to set
-	 */
-	public void setUnnamed(final Boolean unnamed)
-	{
-		this.unnamed = unnamed;
-	}
-	/**
-	 * @return the valid as Boolean (can be null)
-	 */
-	public Boolean getValid()
-	{
-		return valid;
-	}
-	/**
-	 * @return the valid as boolean (will return false if not set)
-	 */
-	public boolean isValid()
-	{
-		return valid == null ? false : valid;
-	}
-	/**
-	 * @param valid the valid to set
-	 */
-	public void setValid(final Boolean valid)
-	{
-		this.valid = valid;
-	}
-	/**
-	 * @return the v2Dir as Boolean (can be null)
-	 */
-	public Boolean getV2Dir()
-	{
-		return v2Dir;
-	}
-	/**
-	 * @return the v2Dir as boolean (will return false if not set)
-	 */
-	public boolean isV2Dir()
-	{
-		return v2Dir == null ? false : v2Dir;
-	}
-	/**
-	 * @param v2Dir the v2Dir to set
-	 */
-	public void setV2Dir(final Boolean v2Dir)
-	{
-		this.v2Dir = v2Dir;
-	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((authority == null) ? 0 : authority.hashCode());
-		result = prime * result + ((badDirectory == null) ? 0 : badDirectory.hashCode());
-		result = prime * result + ((badExit == null) ? 0 : badExit.hashCode());
-		result = prime * result + ((exit == null) ? 0 : exit.hashCode());
-		result = prime * result + ((fast == null) ? 0 : fast.hashCode());
-		result = prime * result + ((guard == null) ? 0 : guard.hashCode());
-		result = prime * result + ((hSDir == null) ? 0 : hSDir.hashCode());
-		result = prime * result + ((named == null) ? 0 : named.hashCode());
-		result = prime * result + ((running == null) ? 0 : running.hashCode());
-		result = prime * result + ((stable == null) ? 0 : stable.hashCode());
-		result = prime * result + ((unnamed == null) ? 0 : unnamed.hashCode());
-		result = prime * result + ((v2Dir == null) ? 0 : v2Dir.hashCode());
-		result = prime * result + ((valid == null) ? 0 : valid.hashCode());
-		result = prime * result + ((hibernating == null) ? 0 : hibernating.hashCode());
-		return result;
-	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(final Object obj)
-	{
-		if (this == obj)
-		{
-			return true;
-		}
-		if (obj == null)
-		{
-			return false;
-		}
-		if (!(obj instanceof RouterFlags))
-		{
-			return false;
-		}
-		RouterFlags other = (RouterFlags) obj;
-		if (!equals(authority, other.authority))
-		{
-			return false;
-		}
-		if (!equals(badDirectory, other.badDirectory))
-		{
-			return false;
-		}
-		if (!equals(badExit, other.badExit))
-		{
-			return false;
-		}
-		if (!equals(exit, other.exit))
-		{
-			return false;
-		}
-		if (!equals(fast, other.fast))
-		{
-			return false;
-		}
-		if (!equals(guard, other.guard))
-		{
-			return false;
-		}
-		if (!equals(hSDir, other.hSDir))
-		{
-			return false;
-		}
-		if (!equals(named, other.named))
-		{
-			return false;
-		}
-		if (!equals(running, other.running))
-		{
-			return false;
-		}
-		if (!equals(stable, other.stable))
-		{
-			return false;
-		}
-		if (!equals(unnamed, other.unnamed))
-		{
-			return false;
-		}
-		if (!equals(valid, other.valid))
-		{
-			return false;
-		}
-		if (!equals(v2Dir, other.v2Dir))
-		{
-			return false;
-		}
-		if (!equals(hibernating, other.hibernating))
-		{
-			return false;
-		}
-		return true;
-	}
-	private boolean equals(final Boolean bool1, final Boolean bool2)
-	{
-		if (bool1 == null && bool2 == null)
-		{
-			return true;
-		}
-		else
-		{
-			if (bool1 == null || bool2 == null)
-			{
-				return false;
-			}
-			return bool1.equals(bool2);
-		}
-	}
-	/**
-	 * Check if the current router flags are matching the other flags.
-	 * @param ruleFlags {@link RouterFlags} object which should be treated as a rule
-	 * @return true if this {@link RouterFlags} matches the given rule
-	 */
-	protected boolean match(final RouterFlags ruleFlags)
-	{
-		if (!match(ruleFlags.getExit(), getExit()))
-		{
-			return false;
-		}
-		if (!match(ruleFlags.getStable(), getStable()))
-		{
-			return false;
-		}
-		if (!match(ruleFlags.getFast(), getFast()))
-		{
-			return false;
-		}
-		if (!match(ruleFlags.getGuard(), getGuard()))
-		{
-			return false;
-		}
-		if (!match(ruleFlags.getHSDir(), getHSDir()))
-		{
-			return false;
-		}
-		if (!match(ruleFlags.getNamed(), getNamed()))
-		{
-			return false;
-		}
-		if (!match(ruleFlags.getUnnamed(), getUnnamed()))
-		{
-			return false;
-		}
-		if (!match(ruleFlags.getValid(), getValid()))
-		{
-			return false;
-		}
-		if (!match(ruleFlags.getV2Dir(), getV2Dir()))
-		{
-			return false;
-		}
-		if (!match(ruleFlags.getRunning(), getRunning()))
-		{
-			return false;
-		}
-		if (!match(ruleFlags.getHibernating(), getHibernating()))
-		{
-			return false;
-		}
-		return true;
-	}
-	/**
-	 * Check if the given rule matches the given value.
-	 * @param rule if rule is null then the value is ignored.
-	 * @param value the value to be checked against the rule
-	 * @return true if value matches with rule
-	 */
-	private boolean match(final Boolean rule, final Boolean value)
-	{
-		if (rule != null && rule != value)
-		{
-			return false;
-		}
-		return true;
-	}
-	@Override
-	public String toString()
-	{
-		StringBuilder buffer = new StringBuilder();
-		if (isAuthority())
-		{
-			buffer.append(IDENTIFIER_AUTHORITY);
-			buffer.append(' ');
-		}
-		if (isBadDirectory())
-		{
-			buffer.append(IDENTIFIER_BAD_DIRECTORY);
-			buffer.append(' ');
-		}
-		if (isBadExit())
-		{
-			buffer.append(IDENTIFIER_BAD_EXIT);
-			buffer.append(' ');
-		}
-		if (isExit())
-		{
-			buffer.append(IDENTIFIER_EXIT);
-			buffer.append(' ');
-		}
-		if (isFast())
-		{
-			buffer.append(IDENTIFIER_FAST);
-			buffer.append(' ');
-		}
-		if (isGuard())
-		{
-			buffer.append(IDENTIFIER_GUARD);
-			buffer.append(' ');
-		}
-		if (isHibernating())
-		{
-			buffer.append(IDENTIFIER_HIBERNATING);
-			buffer.append(' ');
-		}
-		if (isHSDir())
-		{
-			buffer.append(IDENTIFIER_HIDDENSERVICE_DIRECTORY);
-			buffer.append(' ');
-		}
-		if (isNamed())
-		{
-			buffer.append(IDENTIFIER_NAMED);
-			buffer.append(' ');
-		}
-		if (isStable())
-		{
-			buffer.append(IDENTIFIER_STABLE);
-			buffer.append(' ');
-		}
-		if (isRunning())
-		{
-			buffer.append(IDENTIFIER_RUNNING);
-			buffer.append(' ');
-		}
-		if (isUnnamed())
-		{
-			buffer.append(IDENTIFIER_UNNAMED);
-			buffer.append(' ');
-		}
-		if (isValid())
-		{
-			buffer.append(IDENTIFIER_VALID);
-			buffer.append(' ');
-		}
-		if (isV2Dir())
-		{
-			buffer.append(IDENTIFIER_DIRECTORY);
-			buffer.append(' ');
-		}
-		return buffer.toString().trim();
-	}
-	/** Identifier for Authority. */
-	private static final String IDENTIFIER_AUTHORITY = "Authority";
-	/** Identifier for Running. */
-	private static final String IDENTIFIER_RUNNING = "Running";
-	/** Identifier for Exit. */
-	private static final String IDENTIFIER_EXIT = "Exit";
-	/** Identifier for Fast. */
-	private static final String IDENTIFIER_FAST = "Fast";
-	/** Identifier for Guard. */
-	private static final String IDENTIFIER_GUARD = "Guard";
-	/** Identifier for Stable. */
-	private static final String IDENTIFIER_STABLE = "Stable";
-	/** Identifier for Named. */
-	private static final String IDENTIFIER_NAMED = "Named";
-	/** Identifier for Unnamed. */
-	private static final String IDENTIFIER_UNNAMED = "Unnamed";
-	/** Identifier for V2Dir. */
-	private static final String IDENTIFIER_DIRECTORY = "V2Dir";
-	/** Identifier for Valid. */
-	private static final String IDENTIFIER_VALID = "Valid";
-	/** Identifier for HSDir. */
-	private static final String IDENTIFIER_HIDDENSERVICE_DIRECTORY = "HSDir";
-	/** Identifier for Hibernating. */
-	private static final String IDENTIFIER_HIBERNATING = "Hibernating";
-	/** Identifier for BadDirectory. */
-	private static final String IDENTIFIER_BAD_DIRECTORY = "BadDirectory";
-	/** Identifier for BadExit. */
-	private static final String IDENTIFIER_BAD_EXIT = "BadExit";
+public final class RouterFlags {
+    /**
+     * flag Running.
+     * "Running" if the router is currently usable
+     */
+    private static int INDEX_RUNNING = 0;
+    /**
+     * flag Authority.
+     * "Authority" if the router is a directory INDEX_AUTHORITY.
+     */
+    private static int INDEX_AUTHORITY = 1;
+    /**
+     * "Exit" if the router is more useful for building general-purpose INDEX_EXIT circuits than for relay circuits.
+     * The path building algorithm uses this flag; see path-spec.txt.
+     */
+    private static int INDEX_EXIT = 2;
+    /**
+     * "BadExit" if the router is believed to be useless as an INDEX_EXIT node
+     * (because its ISP censors it, because it is behind a restrictive proxy, or for some similar reason).
+     */
+    private static int INDEX_BAD_EXIT = 3;
+    /**
+     * "BadDirectory" if the router is believed to be useless as a directory cache
+     * (because its directory port isn't working, its bandwidth is always throttled, or for some similar reason).
+     */
+    private static int INDEX_BAD_DIRECTORY = 4;
+    /**
+     * "Fast" if the router is suitable for high-bandwidth circuits.
+     */
+    private static int INDEX_FAST = 5;
+    /**
+     * "Guard" if the router is suitable for use as an entry INDEX_GUARD.
+     */
+    private static int INDEX_GUARD = 6;
+    /**
+     * "HSDir" if the router is considered a v2 hidden service directory.
+     */
+    private static int INDEX_HIDDENSERVICE_DIRECTORY = 7;
+    /**
+     * "Named" if the router's identity-nickname mapping is canonical, and this INDEX_AUTHORITY binds names.
+     */
+    private static int INDEX_NAMED = 8;
+    /**
+     * "Stable" if the router is suitable for long-lived circuits.
+     */
+    private static int INDEX_STABLE = 9;
+    /**
+     * "Unnamed" if another router has bound the name used by this router, and this INDEX_AUTHORITY binds names.
+     */
+    private static int INDEX_UNNAMED = 10;
+    /**
+     * "Valid" if the router has been 'validated'.
+     */
+    private static int INDEX_VALID = 11;
+    /**
+     * "V2Dir" if the router implements the v2 directory protocol.
+     */
+    private static int INDEX_V2DIR = 12;
+    /**
+     * If the Router is currently INDEX_HIBERNATING we should not use it.
+     */
+    private static int INDEX_HIBERNATING = 13;
+
+    private BitSet value = new BitSet(14);
+
+    /**
+     * Standard Constructor.
+     * All values are set to null.
+     */
+    public RouterFlags() {
+        value.set(0, 14, false);
+    }
+
+    /**
+     * Initialize all values with the given initial value.
+     *
+     * @param initialValue the initial value used for setting all members.
+     */
+    public RouterFlags(final Boolean initialValue) {
+        value.set(0, 14, initialValue);
+    }
+
+    /**
+     * Set the flags by parsing a given string.
+     *
+     * @param flags the String which contains the set flags. All other flags are set to false.
+     */
+    public RouterFlags(final String flags) {
+        setAllFlags(flags);
+    }
+
+    /**
+     * Set the flags by parsing a given byte array.
+     *
+     * @param data the byte array which contains the flags.
+     */
+    public RouterFlags(final byte[] data) {
+        Boolean[] flags1 = ByteUtils.getBooleansFromByte(data[0]);
+        value.set(INDEX_RUNNING, flags1[0]);
+        value.set(INDEX_EXIT, flags1[1]);
+        value.set(INDEX_AUTHORITY, flags1[2]);
+        value.set(INDEX_FAST, flags1[3]);
+        Boolean[] flags2 = ByteUtils.getBooleansFromByte(data[1]);
+        value.set(INDEX_GUARD, flags2[0]);
+        value.set(INDEX_STABLE, flags2[1]);
+        value.set(INDEX_NAMED, flags2[2]);
+        value.set(INDEX_UNNAMED, flags2[3]);
+        Boolean[] flags3 = ByteUtils.getBooleansFromByte(data[2]);
+        value.set(INDEX_V2DIR, flags3[0]);
+        value.set(INDEX_VALID, flags3[1]);
+        value.set(INDEX_HIDDENSERVICE_DIRECTORY, flags3[2]);
+        value.set(INDEX_BAD_DIRECTORY, flags3[3]);
+        Boolean[] flags4 = ByteUtils.getBooleansFromByte(data[3]);
+        value.set(INDEX_BAD_EXIT, flags4[0]);
+        value.set(INDEX_HIBERNATING, flags4[1]);
+    }
+
+    /**
+     * Set all flags by given flags as string.
+     *
+     * @param flags the flags as string
+     */
+    public void setAllFlags(final String flags) {
+        value.set(INDEX_RUNNING, flags.contains(IDENTIFIER_RUNNING));
+        value.set(INDEX_EXIT, flags.contains(IDENTIFIER_EXIT));
+        value.set(INDEX_AUTHORITY, flags.contains(IDENTIFIER_AUTHORITY));
+        value.set(INDEX_FAST, flags.contains(IDENTIFIER_FAST));
+        value.set(INDEX_GUARD, flags.contains(IDENTIFIER_GUARD));
+        value.set(INDEX_STABLE, flags.contains(IDENTIFIER_STABLE));
+        value.set(INDEX_NAMED, flags.contains(IDENTIFIER_NAMED));
+        value.set(INDEX_UNNAMED, flags.contains(IDENTIFIER_UNNAMED));
+        value.set(INDEX_V2DIR, flags.contains(IDENTIFIER_DIRECTORY));
+        value.set(INDEX_VALID, flags.contains(IDENTIFIER_VALID));
+        value.set(INDEX_HIDDENSERVICE_DIRECTORY, flags.contains(IDENTIFIER_HIDDENSERVICE_DIRECTORY));
+        value.set(INDEX_BAD_DIRECTORY, flags.contains(IDENTIFIER_BAD_DIRECTORY));
+        value.set(INDEX_BAD_EXIT, flags.contains(IDENTIFIER_BAD_EXIT));
+    }
+
+    /**
+     * Convert the RouterFlags to a byte array.
+     *
+     * @return a byte array containing the RouterFlag information.
+     */
+    protected byte[] toByteArray() {
+        byte[] result = new byte[4];
+        result[0] = ByteUtils.getByteFromBooleans(isRunning(), isExit(), isAuthority(), isFast());
+        result[1] = ByteUtils.getByteFromBooleans(isGuard(), isStable(), isNamed(), isUnnamed());
+        result[2] = ByteUtils.getByteFromBooleans(isV2Dir(), isValid(), isHSDir(), isBadDirectory());
+        result[3] = ByteUtils.getByteFromBooleans(isBadExit(), isHibernating());
+        return result;
+    }
+
+    /**
+     * @return the INDEX_RUNNING as boolean (will return false if not set)
+     */
+    public boolean isRunning() {
+        return value.get(INDEX_RUNNING);
+    }
+
+    /**
+     * @param running the INDEX_RUNNING to set
+     */
+    public void setRunning(final Boolean running) {
+        value.set(INDEX_RUNNING, running);
+    }
+
+    /**
+     * @return is the router currently INDEX_HIBERNATING? (will return false if not set)
+     */
+    public boolean isHibernating() {
+        return value.get(INDEX_HIBERNATING);
+    }
+
+    /**
+     * @param hibernating the INDEX_HIBERNATING to set
+     */
+    public void setHibernating(final Boolean hibernating) {
+        value.set(INDEX_HIBERNATING, hibernating);
+    }
+
+    /**
+     * @return the INDEX_AUTHORITY as boolean (will return false if not set)
+     */
+    public boolean isAuthority() {
+        return value.get(INDEX_AUTHORITY);
+    }
+
+    /**
+     * @param authority the INDEX_AUTHORITY to set
+     */
+    public void setAuthority(final Boolean authority) {
+        value.set(INDEX_AUTHORITY, authority);
+    }
+
+    /**
+     * @return the INDEX_EXIT as boolean (will return false if not set)
+     */
+    public boolean isExit() {
+        return value.get(INDEX_EXIT);
+    }
+
+    /**
+     * @param exit the INDEX_EXIT to set
+     */
+    public void setExit(final Boolean exit) {
+        value.set(INDEX_EXIT, exit);
+    }
+
+    /**
+     * @return the INDEX_BAD_EXIT as boolean (will return false if not set)
+     */
+    public boolean isBadExit() {
+        return value.get(INDEX_BAD_EXIT);
+    }
+
+    /**
+     * @param badExit the INDEX_BAD_EXIT to set
+     */
+    public void setBadExit(final Boolean badExit) {
+        value.set(INDEX_BAD_EXIT, badExit);
+    }
+
+    /**
+     * @return the INDEX_BAD_DIRECTORY as boolean (will return false if not set)
+     */
+    public boolean isBadDirectory() {
+        return value.get(INDEX_BAD_DIRECTORY);
+    }
+
+    /**
+     * @param badDirectory the INDEX_BAD_DIRECTORY to set
+     */
+    public void setBadDirectory(final Boolean badDirectory) {
+        value.set(INDEX_BAD_DIRECTORY, badDirectory);
+    }
+
+    /**
+     * @return the INDEX_FAST as boolean (will return false if not set)
+     */
+    public boolean isFast() {
+        return value.get(INDEX_FAST);
+    }
+
+    /**
+     * @param fast the INDEX_FAST to set
+     */
+    public void setFast(final Boolean fast) {
+        value.set(INDEX_FAST, fast);
+    }
+
+    /**
+     * @return the INDEX_GUARD as boolean (will return false if not set)
+     */
+    public boolean isGuard() {
+        return value.get(INDEX_GUARD);
+    }
+
+    /**
+     * @param guard the INDEX_GUARD to set
+     */
+    public void setGuard(final Boolean guard) {
+        value.set(INDEX_GUARD, guard);
+    }
+
+    /**
+     * @return the INDEX_HIDDENSERVICE_DIRECTORY as boolean (will return false if not set)
+     */
+    public boolean isHSDir() {
+        return value.get(INDEX_HIDDENSERVICE_DIRECTORY);
+    }
+
+    /**
+     * @param hSDir the INDEX_HIDDENSERVICE_DIRECTORY to set
+     */
+    public void setHSDir(final Boolean hSDir) {
+        value.set(INDEX_HIDDENSERVICE_DIRECTORY, hSDir);
+    }
+
+    /**
+     * @return the INDEX_NAMED as boolean (will return false if not set)
+     */
+    public boolean isNamed() {
+        return value.get(INDEX_NAMED);
+    }
+
+    /**
+     * @param named the INDEX_NAMED to set
+     */
+    public void setNamed(final Boolean named) {
+        value.set(INDEX_NAMED, named);
+    }
+
+    /**
+     * @return the INDEX_STABLE as boolean (will return false if not set)
+     */
+    public boolean isStable() {
+        return value.get(INDEX_STABLE);
+    }
+
+    /**
+     * @param stable the INDEX_STABLE to set
+     */
+    public void setStable(final Boolean stable) {
+        value.set(INDEX_STABLE, stable);
+    }
+
+    /**
+     * @return the INDEX_UNNAMED as boolean (will return false if not set)
+     */
+    public boolean isUnnamed() {
+        return value.get(INDEX_UNNAMED);
+    }
+
+    /**
+     * @param unnamed the INDEX_UNNAMED to set
+     */
+    public void setUnnamed(final Boolean unnamed) {
+        value.set(INDEX_UNNAMED, unnamed);
+    }
+
+    /**
+     * @return the INDEX_VALID as boolean (will return false if not set)
+     */
+    public boolean isValid() {
+        return value.get(INDEX_VALID);
+    }
+
+    /**
+     * @param valid the INDEX_VALID to set
+     */
+    public void setValid(final Boolean valid) {
+        value.set(INDEX_VALID, valid);
+    }
+
+    /**
+     * @return the INDEX_V2DIR as boolean (will return false if not set)
+     */
+    public boolean isV2Dir() {
+        return value.get(INDEX_V2DIR);
+    }
+
+    /**
+     * @param v2Dir the INDEX_V2DIR to set
+     */
+    public void setV2Dir(final Boolean v2Dir) {
+        value.set(INDEX_V2DIR, v2Dir);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RouterFlags that = (RouterFlags) o;
+
+        if (value != null ? !value.equals(that.value) : that.value != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return value != null ? value.hashCode() : 0;
+    }
+
+    /**
+     * Check if the current router flags are matching the other flags.
+     *
+     * @param ruleFlags {@link RouterFlags} object which should be treated as a rule
+     * @return true if this {@link RouterFlags} matches the given rule
+     */
+    protected boolean match(final RouterFlags ruleFlags) {
+        String [] flags = ruleFlags.toString().split(" ");
+        String myFlags = toString();
+        for (String flag : flags) {
+            if (!myFlags.contains(flag)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder buffer = new StringBuilder();
+        if (isAuthority()) {
+            buffer.append(IDENTIFIER_AUTHORITY);
+            buffer.append(' ');
+        }
+        if (isBadDirectory()) {
+            buffer.append(IDENTIFIER_BAD_DIRECTORY);
+            buffer.append(' ');
+        }
+        if (isBadExit()) {
+            buffer.append(IDENTIFIER_BAD_EXIT);
+            buffer.append(' ');
+        }
+        if (isExit()) {
+            buffer.append(IDENTIFIER_EXIT);
+            buffer.append(' ');
+        }
+        if (isFast()) {
+            buffer.append(IDENTIFIER_FAST);
+            buffer.append(' ');
+        }
+        if (isGuard()) {
+            buffer.append(IDENTIFIER_GUARD);
+            buffer.append(' ');
+        }
+        if (isHibernating()) {
+            buffer.append(IDENTIFIER_HIBERNATING);
+            buffer.append(' ');
+        }
+        if (isHSDir()) {
+            buffer.append(IDENTIFIER_HIDDENSERVICE_DIRECTORY);
+            buffer.append(' ');
+        }
+        if (isNamed()) {
+            buffer.append(IDENTIFIER_NAMED);
+            buffer.append(' ');
+        }
+        if (isStable()) {
+            buffer.append(IDENTIFIER_STABLE);
+            buffer.append(' ');
+        }
+        if (isRunning()) {
+            buffer.append(IDENTIFIER_RUNNING);
+            buffer.append(' ');
+        }
+        if (isUnnamed()) {
+            buffer.append(IDENTIFIER_UNNAMED);
+            buffer.append(' ');
+        }
+        if (isValid()) {
+            buffer.append(IDENTIFIER_VALID);
+            buffer.append(' ');
+        }
+        if (isV2Dir()) {
+            buffer.append(IDENTIFIER_DIRECTORY);
+            buffer.append(' ');
+        }
+        return buffer.toString().trim();
+    }
+
+    /**
+     * Identifier for Authority.
+     */
+    private static final String IDENTIFIER_AUTHORITY = "Authority";
+    /**
+     * Identifier for Running.
+     */
+    private static final String IDENTIFIER_RUNNING = "Running";
+    /**
+     * Identifier for Exit.
+     */
+    private static final String IDENTIFIER_EXIT = "Exit";
+    /**
+     * Identifier for Fast.
+     */
+    private static final String IDENTIFIER_FAST = "Fast";
+    /**
+     * Identifier for Guard.
+     */
+    private static final String IDENTIFIER_GUARD = "Guard";
+    /**
+     * Identifier for Stable.
+     */
+    private static final String IDENTIFIER_STABLE = "Stable";
+    /**
+     * Identifier for Named.
+     */
+    private static final String IDENTIFIER_NAMED = "Named";
+    /**
+     * Identifier for Unnamed.
+     */
+    private static final String IDENTIFIER_UNNAMED = "Unnamed";
+    /**
+     * Identifier for V2Dir.
+     */
+    private static final String IDENTIFIER_DIRECTORY = "V2Dir";
+    /**
+     * Identifier for Valid.
+     */
+    private static final String IDENTIFIER_VALID = "Valid";
+    /**
+     * Identifier for HSDir.
+     */
+    private static final String IDENTIFIER_HIDDENSERVICE_DIRECTORY = "HSDir";
+    /**
+     * Identifier for Hibernating.
+     */
+    private static final String IDENTIFIER_HIBERNATING = "Hibernating";
+    /**
+     * Identifier for BadDirectory.
+     */
+    private static final String IDENTIFIER_BAD_DIRECTORY = "BadDirectory";
+    /**
+     * Identifier for BadExit.
+     */
+    private static final String IDENTIFIER_BAD_EXIT = "BadExit";
 }

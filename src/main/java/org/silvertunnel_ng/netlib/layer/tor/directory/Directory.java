@@ -1294,6 +1294,7 @@ public final class Directory
 				}
 			}
 		}
+        LOG.debug("routers found for given flags (" + flags.toString() + ") {}", result.size());
 		return result;
 	}
 
