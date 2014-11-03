@@ -36,6 +36,7 @@
 package org.silvertunnel_ng.netlib.nameservice.tor;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.fail;
 
 import java.net.UnknownHostException;
@@ -64,7 +65,8 @@ public class TorNetAddressNameServiceRemoteTest extends TorRemoteAbstractTest
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TorNetAddressNameServiceRemoteTest.class);
 
-	private static final String TEST1_HOSTNAME = "dnstest.silvertunnel-ng.org";
+    private static final String TEST1_HOSTNAME = "dnstest.silvertunnel-ng.org";
+    private static final String TEST2_HOSTNAME = "google.com";
 	private static final IpNetAddress TEST1_IP = new IpNetAddress("1.2.3.4");
 	private static final String TEST3_HOSTNAME = "google-public-dns-a.google.com";
 	private static final IpNetAddress TEST3_IP = new IpNetAddress("8.8.8.8");
@@ -79,21 +81,34 @@ public class TorNetAddressNameServiceRemoteTest extends TorRemoteAbstractTest
 		super.initializeTor();
 	}
 
-	/**
-	 * Test host name -> IP mapping for dnstest.silvertunnel.org.
-	 * 
-	 * @throws Exception
-	 */
-	@Test(timeOut = 30000, dependsOnMethods = {"initializeTor" })
-	public void testGetAddressesByName() throws Exception
-	{
-		final NetAddressNameService ns = torNetLayer.getNetAddressNameService();
-		final NetAddress[] resolvedIps = ns.getAddressesByName(TEST1_HOSTNAME);
-		assertEquals("wrong number of IPs found", 1, resolvedIps.length);
-		assertEquals("wrong IP found", TEST1_IP, resolvedIps[0]);
-	}
+    /**
+     * Test host name -> IP mapping for dnstest.silvertunnel.org.
+     *
+     * @throws Exception
+     */
+    @Test(timeOut = 30000, dependsOnMethods = {"initializeTor" })
+    public void testGetAddressByName() throws Exception
+    {
+        final NetAddressNameService ns = torNetLayer.getNetAddressNameService();
+        final NetAddress[] resolvedIps = ns.getAddressesByName(TEST1_HOSTNAME);
+        assertEquals("wrong number of IPs found", 1, resolvedIps.length);
+        assertEquals("wrong IP found", TEST1_IP, resolvedIps[0]);
+    }
 
-	/**
+    /**
+     * Test host name -> multiple IPs mapping for google.com.
+     *
+     * @throws Exception
+     */
+    @Test(timeOut = 30000, dependsOnMethods = {"initializeTor" })
+    public void testGetAddressesByName() throws Exception
+    {
+        final NetAddressNameService ns = torNetLayer.getNetAddressNameService();
+        final NetAddress[] resolvedIps = ns.getAddressesByName(TEST2_HOSTNAME);
+        assertTrue("wrong number of IPs found", resolvedIps.length > 0); // TODO : 0 should be at least 1 but i didnt found a hostname which will be resolved to more than one address for now
+    }
+
+    /**
 	 * Test IP -> host name mapping for 8.8.8.8.
 	 * 
 	 * @throws Exception

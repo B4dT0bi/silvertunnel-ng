@@ -20,6 +20,7 @@ package org.silvertunnel_ng.netlib.nameservice.tor;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.List;
 
 import org.silvertunnel_ng.netlib.api.NetAddress;
 import org.silvertunnel_ng.netlib.api.NetAddressNameService;
@@ -72,8 +73,8 @@ public class TorNetAddressNameService implements NetAddressNameService
 			checkNetlibTorLoop();
 
 			// resolve host name -> IP
-			final NetAddress result = tor.resolve(hostname);
-			return new NetAddress[] { result };
+			final List<NetAddress> result = tor.resolveAll(hostname);
+			return result.toArray(new NetAddress[result.size()]);
 
 		}
 		catch (final UnknownHostException e)

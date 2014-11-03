@@ -466,21 +466,35 @@ public class DynByteBuffer
 		return tmp;
 	}
 
-	/**
-	 * @return gets the next data as byte from the buffer.
-	 */
-	public final byte getNextByte()
-	{
-		if (crrPosRead >= length)
-		{
-			throw new ArrayIndexOutOfBoundsException(crrPosRead);
-		}
-		byte tmp = buffer[crrPosRead];
-		crrPosRead++;
-		return tmp;
-	}
+    /**
+     * @return gets the next data as byte from the buffer.
+     */
+    public final byte getNextByte()
+    {
+        if (crrPosRead >= length)
+        {
+            throw new ArrayIndexOutOfBoundsException(crrPosRead);
+        }
+        byte tmp = buffer[crrPosRead];
+        crrPosRead++;
+        return tmp;
+    }
 
-	/**
+    /**
+     * @return gets the next data-byte as int from the buffer.
+     */
+    public final int getNextByteAsInt()
+    {
+        if (crrPosRead >= length)
+        {
+            throw new ArrayIndexOutOfBoundsException(crrPosRead);
+        }
+        byte tmp = buffer[crrPosRead];
+        crrPosRead++;
+        return ((int) tmp) & 0xff;
+    }
+
+    /**
 	 * @return gets the next data as boolean from the buffer.
 	 */
 	public final boolean getNextBoolean()

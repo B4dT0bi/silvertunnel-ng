@@ -57,9 +57,12 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
+import org.silvertunnel_ng.netlib.api.NetAddress;
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.NetLayerStatus;
+import org.silvertunnel_ng.netlib.api.util.Hostname;
 import org.silvertunnel_ng.netlib.api.util.IpNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.api.TorNetLayerStatus;
@@ -400,25 +403,29 @@ public class Tor implements NetLayerStatusAdmin
 		close(false);
 	}
 
-	/**
-	 * Anonymously resolve a host name.
-	 * 
-	 * @param hostname
-	 *            the host name
-	 * @return the resolved IP; null if no mapping found
-	 */
-	public IpNetAddress resolve(final String hostname) throws IOException
-	{
-		final Object o = resolveInternal(hostname);
-		if (o instanceof IpNetAddress)
-		{
-			return (IpNetAddress) o;
-		}
-		else
-		{
-			return null;
-		}
-	}
+    /**
+     * Anonymously resolve a host name.
+     *
+     * @param hostname
+     *            the host name
+     * @return the resolved IP; null if no mapping found
+     */
+    public List<NetAddress> resolveAll(final String hostname) throws IOException
+    {
+        return resolveInternal(hostname);
+    }
+
+    /**
+     * Anonymously resolve a host name.
+     *
+     * @param hostname
+     *            the host name
+     * @return the resolved IP; null if no mapping found
+     */
+    public IpNetAddress resolve(final String hostname) throws IOException
+    {
+        return (IpNetAddress) resolveInternal(hostname).get(0);
+    }
 
 	/**
 	 * Anonymously do a reverse look-up.
@@ -439,10 +446,10 @@ public class Tor implements NetLayerStatusAdmin
 		}
 		sb.append("in-addr.arpa");
 		// resolve address
-		final Object o = resolveInternal(sb.toString());
-		if (o instanceof String)
+		final List<NetAddress> o = resolveInternal(sb.toString());
+		if (o.get(0) instanceof Hostname)
 		{
-			return (String) o;
+			return ((Hostname) o.get(0)).getHostname();
 		}
 		else
 		{
@@ -459,7 +466,7 @@ public class Tor implements NetLayerStatusAdmin
 	 * @return either an IpNetAddress (normal query), or a String
 	 *         (reverse-DNS-lookup)
 	 */
-	private Object resolveInternal(final String query) throws IOException
+	private List<NetAddress> resolveInternal(final String query) throws IOException
 	{
 		try
 		{
@@ -478,7 +485,7 @@ public class Tor implements NetLayerStatusAdmin
 						{
 							// if an answer is given, we're satisfied
 							final ResolveStream rs = new ResolveStream(circuit);
-							final Object o = rs.resolve(query);
+							final List<NetAddress> o = rs.resolve(query);
 							rs.close();
 							return o;
 						}
@@ -502,7 +509,7 @@ public class Tor implements NetLayerStatusAdmin
 																			  torEventService, 
 																			  false);
 			final ResolveStream rs = new ResolveStream(rsCircuit[0]);
-			final Object o = rs.resolve(query);
+			final List<NetAddress> o = rs.resolve(query);
 			rs.close();
 			return o;
 		}
