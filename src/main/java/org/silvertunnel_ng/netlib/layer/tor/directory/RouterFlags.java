@@ -399,10 +399,8 @@ public final class RouterFlags {
      * @return true if this {@link RouterFlags} matches the given rule
      */
     protected boolean match(final RouterFlags ruleFlags) {
-        String [] flags = ruleFlags.toString().split(" ");
-        String myFlags = toString();
-        for (String flag : flags) {
-            if (!myFlags.contains(flag)) {
+        for (int i = 0; i <ruleFlags.value.size(); i++) {
+            if (ruleFlags.value.get(i) && !value.get(i)) {
                 return false;
             }
         }

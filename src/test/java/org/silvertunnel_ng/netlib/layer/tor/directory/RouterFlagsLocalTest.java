@@ -207,6 +207,26 @@ public final class RouterFlagsLocalTest
 			shiftBoolean(list, 0);
 		}
 	}
+
+    /**
+     * Testing the matching functionality.
+     */
+    @Test
+    public void testMatch() {
+        RouterFlags flags1 = new RouterFlags();
+        flags1.setExit(true);
+        flags1.setFast(true);
+        flags1.setStable(true);
+
+        RouterFlags match = new RouterFlags();
+        match.setStable(true);
+
+        assertTrue(flags1.match(match));
+
+        match.setAuthority(true);
+
+        assertFalse(flags1.match(match));
+    }
 	/**
 	 * Check if the given array of Booleans is null.
 	 * @param list the array of Booleans to be checked
