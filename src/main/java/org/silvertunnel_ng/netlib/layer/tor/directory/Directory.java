@@ -84,6 +84,7 @@ import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.control.ControlNetLayer;
 import org.silvertunnel_ng.netlib.layer.control.ControlParameters;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.api.TorNetLayerStatus;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
@@ -1271,6 +1272,14 @@ public final class Directory
 		return result;
 	}
 
+    /**
+     * Get a Router by its fingerprint.
+     * @param fingerprint
+     * @return
+     */
+    public Router getRouterByFingerprint(final Fingerprint fingerprint) {
+        return allFingerprintsRouters.get(fingerprint);
+    }
 	/**
 	 * Get Map with all Routers which are valid and not excluded by Config and matches the given flags.
 	 * @return a Map with valid routers
