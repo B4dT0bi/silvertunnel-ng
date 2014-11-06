@@ -17,18 +17,42 @@
  */
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
-import org.silvertunnel_ng.netlib.layer.tor.api.Router;
+import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
+import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
 
 /**
  * The GuardEntry contains the Router information and some other information about the Guard node.
  */
 public class GuardEntry {
-    /** The Router information of this Guardnode. */
-    protected Router router;
+    /** The fingerprint of this Guardnode. */
+    protected Fingerprint fingerprint;
     /** When has this Guard first been discarded because of its status in the networkstatus? */
     protected long firstDiscard = 0;
     /** Unsuccessful connect ocunter. */
     protected int unsuccessfulConnect = 0;
     /** When was the last unsuccessful connect? */
     protected long lastUnsuccessfulConnect = 0;
+
+    /**
+     * Create GuardEntry with the help of a DynByteBuffer.
+     * @param buffer the DynByteBuffer which contains the data for this GuardEntry
+     */
+    public GuardEntry(final DynByteBuffer buffer) {
+        fingerprint = new FingerprintImpl(buffer.getNextByteArray());
+        firstDiscard = buffer.getNextLong();
+        unsuccessfulConnect = buffer.getNextInt();
+        lastUnsuccessfulConnect = buffer.getNextLong();
+    }
+    public GuardEntry() {}
+
+    /**
+     * Save this GuardEntry inside a DynByteBuffer.
+     * @param buffer the DynByteBuffer which saves this GuardEntry
+     */
+    public void save(final DynByteBuffer buffer) {
+        buffer.append(fingerprint.getBytes(), true);
+        buffer.append(firstDiscard);
+        buffer.append(unsuccessfulConnect);
+        buffer.append(lastUnsuccessfulConnect);
+    }
 }

@@ -141,6 +141,8 @@ public final class Directory
 	private final Map<Fingerprint, RouterImpl> allFingerprintsRouters = Collections.synchronizedMap(new HashMap<Fingerprint, RouterImpl>());
 	/** the last valid consensus. */
 	private DirectoryConsensus directoryConsensus;
+    /** List of Guards. */
+    private GuardList guardList;
 	/** cache: number of running routers in the consensus. */
 	private int numOfRunningRoutersInDirectoryConsensus = 0;
 	/**
@@ -175,6 +177,13 @@ public final class Directory
 
 	private static final Pattern IPCLASSC_PATTERN = Parsing.compileRegexPattern("(.*)\\.");
 
+    /**
+     * Get the list of Guards.
+     * @return a guardList object
+     */
+    public GuardList getGuardList() {
+        return guardList;
+    }
 	/**
 	 * Initialize directory to prepare later network operations.
 	 */
@@ -201,6 +210,7 @@ public final class Directory
 		countryNeighbours = new HashMap<String, HashSet<Fingerprint>>();
 		rnd = new SecureRandom();
 		excludedNodesByConfig = new HashSet<Fingerprint>(TorConfig.getAvoidedNodeFingerprints());
+        guardList = new GuardList(this);
 	}
 
 	/**

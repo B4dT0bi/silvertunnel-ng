@@ -294,6 +294,7 @@ public final class Circuit
 				{
 					// attach circuit to TLS
 					lastTarget = routeServers[0];
+                    routeEstablished = 0;
 					if (LOG.isDebugEnabled())
 					{
 						LOG.debug("Circuit: connecting to " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")" + " ["
@@ -309,7 +310,6 @@ public final class Circuit
 						LOG.debug("Circuit: assigned to tls " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")" + " ["
 							+ routeServers[0].getPlatform() + "]");
 					}
-					routeEstablished = 0;
 					// connect to entry point = routeServers[0]
 					if (LOG.isDebugEnabled())
 					{
@@ -330,6 +330,7 @@ public final class Circuit
 							+ " [" + routeServers[0].getPlatform() + "]");
 					}
 					routeEstablished = 1;
+                    dir.getGuardList().successful(routeServers[0].getFingerprint());
 					// extend route
 					for (int i = 1; i < routeServers.length; ++i)
 					{
@@ -347,6 +348,10 @@ public final class Circuit
 				}
 				catch (final Exception e)
 				{
+                    if (routeEstablished == 0) {
+                        // Guard was not reachable
+                        dir.getGuardList().unsuccessful(routeServers[0].getFingerprint());
+                    }
 					// some error occurred during the creating of the circuit
 					if (LOG.isDebugEnabled())
 					{

@@ -431,24 +431,7 @@ public class CircuitAdmin
 			else if ((i == 0) && (!sp.isNonGuardEntryAllowed()))
 			{
 				// entry node must be guard
-
-				// determine suitable servers
-				final HashSet<Fingerprint> suitableServerFingerprints = new HashSet<Fingerprint>();
-				for (final RouterImpl r : validRoutersByFingerprint.values())
-				{
-					// entry server must be guard
-					if (r.isDirv2Guard())
-					{
-						suitableServerFingerprints.add(r.getFingerprint());
-					}
-				}
-
-				final HashSet<Fingerprint> x = new HashSet<Fingerprint>(validRoutersByFingerprint.keySet());
-				x.removeAll(suitableServerFingerprints);
-				x.addAll(excludedServerFingerprints);
-				// now select one of them
-				route[i] = directory.selectRandomNode(validRoutersByFingerprint, x, rankingInfluenceIndex, sp.isFastRoute(), sp.isStableRoute());
-
+                route[i] = directory.getGuardList().getGuard(excludedServerFingerprints, sp);
 			}
 			else
 			{
