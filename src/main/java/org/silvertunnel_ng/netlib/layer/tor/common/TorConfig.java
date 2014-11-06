@@ -308,6 +308,8 @@ public final class TorConfig {
      * Amount of usable Entry guards taking into account for Circuit creation.
      */
     public static int numEntryGuards = 3; // TODO : make it configurable
+    public static boolean allowNonGuardEntry = false; // TODO : make it configurable
+
 	public static int queueTimeoutCircuit = 10; // was 20
 	public static int queueTimeoutResolve = 5; // was 10
 	/* TODO was: 11 */

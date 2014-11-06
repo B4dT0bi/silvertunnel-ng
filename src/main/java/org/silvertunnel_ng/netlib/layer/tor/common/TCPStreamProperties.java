@@ -64,7 +64,7 @@ public final class TCPStreamProperties
 	/** allow exit servers to be untrusted. */
 	private boolean untrustedExitAllowed = true;
 	/** allow entry node to be non Guard (dirv2). */
-	private boolean nonGuardEntryAllowed = true;
+	private boolean nonGuardEntryAllowed = TorConfig.allowNonGuardEntry;
 	/** 
 	 * Is an exit policy required?
 	 * 

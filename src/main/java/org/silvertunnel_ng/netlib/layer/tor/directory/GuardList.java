@@ -66,6 +66,7 @@ public class GuardList {
             for (int i = 0; i < count; i++) {
                 GuardEntry entry = new GuardEntry(buffer);
                 guardNodes.add(entry);
+                LOG.debug("guard loaded from cache {}", entry.fingerprint.getHex());
             }
             fileInputStream.close();
         } catch (FileNotFoundException exception) {
@@ -111,6 +112,7 @@ public class GuardList {
         if (!isGuardInList(candidate.getFingerprint())) {
             candidates.add(candidate.getFingerprint());
         }
+        LOG.debug("returning guard {}", candidate.getFingerprint().getHex());
         return (RouterImpl) candidate;
     }
 
@@ -205,6 +207,7 @@ public class GuardList {
         Map<Fingerprint, RouterImpl> guards = directory.getValidRoutersByFlags(flags);
         Router guard = directory.selectRandomNode(guards, excluded, prop.getRankingInfluenceIndex(), prop.isFastRoute(), prop.isStableRoute());
         routerList.add(guard);
+        LOG.debug("adding guard {} to list", guard.getFingerprint().getHex());
     }
 
     /**
