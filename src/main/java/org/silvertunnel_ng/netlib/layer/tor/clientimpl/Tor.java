@@ -206,7 +206,7 @@ public class Tor implements NetLayerStatusAdmin
 	 * @param torNetLayer
 	 * @return some socket-thing
 	 */
-	public TCPStream connect(final TCPStreamProperties sp, final NetLayer torNetLayer) throws IOException
+	public TCPStream connect(final TCPStreamProperties sp, final NetLayer torNetLayer) throws Throwable
 	{
 		if (sp.getHostname() == null && sp.getAddr() == null)
 		{
@@ -409,7 +409,7 @@ public class Tor implements NetLayerStatusAdmin
      *            the host name
      * @return the resolved IP; null if no mapping found
      */
-    public List<NetAddress> resolveAll(final String hostname) throws IOException
+    public List<NetAddress> resolveAll(final String hostname) throws Throwable
     {
         return resolveInternal(hostname);
     }
@@ -421,7 +421,7 @@ public class Tor implements NetLayerStatusAdmin
      *            the host name
      * @return the resolved IP; null if no mapping found
      */
-    public IpNetAddress resolve(final String hostname) throws IOException
+    public IpNetAddress resolve(final String hostname) throws Throwable
     {
         return (IpNetAddress) resolveInternal(hostname).get(0);
     }
@@ -433,7 +433,7 @@ public class Tor implements NetLayerStatusAdmin
 	 *            the IP address to be resolved
 	 * @return the host name; null if no mapping found
 	 */
-	public String resolve(final IpNetAddress addr) throws IOException
+	public String resolve(final IpNetAddress addr) throws Throwable
 	{
 		// build address (works only for IPv4!)
 		final byte[] a = addr.getIpaddress();
@@ -465,7 +465,7 @@ public class Tor implements NetLayerStatusAdmin
 	 * @return either an IpNetAddress (normal query), or a String
 	 *         (reverse-DNS-lookup)
 	 */
-	private List<NetAddress> resolveInternal(final String query) throws IOException
+	private List<NetAddress> resolveInternal(final String query) throws Throwable
 	{
 		try
 		{

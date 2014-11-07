@@ -88,6 +88,10 @@ public class TorNetAddressNameService implements NetAddressNameService
 			e2.initCause(e);
 			throw e2;
 		}
+        catch (final Throwable throwable) {
+            LOG.warn("got Exception",throwable);
+            return null;
+        }
 	}
 
 	/** @see NetAddressNameService#getNamesByAddress(NetAddress) */
@@ -128,6 +132,11 @@ public class TorNetAddressNameService implements NetAddressNameService
 			e2.initCause(e);
 			throw e2;
 		}
+        catch (final Throwable throwable)
+        {
+            LOG.warn("got Exception", throwable);
+            return null;
+        }
 	}
 
 	/**

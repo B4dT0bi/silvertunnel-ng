@@ -98,7 +98,7 @@ public final class HiddenServiceClient
 											final TorEventService torEventService,
 											final TLSConnectionAdmin tlsConnectionAdmin,
 											final NetLayer torNetLayer,
-											final TCPStreamProperties spo) throws IOException
+											final TCPStreamProperties spo) throws Throwable
 	{
 		// String address, x, y;
 		final String z = Encoding.parseHiddenAddress(spo.getHostname()).get("z");
@@ -241,8 +241,7 @@ public final class HiddenServiceClient
 	private static RendezvousPointData createRendezvousPoint(final Directory directory,
 																final TorEventService torEventService,
 																final TLSConnectionAdmin tlsConnectionAdmin,
-																final String z) throws IOException, TorException
-	{
+																final String z) throws Throwable {
 		Circuit myRendezvousCirc = null;
 		try
 		{
@@ -317,8 +316,7 @@ public final class HiddenServiceClient
 	                                          final TLSConnectionAdmin tlsConnectionAdmin,
 	                                          final RendezvousPointData rendezvousPointData,
 	                                          final SDIntroductionPoint introPoint,
-	                                          final String z) throws IOException, TorException, InterruptedException
-	{
+	                                          final String z) throws Throwable {
 
 		final Fingerprint introPointFingerprint = introPoint.getIdentifierAsFingerprint();
 		LOG.info("sendIntroduction1Cell(): contacting introduction point=" + introPointFingerprint + " for " + z);

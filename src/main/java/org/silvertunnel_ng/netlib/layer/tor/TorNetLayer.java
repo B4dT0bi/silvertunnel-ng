@@ -166,9 +166,13 @@ public class TorNetLayer implements NetLayer
 					.getFingerprint());
 			sp.setCustomRoute(new FingerprintImpl[] {(FingerprintImpl) sp.getCustomExitpoint()});
 		}
-		final TCPStream remote = tor.connect(sp, thisTorNetLayerWithTimeoutControl);
-
-		return new TorNetSocket(remote, "TorNetLayer connection to " + ra);
+        try {
+            final TCPStream remote = tor.connect(sp, thisTorNetLayerWithTimeoutControl);
+            return new TorNetSocket(remote, "TorNetLayer connection to " + ra);
+        }
+        catch (Throwable throwable) {
+            throw new IOException(throwable);
+        }
 	}
 
 	private TCPStreamProperties convertTcpipNetAddress2TCPStreamProperties(final TcpipNetAddress ra)

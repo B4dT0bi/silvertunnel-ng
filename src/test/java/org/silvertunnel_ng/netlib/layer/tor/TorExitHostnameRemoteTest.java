@@ -40,11 +40,14 @@ import org.silvertunnel_ng.netlib.adapter.nameservice.NameServiceGlobalUtil;
 import org.silvertunnel_ng.netlib.api.HttpTestUtil;
 import org.silvertunnel_ng.netlib.api.util.IpNetAddress;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
+import org.silvertunnel_ng.netlib.layer.tor.util.TorServerNotFoundException;
 import org.silvertunnel_ng.netlib.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 /**
  * Test the support of .exit host names to specify Tor exit nodes.
@@ -57,17 +60,8 @@ public final class TorExitHostnameRemoteTest extends TorRemoteAbstractTest
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TorExitHostnameRemoteTest.class);
 
-	// our exit node: chaoscomputerclub10
-	// private static final String OUR_EXITNODE_HEX_DIGEST =
-	// "11A0239FC6668705F68842811318B669C636F86E";
-	// private static final String OUR_EXITNODE_IP = "62.113.219.3";
-
-	// our exit node: chaoscomputerclub18
-	// parameters found with: grep -A 9 chaoscomputerclub18
-	// /tmp/st-directory-cached-router-descriptors.txt
-	//TODO : this test fails sometimes (maybe exitnode is under heavy load/ressource limit/hibernation/etc) try to make this test more stable
-	private static final String OUR_EXITNODE_HEX_DIGEST = "48B1B47BD189B86EFD67D93AB6904DAEFFE81B82";
-	private static final String OUR_EXITNODE_IP = "31.172.30.1";
+	private static final String OUR_EXITNODE_HEX_DIGEST[] = {"AB176BD65735A99DCCB7889184E62EF0B2E35751", "48B1B47BD189B86EFD67D93AB6904DAEFFE81B82", "9BDF3EEA1D33AA58A2EEA9E6CA58FB8A667288FC"};
+	private static final String OUR_EXITNODE_IP[] = {"77.244.254.228", "31.172.30.1", "77.244.254.227"};
 	@BeforeClass
 	public static void setUp()
 	{
@@ -88,15 +82,25 @@ public final class TorExitHostnameRemoteTest extends TorRemoteAbstractTest
 	@Test(timeOut = 15000, dependsOnMethods = {"initializeTor" })
 	public void testWithHostname() throws Exception
 	{
-		final String HOSTNAME = HttpUtil.HTTPTEST_SERVER_NAME + "." + OUR_EXITNODE_HEX_DIGEST + ".exit";
-		final TcpipNetAddress NETADDRESS = new TcpipNetAddress(HOSTNAME, HttpUtil.HTTPTEST_SERVER_PORT);
+        for (int i = 0; i < OUR_EXITNODE_HEX_DIGEST.length; i++) {
+            try {
+                final String HOSTNAME = HttpUtil.HTTPTEST_SERVER_NAME + "." + OUR_EXITNODE_HEX_DIGEST[i] + ".exit";
+                final TcpipNetAddress NETADDRESS = new TcpipNetAddress(HOSTNAME, HttpUtil.HTTPTEST_SERVER_PORT);
 
-		// determine exit node id
-		final IpNetAddress exitNodeIp = HttpTestUtil.getSourceIpNetAddress(
-				torNetLayer, NETADDRESS, "/httptest/bigtest.php");
+                // determine exit node id
+                final IpNetAddress exitNodeIp = HttpTestUtil.getSourceIpNetAddress(
+                        torNetLayer, NETADDRESS, "/httptest/bigtest.php");
 
-		// check result
-		assertEquals("wrong exit node IP determined", new IpNetAddress(
-				OUR_EXITNODE_IP), exitNodeIp);
+                // check result
+                assertEquals("wrong exit node IP determined", new IpNetAddress(
+                        OUR_EXITNODE_IP[i]), exitNodeIp);
+            } catch (IOException e) {
+                // did we got a TorServerNotFound Exception? If yes try the next exit node
+                if (!(e.getCause() instanceof TorServerNotFoundException)) {
+                    throw e; // else rethrow the exception
+                }
+                LOG.info("skipping exit with fingerprint {} due to exception", OUR_EXITNODE_HEX_DIGEST[i]);
+            }
+        }
 	}
 }

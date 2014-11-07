@@ -146,13 +146,18 @@ public class HiddenServiceServer
 						// spIntro.setCustomExitpoint(new
 						// FingerprintImpl(Encoding.parseHex("F5A78ED829191D76C7399B86E4429F8F663E0C02")));
 						// // bach/212.42.236.140:443
-						final Circuit result = establishIntroductionPoint(directory, 
-						                                                  torEventService, 
-						                                                  tlsConnectionAdmin, 
-						                                                  hiddenServiceProps,
-						                                                  spIntro, 
-						                                                  hiddenServiceInstanceFinal);
-						LOG.debug("Callable Finished!");
+						Circuit result = null;
+                        try {
+                            result = establishIntroductionPoint(directory,
+                                                                              torEventService,
+                                                                              tlsConnectionAdmin,
+                                                                              hiddenServiceProps,
+                                                                              spIntro,
+                                                                              hiddenServiceInstanceFinal);
+                        } catch (Throwable throwable) {
+                            LOG.warn("got Exception", throwable);
+                        }
+                        LOG.debug("Callable Finished!");
 						return result;
 					}
 				};
@@ -228,8 +233,7 @@ public class HiddenServiceServer
 											   final TLSConnectionAdmin tlsConnectionAdmin,
 											   final HiddenServiceProperties service,
 											   final TCPStreamProperties spIntro,
-											   final HiddenServiceInstance hiddenServiceInstance)
-	{
+											   final HiddenServiceInstance hiddenServiceInstance) throws Throwable {
 		Circuit circuit = null;
 		for (int i = 0; i < spIntro.getConnectRetries(); ++i)
 		{

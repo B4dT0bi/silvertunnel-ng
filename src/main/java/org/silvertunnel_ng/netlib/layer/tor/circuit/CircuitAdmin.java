@@ -56,7 +56,9 @@ import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorEventService;
 import org.silvertunnel_ng.netlib.layer.tor.directory.Directory;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterFlags;
+import org.silvertunnel_ng.netlib.layer.tor.util.NodeType;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
+import org.silvertunnel_ng.netlib.layer.tor.util.TorServerNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,8 +100,7 @@ public class CircuitAdmin
 	static Circuit provideSuitableNewCircuit(final TLSConnectionAdmin tlsConnectionAdmin, 
 	                                         final Directory dir,
 	                                         final TCPStreamProperties sp, 
-	                                         final TorEventService torEventService)
-	{
+	                                         final TorEventService torEventService) throws Throwable {
 		LOG.debug("provideSuitableNewCircuit called");
 		final ExecutorService executor = Executors.newCachedThreadPool();
 		final Collection<Callable<Circuit>> allTasks = new ArrayList<Callable<Circuit>>();
@@ -109,8 +110,7 @@ public class CircuitAdmin
 			{
 				/** establish Circuit to one introduction point */
 				@Override
-				public Circuit call()
-				{
+				public Circuit call() throws TorServerNotFoundException, ExecutionException {
 					Circuit result = null;
 					LOG.debug("Callable Started..");
 					for (int retries = 0; retries < TorConfig.getRetriesConnect(); ++retries)
@@ -124,11 +124,19 @@ public class CircuitAdmin
 							/* do nothing, continue trying */
 							LOG.debug("got InterruptedException : {}", e.getMessage(), e);
 						}
-						catch (final TorException e)
-						{
+                        catch (final TorServerNotFoundException e)
+                        {
+                            if (e.getNodeType() == NodeType.EXIT && e.getFingerprint().equals(sp.getCustomExitpoint())) {
+                                    LOG.error("the chosen exit node could not be found", e);
+                                    throw e;
+                            }
+                            LOG.debug("got TorServerNotFoundException but ignoring it", e);
+                        }
+                        catch (final TorException e)
+                        {
 							/* do nothing, continue trying */
-							LOG.debug("got TorException : {}", e.getMessage(), e);
-						}
+                            LOG.debug("got TorException : {}", e.getMessage(), e);
+                        }
 						catch (final IOException e)
 						{
 							/* do nothing, continue trying */
@@ -154,6 +162,7 @@ public class CircuitAdmin
 		catch (ExecutionException exception)
 		{
 			LOG.debug("got Exception while executing tasks", exception);
+            throw exception.getCause();
 		}
 		return null;
 	}
@@ -171,8 +180,7 @@ public class CircuitAdmin
 	public static Circuit provideSuitableExclusiveCircuit(final TLSConnectionAdmin tlsConnectionAdmin, 
 	                                                      final Directory dir,
 	                                                      final TCPStreamProperties sp, 
-	                                                      final TorEventService torEventService)
-	{
+	                                                      final TorEventService torEventService) throws Throwable {
 		try
 		{
 			for (final TLSConnection tls : tlsConnectionAdmin.getConnections())
@@ -221,8 +229,7 @@ public class CircuitAdmin
 													final Directory dir,
 													final TCPStreamProperties sp, 
 													final TorEventService torEventService,
-													final boolean forHiddenService) throws IOException
-	{
+													final boolean forHiddenService) throws Throwable {
 		LOG.debug("TLSConnectionAdmin.provideSuitableCircuits: called for {}", sp.getHostname());
 
 		// TODO test: shortcut/cache
@@ -387,7 +394,13 @@ public class CircuitAdmin
 			route[i] = validRoutersByFingerprint.get(proposedRoute[i]);
 			if (route[i] == null)
 			{
-				throw new TorException("couldn't find server " + proposedRoute[i] + " for position " + i);
+                NodeType nodeType = NodeType.MIDDLE;
+                if (i == 0) {
+                    nodeType = NodeType.ENTRY;
+                } else if (i == route.length - 1) {
+                    nodeType = NodeType.EXIT;
+                }
+				throw new TorServerNotFoundException(proposedRoute[i], i, nodeType);
 			}
 		}
 		else

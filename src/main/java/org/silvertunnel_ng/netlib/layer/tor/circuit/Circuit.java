@@ -81,10 +81,7 @@ import org.silvertunnel_ng.netlib.layer.tor.common.TorEventService;
 import org.silvertunnel_ng.netlib.layer.tor.directory.Directory;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RendezvousServiceDescriptor;
 import org.silvertunnel_ng.netlib.layer.tor.hiddenservice.HiddenServiceProperties;
-import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
-import org.silvertunnel_ng.netlib.layer.tor.util.Encryption;
-import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
-import org.silvertunnel_ng.netlib.layer.tor.util.TorNoAnswerException;
+import org.silvertunnel_ng.netlib.layer.tor.util.*;
 import org.silvertunnel_ng.netlib.util.ByteArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -415,6 +412,10 @@ public final class Circuit
 				close(true);
 			}
 		}
+        catch (TorServerNotFoundException exception)
+        {
+            throw exception;
+        }
 		catch (Exception exception)
 		{
 			if (LOG.isDebugEnabled())
@@ -588,7 +589,7 @@ public final class Circuit
 						break;
 
 					}
-					catch (final Exception e)
+					catch (final Throwable e)
 					{
 						LOG.warn("Exception in handleIntroduce2", e);
 					}
