@@ -161,7 +161,7 @@ public class GuardList {
         }
         Router routerFromDirectory = directory.getRouterByFingerprint(guardEntry.fingerprint);
         // check if Router is still guard, valid and running
-        if (!routerFromDirectory.isDirv2Guard() || !routerFromDirectory.isDirv2Running() || !routerFromDirectory.isDirv2Valid()) {
+        if (routerFromDirectory == null || !routerFromDirectory.isDirv2Guard() || !routerFromDirectory.isDirv2Running() || !routerFromDirectory.isDirv2Valid()) {
             if (guardEntry.firstDiscard > 0) {
                 if (System.currentTimeMillis() - guardEntry.firstDiscard > TIMEOUT_TILL_REMOVE) {
                     guardNodes.remove(guardEntry);
