@@ -52,9 +52,9 @@ import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.NetSocket;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tls.TLSNetLayer;
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.Cell;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorX509TrustManager;
-import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +76,7 @@ public class TLSConnection
 	private static final String enabledSuitesStr = "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA,TLS_DHE_RSA_WITH_AES_128_CBC_SHA";
 
 	/** pointer to the server/router. */
-	private RouterImpl router;
+	private Router router;
 	/** the physical connection (if any) to the node. */
 	private final NetSocket tls;
 	private boolean closed = false;
@@ -97,7 +97,7 @@ public class TLSConnection
 	 * @exception IOException
 	 * @exception SSLPeerUnverifiedException
 	 */
-	TLSConnection(final RouterImpl server, 
+	TLSConnection(final Router server,
 				  final NetLayer lowerNetLayer) throws IOException,
 				  									   SSLPeerUnverifiedException, 
 				  									   SSLException
@@ -296,12 +296,12 @@ public class TLSConnection
 	// getters and setters
 	// /////////////////////////////////////////////////////
 
-	public RouterImpl getRouter()
+	public Router getRouter()
 	{
 		return router;
 	}
 
-	public void setRouter(final RouterImpl router)
+	public void setRouter(final Router router)
 	{
 		this.router = router;
 	}

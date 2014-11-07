@@ -34,6 +34,7 @@ import java.util.Map;
 import javax.xml.bind.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.tool.ByteUtils;
 import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
@@ -78,7 +79,7 @@ public final class RouterImplLocalTest
 	@Test
 	public void testRouterImplTorConfigString() throws TorException, IOException
 	{
-		final RouterImpl testObject = new RouterImpl(descriptor);
+		final Router testObject = new RouterImpl(descriptor);
 		assertNotNull("parsing the descriptor didnt worked (should not return null)", testObject);
 		assertEquals("wrong contact info", "J. Random Hacker <anonymizer@ccc.de>", testObject.getContact());
 		assertEquals("wrong countrycode", "AT", testObject.getCountryCode());
@@ -148,14 +149,14 @@ public final class RouterImplLocalTest
 	@Test
 	public void testWriteRouterToFile() throws TorException, IOException
 	{
-		final RouterImpl testObject = new RouterImpl(descriptor);
+		final Router testObject = new RouterImpl(descriptor);
 		FileOutputStream fileOutputStream = new FileOutputStream("router.test");
 		fileOutputStream.write(testObject.toByteArray());
 		fileOutputStream.close();
 		
 		FileInputStream fileInputStream = new FileInputStream("router.test");
 		DynByteBuffer buffer = new DynByteBuffer(fileInputStream);
-		RouterImpl testObject2 = new RouterImpl(buffer);
+		Router testObject2 = new RouterImpl(buffer);
 		assertEquals(testObject, testObject2);
 	}
 	/**
@@ -168,26 +169,26 @@ public final class RouterImplLocalTest
 	public void testWriteRoutersToFile() throws TorException, IOException, ClassNotFoundException
 	{
 		Directory directory = new Directory(null, null, null);
-		final Map<Fingerprint, RouterImpl> allrouters = directory.parseRouterDescriptors(descriptors);
+		final Map<Fingerprint, Router> allrouters = directory.parseRouterDescriptors(descriptors);
 		assertNotNull(allrouters);
 		assertFalse(allrouters.isEmpty());
 		assertEquals(4648, allrouters.size());
 
 		FileOutputStream fileOutputStream = new FileOutputStream("routers.test");
 		fileOutputStream.write(ByteUtils.intToBytes(allrouters.size()));
-		for (RouterImpl router : allrouters.values())
+		for (Router router : allrouters.values())
 		{
 			fileOutputStream.write(router.toByteArray());
 		}
 		fileOutputStream.close();
 		
-		final Map<Fingerprint, RouterImpl> allrouters2 = new HashMap<Fingerprint, RouterImpl>();
+		final Map<Fingerprint, Router> allrouters2 = new HashMap<Fingerprint, Router>();
 		FileInputStream fileInputStream = new FileInputStream("routers.test");
 		DynByteBuffer buffer = new DynByteBuffer(fileInputStream);
 		int count = buffer.getNextInt();
 		for (int i = 0; i < count; i++)
 		{
-			RouterImpl router = new RouterImpl(buffer);
+			Router router = new RouterImpl(buffer);
 			allrouters2.put(router.getFingerprint(), router);
 		}
 		assertEquals(allrouters, allrouters2);
@@ -214,7 +215,7 @@ public final class RouterImplLocalTest
 	public void testParseRouterDescriptors() throws IOException
 	{
 		Directory directory = new Directory(null, null, null);
-		final Map<Fingerprint, RouterImpl> allrouters = directory.parseRouterDescriptors(descriptors);
+		final Map<Fingerprint, Router> allrouters = directory.parseRouterDescriptors(descriptors);
 		assertNotNull(allrouters);
 		assertFalse(allrouters.isEmpty());
 		assertEquals(4648, allrouters.size());

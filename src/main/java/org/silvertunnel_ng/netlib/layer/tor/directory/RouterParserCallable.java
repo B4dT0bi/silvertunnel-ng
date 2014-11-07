@@ -20,6 +20,7 @@ package org.silvertunnel_ng.netlib.layer.tor.directory;
 
 import java.util.concurrent.Callable;
 
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tobias Boese
  */
-public final class RouterParserCallable implements Callable<RouterImpl>
+public final class RouterParserCallable implements Callable<Router>
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(RouterParserCallable.class);
@@ -46,7 +47,7 @@ public final class RouterParserCallable implements Callable<RouterImpl>
 	}
 
 	@Override
-	public RouterImpl call() throws TorException
+	public Router call() throws TorException
 	{
 		try
 		{

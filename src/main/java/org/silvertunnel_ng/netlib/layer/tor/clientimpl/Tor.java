@@ -76,7 +76,6 @@ import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorEventService;
 import org.silvertunnel_ng.netlib.layer.tor.directory.Directory;
-import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 import org.silvertunnel_ng.netlib.layer.tor.hiddenservice.HiddenServiceProperties;
 import org.silvertunnel_ng.netlib.layer.tor.stream.ClosingThread;
 import org.silvertunnel_ng.netlib.layer.tor.stream.ResolveStream;
@@ -187,11 +186,11 @@ public class Tor implements NetLayerStatusAdmin
 	 */
 	public Collection<Router> getValidTorRouters()
 	{
-		final Collection<RouterImpl> resultBase = directory.getValidRoutersByFingerprint().values();
+		final Collection<Router> resultBase = directory.getValidRoutersByFingerprint().values();
 		final Collection<Router> result = new ArrayList<Router>(resultBase.size());
 
 		// copy all routers to the result collection
-		for (final RouterImpl r : resultBase)
+		for (final Router r : resultBase)
 		{
 			result.add(r.cloneReliable());
 		}

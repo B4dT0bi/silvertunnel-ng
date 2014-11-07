@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.tool.SimpleHttpClientCompressed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,7 @@ public final class DescriptorFetcher
 	 * @param dirConnectionNetLayer the {@link NetLayer} to be used for contacting the server
 	 * @return the descriptors as String; null in the case of an error
 	 */
-	public static String downloadAllDescriptors(final RouterImpl directoryServer,
+	public static String downloadAllDescriptors(final Router directoryServer,
 	                                            final NetLayer dirConnectionNetLayer)
 	{
 		// download descriptor(s)

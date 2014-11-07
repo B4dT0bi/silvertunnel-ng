@@ -17,9 +17,9 @@
  */
 package org.silvertunnel_ng.netlib.layer.tor.circuit;
 
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
 import org.silvertunnel_ng.netlib.layer.tor.directory.Directory;
-import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 
 /**
@@ -45,7 +45,7 @@ public class DirectoryService
 	                                   final boolean forHiddenService)
 	                                		   throws TorException
 	{
-		final RouterImpl[] routeCopy = new RouterImpl[circ.getRouteNodes().length];
+		final Router[] routeCopy = new Router[circ.getRouteNodes().length];
 		for (int i = 0; i < circ.getRouteNodes().length; ++i)
 		{
 			routeCopy[i] = circ.getRouteNodes()[i].getRouter();

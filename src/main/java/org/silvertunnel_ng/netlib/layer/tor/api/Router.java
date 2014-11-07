@@ -23,7 +23,9 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 import java.util.Set;
 
+import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterFlags;
+import org.silvertunnel_ng.netlib.layer.tor.directory.RouterStatusDescription;
 
 /**
  * a compound data structure that keeps track of the static informations we have
@@ -40,6 +42,12 @@ public interface Router
 	InetAddress getAddress();
 
 	String getCountryCode();
+
+    String toLongString();
+
+    TcpipNetAddress getDirAddress();
+
+    void updateServerStatus(final RouterStatusDescription statusDescription);
 
 	int getOrPort();
 
@@ -89,10 +97,27 @@ public interface Router
 
 	boolean isDirv2Valid();
 
+    boolean isValid();
+
 	boolean isDirv2V2dir();
+
+    boolean isDirv2HSDir();
 	
 	boolean isExitNode();
-	
+
+    Fingerprint getV3Ident();
+
+    void punishRanking();
+
+    Router cloneReliable();
+
+    boolean exitPolicyAccepts(final InetAddress addr, final int port);
+
+    byte [] toByteArray();
+
+    float getRefinedRankingIndex(final float p);
+
+    TcpipNetAddress getOrAddress();
 	/**
 	 * Get the routerflags of a router (stable, valid, fast, etc).
 	 * @return a {@link RouterFlags} object

@@ -42,6 +42,7 @@ import java.net.InetAddress;
 import java.util.Arrays;
 
 import org.silvertunnel_ng.netlib.api.NetSocket;
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Queue;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Stream;
@@ -58,7 +59,6 @@ import org.silvertunnel_ng.netlib.layer.tor.clientimpl.Tor;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorEvent;
-import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorNoAnswerException;
 import org.slf4j.Logger;
@@ -496,7 +496,7 @@ public class TCPStream implements Stream, NetSocket
 		final StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < circuit.getRouteEstablished(); ++i)
 		{
-			final RouterImpl r = circuit.getRouteNodes()[i].getRouter();
+			final Router r = circuit.getRouteNodes()[i].getRouter();
 			sb.append(", ");
 			sb.append(r.getNickname() + " (" + r.getCountryCode() + ")");
 		}

@@ -221,10 +221,10 @@ public final class RouterImpl implements Router, Cloneable
 	/**
 	 * Update this server's status.
 	 * 
-	 * @param flags
-	 *            string containing flags
+	 * @param statusDescription
+	 *            containing the routers status description
 	 */
-	void updateServerStatus(final RouterStatusDescription statusDescription)
+	public void updateServerStatus(final RouterStatusDescription statusDescription)
 	{
 		routerFlags = statusDescription.getRouterFlags();
 	}
@@ -323,7 +323,7 @@ public final class RouterImpl implements Router, Cloneable
 	 * Store the information of this Router in a byte array. (Serialization)
 	 * @return a byte array containing all information about this router
 	 */
-	protected byte [] toByteArray()
+	public byte [] toByteArray()
 	{
 		DynByteBuffer buffer = new DynByteBuffer();
 		buffer.append(CURRENT_BINARY_VERSION);
@@ -373,11 +373,11 @@ public final class RouterImpl implements Router, Cloneable
 	/**
 	 * Clone, but do not throw an exception.
 	 */
-	public RouterImpl cloneReliable() throws RuntimeException
+	public Router cloneReliable() throws RuntimeException
 	{
 		try
 		{
-			return (RouterImpl) clone();
+			return (Router) clone();
 		}
 		catch (final CloneNotSupportedException e)
 		{
@@ -736,7 +736,7 @@ public final class RouterImpl implements Router, Cloneable
 	 *            prob.
 	 *            </ul>
 	 */
-	float getRefinedRankingIndex(final float p)
+	public float getRefinedRankingIndex(final float p)
 	{
 		// align all ranking values to 0.5, if the user wants to choose his
 		// servers

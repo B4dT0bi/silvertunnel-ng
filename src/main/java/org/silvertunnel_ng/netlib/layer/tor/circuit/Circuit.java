@@ -80,7 +80,6 @@ import org.silvertunnel_ng.netlib.layer.tor.common.TorEvent;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorEventService;
 import org.silvertunnel_ng.netlib.layer.tor.directory.Directory;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RendezvousServiceDescriptor;
-import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 import org.silvertunnel_ng.netlib.layer.tor.hiddenservice.HiddenServiceProperties;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encryption;
@@ -260,7 +259,7 @@ public final class Circuit
 			final String originalThreadName = currentThread.getName();
 
 			// get a new route
-			RouterImpl[] routeServers = CircuitAdmin.createNewRoute(dir, sp);
+			Router[] routeServers = CircuitAdmin.createNewRoute(dir, sp);
 			if (routeServers == null || routeServers.length < 1)
 			{
 				throw new TorException("Circuit: could not build route");
@@ -289,7 +288,7 @@ public final class Circuit
 				{
 					throw new InterruptedException();
 				}
-				RouterImpl lastTarget = null;
+				Router lastTarget = null;
 				try
 				{
 					// attach circuit to TLS
@@ -510,7 +509,7 @@ public final class Circuit
 		// determine rendezvous point router,
 		// try both byte order variants - TODO: find the correct way
 		final TcpipNetAddress rendezvousPointTcpipNetAddress1 = new TcpipNetAddress(rendezvousPointAddress, rendezvousPointPort);
-		final RouterImpl rendezvousServer1 = directory.getValidRouterByIpAddressAndOnionPort(rendezvousPointTcpipNetAddress1.getIpNetAddress(),
+		final Router rendezvousServer1 = directory.getValidRouterByIpAddressAndOnionPort(rendezvousPointTcpipNetAddress1.getIpNetAddress(),
 																							 rendezvousPointTcpipNetAddress1.getPort());
 		if (LOG.isDebugEnabled())
 		{
@@ -523,14 +522,14 @@ public final class Circuit
 		rendezvousPointAddress2[2] = rendezvousPointAddress[1];
 		rendezvousPointAddress2[3] = rendezvousPointAddress[0];
 		final TcpipNetAddress rendezvousPointTcpipNetAddress2 = new TcpipNetAddress(rendezvousPointAddress2, rendezvousPointPort);
-		final RouterImpl rendezvousServer2 = directory.getValidRouterByIpAddressAndOnionPort(rendezvousPointTcpipNetAddress2.getIpNetAddress(),
+		final Router rendezvousServer2 = directory.getValidRouterByIpAddressAndOnionPort(rendezvousPointTcpipNetAddress2.getIpNetAddress(),
 																							 rendezvousPointTcpipNetAddress2.getPort());
 		if (LOG.isDebugEnabled())
 		{
 			LOG.debug("rendezvousServer2=" + rendezvousServer2);
 		}
 		// result
-		final RouterImpl rendezvousServer = (rendezvousServer1 != null) ? rendezvousServer1 : rendezvousServer2;
+		final Router rendezvousServer = (rendezvousServer1 != null) ? rendezvousServer1 : rendezvousServer2;
 		if (LOG.isDebugEnabled())
 		{
 			LOG.debug("rendezvousServer=" + rendezvousServer);
@@ -743,7 +742,7 @@ public final class Circuit
 	 * initiates circuit, sends CREATE-cell. throws an error, if something went
 	 * wrong
 	 */
-	private void create(final RouterImpl init) throws IOException, TorException
+	private void create(final Router init) throws IOException, TorException
 	{
 		// save starting point
 		routeNodes[0] = new Node(init);
@@ -759,7 +758,7 @@ public final class Circuit
 	 * initiates circuit, sends CREATE_FAST-cell. throws an error, if something
 	 * went wrong
 	 */
-	private void createFast(final RouterImpl init) throws IOException, TorException
+	private void createFast(final Router init) throws IOException, TorException
 	{
 		LOG.debug("preparing CREATE-FAST cell");
 		// save starting point
@@ -776,7 +775,7 @@ public final class Circuit
 	/**
 	 * Extends the existing circuit one more hop. sends an EXTEND-cell.
 	 */
-	private void extend(final int i, final RouterImpl next) throws IOException, TorException
+	private void extend(final int i, final Router next) throws IOException, TorException
 	{
 		if (LOG.isDebugEnabled())
 		{
@@ -819,7 +818,7 @@ public final class Circuit
 				throw new TorException("Circuit cant be extended to given fingerprint as this router is already a node");
 			}
 		}
-		RouterImpl router = directory.getValidRoutersByFingerprint().get(routerFingerprint);
+		Router router = directory.getValidRoutersByFingerprint().get(routerFingerprint);
 		if (router == null)
 		{
 			throw new TorException("Router with fingerprint " + routerFingerprint + " not found.");
@@ -1129,9 +1128,9 @@ public final class Circuit
 	 * returns the route of the circuit. used to display route on a map or the
 	 * like
 	 */
-	public RouterImpl[] getRoute()
+	public Router[] getRoute()
 	{
-		final RouterImpl[] s = new RouterImpl[routeEstablished];
+		final Router[] s = new Router[routeEstablished];
 		for (int i = 0; i < routeEstablished; ++i)
 		{
 			s[i] = routeNodes[i].getRouter();

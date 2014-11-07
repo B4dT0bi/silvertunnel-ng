@@ -44,6 +44,7 @@ import java.util.Iterator;
 import javax.xml.bind.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -117,15 +118,15 @@ public class AuthorityServersLocalTest
 	public void testGetAuthorityRouters() throws Exception
 	{
 		// action
-		final Collection<RouterImpl> all = AuthorityServers
+		final Collection<Router> all = AuthorityServers
 				.getAuthorityRouters();
 
 		// check size
 		assertEquals("wrong size", 10, all.size());
 
 		// check the 1st element
-		final Iterator<RouterImpl> iter = all.iterator();
-		RouterImpl r = iter.next();
+		final Iterator<Router> iter = all.iterator();
+		Router r = iter.next();
 		assertEquals("wrong 1st element: wrong nickname", "moria1",
 				r.getNickname());
 		assertEquals("wrong 1st element: wrong address", "128.31.0.39", r

@@ -23,7 +23,6 @@ import java.security.SecureRandom;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorKeyAgreement;
-import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 import org.silvertunnel_ng.netlib.layer.tor.util.AESCounterMode;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encryption;
@@ -46,7 +45,7 @@ public class Node
 	/** length of SHA-1 digest in bytes. */
 	private static final int DIGEST_LEN = 20;
 
-	private final RouterImpl router;
+	private final Router router;
 	/** used to encrypt a part of the diffie-hellman key-exchange. */
 	private byte[] symmetricKeyForCreate;
 	/** data for the diffie-hellman key-exchange. */
@@ -70,7 +69,7 @@ public class Node
 
 	/** constructor for (hidden service) server-side. 
 	 * @throws TorException */
-	Node(final RouterImpl init, final byte[] dhXBytes) throws TorException
+	Node(final Router init, final byte[] dhXBytes) throws TorException
 	{
 		if (init == null)
 		{
@@ -148,7 +147,7 @@ public class Node
 	/** constructor for client-side. 
 	 *	@param init the {@link Router} which should be used as {@link Node}
 	 */
-	public Node(final RouterImpl init) throws TorException
+	public Node(final Router init) throws TorException
 	{
 		this(init, false);
 	}
@@ -156,7 +155,7 @@ public class Node
 	 *	@param init the {@link Router} which should be used as {@link Node}
 	 *  @param createFast skip Diffie-Hellman? (see create_fast cell) 
 	 */
-	public Node(final RouterImpl init, final boolean createFast) throws TorException
+	public Node(final Router init, final boolean createFast) throws TorException
 	{
 		if (init == null)
 		{
@@ -480,7 +479,7 @@ public class Node
 	// getters and setters
 	// /////////////////////////////////////////////////////
 
-	public RouterImpl getRouter()
+	public Router getRouter()
 	{
 		return router;
 	}

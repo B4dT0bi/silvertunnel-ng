@@ -61,6 +61,7 @@ import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.NetSocket;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.hiddenservice.HiddenServiceProperties;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
@@ -137,8 +138,8 @@ public class RendezvousServiceDescriptorService
 
 				// try the routers/hidden service directory servers that are
 				// responsible for the descriptorId
-				final Collection<RouterImpl> routers = directory.getThreeHiddenDirectoryServersWithFingerprintGreaterThan(descriptorIdAsFingerprint);
-				for (final RouterImpl r : routers)
+				final Collection<Router> routers = directory.getThreeHiddenDirectoryServersWithFingerprintGreaterThan(descriptorIdAsFingerprint);
+				for (final Router r : routers)
 				{
 					TcpipNetAddress dirAddress = r.getDirAddress();
 					dirAddress = new TcpipNetAddress(dirAddress.getHostnameOrIpaddress() + ":" + dirAddress.getPort());
@@ -224,10 +225,10 @@ public class RendezvousServiceDescriptorService
 				// try to post the descriptor to hidden service directory
 				// servers that are responsible for the descriptorId -
 				// do it in parallel
-				final Collection<RouterImpl> routers = directory.getThreeHiddenDirectoryServersWithFingerprintGreaterThan(descriptorIdAsFingerprint);
-				for (final RouterImpl ro : routers)
+				final Collection<Router> routers = directory.getThreeHiddenDirectoryServersWithFingerprintGreaterThan(descriptorIdAsFingerprint);
+				for (final Router ro : routers)
 				{
-					final RouterImpl r = ro;
+					final Router r = ro;
 					new Thread()
 					{
 						@Override

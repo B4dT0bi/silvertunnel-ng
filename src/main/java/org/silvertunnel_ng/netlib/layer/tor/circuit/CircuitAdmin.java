@@ -50,12 +50,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorEventService;
 import org.silvertunnel_ng.netlib.layer.tor.directory.Directory;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterFlags;
-import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -342,8 +342,8 @@ public class CircuitAdmin
 
 	/**
 	 * returns a route through the network as specified in
-	 * @see TCPStreamProperties.
-	 * 
+	 * @see org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties.
+	 *
 	 * @param sp
 	 *            tcp stream properties
 	 * @param proposedRoute
@@ -357,12 +357,12 @@ public class CircuitAdmin
 	 *            index in array route up to which the route has to be built
 	 * @return a list of servers
 	 */
-	private static synchronized RouterImpl[] createNewRoute(
+	private static synchronized Router[] createNewRoute(
 			final Directory directory, 
 			final TCPStreamProperties sp,
 			final Fingerprint[] proposedRoute,
 			final HashSet<Fingerprint> excludedServerFingerprints,
-			RouterImpl[] route, 
+			Router[] route,
 			final int i, 
 			int maxIterations) throws TorException
 	{
@@ -370,8 +370,8 @@ public class CircuitAdmin
 		final float rankingInfluenceIndex = sp.getRankingInfluenceIndex();
 		final HashSet<Fingerprint> previousExcludedServerFingerprints = new HashSet<Fingerprint>();
 
-		final Map<Fingerprint, RouterImpl> validRoutersByFingerprint = directory.getValidRoutersByFingerprint();
-		for (final RouterImpl r : validRoutersByFingerprint.values()) // TODO : isnt it better to iterate through CircuitAdmin.currentlyUsedNodes ???
+		final Map<Fingerprint, Router> validRoutersByFingerprint = directory.getValidRoutersByFingerprint();
+		for (final Router r : validRoutersByFingerprint.values()) // TODO : isnt it better to iterate through CircuitAdmin.currentlyUsedNodes ???
 		{
 			final Integer allowedCircuitsWithNode = CircuitAdmin.currentlyUsedNodes.get(r.getFingerprint());
 			// check if server has been used already in other circuits
@@ -398,7 +398,7 @@ public class CircuitAdmin
 				// the last router has to accept exit policy
 
 				// determine suitable servers
-				final Map<Fingerprint, RouterImpl> suitableServerFingerprints = new HashMap<Fingerprint, RouterImpl>();
+				final Map<Fingerprint, Router> suitableServerFingerprints = new HashMap<Fingerprint, Router>();
 				RouterFlags flags = new RouterFlags();
 				if (sp.isFastRoute())
 				{
@@ -409,7 +409,7 @@ public class CircuitAdmin
 					flags.setStable(true);
 				}
 				flags.setExit(true);
-				for (final RouterImpl r : directory.getValidRoutersByFlags(flags).values())
+				for (final Router r : directory.getValidRoutersByFlags(flags).values())
 				{
 					// exit server must be trusted
 					if (r.exitPolicyAccepts(sp.getAddr(), sp.getPort()) && (sp.isUntrustedExitAllowed() || r.isDirv2Exit()))
@@ -461,7 +461,7 @@ public class CircuitAdmin
 
 		if (i > 0)
 		{
-			final RouterImpl[] aRoute = createNewRoute(directory, sp, proposedRoute, excludedServerFingerprints, route, i - 1, -1);
+			final Router[] aRoute = createNewRoute(directory, sp, proposedRoute, excludedServerFingerprints, route, i - 1, -1);
 			if (aRoute == null)
 			{
 
@@ -502,7 +502,7 @@ public class CircuitAdmin
 	 * @return a list of servers
 	 * @throws TorException when directory is empty
 	 */
-	public static RouterImpl[] createNewRoute(final Directory directory, 
+	public static Router[] createNewRoute(final Directory directory,
 			                                  final TCPStreamProperties sp) throws TorException
 	{
 		// are servers available?
@@ -525,7 +525,7 @@ public class CircuitAdmin
 		}
 
 		// choose random servers to form route
-		final RouterImpl[] route = new RouterImpl[len];
+		final Router[] route = new Router[len];
 
 		final HashSet<Fingerprint> excludedServerFingerprints = new HashSet<Fingerprint>();
 		// take care, that none of the specified proposed servers is selected
@@ -537,7 +537,7 @@ public class CircuitAdmin
 			{
 				if (proposedRoute[j] != null)
 				{
-					final RouterImpl s = directory.getValidRoutersByFingerprint().get(proposedRoute[j]);
+					final Router s = directory.getValidRoutersByFingerprint().get(proposedRoute[j]);
 					if (s != null)
 					{
 						excludedServerFingerprints.addAll(directory.excludeRelatedNodes(s));
@@ -545,7 +545,7 @@ public class CircuitAdmin
 				}
 			}
 		}
-		final RouterImpl[] result = createNewRoute(directory, 
+		final Router[] result = createNewRoute(directory,
 		                                           sp,
 		                                           proposedRoute, 
 		                                           excludedServerFingerprints, 
@@ -563,7 +563,7 @@ public class CircuitAdmin
 			if (LOG.isDebugEnabled())
 			{
 				final StringBuffer sb = new StringBuffer(50);
-				for (final RouterImpl server : result)
+				for (final Router server : result)
 				{
 					sb.append("server(or=" + server.getHostname() + ":"
 							+ server.getOrPort() + "(" + server.getNickname()
@@ -586,9 +586,9 @@ public class CircuitAdmin
 	 *            index of node in route, that failed
 	 * @return a route
 	 */
-	public static RouterImpl[] restoreCircuit(final Directory directory,
+	public static Router[] restoreCircuit(final Directory directory,
 											  TCPStreamProperties sp, 
-											  RouterImpl[] route, 
+											  Router[] route,
 											  final int failedNode)
 													  	throws TorException
 	{

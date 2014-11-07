@@ -34,21 +34,17 @@
  */
 package org.silvertunnel_ng.netlib.layer.tor.circuit;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
-import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.security.SecureRandom;
+import java.util.*;
 
 /**
  * maintains the list of active TLS-connections to Tor nodes (direct connections
@@ -101,7 +97,7 @@ public final class TLSConnectionAdmin
 	 *            the node to connect to
 	 * @return the TLS connection
 	 */
-	TLSConnection getConnection(final RouterImpl router) throws IOException,
+	TLSConnection getConnection(final Router router) throws IOException,
 																TorException
 	{
 		if (router == null)

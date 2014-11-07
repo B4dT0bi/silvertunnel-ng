@@ -40,6 +40,7 @@ import java.security.SecureRandom;
 
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.CircuitAdmin;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Node;
@@ -254,7 +255,7 @@ public final class HiddenServiceClient
 			{
 				throw new TorException("getNewRendezvousPoint(): couldnt establish rendezvous point for " + z + " - at the moment");
 			}
-			final RouterImpl rendezvousPointRouter = myRendezvousCirc.getRouteNodes()[myRendezvousCirc.getRouteEstablished() - 1].getRouter();
+			final Router rendezvousPointRouter = myRendezvousCirc.getRouteNodes()[myRendezvousCirc.getRouteEstablished() - 1].getRouter();
 
 			LOG.info("getNewRendezvousPoint(): establishing rendezvous point for " + z + " at " + rendezvousPointRouter);
 			final SecureRandom rnd = new SecureRandom();
@@ -340,7 +341,7 @@ public final class HiddenServiceClient
 			LOG.info("sendIntroduction1Cell(): use Circuit to introduction point=" + myIntroCirc);
 
 			// send CellIntro1 data encrypted with PK of the introPoint
-			final RouterImpl introPointServicePublicKey = new RouterImpl(introPoint.getServicePublicKey());
+			final Router introPointServicePublicKey = new RouterImpl(introPoint.getServicePublicKey());
 			final Node introPointServicePublicKeyNode = new Node(introPointServicePublicKey);
 			myIntroCirc.sendCell(new CellRelayIntroduce1(myIntroCirc,
 															rendezvousPointData.getRendezvousCookie(),

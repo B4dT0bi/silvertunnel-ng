@@ -35,7 +35,6 @@ import org.silvertunnel_ng.netlib.layer.logger.LoggingNetLayer;
 import org.silvertunnel_ng.netlib.layer.tcpip.TcpipNetLayer;
 import org.silvertunnel_ng.netlib.layer.tls.TLSNetLayer;
 import org.silvertunnel_ng.netlib.layer.tor.api.Router;
-import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 import org.silvertunnel_ng.netlib.tool.SimpleHttpClientCompressed;
 import org.silvertunnel_ng.netlib.util.TempfileStringStorage;
 import org.slf4j.Logger;
@@ -59,9 +58,9 @@ public final class TorDirectoryConsensusDownload
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TorDirectoryConsensusDownload.class);
 	/** Directory Router used for testcase. */
-	private RouterImpl dirRouter;
+	private Router dirRouter;
 	
-	public TorDirectoryConsensusDownload(final RouterImpl routerToTest)
+	public TorDirectoryConsensusDownload(final Router routerToTest)
 	{
 		dirRouter = routerToTest;
 	}
@@ -72,12 +71,12 @@ public final class TorDirectoryConsensusDownload
 	 * @throws Exception an exception (from Tor initialization process)
 	 */
 	@DataProvider(name = "getRouters")
-	public static Collection<RouterImpl[]> data() throws Exception
+	public static Collection<Router[]> data() throws Exception
 	{
 		initializeTor();
 		// first get all Routers
 		Collection<Router> routers = torNetLayer.getValidTorRouters();
-		Collection<RouterImpl[]> dirRouters = new ArrayList<RouterImpl[]>();
+		Collection<Router[]> dirRouters = new ArrayList<Router[]>();
 		Set<String> platforms = new HashSet<String>();
 		for (Router router : routers)
 		{
@@ -88,7 +87,7 @@ public final class TorDirectoryConsensusDownload
 				if (!platforms.contains(version))
 				{
 					platforms.add(version);
-					dirRouters.add(new RouterImpl[] {(RouterImpl) router});
+					dirRouters.add(new Router[] {router});
 				}
 			}
 		}

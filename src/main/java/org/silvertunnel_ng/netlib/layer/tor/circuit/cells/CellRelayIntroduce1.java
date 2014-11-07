@@ -35,9 +35,9 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.circuit.cells;
 
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Node;
-import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 import org.silvertunnel_ng.netlib.layer.tor.directory.SDIntroductionPoint;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encryption;
@@ -68,14 +68,14 @@ public class CellRelayIntroduce1 extends CellRelay
 	 * @param rendezvousCookie a randomly created cookie
 	 * @param introPoint {@link SDIntroductionPoint} the descriptor of the chosen introduction point
 	 * @param introPointServicePublicKeyNode the {@link Node} of the introduction point
-	 * @param rendezvousPointRouter the {@link RouterImpl} of the rendezvous point
+	 * @param rendezvousPointRouter the {@link Router} of the rendezvous point
 	 * @throws TorException an {@link TorException} when there is a problem with the encryption
 	 */
 	public CellRelayIntroduce1(final Circuit circuit, 
 							   final byte[] rendezvousCookie,
 							   final SDIntroductionPoint introPoint,
 							   final Node introPointServicePublicKeyNode,
-							   final RouterImpl rendezvousPointRouter) throws TorException
+							   final Router rendezvousPointRouter) throws TorException
 	{
 		super(circuit, RELAY_INTRODUCE1);
 

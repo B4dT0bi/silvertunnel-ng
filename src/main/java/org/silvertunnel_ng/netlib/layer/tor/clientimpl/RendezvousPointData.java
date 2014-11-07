@@ -17,44 +17,39 @@
  */
 package org.silvertunnel_ng.netlib.layer.tor.clientimpl;
 
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.Circuit;
-import org.silvertunnel_ng.netlib.layer.tor.directory.RouterImpl;
 
 /**
  * Simple bean to hold data of a rendezvous point.
- * 
+ *
  * @author hapke
  */
-class RendezvousPointData
-{
-	private byte[] rendezvousCookie = new byte[20];
-	private RouterImpl rendezvousPointRouter = null;
-	private Circuit myRendezvousCirc = null;
+class RendezvousPointData {
+    private byte[] rendezvousCookie = new byte[20];
+    private Router rendezvousPointRouter = null;
+    private Circuit myRendezvousCirc = null;
 
-	public RendezvousPointData(final byte[] rendezvousCookie,
-			final RouterImpl rendezvousPointRouter, final Circuit myRendezvousCirc)
-	{
-		this.rendezvousCookie = rendezvousCookie;
-		this.rendezvousPointRouter = rendezvousPointRouter;
-		this.myRendezvousCirc = myRendezvousCirc;
-	}
+    public RendezvousPointData(final byte[] rendezvousCookie,
+                               final Router rendezvousPointRouter, final Circuit myRendezvousCirc) {
+        this.rendezvousCookie = rendezvousCookie;
+        this.rendezvousPointRouter = rendezvousPointRouter;
+        this.myRendezvousCirc = myRendezvousCirc;
+    }
 
-	// /////////////////////////////////////////////////////
-	// generated getters
-	// /////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////
+    // generated getters
+    // /////////////////////////////////////////////////////
 
-	public byte[] getRendezvousCookie()
-	{
-		return rendezvousCookie;
-	}
+    public byte[] getRendezvousCookie() {
+        return rendezvousCookie;
+    }
 
-	public RouterImpl getRendezvousPointRouter()
-	{
-		return rendezvousPointRouter;
-	}
+    public Router getRendezvousPointRouter() {
+        return rendezvousPointRouter;
+    }
 
-	public Circuit getMyRendezvousCirc()
-	{
-		return myRendezvousCirc;
-	}
+    public Circuit getMyRendezvousCirc() {
+        return myRendezvousCirc;
+    }
 }

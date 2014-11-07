@@ -27,6 +27,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
+import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +115,7 @@ public class AuthorityServers
 					+ "v3ident=EFCBE720AB3A82B99F9E953CD5BF50F7EEFC7B97 "
 					+ "154.35.32.5:80 CF6D 0AAF B385 BE71 B8E1 11FC 5CFF 4B47 9237 33BC", };
 
-	private static Collection<RouterImpl> parsedAuthorityRouters;
+	private static Collection<Router> parsedAuthorityRouters;
 
 	/** pattern of rawData. */
 	private static Pattern pattern;
@@ -142,7 +143,7 @@ public class AuthorityServers
 	/**
 	 * @return the list of (hard-coded) authority servers
 	 */
-	public static Collection<RouterImpl> getAuthorityRouters()
+	public static Collection<Router> getAuthorityRouters()
 	{
 		if (parsedAuthorityRouters == null)
 		{
@@ -158,9 +159,9 @@ public class AuthorityServers
 	 * 
 	 * @return the list of (hard-coded) authority servers
 	 */
-	private static Collection<RouterImpl> parseAuthorityRouters()
+	private static Collection<Router> parseAuthorityRouters()
 	{
-		final Collection<RouterImpl> result = new ArrayList<RouterImpl>();
+		final Collection<Router> result = new ArrayList<Router>();
 		// try to parse the separate authority server entries
 		for (final String singleRawData : RAW_DATA)
 		{
@@ -182,7 +183,7 @@ public class AuthorityServers
 					final Fingerprint fingerprint = new FingerprintImpl(DatatypeConverter.parseHexBinary(fingerprintStr));
 
 					// create and collect object
-					final RouterImpl router = new RouterImpl(nickname, 
+					final Router router = new RouterImpl(nickname,
 					                                         InetAddress.getByAddress(netAddress.getIpaddress()), 
 					                                         orPort, 
 					                                         dirPort, 
@@ -213,8 +214,8 @@ public class AuthorityServers
 		final Collection<String> result = new ArrayList<String>();
 
 		// convert data
-		final Collection<RouterImpl> authorityRouters = getAuthorityRouters();
-		for (final RouterImpl router : authorityRouters)
+		final Collection<Router> authorityRouters = getAuthorityRouters();
+		for (final Router router : authorityRouters)
 		{
 			final String ipAndPort = router.getAddress().getHostAddress() + ":"
 					+ router.getDirPort();
@@ -232,8 +233,8 @@ public class AuthorityServers
 		final Collection<Fingerprint> result = new ArrayList<Fingerprint>();
 
 		// convert data
-		final Collection<RouterImpl> authorityRouters = getAuthorityRouters();
-		for (final RouterImpl router : authorityRouters)
+		final Collection<Router> authorityRouters = getAuthorityRouters();
+		for (final Router router : authorityRouters)
 		{
 			final Fingerprint v3Ident = router.getV3Ident();
 			if (v3Ident != null)

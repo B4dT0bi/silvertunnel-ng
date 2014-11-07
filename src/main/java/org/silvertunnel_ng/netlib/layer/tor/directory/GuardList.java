@@ -102,7 +102,7 @@ public class GuardList {
      * @param excluded fingerprints which should be excluded from the selection
      * @return a Router
      */
-    public RouterImpl getGuard(final HashSet<Fingerprint> excluded, final TCPStreamProperties props) {
+    public Router getGuard(final HashSet<Fingerprint> excluded, final TCPStreamProperties props) {
         List<Router> routers = getUsableRouter(excluded);
         while (routers.size() <= 2) {
             addGuardsToList(routers, excluded, props);
@@ -113,7 +113,7 @@ public class GuardList {
             candidates.add(candidate.getFingerprint());
         }
         LOG.debug("returning guard {}", candidate.getFingerprint().getHex());
-        return (RouterImpl) candidate;
+        return candidate;
     }
 
     /**
@@ -204,7 +204,7 @@ public class GuardList {
         flags.setRunning(true);
         flags.setValid(true);
 
-        Map<Fingerprint, RouterImpl> guards = directory.getValidRoutersByFlags(flags);
+        Map<Fingerprint, Router> guards = directory.getValidRoutersByFlags(flags);
         Router guard = directory.selectRandomNode(guards, excluded, prop.getRankingInfluenceIndex(), prop.isFastRoute(), prop.isStableRoute());
         routerList.add(guard);
         LOG.debug("adding guard {} to list", guard.getFingerprint().getHex());

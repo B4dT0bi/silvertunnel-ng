@@ -138,7 +138,7 @@ public final class Directory
 	 * collection of all valid Tor server. (all routers that are valid or were
 	 * valid in the past)
 	 */
-	private final Map<Fingerprint, RouterImpl> allFingerprintsRouters = Collections.synchronizedMap(new HashMap<Fingerprint, RouterImpl>());
+	private final Map<Fingerprint, Router> allFingerprintsRouters = Collections.synchronizedMap(new HashMap<Fingerprint, Router>());
 	/** the last valid consensus. */
 	private DirectoryConsensus directoryConsensus;
     /** List of Guards. */
@@ -151,7 +151,7 @@ public final class Directory
 	 * 
 	 * key=identity key
 	 */
-	private Map<Fingerprint, RouterImpl> validRoutersByFingerprint = new HashMap<Fingerprint, RouterImpl>();
+	private Map<Fingerprint, Router> validRoutersByFingerprint = new HashMap<Fingerprint, Router>();
 	/**
 	 * Map that has class C address as key, and a HashSet with fingerprints of
 	 * Nodes that have IP-Address of that class.
@@ -218,7 +218,7 @@ public final class Directory
 	 * 
 	 * @param r
 	 */
-	private void addToNeighbours(final RouterImpl r)
+	private void addToNeighbours(final Router r)
 	{
 		HashSet<Fingerprint> neighbours;
 		final String ipClassCString = Parsing.parseStringByRE(r.getAddress().getHostAddress(), IPCLASSC_PATTERN, "");
@@ -270,16 +270,16 @@ public final class Directory
 	 * @return all routers that can be used; cached dirs are preferred if they
 	 *         are known
 	 */
-	private Collection<RouterImpl> getDirRouters()
+	private Collection<Router> getDirRouters()
 	{
 		// filter
-		Collection<RouterImpl> cacheDirs;
-		Collection<RouterImpl> authorityDirs;
+		Collection<Router> cacheDirs;
+		Collection<Router> authorityDirs;
 		synchronized (allFingerprintsRouters)
 		{
-			cacheDirs = new ArrayList<RouterImpl>(allFingerprintsRouters.size());
-			authorityDirs = new ArrayList<RouterImpl>();
-			for (final RouterImpl r : allFingerprintsRouters.values())
+			cacheDirs = new ArrayList<Router>(allFingerprintsRouters.size());
+			authorityDirs = new ArrayList<Router>();
+			for (final Router r : allFingerprintsRouters.values())
 			{
 				if (TorConfig.isCountryAllowed(r.getCountryCode()) && r.isValid())
 				{
@@ -306,7 +306,7 @@ public final class Directory
 		if (authorityDirs.size() + cacheDirs.size() >= MIN_NUM_OF_DIRS)
 		{
 			LOG.debug("using authorities");
-			final Collection<RouterImpl> result = cacheDirs;
+			final Collection<Router> result = cacheDirs;
 			result.addAll(authorityDirs);
 			return result;
 		}
@@ -430,13 +430,13 @@ public final class Directory
 			if (newDirectoryConsensus == null)
 			{
 				// all v3 directory servers
-				final List<RouterImpl> dirRouters = new ArrayList<RouterImpl>(getDirRouters());
+				final List<Router> dirRouters = new ArrayList<Router>(getDirRouters());
 
 				// Choose one randomly
 				while (dirRouters.size() > 0)
 				{
 					final int index = rnd.nextInt(dirRouters.size());
-					final RouterImpl dirRouter = dirRouters.get(index);
+					final Router dirRouter = dirRouters.get(index);
 					if (LOG.isDebugEnabled())
 					{
 						LOG.debug("Directory.updateNetworkStatusNew: Randomly chosen dirRouter to fetch consensus document: " 
@@ -511,18 +511,18 @@ public final class Directory
 
 			// merge directoryConsensus&fingerprintsRouters ->
 			// validRoutersBy[Fingerprint|Name]
-			final Map<Fingerprint, RouterImpl> newValidRoutersByfingerprint = new HashMap<Fingerprint, RouterImpl>();
-			final Map<Fingerprint, RouterImpl> newExitnodeRouters = new HashMap<Fingerprint, RouterImpl>();
-			final Map<Fingerprint, RouterImpl> newFastRouters = new HashMap<Fingerprint, RouterImpl>();
-			final Map<Fingerprint, RouterImpl> newGuardRouters = new HashMap<Fingerprint, RouterImpl>();
-			final Map<Fingerprint, RouterImpl> newStableRouters = new HashMap<Fingerprint, RouterImpl>();
-			final Map<Fingerprint, RouterImpl> newStableAndFastRouters = new HashMap<Fingerprint, RouterImpl>();
+			final Map<Fingerprint, Router> newValidRoutersByfingerprint = new HashMap<Fingerprint, Router>();
+			final Map<Fingerprint, Router> newExitnodeRouters = new HashMap<Fingerprint, Router>();
+			final Map<Fingerprint, Router> newFastRouters = new HashMap<Fingerprint, Router>();
+			final Map<Fingerprint, Router> newGuardRouters = new HashMap<Fingerprint, Router>();
+			final Map<Fingerprint, Router> newStableRouters = new HashMap<Fingerprint, Router>();
+			final Map<Fingerprint, Router> newStableAndFastRouters = new HashMap<Fingerprint, Router>();
 			int newNumOfRunningRoutersInDirectoryConsensus = 0;
 			for (final RouterStatusDescription networkStatusDescription : directoryConsensus.getFingerprintsNetworkStatusDescriptors().values())
 			{
 				// one server of consensus
 				final Fingerprint fingerprint = networkStatusDescription.getFingerprint();
-				final RouterImpl r = allFingerprintsRouters.get(fingerprint);
+				final Router r = allFingerprintsRouters.get(fingerprint);
 				if (r != null && r.isValid())
 				{
 					// valid server with description
@@ -575,7 +575,7 @@ public final class Directory
 				FileOutputStream fileOutputStream = new FileOutputStream(
 				                     TempfileStringStorage.getTempfileFile(DIRECTORY_CACHED_ROUTER_DESCRIPTORS));
 				fileOutputStream.write(ByteUtils.intToBytes(validRoutersByFingerprint.size()));
-				for (RouterImpl router : validRoutersByFingerprint.values())
+				for (Router router : validRoutersByFingerprint.values())
 				{
 					fileOutputStream.write(router.toByteArray());
 				}
@@ -722,10 +722,10 @@ public final class Directory
 	 * @return the result; if multiple entries with the same fingerprint are in
 	 *         routerDescriptors, the last will be considered
 	 */
-	protected Map<Fingerprint, RouterImpl> parseRouterDescriptors(final String routerDescriptors)
+	protected Map<Fingerprint, Router> parseRouterDescriptors(final String routerDescriptors)
 	{
 		final long timeStart = System.currentTimeMillis();
-		final Map<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>();
+		final Map<Fingerprint, Router> result = new HashMap<Fingerprint, Router>();
 
 		final Matcher m = ROUTER_DESCRIPTORS_PATTERN.matcher(routerDescriptors);
 
@@ -737,7 +737,7 @@ public final class Directory
 		{
 			allTasks.add(new RouterParserCallable(m.group(1)));
 		}
-		List<Future<RouterImpl>> results = null;
+		List<Future<Router>> results = null;
 		try
 		{
 			results = executor.invokeAll(allTasks);
@@ -748,9 +748,9 @@ public final class Directory
 		}
 		if (results != null && !results.isEmpty())
 		{
-			for (Future<RouterImpl> item : results)
+			for (Future<Router> item : results)
 			{
-				RouterImpl router = null;
+				Router router = null;
 				try
 				{
 					router = item.get();
@@ -788,7 +788,7 @@ public final class Directory
 	 * @param directoryConsensus
 	 *            will be read
 	 */
-	private void fetchDescriptors(final Map<Fingerprint, RouterImpl> fingerprintsRouters, 
+	private void fetchDescriptors(final Map<Fingerprint, Router> fingerprintsRouters,
 	                              final DirectoryConsensus directoryConsensus)
 																				throws TorException
 	{
@@ -797,7 +797,7 @@ public final class Directory
 		for (final RouterStatusDescription networkStatusDescription : directoryConsensus.getFingerprintsNetworkStatusDescriptors().values())
 		{
 			// check one router of the consensus
-			final RouterImpl r = fingerprintsRouters.get(networkStatusDescription.getFingerprint());
+			final Router r = fingerprintsRouters.get(networkStatusDescription.getFingerprint());
 			if (r == null || !r.isValid())
 			{
 				// router description not yet contained or too old -> load it
@@ -821,10 +821,10 @@ public final class Directory
 				                           TempfileStringStorage.getTempfileFile(DIRECTORY_CACHED_ROUTER_DESCRIPTORS));
 				DynByteBuffer buffer = new DynByteBuffer(fileInputStream);
 				int count = buffer.getNextInt();
-				final Map<Fingerprint, RouterImpl> parsedServers = new HashMap<Fingerprint, RouterImpl>(count);
+				final Map<Fingerprint, Router> parsedServers = new HashMap<Fingerprint, Router>(count);
 				for (int i = 0; i < count; i++)
 				{
-					RouterImpl router = new RouterImpl(buffer);
+					Router router = new RouterImpl(buffer);
 					parsedServers.put(router.getFingerprint(), router);
 				}
 				fileInputStream.close();
@@ -832,7 +832,7 @@ public final class Directory
 				for (final Fingerprint fingerprint : fingerprintsOfRoutersToLoadCopy)
 				{
 					// one searched fingerprint
-					final RouterImpl r = parsedServers.get(fingerprint);
+					final Router r = parsedServers.get(fingerprint);
 					if (r != null && r.isValid())
 					{
 						// found valid descriptor
@@ -866,11 +866,11 @@ public final class Directory
 		else
 		{
 			// load all description with one request (usually done during startup)
-			final List<RouterImpl> dirRouters = new ArrayList<RouterImpl>(getDirRouters());
+			final List<Router> dirRouters = new ArrayList<Router>(getDirRouters());
 			while (dirRouters.size() > 0)
 			{
 				final int i = rnd.nextInt(dirRouters.size());
-				final RouterImpl directoryServer = dirRouters.get(i);
+				final Router directoryServer = dirRouters.get(i);
 				dirRouters.remove(i);
 				if (directoryServer.getDirPort() < 1)
 				{
@@ -882,12 +882,12 @@ public final class Directory
 				// split into single server descriptors
 				if (allDescriptors != null && allDescriptors.length() >= ALL_DESCRIPTORS_STR_MIN_LEN)
 				{
-					final Map<Fingerprint, RouterImpl> parsedServers = parseRouterDescriptors(allDescriptors);
+					final Map<Fingerprint, Router> parsedServers = parseRouterDescriptors(allDescriptors);
 					int attempts = 0;
 					for (final Fingerprint fingerprint : fingerprintsOfRoutersToLoad)
 					{
 						// one searched fingerprint
-						final RouterImpl r = parsedServers.get(fingerprint);
+						final Router r = parsedServers.get(fingerprint);
 						attempts++;
 						if (r != null)
 						{
@@ -921,7 +921,7 @@ public final class Directory
 	 *            set to TRUE to disregard exitPolicies
 	 * @return the boolean result
 	 */
-	public boolean isCompatible(final RouterImpl[] route, final TCPStreamProperties sp, final boolean forHiddenService) throws TorException
+	public boolean isCompatible(final Router[] route, final TCPStreamProperties sp, final boolean forHiddenService) throws TorException
 	{
 		// check for null values
 		if (route == null)
@@ -987,7 +987,7 @@ public final class Directory
 	 *            node that should be excluded with all its relations
 	 * @return set of excluded node names
 	 */
-	public Set<Fingerprint> excludeRelatedNodes(final RouterImpl r)
+	public Set<Fingerprint> excludeRelatedNodes(final Router r)
 	{
 		final HashSet<Fingerprint> excludedServerfingerprints = new HashSet<Fingerprint>();
 		HashSet<Fingerprint> myAddressNeighbours, myCountryNeighbours;
@@ -1030,19 +1030,19 @@ public final class Directory
 	 *            a list of all Routers which should be excluded
 	 * @param rankingInfluenceIndex
 	 *            the ranking influence index
-	 * @return a {@link RouterImpl}
+	 * @return a {@link Router}
 	 */
-	public RouterImpl selectRandomNode(final Map<Fingerprint, RouterImpl> torRouters,
+	public Router selectRandomNode(final Map<Fingerprint, Router> torRouters,
 										final HashSet<Fingerprint> excludedServerFingerprints,
 										final float rankingInfluenceIndex,
 										final boolean onlyFast,
 										final boolean onlyStable)
 	{
-		Map<Fingerprint, RouterImpl> routersToChooseFrom = new HashMap<Fingerprint, RouterImpl>(torRouters);
+		Map<Fingerprint, Router> routersToChooseFrom = new HashMap<Fingerprint, Router>(torRouters);
 		Set<Fingerprint> listOfExcludedRouters = new HashSet<Fingerprint>(excludedServerFingerprints);
 		if (onlyFast)
 		{
-			for (RouterImpl router : routersToChooseFrom.values())
+			for (Router router : routersToChooseFrom.values())
 			{
 				if (!router.isDirv2Fast())
 				{
@@ -1052,7 +1052,7 @@ public final class Directory
 		}
 		if (onlyStable)
 		{
-			for (RouterImpl router : routersToChooseFrom.values())
+			for (Router router : routersToChooseFrom.values())
 			{
 				if (!router.isDirv2Stable())
 				{
@@ -1061,10 +1061,10 @@ public final class Directory
 			}
 		}
 		float rankingSum = 0;
-		RouterImpl myServer;
+		Router myServer;
 		listOfExcludedRouters.addAll(excludedNodesByConfig);
 		// At first, calculate sum of the rankings
-		Iterator<RouterImpl> it = routersToChooseFrom.values().iterator();
+		Iterator<Router> it = routersToChooseFrom.values().iterator();
 		while (it.hasNext())
 		{
 			myServer = it.next();
@@ -1099,7 +1099,7 @@ public final class Directory
 	 * @param onionPort port of the router
 	 * @return the router; null if no valid matching router found
 	 */
-	public RouterImpl getValidRouterByIpAddressAndOnionPort(final IpNetAddress ipNetAddress, final int onionPort)
+	public Router getValidRouterByIpAddressAndOnionPort(final IpNetAddress ipNetAddress, final int onionPort)
 	{
 		final TcpipNetAddress check = new TcpipNetAddress(ipNetAddress, onionPort);
 		return getValidRouterByIpAddressAndOnionPort(check);
@@ -1111,9 +1111,9 @@ public final class Directory
 	 * @param tcpipNetAddress {@link TcpipNetAddress} of the router to be searched
 	 * @return the router; null if no valid matching router found
 	 */
-	public RouterImpl getValidRouterByIpAddressAndOnionPort(final TcpipNetAddress tcpipNetAddress)
+	public Router getValidRouterByIpAddressAndOnionPort(final TcpipNetAddress tcpipNetAddress)
 	{
-		for (final RouterImpl router : getValidRoutersByFingerprint().values())
+		for (final Router router : getValidRoutersByFingerprint().values())
 		{
 			if (router.getOrAddress().equals(tcpipNetAddress))
 			{
@@ -1130,9 +1130,9 @@ public final class Directory
 	 * @param tcpipNetAddress {@link TcpipNetAddress} of the router to be searched
 	 * @return the router; null if no valid matching router found
 	 */
-	public RouterImpl getValidRouterByIpAddressAndDirPort(final TcpipNetAddress tcpipNetAddress)
+	public Router getValidRouterByIpAddressAndDirPort(final TcpipNetAddress tcpipNetAddress)
 	{
-		for (final RouterImpl router : getValidRoutersByFingerprint().values())
+		for (final Router router : getValidRoutersByFingerprint().values())
 		{
 			if (router.getDirAddress().equals(tcpipNetAddress))
 			{
@@ -1148,17 +1148,17 @@ public final class Directory
 	 * @return all valid routers with HSDir flag (hidden server directory),
 	 *         ordered by fingerprint
 	 */
-	public RouterImpl[] getValidHiddenDirectoryServersOrderedByFingerprint()
+	public Router[] getValidHiddenDirectoryServersOrderedByFingerprint()
 	{
 		// copy all hidden server directory to list
-		List<RouterImpl> routersList;
+		List<Router> routersList;
 		synchronized (allFingerprintsRouters)
 		{
-			routersList = new ArrayList<RouterImpl>(allFingerprintsRouters.values());
+			routersList = new ArrayList<Router>(allFingerprintsRouters.values());
 		}
-		for (final Iterator<RouterImpl> i = routersList.iterator(); i.hasNext();)
+		for (final Iterator<Router> i = routersList.iterator(); i.hasNext();)
 		{
-			final RouterImpl r = i.next();
+			final Router r = i.next();
 			if ((!r.isDirv2HSDir()) || r.getDirPort() < 1) // TODO : check if this logic still applies (see
 															// https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/185-dir-without-dirport.txt)
 			{
@@ -1168,13 +1168,13 @@ public final class Directory
 		}
 
 		// copy list to array
-		final RouterImpl[] routers = routersList.toArray(new RouterImpl[routersList.size()]);
+		final Router[] routers = routersList.toArray(new Router[routersList.size()]);
 
 		// order by fingerprint
-		final Comparator<RouterImpl> comp = new Comparator<RouterImpl>()
+		final Comparator<Router> comp = new Comparator<Router>()
 		{
 			@Override
-			public int compare(final RouterImpl o1, final RouterImpl o2)
+			public int compare(final Router o1, final Router o2)
 			{
 				return o1.getFingerprint().compareTo(o2.getFingerprint());
 			}
@@ -1193,19 +1193,19 @@ public final class Directory
 	 * @return three consecutive routers that are hidden service directories
 	 *         with router.fingerprint&gt;f
 	 */
-	public Collection<RouterImpl> getThreeHiddenDirectoryServersWithFingerprintGreaterThan(final Fingerprint f)
+	public Collection<Router> getThreeHiddenDirectoryServersWithFingerprintGreaterThan(final Fingerprint f)
 	{
-		final RouterImpl[] routers = getValidHiddenDirectoryServersOrderedByFingerprint();
+		final Router[] routers = getValidHiddenDirectoryServersOrderedByFingerprint();
 
 		final int REQUESTED_NUM_OF_ROUTERS = 3;
 		int numOfRoutersToFind = Math.min(REQUESTED_NUM_OF_ROUTERS, routers.length);
-		final Collection<RouterImpl> result = new ArrayList<RouterImpl>(numOfRoutersToFind);
+		final Collection<Router> result = new ArrayList<Router>(numOfRoutersToFind);
 
 		// find the first and the consecutive routers
 		boolean takeNextRouters = false;
 		for (int i = 0; i < 2 * routers.length; i++)
 		{
-			final RouterImpl r = routers[i % routers.length];
+			final Router r = routers[i % routers.length];
 
 			// does it match?
 			if (!takeNextRouters && r.getFingerprint().compareTo(f) >= 0)
@@ -1257,7 +1257,7 @@ public final class Directory
 	{
 		if (LOG.isDebugEnabled())
 		{
-			for (final RouterImpl r : validRoutersByFingerprint.values())
+			for (final Router r : validRoutersByFingerprint.values())
 			{
 				LOG.debug(r.toString());
 			}
@@ -1268,10 +1268,10 @@ public final class Directory
 	 * Get Map with all Routers which are valid and not excluded by Config.
 	 * @return a Map with valid routers
 	 */
-	public Map<Fingerprint, RouterImpl> getValidRoutersByFingerprint()
+	public Map<Fingerprint, Router> getValidRoutersByFingerprint()
 	{
-		HashMap<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>(validRoutersByFingerprint);
-		Iterator<Entry<Fingerprint, RouterImpl>>itRouter = result.entrySet().iterator();
+		HashMap<Fingerprint, Router> result = new HashMap<Fingerprint, Router>(validRoutersByFingerprint);
+		Iterator<Entry<Fingerprint, Router>>itRouter = result.entrySet().iterator();
 		while (itRouter.hasNext())
 		{
 			if (!TorConfig.isCountryAllowed(itRouter.next().getValue().getCountryCode()))
@@ -1294,13 +1294,13 @@ public final class Directory
 	 * Get Map with all Routers which are valid and not excluded by Config and matches the given flags.
 	 * @return a Map with valid routers
 	 */
-	public Map<Fingerprint, RouterImpl> getValidRoutersByFlags(final RouterFlags flags)
+	public Map<Fingerprint, Router> getValidRoutersByFlags(final RouterFlags flags)
 	{
-		HashMap<Fingerprint, RouterImpl> result = new HashMap<Fingerprint, RouterImpl>(validRoutersByFingerprint);
-		Iterator<Entry<Fingerprint, RouterImpl>>itRouter = result.entrySet().iterator();
+		HashMap<Fingerprint, Router> result = new HashMap<Fingerprint, Router>(validRoutersByFingerprint);
+		Iterator<Entry<Fingerprint, Router>>itRouter = result.entrySet().iterator();
 		while (itRouter.hasNext())
 		{
-			RouterImpl router = itRouter.next().getValue();
+			Router router = itRouter.next().getValue();
 			if (!TorConfig.isCountryAllowed(router.getCountryCode()))
 			{
 				itRouter.remove();
@@ -1333,7 +1333,7 @@ public final class Directory
 			ip[2] = (byte) Integer.parseInt(octets[2]);
 			ip[3] = (byte) Integer.parseInt(octets[3]);
 
-			final RouterImpl router = getValidRouterByIpAddressAndDirPort(new TcpipNetAddress(ip, sp.getPort()));
+			final Router router = getValidRouterByIpAddressAndDirPort(new TcpipNetAddress(ip, sp.getPort()));
 			if (router != null && (router.isDirv2HSDir() || router.isDirv2V2dir()))
 			{
 				return true;
