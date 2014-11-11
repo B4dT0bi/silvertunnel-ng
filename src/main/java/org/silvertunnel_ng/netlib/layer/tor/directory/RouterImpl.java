@@ -322,8 +322,7 @@ public final class RouterImpl implements Router, Cloneable
 		// TODO : add signature check
 	}
 	/**
-	 * Store the information of this Router in a byte array. (Serialization)
-	 * @return a byte array containing all information about this router
+	 * Store the information of this Router in a Stream with the help of ConvenientStreamWriter.
 	 */
 	public void save(final ConvenientStreamWriter convenientStreamWriter) throws IOException {
 		convenientStreamWriter.writeByte(CURRENT_BINARY_VERSION);

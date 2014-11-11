@@ -201,8 +201,7 @@ public final class RouterExitPolicyImpl implements RouterExitPolicy, Cloneable
 		return result;
 	}
 	/**
-	 * Serialize all members into a byte array.
-	 * @return a byte array containing the binary representation of this object.
+	 * Serialize all members into a stream.
 	 */
 	public void save(final ConvenientStreamWriter convenientStreamWriter) throws IOException {
         convenientStreamWriter.writeBoolean(accept);
