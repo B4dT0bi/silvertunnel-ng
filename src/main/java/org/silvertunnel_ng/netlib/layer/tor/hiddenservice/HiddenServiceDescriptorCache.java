@@ -35,10 +35,7 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.hiddenservice;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,9 +100,12 @@ public final class HiddenServiceDescriptorCache
 				objectInputStream.close();
 						   							
 			}
+            catch (FileNotFoundException exception) {
+                LOG.info("no cached hiddenservice descriptors found");
+            }
 			catch (Exception exception)
 			{
-				LOG.warn("could not load cached descriptors because of exception", exception);
+				LOG.warn("could not load cached hiddenservice descriptors because of exception", exception);
 			}
 		}
 	}
