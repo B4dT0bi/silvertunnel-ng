@@ -166,9 +166,7 @@ public class RendezvousServiceDescriptorService
 					}
 					try
 					{
-						final RendezvousServiceDescriptor result = new RendezvousServiceDescriptor(response, System.currentTimeMillis());
-						return result;
-
+						return new RendezvousServiceDescriptor(response, System.currentTimeMillis());
 					}
 					catch (final TorException e)
 					{

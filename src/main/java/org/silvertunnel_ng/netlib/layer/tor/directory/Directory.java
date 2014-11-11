@@ -1236,9 +1236,7 @@ public final class Directory
 	 */
 	private HashSet<Fingerprint> getAddressNeighbours(final String address)
 	{
-		final String ipClassCString = Parsing.parseStringByRE(address, IPCLASSC_PATTERN, "");
-		final HashSet<Fingerprint> neighbours = addressNeighbours.get(ipClassCString);
-		return neighbours;
+		return addressNeighbours.get(Parsing.parseStringByRE(address, IPCLASSC_PATTERN, ""));
 	}
 
 	/**

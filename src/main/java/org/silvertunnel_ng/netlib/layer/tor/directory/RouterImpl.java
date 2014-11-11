@@ -413,12 +413,12 @@ public final class RouterImpl implements Router, Cloneable
 			epNetmask = 0;
 			if (!network.equals("*"))
 			{
-				final int slash = network.indexOf("/");
+				final int slash = network.indexOf('/');
 				if (slash >= 0)
 				{
 					epIp = Encoding.dottedNotationToBinary(network.substring(0, slash));
 					final String netmask = network.substring(slash + 1);
-					if (netmask.indexOf(".") > -1)
+					if (netmask.indexOf('.') > -1)
 					{
 						epNetmask = Encoding.dottedNotationToBinary(netmask);
 					}

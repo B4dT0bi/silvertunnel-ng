@@ -145,8 +145,7 @@ public class RendezvousServiceDescriptorUtil
 
 		// calculate digest
 		final byte[] allBytes = ByteArrayUtil.concatByteArrays(timePeriodBytes, descriptorCookieBytes, replicaBytes);
-		final byte[] result = Encryption.getDigest(allBytes);
-		return result;
+		return Encryption.getDigest(allBytes);
 	}
 
 	/**
@@ -162,7 +161,6 @@ public class RendezvousServiceDescriptorUtil
 		final byte[] publicKeyHash = Encryption.getDigest(Encryption.getPKCS1EncodingFromRSAPublicKey(publicKey));
 		final byte[] zBytes = new byte[10];
 		System.arraycopy(publicKeyHash, 0, zBytes, 0, 10);
-		final String z = Encoding.toBase32(zBytes);
-		return z;
+		return Encoding.toBase32(zBytes);
 	}
 }

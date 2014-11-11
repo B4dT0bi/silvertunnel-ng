@@ -626,7 +626,7 @@ public class HttpClient extends NetworkClient
 				{
 					keep = responses.findValue("Connection");
 				}
-				if (keep != null && keep.toLowerCase().equals("keep-alive"))
+				if (keep != null && keep.equalsIgnoreCase("keep-alive"))
 				{
 					/*
 					 * some servers, notably Apache1.1, send something like:

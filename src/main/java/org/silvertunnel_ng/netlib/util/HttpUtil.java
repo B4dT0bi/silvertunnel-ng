@@ -43,6 +43,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.NetSocket;
@@ -79,7 +80,7 @@ public class HttpUtil
 	{
 		return instance;
 	}
-
+    private static final Random RANDOM = new Random();
 	/**
 	 * Try to execute the /httptest/smalltest.php over the provided net socket
 	 * with a random id.
@@ -99,7 +100,7 @@ public class HttpUtil
 			String idPrefix, long timeoutInMs) throws IOException
 	{
 		// generate the id
-		final int randomNo = (int) (1000000000 * Math.random());
+		final int randomNo = RANDOM.nextInt(1000000000);
 		final String id = idPrefix + randomNo;
 
 		// communicate with the remote side

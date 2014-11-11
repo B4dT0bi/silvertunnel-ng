@@ -18,6 +18,8 @@
 package org.silvertunnel_ng.netlib.layer.tor.circuit;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.Cell;
@@ -43,8 +45,8 @@ public final class Queue
 	private volatile boolean addClosed = false;
 	/** timeout internally represented in ms. */
 	private int timeoutMs = 1000;
-	private final Vector<Cell> queue = new Vector<Cell>();
-	private final Vector<QueueHandler> handler = new Vector<QueueHandler>();
+	private final List<Cell> queue = new ArrayList<Cell>();
+	private final List<QueueHandler> handler = new ArrayList<QueueHandler>();
 
 	/**
 	 * init class.

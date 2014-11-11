@@ -37,13 +37,7 @@ package org.silvertunnel_ng.netlib.layer.tor.circuit;
 
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -240,9 +234,9 @@ public class CircuitAdmin
 			LOG.debug("return chachedResults");
 		}
 
-		// list all suiting circuits in a vector
+		// list all suiting circuits in a list
 		int numberOfExistingCircuits = 0;
-		final Vector<Circuit> allCircs = new Vector<Circuit>(10, 10);
+		final List<Circuit> allCircs = new ArrayList<Circuit>(10);
 		int rankingSum = 0;
 		for (final TLSConnection tls : tlsConnectionAdmin.getConnections())
 		{

@@ -417,8 +417,8 @@ public class ParseUtil
 			 */
 			if (opaquePart.startsWith("//["))
 			{
-				final int end = opaquePart.indexOf("]");
-				if (end != -1 && opaquePart.indexOf(":") != -1)
+				final int end = opaquePart.indexOf(']');
+				if (end != -1 && opaquePart.indexOf(':') != -1)
 				{
 					String doquote, dontquote;
 					if (end == opaquePart.length())
@@ -488,8 +488,8 @@ public class ParseUtil
 			sb.append("//");
 			if (authority.startsWith("["))
 			{
-				final int end = authority.indexOf("]");
-				if (end != -1 && authority.indexOf(":") != -1)
+				final int end = authority.indexOf(']');
+				if (end != -1 && authority.indexOf(':') != -1)
 				{
 					String doquote, dontquote;
 					if (end == authority.length())

@@ -75,8 +75,7 @@ public final class DescriptorFetcher
 			final String path = "/tor/server/d/" + builder.substring(0, builder.length() - 1);
 			final TcpipNetAddress hostAndPort = new TcpipNetAddress(directoryServer.getIp(), directoryServer.getDirPort());
 
-			final String httpResponse = SimpleHttpClientCompressed.getInstance().get(dirConnectionNetLayer, hostAndPort, path);
-			return httpResponse;
+			return SimpleHttpClientCompressed.getInstance().get(dirConnectionNetLayer, hostAndPort, path);
 
 		}
 		catch (final Exception e)
