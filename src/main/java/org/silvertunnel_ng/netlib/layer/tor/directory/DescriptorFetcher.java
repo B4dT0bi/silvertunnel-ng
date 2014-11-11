@@ -50,7 +50,7 @@ public final class DescriptorFetcher
 	 * @return the descriptors as single String; null in the case of an error
 	 */
 	public static String downloadDescriptorsByDigest(final List<String> nodesDigestsToLoad,
-	                                                 final RouterStatusDescription directoryServer,
+	                                                 final Router directoryServer,
 	                                                 final NetLayer dirConnectionNetLayer)
 	{
 		if (nodesDigestsToLoad == null || nodesDigestsToLoad.isEmpty())
@@ -73,10 +73,8 @@ public final class DescriptorFetcher
 		try
 		{
 			final String path = "/tor/server/d/" + builder.substring(0, builder.length() - 1);
-			final TcpipNetAddress hostAndPort = new TcpipNetAddress(directoryServer.getIp(), directoryServer.getDirPort());
 
-			return SimpleHttpClientCompressed.getInstance().get(dirConnectionNetLayer, hostAndPort, path);
-
+			return SimpleHttpClientCompressed.getInstance().get(dirConnectionNetLayer, directoryServer.getDirAddress(), path);
 		}
 		catch (final Exception e)
 		{
