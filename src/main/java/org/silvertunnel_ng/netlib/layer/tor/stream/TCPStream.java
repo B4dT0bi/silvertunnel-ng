@@ -238,9 +238,10 @@ public class TCPStream implements Stream, NetSocket
 			case 4 + 1 + 16 + 4:
 				// IPv6 address
 				// TODO: not yet implemented
+                LOG.warn("IPv6 not implemented yet");
 				break;
 			default:
-				LOG.error("this should not happen");
+				LOG.error("this should not happen, unexpected length received : {}", relay.getLength());
 				break;
 		}
 
