@@ -37,7 +37,11 @@ package org.silvertunnel_ng.netlib.layer.tor.directory;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.RouterExitPolicy;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
 import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
+
+import java.io.IOException;
 
 /**
  * Compound data structure for storing exit policies.
@@ -188,27 +192,23 @@ public final class RouterExitPolicyImpl implements RouterExitPolicy, Cloneable
 	 * @param data the byte array containing the binary representation of a {@link RouterExitPolicyImpl} object
 	 * @return a new {@link RouterExitPolicyImpl} object containing the information from the byte array
 	 */
-	protected static RouterExitPolicyImpl parseFrom(final DynByteBuffer data)
-	{
-		RouterExitPolicyImpl result = new RouterExitPolicyImpl(data.getNextBoolean(), 
-															   data.getNextLong(), 
-															   data.getNextLong(), 
-															   data.getNextInt(), 
-															   data.getNextInt());
+	protected static RouterExitPolicyImpl parseFrom(final ConvenientStreamReader data) throws IOException {
+		RouterExitPolicyImpl result = new RouterExitPolicyImpl(data.readBoolean(),
+															   data.readLong(),
+															   data.readLong(),
+															   data.readInt(),
+															   data.readInt());
 		return result;
 	}
 	/**
 	 * Serialize all members into a byte array.
 	 * @return a byte array containing the binary representation of this object.
 	 */
-	protected byte [] toByteArray()
-	{
-		DynByteBuffer buffer = new DynByteBuffer();
-		buffer.append(accept);
-		buffer.append(ip);
-		buffer.append(netmask);
-		buffer.append(loPort);
-		buffer.append(hiPort);
-		return buffer.toArray();
+	public void save(final ConvenientStreamWriter convenientStreamWriter) throws IOException {
+        convenientStreamWriter.writeBoolean(accept);
+        convenientStreamWriter.writeLong(ip);
+        convenientStreamWriter.writeLong(netmask);
+        convenientStreamWriter.writeInt(loPort);
+        convenientStreamWriter.writeInt(hiPort);
 	}
 }

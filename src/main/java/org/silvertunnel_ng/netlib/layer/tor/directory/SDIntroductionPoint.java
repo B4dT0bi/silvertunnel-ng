@@ -17,6 +17,7 @@
  */
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
+import java.io.Serializable;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author hapke
  */
-public class SDIntroductionPoint
+public class SDIntroductionPoint implements Serializable
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(SDIntroductionPoint.class);

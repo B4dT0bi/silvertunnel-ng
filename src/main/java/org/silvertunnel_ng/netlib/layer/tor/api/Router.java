@@ -18,6 +18,7 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.api;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
@@ -26,6 +27,7 @@ import java.util.Set;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterFlags;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterStatusDescription;
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
 
 /**
  * a compound data structure that keeps track of the static informations we have
@@ -113,7 +115,7 @@ public interface Router
 
     boolean exitPolicyAccepts(final InetAddress addr, final int port);
 
-    byte [] toByteArray();
+    void save(ConvenientStreamWriter convenientStreamWriter) throws IOException;
 
     float getRefinedRankingIndex(final float p);
 

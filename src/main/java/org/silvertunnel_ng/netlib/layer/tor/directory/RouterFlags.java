@@ -18,7 +18,10 @@
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
 import org.silvertunnel_ng.netlib.tool.ByteUtils;
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
 
+import java.io.IOException;
 import java.util.BitSet;
 
 
@@ -143,6 +146,31 @@ public final class RouterFlags {
         value.set(INDEX_BAD_EXIT, flags4[0]);
         value.set(INDEX_HIBERNATING, flags4[1]);
     }
+    /**
+     * Set the flags by parsing a given inputstream.
+     *
+     * @param convenientStreamReader the convenientStreamReader which contains the flags.
+     */
+    public RouterFlags(final ConvenientStreamReader convenientStreamReader) throws IOException {
+        Boolean[] flags1 = ByteUtils.getBooleansFromByte(convenientStreamReader.readByte());
+        value.set(INDEX_RUNNING, flags1[0]);
+        value.set(INDEX_EXIT, flags1[1]);
+        value.set(INDEX_AUTHORITY, flags1[2]);
+        value.set(INDEX_FAST, flags1[3]);
+        Boolean[] flags2 = ByteUtils.getBooleansFromByte(convenientStreamReader.readByte());
+        value.set(INDEX_GUARD, flags2[0]);
+        value.set(INDEX_STABLE, flags2[1]);
+        value.set(INDEX_NAMED, flags2[2]);
+        value.set(INDEX_UNNAMED, flags2[3]);
+        Boolean[] flags3 = ByteUtils.getBooleansFromByte(convenientStreamReader.readByte());
+        value.set(INDEX_V2DIR, flags3[0]);
+        value.set(INDEX_VALID, flags3[1]);
+        value.set(INDEX_HIDDENSERVICE_DIRECTORY, flags3[2]);
+        value.set(INDEX_BAD_DIRECTORY, flags3[3]);
+        Boolean[] flags4 = ByteUtils.getBooleansFromByte(convenientStreamReader.readByte());
+        value.set(INDEX_BAD_EXIT, flags4[0]);
+        value.set(INDEX_HIBERNATING, flags4[1]);
+    }
 
     /**
      * Set all flags by given flags as string.
@@ -166,17 +194,13 @@ public final class RouterFlags {
     }
 
     /**
-     * Convert the RouterFlags to a byte array.
-     *
-     * @return a byte array containing the RouterFlag information.
+     * Save the RouterFlags to a inputstream.
      */
-    protected byte[] toByteArray() {
-        byte[] result = new byte[4];
-        result[0] = ByteUtils.getByteFromBooleans(isRunning(), isExit(), isAuthority(), isFast());
-        result[1] = ByteUtils.getByteFromBooleans(isGuard(), isStable(), isNamed(), isUnnamed());
-        result[2] = ByteUtils.getByteFromBooleans(isV2Dir(), isValid(), isHSDir(), isBadDirectory());
-        result[3] = ByteUtils.getByteFromBooleans(isBadExit(), isHibernating());
-        return result;
+    protected void save(final ConvenientStreamWriter convenientStreamWriter) throws IOException {
+        convenientStreamWriter.writeByte(ByteUtils.getByteFromBooleans(isRunning(), isExit(), isAuthority(), isFast()));
+        convenientStreamWriter.writeByte(ByteUtils.getByteFromBooleans(isGuard(), isStable(), isNamed(), isUnnamed()));
+        convenientStreamWriter.writeByte(ByteUtils.getByteFromBooleans(isV2Dir(), isValid(), isHSDir(), isBadDirectory()));
+        convenientStreamWriter.writeByte(ByteUtils.getByteFromBooleans(isBadExit(), isHibernating()));
     }
 
     /**

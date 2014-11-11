@@ -23,7 +23,15 @@ import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
 import org.testng.annotations.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 
 /**
@@ -180,8 +188,7 @@ public final class RouterFlagsLocalTest
 	 * Testing all possibilities of all flags.
 	 */
 	@Test
-	public void testAllFlags()
-	{
+	public void testAllFlags() throws IOException {
 		boolean [] list = new boolean [14]; // we have 14 flags to test
 		shiftBoolean(list, 0);
 		while (!isFalse(list))
@@ -201,8 +208,12 @@ public final class RouterFlagsLocalTest
 			flags1.setV2Dir(list[11]);
 			flags1.setValid(list[12]);
 			flags1.setHibernating(list[13]);
-			
-			RouterFlags flags2 = new RouterFlags(flags1.toByteArray());
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ConvenientStreamWriter convenientStreamWriter = new ConvenientStreamWriter(byteArrayOutputStream);
+            flags1.save(convenientStreamWriter);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            ConvenientStreamReader convenientStreamReader = new ConvenientStreamReader(byteArrayInputStream);
+			RouterFlags flags2 = new RouterFlags(convenientStreamReader);
 			assertEquals(flags1, flags2);
 			shiftBoolean(list, 0);
 		}

@@ -21,6 +21,7 @@ import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.api.Router;
 import org.silvertunnel_ng.netlib.layer.tor.common.TCPStreamProperties;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
 import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
 import org.silvertunnel_ng.netlib.util.TempfileStringStorage;
 import org.slf4j.Logger;
@@ -61,10 +62,10 @@ public class GuardList {
         try {
             FileInputStream fileInputStream = new FileInputStream(
                     TempfileStringStorage.getTempfileFile(GUARDLIST_LOCATION));
-            DynByteBuffer buffer = new DynByteBuffer(fileInputStream);
-            int count = buffer.getNextInt();
+            ConvenientStreamReader convenientStreamReader = new ConvenientStreamReader(fileInputStream);
+            int count = convenientStreamReader.readInt();
             for (int i = 0; i < count; i++) {
-                GuardEntry entry = new GuardEntry(buffer);
+                GuardEntry entry = new GuardEntry(convenientStreamReader);
                 guardNodes.add(entry);
                 LOG.debug("guard loaded from cache {}", entry.fingerprint.getHex());
             }

@@ -18,7 +18,10 @@
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
 import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
+
+import java.io.IOException;
 
 /**
  * The GuardEntry contains the Router information and some other information about the Guard node.
@@ -34,14 +37,14 @@ public class GuardEntry {
     protected long lastUnsuccessfulConnect = 0;
 
     /**
-     * Create GuardEntry with the help of a DynByteBuffer.
-     * @param buffer the DynByteBuffer which contains the data for this GuardEntry
+     * Create GuardEntry with the help of a ConvenientStreamReader.
+     * @param convenientStreamReader the ConvenientStreamReader which contains the data for this GuardEntry
      */
-    public GuardEntry(final DynByteBuffer buffer) {
-        fingerprint = new FingerprintImpl(buffer.getNextByteArray());
-        firstDiscard = buffer.getNextLong();
-        unsuccessfulConnect = buffer.getNextInt();
-        lastUnsuccessfulConnect = buffer.getNextLong();
+    public GuardEntry(final ConvenientStreamReader convenientStreamReader) throws IOException{
+        fingerprint = new FingerprintImpl(convenientStreamReader.readByteArray());
+        firstDiscard = convenientStreamReader.readLong();
+        unsuccessfulConnect = convenientStreamReader.readInt();
+        lastUnsuccessfulConnect = convenientStreamReader.readLong();
     }
     public GuardEntry() {}
 

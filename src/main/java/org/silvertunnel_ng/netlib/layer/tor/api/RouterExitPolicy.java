@@ -18,6 +18,10 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.api;
 
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
+
+import java.io.IOException;
+
 /**
  * Compound data structure for storing exit policies.
  * 
@@ -44,5 +48,6 @@ public interface RouterExitPolicy
 	int getLoPort();
 
 	int getHiPort();
-	
+
+    void save(ConvenientStreamWriter convenientStreamWriter) throws IOException;
 }

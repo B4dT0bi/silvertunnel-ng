@@ -35,6 +35,7 @@
 
 package org.silvertunnel_ng.netlib.api.util;
 
+import java.io.Serializable;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -55,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * @author hapke
  * @author Tobias Boese
  */
-public class TcpipNetAddress implements NetAddress
+public class TcpipNetAddress implements NetAddress, Serializable
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(TcpipNetAddress.class);

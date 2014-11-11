@@ -91,10 +91,7 @@ import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.util.NetLayerStatusAdmin;
 import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
-import org.silvertunnel_ng.netlib.tool.ByteUtils;
-import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
-import org.silvertunnel_ng.netlib.tool.SimpleHttpClient;
-import org.silvertunnel_ng.netlib.tool.SimpleHttpClientCompressed;
+import org.silvertunnel_ng.netlib.tool.*;
 import org.silvertunnel_ng.netlib.util.StringStorage;
 import org.silvertunnel_ng.netlib.util.TempfileStringStorage;
 import org.slf4j.Logger;
@@ -574,10 +571,11 @@ public final class Directory
 				long startWriteCache = System.currentTimeMillis();
 				FileOutputStream fileOutputStream = new FileOutputStream(
 				                     TempfileStringStorage.getTempfileFile(DIRECTORY_CACHED_ROUTER_DESCRIPTORS));
-				fileOutputStream.write(ByteUtils.intToBytes(validRoutersByFingerprint.size()));
+                ConvenientStreamWriter convenientStreamWriter = new ConvenientStreamWriter(fileOutputStream);
+                convenientStreamWriter.writeInt(validRoutersByFingerprint.size());
 				for (Router router : validRoutersByFingerprint.values())
 				{
-					fileOutputStream.write(router.toByteArray());
+                    router.save(convenientStreamWriter);
 				}
 				fileOutputStream.close();
 				LOG.debug("wrote router descriptors to local cache in {} ms", System.currentTimeMillis() - startWriteCache);
@@ -819,12 +817,12 @@ public final class Directory
 				long startLoadCached = System.currentTimeMillis();
 				FileInputStream fileInputStream = new FileInputStream(
 				                           TempfileStringStorage.getTempfileFile(DIRECTORY_CACHED_ROUTER_DESCRIPTORS));
-				DynByteBuffer buffer = new DynByteBuffer(fileInputStream);
-				int count = buffer.getNextInt();
+				ConvenientStreamReader convenientStreamReader = new ConvenientStreamReader(fileInputStream);
+				int count = convenientStreamReader.readInt();
 				final Map<Fingerprint, Router> parsedServers = new HashMap<Fingerprint, Router>(count);
 				for (int i = 0; i < count; i++)
 				{
-					Router router = new RouterImpl(buffer);
+					Router router = new RouterImpl(convenientStreamReader);
 					parsedServers.put(router.getFingerprint(), router);
 				}
 				fileInputStream.close();

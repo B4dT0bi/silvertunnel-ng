@@ -36,6 +36,7 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -68,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * @author hapke
  * @author Tobias Boese
  */
-public final class RendezvousServiceDescriptor
+public final class RendezvousServiceDescriptor implements Serializable
 {
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(RendezvousServiceDescriptor.class);

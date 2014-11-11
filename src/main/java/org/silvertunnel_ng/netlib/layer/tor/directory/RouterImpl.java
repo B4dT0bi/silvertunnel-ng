@@ -35,6 +35,7 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
@@ -62,6 +63,8 @@ import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encryption;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.layer.tor.util.Util;
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
+import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
 import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,18 +235,17 @@ public final class RouterImpl implements Router, Cloneable
 	private static final byte CURRENT_BINARY_VERSION = 1;
 	/**
 	 * Parse a byte array containing information for a Router and creating a RouterImpl object.
-	 * @param buffer the {@link DynByteBuffer} which contains the data
+	 * @param convenientStreamReader the {@link org.silvertunnel_ng.netlib.tool.ConvenientStreamReader} which contains the data
 	 * @throws TorException if something went wrong during parsing
 	 */
-	protected RouterImpl(final DynByteBuffer buffer) throws TorException
-	{
-		if (buffer.getNextByte() != CURRENT_BINARY_VERSION)
+	protected RouterImpl(final ConvenientStreamReader convenientStreamReader) throws IOException, TorException {
+		if (convenientStreamReader.readByte() != CURRENT_BINARY_VERSION)
 		{
 			throw new TorException("the saved binary version identifier doesnt match the current! Cannot parse the object.");
 		}
-		nickname = buffer.getNextString();
-		hostname = buffer.getNextString();
-		int len = buffer.getNextInt();
+		nickname = convenientStreamReader.readString();
+		hostname = convenientStreamReader.readString();
+		int len = convenientStreamReader.readInt();
 		try
 		{
 			if (len == 0)
@@ -252,44 +254,44 @@ public final class RouterImpl implements Router, Cloneable
 			}
 			else
 			{
-				address = InetAddress.getByAddress(buffer.getNextByteArray(len));
+				address = InetAddress.getByAddress(convenientStreamReader.readByteArray(len));
 			}
 		}
 		catch (UnknownHostException exception)
 		{
 			throw new TorException("error while parsing address field.", exception);
 		}
-		countryCode = buffer.getNextString();
-		orPort = buffer.getNextInt();
-		socksPort = buffer.getNextInt();
-		dirPort = buffer.getNextInt();
-		bandwidthAvg = buffer.getNextInt();
-		bandwidthBurst = buffer.getNextInt();
-		bandwidthObserved = buffer.getNextInt();
-		platform = buffer.getNextString();
-		published = buffer.getNextLong();
-		int count = buffer.getNextInt();
+		countryCode = convenientStreamReader.readString();
+		orPort = convenientStreamReader.readInt();
+		socksPort = convenientStreamReader.readInt();
+		dirPort = convenientStreamReader.readInt();
+		bandwidthAvg = convenientStreamReader.readInt();
+		bandwidthBurst = convenientStreamReader.readInt();
+		bandwidthObserved = convenientStreamReader.readInt();
+		platform = convenientStreamReader.readString();
+		published = convenientStreamReader.readLong();
+		int count = convenientStreamReader.readInt();
 		if (count == 0)
 		{
 			fingerprint = null;
 		}
 		else
 		{
-			fingerprint = new FingerprintImpl(buffer.getNextByteArray(count));
+			fingerprint = new FingerprintImpl(convenientStreamReader.readByteArray(count));
 		}
-		count = buffer.getNextInt();
+		count = convenientStreamReader.readInt();
 		if (count == 0)
 		{
 			v3ident = null;
 		}
 		else
 		{
-			v3ident = new FingerprintImpl(buffer.getNextByteArray(count));
+			v3ident = new FingerprintImpl(convenientStreamReader.readByteArray(count));
 		}
-		uptime = buffer.getNextInt();
-		onionKey = Encryption.extractBinaryRSAKey(buffer.getNextByteArray());
-		signingKey = Encryption.extractBinaryRSAKey(buffer.getNextByteArray());
-		count = buffer.getNextInt();
+		uptime = convenientStreamReader.readInt();
+		onionKey = Encryption.extractBinaryRSAKey(convenientStreamReader.readByteArray());
+		signingKey = Encryption.extractBinaryRSAKey(convenientStreamReader.readByteArray());
+		count = convenientStreamReader.readInt();
 		if (count == 0)
 		{
 			exitpolicy = null;
@@ -299,77 +301,73 @@ public final class RouterImpl implements Router, Cloneable
 			exitpolicy = new RouterExitPolicy[count];
 			for (int i = 0; i < count; i++)
 			{
-				exitpolicy[i] = RouterExitPolicyImpl.parseFrom(buffer);
+				exitpolicy[i] = RouterExitPolicyImpl.parseFrom(convenientStreamReader);
 			}
 		}
-		routerSignature = buffer.getNextByteArray();
-		contact = buffer.getNextString();
-		count = buffer.getNextInt();
+		routerSignature = convenientStreamReader.readByteArray();
+		contact = convenientStreamReader.readString();
+		count = convenientStreamReader.readInt();
 		family.clear();
 		if (count > 0)
 		{
 			for (int i = 0; i < count; i++)
 			{
-				family.add(new FingerprintImpl(buffer.getNextByteArray()));
+				family.add(new FingerprintImpl(convenientStreamReader.readByteArray()));
 			}
 		}
-		validUntil = buffer.getNextLong();
-		lastUpdate = buffer.getNextLong();
-		routerFlags = new RouterFlags(buffer.getNextByteArray());
-		rankingIndex = buffer.getNextFloat();
+		validUntil = convenientStreamReader.readLong();
+		lastUpdate = convenientStreamReader.readLong();
+		routerFlags = new RouterFlags(convenientStreamReader);
+		rankingIndex = convenientStreamReader.readFloat();
 		// TODO : add signature check
 	}
 	/**
 	 * Store the information of this Router in a byte array. (Serialization)
 	 * @return a byte array containing all information about this router
 	 */
-	public byte [] toByteArray()
-	{
-		DynByteBuffer buffer = new DynByteBuffer();
-		buffer.append(CURRENT_BINARY_VERSION);
-		buffer.append(nickname);
-		buffer.append(hostname);
-		buffer.append(address.getAddress(), true);
-		buffer.append(countryCode);
-		buffer.append(orPort);
-		buffer.append(socksPort);
-		buffer.append(dirPort);
-		buffer.append(bandwidthAvg);
-		buffer.append(bandwidthBurst);
-		buffer.append(bandwidthObserved);
-		buffer.append(platform);
-		buffer.append(published);
-		buffer.append(fingerprint.getBytes(), true);
+	public void save(final ConvenientStreamWriter convenientStreamWriter) throws IOException {
+		convenientStreamWriter.writeByte(CURRENT_BINARY_VERSION);
+		convenientStreamWriter.writeString(nickname);
+		convenientStreamWriter.writeString(hostname);
+		convenientStreamWriter.writeByteArray(address.getAddress(), true);
+		convenientStreamWriter.writeString(countryCode);
+		convenientStreamWriter.writeInt(orPort);
+		convenientStreamWriter.writeInt(socksPort);
+		convenientStreamWriter.writeInt(dirPort);
+		convenientStreamWriter.writeInt(bandwidthAvg);
+		convenientStreamWriter.writeInt(bandwidthBurst);
+		convenientStreamWriter.writeInt(bandwidthObserved);
+		convenientStreamWriter.writeString(platform);
+		convenientStreamWriter.writeLong(published);
+		convenientStreamWriter.writeByteArray(fingerprint.getBytes(), true);
 		if (v3ident == null)
 		{
-			buffer.append(0);
+			convenientStreamWriter.writeInt(0);
 		}
 		else
 		{
-			buffer.append(v3ident.getBytes(), true);
+			convenientStreamWriter.writeByteArray(v3ident.getBytes(), true);
 		}
-		buffer.append(uptime);
-		buffer.append(Encryption.getPKCS1EncodingFromRSAPublicKey(onionKey), true);
-		buffer.append(Encryption.getPKCS1EncodingFromRSAPublicKey(signingKey), true);
-		buffer.append(exitpolicy.length);
+		convenientStreamWriter.writeInt(uptime);
+		convenientStreamWriter.writeByteArray(Encryption.getPKCS1EncodingFromRSAPublicKey(onionKey), true);
+		convenientStreamWriter.writeByteArray(Encryption.getPKCS1EncodingFromRSAPublicKey(signingKey), true);
+		convenientStreamWriter.writeInt(exitpolicy.length);
 		for (RouterExitPolicy exitPolicy : exitpolicy)
 		{
-			buffer.append(((RouterExitPolicyImpl) exitPolicy).toByteArray(), false);
+			exitPolicy.save(convenientStreamWriter);
 		}
-		buffer.append(routerSignature, true);
-		buffer.append(contact);
-		buffer.append(family.size());
+		convenientStreamWriter.writeByteArray(routerSignature, true);
+		convenientStreamWriter.writeString(contact);
+		convenientStreamWriter.writeInt(family.size());
 		for (Fingerprint member : family)
 		{
-			buffer.append(member.getBytes(), true);
+			convenientStreamWriter.writeByteArray(member.getBytes(), true);
 		}
-		buffer.append(validUntil);
-		buffer.append(lastUpdate);
-		buffer.append(routerFlags.toByteArray(), true);
-		buffer.append(rankingIndex);
-		
-		return buffer.toArray();
-	}
+		convenientStreamWriter.writeLong(validUntil);
+		convenientStreamWriter.writeLong(lastUpdate);
+		routerFlags.save(convenientStreamWriter);
+        convenientStreamWriter.writeFloat(rankingIndex);
+    }
 	/**
 	 * Clone, but do not throw an exception.
 	 */
