@@ -42,7 +42,7 @@ public final class TimeTest
 	/**
 	 * Gets the current difference between system time and atomic time.
 	 */
-	@Test
+	@Test(timeOut = 2000)
 	public void testTimeDifference()
 	{
 		try
