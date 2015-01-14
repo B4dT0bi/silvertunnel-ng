@@ -19,11 +19,9 @@
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
 import java.util.Arrays;
-import java.util.Date;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 
 /**
  * used to store server descriptors from a dir-spec v2 network status document.

@@ -27,7 +27,7 @@ import org.silvertunnel_ng.netlib.util.FileUtil;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import javax.xml.bind.DatatypeConverter;
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;

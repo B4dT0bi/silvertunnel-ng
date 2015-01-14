@@ -41,7 +41,7 @@ import static org.testng.AssertJUnit.assertTrue;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.xml.bind.DatatypeConverter;
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.api.Router;

@@ -52,35 +52,44 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.util;
 
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1OutputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.x509.RSAPublicKeyStructure;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.encodings.OAEPEncoding;
-import org.bouncycastle.crypto.engines.RSAEngine;
-import org.bouncycastle.crypto.params.RSAKeyParameters;
-import org.bouncycastle.jce.provider.JCERSAPublicKey;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.PEMWriter;
-import org.bouncycastle.util.encoders.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigInteger;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Security;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
+
+import javax.crypto.Cipher;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.spongycastle.asn1.ASN1InputStream;
+import org.spongycastle.asn1.ASN1OutputStream;
+import org.spongycastle.asn1.ASN1Sequence;
+import org.spongycastle.asn1.x509.RSAPublicKeyStructure;
+import org.spongycastle.crypto.InvalidCipherTextException;
+import org.spongycastle.crypto.encodings.OAEPEncoding;
+import org.spongycastle.crypto.engines.RSAEngine;
+import org.spongycastle.crypto.params.RSAKeyParameters;
+import org.spongycastle.jce.provider.JCERSAPublicKey;
+import org.spongycastle.openssl.PEMKeyPair;
+import org.spongycastle.openssl.PEMParser;
+import org.spongycastle.openssl.PEMWriter;
+import org.spongycastle.util.encoders.Base64;
 
 /**
  * this class contains utility functions concerning encryption.
@@ -107,9 +116,9 @@ public class Encryption {
     static {
         try {
             // install BC, if not already done
-            if (Security.getProvider("BC") == null) // TODO : get rid of bouncycastle...
+            if (Security.getProvider("BC") == null) // TODO : get rid of spongycastle...
             {
-                Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+                Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
             }
         } catch (final Throwable t) {
             LOG.error("Cannot initialize class Encryption", t);

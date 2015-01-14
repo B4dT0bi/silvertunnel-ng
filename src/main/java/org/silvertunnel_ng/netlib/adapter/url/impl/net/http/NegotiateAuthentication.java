@@ -29,8 +29,7 @@ import java.io.IOException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.HashMap;
-
-import javax.xml.bind.DatatypeConverter;
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 
 /**
  * NegotiateAuthentication:

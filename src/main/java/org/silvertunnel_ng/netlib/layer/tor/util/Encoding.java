@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.DatatypeConverter;
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 
 /**
  * this class contains utility functions concerning encodings.

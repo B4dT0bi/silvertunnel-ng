@@ -12,12 +12,11 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.List;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.silvertunnel_ng.netlib.layer.tor.util.ASN1Parser.ASN1BitString;
 import org.silvertunnel_ng.netlib.layer.tor.util.ASN1Parser.ASN1Integer;
 import org.silvertunnel_ng.netlib.layer.tor.util.ASN1Parser.ASN1Object;
 import org.silvertunnel_ng.netlib.layer.tor.util.ASN1Parser.ASN1Sequence;
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 
 public class RSAKeyEncoder
 {

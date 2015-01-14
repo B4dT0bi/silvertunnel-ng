@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.security.Security;
 import java.util.Date;
 
-import javax.xml.bind.DatatypeConverter;
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
@@ -82,7 +82,7 @@ public final class DirectoryConsensusLocalTest
 		// install BC, if not already done
 		if (Security.getProvider("BC") == null)
 		{
-			Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+			Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
 		}
 	}
 

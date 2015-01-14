@@ -54,11 +54,10 @@ package org.silvertunnel_ng.netlib.layer.tor.common;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.CircuitHistory;
 import org.silvertunnel_ng.netlib.layer.tor.directory.FingerprintImpl;
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 import org.silvertunnel_ng.netlib.util.SystemPropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

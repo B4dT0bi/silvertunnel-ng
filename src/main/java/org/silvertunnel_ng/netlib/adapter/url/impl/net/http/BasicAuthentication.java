@@ -30,8 +30,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import javax.xml.bind.DatatypeConverter;
-
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

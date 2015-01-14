@@ -21,7 +21,7 @@ package org.silvertunnel_ng.netlib.layer.tor.directory;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import javax.xml.bind.DatatypeConverter;
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;

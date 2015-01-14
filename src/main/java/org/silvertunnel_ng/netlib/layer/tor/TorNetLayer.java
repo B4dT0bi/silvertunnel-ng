@@ -43,8 +43,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.silvertunnel_ng.netlib.api.NetAddress;
 import org.silvertunnel_ng.netlib.api.NetAddressNameService;
 import org.silvertunnel_ng.netlib.api.NetLayer;
@@ -64,6 +62,7 @@ import org.silvertunnel_ng.netlib.layer.tor.hiddenservice.HiddenServicePropertie
 import org.silvertunnel_ng.netlib.layer.tor.stream.TCPStream;
 import org.silvertunnel_ng.netlib.nameservice.cache.CachingNetAddressNameService;
 import org.silvertunnel_ng.netlib.nameservice.tor.TorNetAddressNameService;
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 import org.silvertunnel_ng.netlib.util.StringStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

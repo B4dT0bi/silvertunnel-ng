@@ -44,7 +44,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-import javax.xml.bind.DatatypeConverter;
+import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encryption;
@@ -75,7 +75,7 @@ public class AuthorityKeyCertificatesLocalTest
 		// install BC, if not already done
 		if (Security.getProvider("BC") == null)
 		{
-			Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+			Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
 		}
 	}
 
