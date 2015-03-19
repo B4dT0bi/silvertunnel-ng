@@ -92,7 +92,7 @@ public final class HiddenServiceDescriptorCache
 			try
 			{
 				FileInputStream fileInputStream = new FileInputStream(TorConfig.getTempDirectory() 
-						   											+ "\\"
+						   											+ File.separator
 						   											+ TorConfig.FILENAME_PREFIX
 						   											+ "hidden_service_descriptor.cache");
 				ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
@@ -122,7 +122,7 @@ public final class HiddenServiceDescriptorCache
 		try
 		{
 			FileOutputStream fileOutputStream = new FileOutputStream(TorConfig.getTempDirectory() 
-																   + "\\"
+																   + File.separator
 																   + TorConfig.FILENAME_PREFIX
 					                                               + "hidden_service_descriptor.cache");
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
