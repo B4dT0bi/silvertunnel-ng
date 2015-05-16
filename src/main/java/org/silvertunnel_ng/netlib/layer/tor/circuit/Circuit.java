@@ -291,26 +291,26 @@ public final class Circuit
 					// attach circuit to TLS
 					lastTarget = routeServers[0];
                     routeEstablished = 0;
-					if (LOG.isDebugEnabled())
-					{
+					//if (LOG.isDebugEnabled())
+					//{
 						LOG.debug("Circuit: connecting to " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")" + " ["
 							+ routeServers[0].getPlatform() + "] over tls");
-					}
+					//}
 					tls = fnh.getConnection(routeServers[0]);
 					queue = new Queue(TorConfig.queueTimeoutCircuit);
 					// attention: Addition to circuits-list is quite hidden
 					// here.
 					circuitId = tls.assignCircuitId(this);
-					if (LOG.isDebugEnabled())
-					{
+					//if (LOG.isDebugEnabled())
+					//{
 						LOG.debug("Circuit: assigned to tls " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")" + " ["
 							+ routeServers[0].getPlatform() + "]");
-					}
+					//}
 					// connect to entry point = routeServers[0]
-					if (LOG.isDebugEnabled())
-					{
+					//if (LOG.isDebugEnabled())
+					//{
 						LOG.debug("Circuit: sending create cell to " + routeServers[0].getNickname());
-					}
+					//}
 					routeNodes = new Node[routeServers.length];
 					if (TorConfig.useCreateFastCells())
 					{
@@ -320,11 +320,11 @@ public final class Circuit
 					{
 						create(routeServers[0]);
 					}
-					if (LOG.isDebugEnabled())
-					{
+					//if (LOG.isDebugEnabled())
+					//{
 						LOG.debug("Circuit: connected to entry point " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")"
 							+ " [" + routeServers[0].getPlatform() + "]");
-					}
+					//}
 					routeEstablished = 1;
                     dir.getGuardList().successful(routeServers[0].getFingerprint());
 					// extend route
@@ -334,10 +334,10 @@ public final class Circuit
 						extend(i, routeServers[i]);
 						routeEstablished += 1;
 					}
-					if (LOG.isDebugEnabled())
-					{
+					//if (LOG.isDebugEnabled())
+					//{
 						LOG.debug("Circuit: " + toString() + " successfully established");
-					}
+					//}
 					// finished - success
 					break;
 
@@ -349,16 +349,16 @@ public final class Circuit
                         dir.getGuardList().unsuccessful(routeServers[0].getFingerprint());
                     }
 					// some error occurred during the creating of the circuit
-					if (LOG.isDebugEnabled())
-					{
+					//if (LOG.isDebugEnabled())
+					//{
 						LOG.debug("Circuit: " + toString() + " Exception " + misses + " :" + e, e);
-					}
+					//}
 					if (lastTarget != null)
 					{
-						if (LOG.isDebugEnabled())
-						{
+						//if (LOG.isDebugEnabled())
+						//{
 							LOG.debug("Circuit: " + toString() + "\nlastTarget\n" + lastTarget.toLongString());
-						}
+						//}
 					}
 					// cleanup now
 					if (circuitId != 0)
@@ -384,10 +384,10 @@ public final class Circuit
 					}
 					// build a new route over the hosts that are known to be
 					// working, punish failing host
-					if (LOG.isDebugEnabled())
-					{
+					//if (LOG.isDebugEnabled())
+					//{
 						LOG.debug("Circuit: " + toString() + " build a new route over the hosts that are known to be working, punish failing host");
-					}
+					//}
 					routeServers = CircuitAdmin.restoreCircuit(dir, sp, routeServers, routeEstablished);
 				}
 			}
@@ -395,20 +395,20 @@ public final class Circuit
 			if (setupDurationMs < TorConfig.maxAllowedSetupDurationMs)
 			{
 				established = true;
-				if (LOG.isDebugEnabled())
-				{
+				//if (LOG.isDebugEnabled())
+				//{
 					LOG.debug("Circuit: " + toString() + " established within " + setupDurationMs + " ms - OK");
-				}
+				//}
 				// fire event
 				torEventService.fireEvent(new TorEvent(TorEvent.CIRCUIT_BUILD, this, "Circuit build " + toString()));
 				successful = true;
 			}
 			else
 			{
-				if (LOG.isInfoEnabled())
-				{
+				//if (LOG.isInfoEnabled())
+				//{
 					LOG.info("Circuit: close-after-create " + toString() + ", because established within " + setupDurationMs + " ms was too long");
-				}
+				//}
 				close(true);
 			}
 		}
@@ -418,10 +418,10 @@ public final class Circuit
         }
 		catch (Exception exception)
 		{
-			if (LOG.isDebugEnabled())
-			{
+			//if (LOG.isDebugEnabled())
+			//{
 				LOG.debug("got Exception while constructing circuit : " + exception, exception);
-			}
+			//}
 		}
 		finally
 		{

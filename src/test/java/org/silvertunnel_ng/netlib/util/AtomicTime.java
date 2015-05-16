@@ -40,7 +40,7 @@ public class AtomicTime
 	/** class logger. */
 	private static final Logger LOG = LoggerFactory.getLogger(AtomicTime.class);
 	
-	private static final String ATOMIC_TIME_SERVER = "216.171.112.36";
+	private static final String ATOMIC_TIME_SERVER = "time-a.nist.gov";
 
 	public static final long getTimeDiffinMillis() throws IOException
 	{

@@ -215,9 +215,9 @@ public class Encryption {
             if (decryptedDigest != null && dataDigest != null && decryptedDigest.length > dataDigest.length) {
                 // try to fix bug in security calculation with OpenJDK-6 java
                 // web start (ticket #59)
-                LOG.warn("verifySignature(): try to fix bug in security calculation with OpenJDK-6 java web start (ticket #59)");
-                LOG.warn("verifySignature(): original decryptedDigest=" + Encoding.toHexString(decryptedDigest));
-                LOG.warn("verifySignature(): dataDigest              =" + Encoding.toHexString(dataDigest));
+                //LOG.warn("verifySignature(): try to fix bug in security calculation with OpenJDK-6 java web start (ticket #59)");
+                //LOG.warn("verifySignature(): original decryptedDigest=" + Encoding.toHexString(decryptedDigest));
+                //LOG.warn("verifySignature(): dataDigest              =" + Encoding.toHexString(dataDigest));
                 final byte[] fixedDecryptedDigest = new byte[dataDigest.length];
                 System.arraycopy(decryptedDigest, decryptedDigest.length - dataDigest.length, fixedDecryptedDigest, 0, dataDigest.length);
                 decryptedDigest = fixedDecryptedDigest;

@@ -273,7 +273,7 @@ public final class HiddenServiceClient
 			}
 
 			// success
-			LOG.info("getNewRendezvousPoint(): establishing rendezvous point for " + z + " at " + rendezvousPointRouter);
+			LOG.debug("getNewRendezvousPoint(): establishing rendezvous point for " + z + " at " + rendezvousPointRouter);
 			return new RendezvousPointData(rendezvousCookie, rendezvousPointRouter, myRendezvousCirc);
 		}
 		catch (final IOException e)
@@ -319,7 +319,7 @@ public final class HiddenServiceClient
 	                                          final String z) throws Throwable {
 
 		final Fingerprint introPointFingerprint = introPoint.getIdentifierAsFingerprint();
-		LOG.info("sendIntroduction1Cell(): contacting introduction point=" + introPointFingerprint + " for " + z);
+		LOG.debug("sendIntroduction1Cell(): contacting introduction point=" + introPointFingerprint + " for " + z);
 
 		// build new circuit where the last node is introduction point
 		final TCPStreamProperties spIntro = new TCPStreamProperties();
@@ -336,7 +336,7 @@ public final class HiddenServiceClient
 				LOG.debug("Circuit to Introductionpoint not successful.");
 				throw new TorException("Circuit to Introductionpoint " + introPointFingerprint + " not successful.");
 			}
-			LOG.info("sendIntroduction1Cell(): use Circuit to introduction point=" + myIntroCirc);
+			LOG.debug("sendIntroduction1Cell(): use Circuit to introduction point=" + myIntroCirc);
 
 			// send CellIntro1 data encrypted with PK of the introPoint
 			final Router introPointServicePublicKey = new RouterImpl(introPoint.getServicePublicKey());
@@ -354,7 +354,7 @@ public final class HiddenServiceClient
 				throw new TorException("sendIntroduction1Cell(): Got NACK from Introduction Point introACK=" + introACK);
 			}
 			// introduce ACK is received
-			LOG.info("sendIntroduction1Cell(): Got ACK from Intro Point");
+			LOG.debug("sendIntroduction1Cell(): Got ACK from Intro Point");
 
 			return introPointServicePublicKeyNode;
 		}
@@ -403,6 +403,6 @@ public final class HiddenServiceClient
 
 		myRendezvousCircuit.addNode(introPointServicePublicKeyNode);
 
-		LOG.info("doRendezvous(): succesfully established rendezvous with " + z);
+		LOG.debug("doRendezvous(): succesfully established rendezvous with " + z);
 	}
 }

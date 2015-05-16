@@ -18,19 +18,6 @@
 
 package org.silvertunnel_ng.netlib.layer.tls;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.util.Arrays;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-
 import org.silvertunnel_ng.netlib.api.NetSocket;
 import org.silvertunnel_ng.netlib.api.impl.NetSocket2Socket;
 import org.silvertunnel_ng.netlib.api.impl.Socket2NetSocket;
@@ -38,93 +25,89 @@ import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.*;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
 /**
  * Helper method to access the Java-internal TLS/SSL logic.
- * 
+ *
  * @author hapke
  */
-public class TLSNetSocketUtil
-{
-	/** */
-	private static final Logger LOG = LoggerFactory.getLogger(TLSNetSocketUtil.class);
+public class TLSNetSocketUtil {
+    /** */
+    private static final Logger LOG = LoggerFactory.getLogger(TLSNetSocketUtil.class);
 
-	/**
-	 * Returns a socket layered over an existing socket connected to the named
-	 * host, at the given port. This construction can be used when tunneling
-	 * SSL/TLS through a proxy or when negotiating the use of SSL/TLS over an
-	 * existing socket. The host and port refer to the logical peer destination.
-	 * 
-	 * @param lowerLayerNetSocket
-	 * @param remoteAddress
-	 * @param autoClose
-	 * @param enabledCipherSuites
-	 *            if null, the default TLS cipher suites are used
-	 * @param keyManagers
-	 *            if null, the now local keys are used
-	 * @param trustManagers
-	 *            if null, the default trust managers are used
-	 * @return
-	 * @throws IOException
-	 */
-	public static NetSocket createTLSSocket(NetSocket lowerLayerNetSocket,
-			TcpipNetAddress remoteAddress, boolean autoClose,
-			String[] enabledCipherSuites, KeyManager[] keyManagers,
-			TrustManager[] trustManagers) throws IOException
-	{
-		final Socket lowerLayerSocket = new NetSocket2Socket(
-				lowerLayerNetSocket);
+    /**
+     * Returns a socket layered over an existing socket connected to the named
+     * host, at the given port. This construction can be used when tunneling
+     * SSL/TLS through a proxy or when negotiating the use of SSL/TLS over an
+     * existing socket. The host and port refer to the logical peer destination.
+     *
+     * @param lowerLayerNetSocket
+     * @param remoteAddress
+     * @param autoClose
+     * @param enabledCipherSuites if null, the default TLS cipher suites are used
+     * @param keyManagers         if null, the now local keys are used
+     * @param trustManagers       if null, the default trust managers are used
+     * @return
+     * @throws IOException
+     */
+    public static NetSocket createTLSSocket(NetSocket lowerLayerNetSocket,
+                                            TcpipNetAddress remoteAddress, boolean autoClose,
+                                            String[] enabledCipherSuites, KeyManager[] keyManagers,
+                                            TrustManager[] trustManagers) throws IOException {
+        final Socket lowerLayerSocket = new NetSocket2Socket(
+                lowerLayerNetSocket);
 
-		// create TLS/SSL socket factory
-		SSLContext context = null;
-		try
-		{
-			context = SSLContext.getInstance("TLS", "SunJSSE");
-			context.init(keyManagers, trustManagers, null);
-		}
-		catch (final NoSuchAlgorithmException e)
-		{
-			final IOException ioe = new IOException();
-			ioe.initCause(e);
-			throw ioe;
-		}
-		catch (final KeyManagementException e)
-		{
-			final IOException ioe = new IOException();
-			ioe.initCause(e);
-			throw ioe;
-		}
-		catch (final NoSuchProviderException e)
-		{
-			final IOException ioe = new IOException();
-			ioe.initCause(e);
-			throw ioe;
-		}
-		final SSLSocketFactory f = context.getSocketFactory();
+        // create TLS/SSL socket factory
+        SSLContext context = null;
+        try {
+            context = SSLContext.getInstance("TLS");
+            context.init(keyManagers, trustManagers, null);
+        } catch (final NoSuchAlgorithmException e) {
+            final IOException ioe = new IOException();
+            ioe.initCause(e);
+            LOG.debug("Got Exception during SSLContext init", e);
+            throw ioe;
+        } catch (final KeyManagementException e) {
+            final IOException ioe = new IOException();
+            ioe.initCause(e);
+            LOG.debug("Got Exception during SSLContext init", e);
+            throw ioe;
+        }
 
-		// create TLS/SSL session with socket
-		final String hostname = (remoteAddress != null) ? remoteAddress
-				.getHostname() : null;
-		final int port = (remoteAddress != null) ? remoteAddress.getPort() : 0;
-		final SSLSocket resultSocket = (SSLSocket) f.createSocket(
-				lowerLayerSocket, hostname, port, autoClose);
+        final SSLSocketFactory f = context.getSocketFactory();
 
-		// set properties
-		if (LOG.isDebugEnabled())
-		{
-			LOG.debug("default enabledCipherSuites="
-				+ Arrays.toString(resultSocket.getEnabledCipherSuites()));
-		}
-		if (enabledCipherSuites != null)
-		{
-			resultSocket.setEnabledCipherSuites(enabledCipherSuites);
-			if (LOG.isDebugEnabled())
-			{
-				LOG.debug("set enabledCipherSuites="
-					+ Arrays.toString(enabledCipherSuites));
-			}
-		}
+        // create TLS/SSL session with socket
+        final String hostname = (remoteAddress != null) ? remoteAddress
+                .getHostname() : null;
+        final int port = (remoteAddress != null) ? remoteAddress.getPort() : 0;
+        final SSLSocket resultSocket = (SSLSocket) f.createSocket(
+                lowerLayerSocket, hostname, port, autoClose);
 
-		return new TLSNetSocket(new Socket2NetSocket(resultSocket),
-				resultSocket.getSession(), "" + lowerLayerNetSocket);
-	}
+        // set properties
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("default enabledCipherSuites="
+                    + Arrays.toString(resultSocket.getEnabledCipherSuites()));
+        }
+        if (enabledCipherSuites != null) {
+            resultSocket.setEnabledCipherSuites(enabledCipherSuites);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("set enabledCipherSuites="
+                        + Arrays.toString(enabledCipherSuites));
+            }
+        }
+
+        if (!resultSocket.isConnected()) {
+			resultSocket.connect(new InetSocketAddress(hostname, port));
+        }
+
+        return new TLSNetSocket(new Socket2NetSocket(resultSocket),
+                resultSocket.getSession(), "" + lowerLayerNetSocket);
+    }
 }

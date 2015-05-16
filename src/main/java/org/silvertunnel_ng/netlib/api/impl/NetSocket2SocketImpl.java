@@ -18,9 +18,11 @@
 
 package org.silvertunnel_ng.netlib.api.impl;
 
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -69,12 +71,21 @@ public class NetSocket2SocketImpl extends SocketImpl
 
 	private SocketTimeoutInputStream inputStream;
 
+	private SocketImpl impl;
+
 	/**
 	 * @param netSocket
 	 *            connect using this NetSocket
 	 */
 	public NetSocket2SocketImpl(final NetSocket netSocket)
 	{
+		FileDescriptor fd = new FileDescriptor();
+		try {
+			this.impl = (SocketImpl) Class.forName("java.net.PlainSocketImpl").getConstructor(FileDescriptor.class).newInstance(fd);
+		} catch (Exception e) {
+			LOG.warn("exception while creating dummy Socket", e);
+		}
+		this.fd = fd;
 		this.netSocket = netSocket;
 	}
 
@@ -84,6 +95,13 @@ public class NetSocket2SocketImpl extends SocketImpl
 	 */
 	public NetSocket2SocketImpl(final NetLayer netLayer)
 	{
+		FileDescriptor fd = new FileDescriptor();
+		try {
+			this.impl = (SocketImpl) Class.forName("java.net.PlainSocketImpl").getConstructor(FileDescriptor.class).newInstance(fd);
+		} catch (Exception e) {
+			LOG.warn("exception while creating dummy Socket", e);
+		}
+		this.fd = fd;
 		this.netLayer = netLayer;
 	}
 
