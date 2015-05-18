@@ -1,0 +1,16 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>parent</artifactId>
+        <groupId>org.silvertunnel-ng</groupId>
+        <version>0.0.4-SNAPSHOT</version>
+    </parent>
+    <artifactId>android-support</artifactId>
+    <name>SilverTunnel-NG Android Support library</name>
+    <packaging>jar</packaging>
+    <url>https://silvertunnel-ng.org</url>
+    <description>This Library is only needed for compiling SilverTunnel-NG Netlib</description>
+
+</project>

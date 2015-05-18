@@ -3,7 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SilverTunnel-NG.iml" filepath="$PROJECT_DIR$/SilverTunnel-NG.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-support/android-support.iml" filepath="$PROJECT_DIR$/android-support/android-support.iml" />
+      <module fileurl="file://$PROJECT_DIR$/netlib/netlib.iml" filepath="$PROJECT_DIR$/netlib/netlib.iml" />
     </modules>
   </component>
 </project>
-

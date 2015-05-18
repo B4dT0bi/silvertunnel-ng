@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>parent</artifactId>
+        <groupId>org.silvertunnel-ng</groupId>
+        <version>0.0.4-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>netlib</artifactId>
+    <name>SilverTunnel-NG Netlib</name>
+    <packaging>jar</packaging>
+    <url>https://silvertunnel-ng.org</url>
+    <description>SilverTunnel-NG Netlib is a free library for the Java programming language that implements and
+        encapsulates all the complex network protocol stuff needed for anonymous communication over the Tor anonymity
+        network. Netlib can be easily integrated in almost every existing and new Java application. The library requires
+        Java 1.6/Java SE 6 or a newer version.
+        The original silvertunnel Netlib can be found here : silvertunnel.org
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.directory.studio</groupId>
+            <artifactId>org.apache.httpcomponents.httpcore</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-android</artifactId>
+            <version>4.3.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.madgag.spongycastle</groupId>
+            <artifactId>prov</artifactId>
+            <version>1.51.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.madgag.spongycastle</groupId>
+            <artifactId>pkix</artifactId>
+            <version>1.51.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>jdepend</groupId>
+            <artifactId>jdepend</artifactId>
+            <version>2.9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8.21</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.silvertunnel-ng</groupId>
+            <artifactId>android-support</artifactId>
+            <version>0.0.4-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+</project>
