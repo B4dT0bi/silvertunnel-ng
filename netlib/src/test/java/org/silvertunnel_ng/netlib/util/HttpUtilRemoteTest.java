@@ -70,7 +70,7 @@ public class HttpUtilRemoteTest
 		NameServiceGlobalUtil.setIpNetAddressNameService(DefaultIpNetAddressNameService.getInstance());
 	}
 
-	private static final String POSTTEST_URL = "http://silvertunnel.org/httptest/posttest.jsp";
+	private static final String POSTTEST_URL = "http://httptest.silvertunnel-ng.org/httptest/posttest.php";
 	private static final String POSTTEST_URL2 = "http://109.123.119.163:9031/tor/rendezvous2/publish";
 
 	@Test(timeOut = 15000)
