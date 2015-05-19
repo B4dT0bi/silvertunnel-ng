@@ -214,7 +214,7 @@ public class CellRelay extends Cell
 	 */
 	void initFromData() throws TorException
 	{
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("CellRelay.initFromData() for "
 					+ outCircuit.getRouteEstablished() + " layers");
@@ -239,7 +239,7 @@ public class CellRelay extends Cell
 			}
 			// decrypt payload
 			outCircuit.getRouteNodes()[encryptingRouter].symDecrypt(payload);
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.info("CellRelay.initFromDate with encryptingRouter="
 						+ encryptingRouter + " has decrypted payload="
@@ -269,7 +269,7 @@ public class CellRelay extends Cell
 				 && digest[2] == digestCalc[2]
 				 && digest[3] == digestCalc[3])
 				{
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug("CellRelay.initFromData(): backward digest from "
 								+ outCircuit.getRouteNodes()[encryptingRouter]
@@ -280,7 +280,7 @@ public class CellRelay extends Cell
 				}
 				else
 				{
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug("didn't verified digest="
 								+ Encoding.toHexString(digest)
@@ -305,7 +305,7 @@ public class CellRelay extends Cell
 		length = Encoding.byteArrayToInt(payload, CellRelay.RELAY_LENGTH_POS, CellRelay.RELAY_LENGTH_SIZE);
 		System.arraycopy(payload, CellRelay.RELAY_DATA_POS, data, 0, CellRelay.RELAY_DATA_SIZE);
 
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("CellRelay.initFromData(): " + toString());
 		}
@@ -335,7 +335,7 @@ public class CellRelay extends Cell
 	public
 	byte[] toByteArray()
 	{
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("CellRelay.toByteArray() for " + outCircuit.getRouteEstablished() + " layers");
 		}
@@ -361,14 +361,14 @@ public class CellRelay extends Cell
 		digest = outCircuit.getRouteNodes()[i0].calcForwardDigest(payload);
 		System.arraycopy(digest, 0, payload, CellRelay.RELAY_DIGEST_POS, CellRelay.RELAY_DIGEST_SIZE);
 
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("CellRelay.toByteArray(): " + toString());
 		}
 		// encrypt backwards, take keys from route
 		for (int i = i0; i >= 0; --i)
 		{
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("CellRelay.toByteArray with encryptingRouter=" + i
 						+ " has unencrypted payload="
@@ -484,7 +484,7 @@ public class CellRelay extends Cell
 			}
 			catch (final UnknownHostException e)
 			{
-				if (LOG.isDebugEnabled())
+				//if (LOG.isDebugEnabled())
 				{
 					LOG.debug("got UnknownHostException : ip = "
 						+ Arrays.toString(ip) 

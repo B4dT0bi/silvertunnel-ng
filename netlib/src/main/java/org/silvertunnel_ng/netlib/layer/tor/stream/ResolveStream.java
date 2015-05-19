@@ -66,9 +66,9 @@ public final class ResolveStream extends TCPStream {
         circuit.getStreamHistory().add(hostname);
         queue = new Queue(queueTimeoutS);
         setClosed(false);
-        if (LOG.isDebugEnabled()) {
+        //if (LOG.isDebugEnabled()) {
             LOG.debug("resolving hostname " + hostname + " on stream " + toString());
-        }
+        //}
         // send RELAY-RESOLV
         sendCell(new CellRelayResolve(this, hostname));
         // wait for RELAY_RESOLVED

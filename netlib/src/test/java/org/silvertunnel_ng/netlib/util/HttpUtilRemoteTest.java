@@ -82,7 +82,7 @@ public class HttpUtilRemoteTest
 		// communicate with the remote side
 		final NetLayer netLayer = NetFactory.getInstance().getNetLayerById(NetLayerIDs.TCPIP);
 		final NetSocket netSocket = netLayer.createNetSocket(null, null, HttpUtil.HTTPTEST_SERVER_NETADDRESS);
-		final long timeoutInMs = 5L * 1000L;
+		final long timeoutInMs = 10L * 1000L;
 		HttpUtil.getInstance();
 		final byte[] httpResponse = HttpUtil.get(netSocket,
 				HttpUtil.HTTPTEST_SERVER_NETADDRESS,
@@ -98,9 +98,9 @@ public class HttpUtilRemoteTest
 
 	private static final String DATA_TO_POST = "Das sind die\nPost\nDaten";
 	private static final String EXPECTED_RESPONSE = "<postedData>" + DATA_TO_POST + "</postedData>";
-	private static final long TIMEOUT_MS = 15000;
+	private static final long TIMEOUT_MS = 30000;
 
-	@Test(timeOut = 15000)
+	@Test(timeOut = 40000)
 	public void testPostRequest() throws Exception
 	{
 

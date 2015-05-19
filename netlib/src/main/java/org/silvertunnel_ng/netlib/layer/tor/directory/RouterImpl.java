@@ -456,7 +456,7 @@ public final class RouterImpl implements Router, Cloneable
 			++nr;
 			epList.add(new RouterExitPolicyImpl(epAccept, epIp, epNetmask, epLoPort, epHiPort));
 		}
-		if (LOG.isDebugEnabled() && nr >= MAX_EXITPOLICY_ITEMS)
+		if (/*LOG.isDebugEnabled() && */nr >= MAX_EXITPOLICY_ITEMS)
 		{
 			LOG.debug("Router has more than {} exitpolicy items", MAX_EXITPOLICY_ITEMS);
 		}

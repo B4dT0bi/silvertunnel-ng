@@ -254,7 +254,7 @@ public final class Queue
 			{
 				if (relay.isTypeTruncated())
 				{
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug("Queue.receiveRelayCell: expected relay-cell of type "
 							+ CellRelay.getRelayCommandAsString(type)
@@ -273,7 +273,7 @@ public final class Queue
 				}
 				else
 				{
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug("Queue.receiveRelayCell: expected relay-cell of type "
 							+ CellRelay.getRelayCommandAsString(type)

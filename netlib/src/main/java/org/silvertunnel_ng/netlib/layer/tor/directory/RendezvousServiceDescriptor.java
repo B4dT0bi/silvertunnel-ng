@@ -315,7 +315,7 @@ public final class RendezvousServiceDescriptor implements Serializable
 			final byte[] introductionPointsBytes = DatatypeConverter.parseBase64Binary(introductionPointsBase64);
 			final String introductionPointsStr = new String(introductionPointsBytes, Util.UTF8);
 			introductionPoints = SDIntroductionPoint.parseMultipleIntroductionPoints(introductionPointsStr);
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("ips = " + introductionPoints);
 			}

@@ -127,7 +127,7 @@ public class AuthorityKeyCertificates
 				// check certificate
 				if (!oneCert.getDirKeyExpires().after(minValidUntil))
 				{
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug("skip authorityKeyCertificate because expired with fingerprint="
 							+ oneCert.getDirIdentityKeyDigest()
@@ -138,7 +138,7 @@ public class AuthorityKeyCertificates
 				if (!allowedAuthorityKeyIdentFingerprints.contains(oneCert
 						.getDirIdentityKeyDigest()))
 				{
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug("skip authorityKeyCertificate because unauthorized fingerprint="
 							+ oneCert.getDirIdentityKeyDigest());
@@ -194,7 +194,7 @@ public class AuthorityKeyCertificates
 
 		// calculate result
 		final boolean result = (certValidCount >= MIN_CERT_VALID_COUNT && certOutdatedCount <= MAX_CERT_OUTDATED_COUNT);
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("isValid(): result=" + result + ", certValidCount="
 				+ certValidCount + ", certOutdatedCount=" + certOutdatedCount); // TODO

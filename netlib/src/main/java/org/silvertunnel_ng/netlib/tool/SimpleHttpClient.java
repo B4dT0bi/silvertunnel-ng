@@ -101,7 +101,7 @@ public final class SimpleHttpClient
 		try
 		{
 
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("start download with hostAndPort=" + hostAndPort
 						+ " and path=" + path);
@@ -159,7 +159,7 @@ public final class SimpleHttpClient
 			}
 
 			// result
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("end download with hostAndPort=" + hostAndPort
 						+ " and path=" + path

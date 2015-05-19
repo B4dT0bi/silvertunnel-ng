@@ -29,87 +29,104 @@ import java.io.InputStream;
 public class ConvenientStreamReader {
     private static final Logger LOG = LoggerFactory.getLogger(ConvenientStreamReader.class);
     private InputStream inputStream;
+
     public ConvenientStreamReader(final InputStream inputStream) throws IOException {
         this.inputStream = inputStream;
     }
 
     /**
      * Reads a byte from the underlaying InputStream.
+     *
      * @return a byte
      * @throws IOException
      */
     public byte readByte() throws IOException {
-        byte [] result = new byte [1];
+        byte[] result = new byte[1];
         inputStream.read(result);
         return result[0];
     }
+
     /**
      * Reads a byte array from the underlaying InputStream.
+     *
      * @param len the len of the byte array
      * @return a byte array
      * @throws IOException
      */
-    public byte [] readByteArray(final int len) throws IOException {
-        byte [] result = new byte [len];
+    public byte[] readByteArray(final int len) throws IOException {
+        if (len > 200000000) throw new IOException("lenght seems to be to big! len = " + len);
+        byte[] result = new byte[len];
         inputStream.read(result);
         return result;
     }
+
     /**
      * Reads a byte array from the underlaying InputStream.
      * It first reads the length of the byte array and then the byte array itself.
+     *
      * @return a byte array
      * @throws IOException
      */
-    public byte [] readByteArray() throws IOException {
-        int len = readInt();
+    public byte[] readByteArray() throws IOException {
+        int len = readInt();// TODO : check if the read has problems with the endianess on Android
         if (len == 0) return null;
+
         return readByteArray(len);
     }
+
     /**
      * Reads an int from the underlaying InputStream.
+     *
      * @return an int
      * @throws IOException
      */
     public int readInt() throws IOException {
-        byte [] result = new byte [4];
+        byte[] result = new byte[4];
         inputStream.read(result);
         return ByteUtils.bytesToInt(result, 0);
     }
+
     /**
      * Reads a boolean from the underlaying InputStream.
+     *
      * @return a boolean
      * @throws IOException
      */
     public boolean readBoolean() throws IOException {
         return readByte() == (byte) 1;
     }
+
     /**
      * Reads a float from the underlaying InputStream.
+     *
      * @return a float
      * @throws IOException
      */
     public float readFloat() throws IOException {
         return Float.intBitsToFloat(readInt());
     }
+
     /**
      * Reads a long from the underlaying InputStream.
+     *
      * @return a long
      * @throws IOException
      */
     public long readLong() throws IOException {
-        byte [] result = new byte [8];
+        byte[] result = new byte[8];
         inputStream.read(result);
         return ByteUtils.bytesToLong(result);
     }
+
     /**
      * Reads a String from the underlaying InputStream.
+     *
      * @return a String
      * @throws IOException
      */
     public String readString() throws IOException {
         byte[] tmp = readByteArray();
-        if (tmp == null || tmp.length == 0)
-        {
+        if (tmp == null || tmp.length == 0) {
             return null;
         }
         return new String(tmp);

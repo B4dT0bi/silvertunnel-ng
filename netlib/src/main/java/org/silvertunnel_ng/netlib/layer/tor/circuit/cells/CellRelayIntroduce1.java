@@ -126,7 +126,7 @@ public class CellRelayIntroduce1 extends CellRelay
 				// g^x Diffie-Hellman data, part 1 [128 octets]
 				introPointServicePublicKeyNode.getDhXBytes());
 		final byte[] encryptedData = introPointServicePublicKeyNode.asymEncrypt(unencryptedData);
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("CellRelayIntroduce1: unencryptedData=" + Encoding.toHexString(unencryptedData));
 			LOG.debug("CellRelayIntroduce1: encryptedData=" + Encoding.toHexString(encryptedData));
@@ -136,7 +136,7 @@ public class CellRelayIntroduce1 extends CellRelay
 		System.arraycopy(encryptedData, 0, data, clearText.length, encryptedData.length);
 		setLength(clearText.length + encryptedData.length);
 
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("CellRelayIntroduce1: cell=" + toString());
 		}

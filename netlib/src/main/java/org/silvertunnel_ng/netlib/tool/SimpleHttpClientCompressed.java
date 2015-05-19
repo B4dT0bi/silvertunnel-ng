@@ -102,9 +102,9 @@ public final class SimpleHttpClientCompressed {
         final long startTime = System.currentTimeMillis();
         try {
 
-            if (LOG.isDebugEnabled()) {
+            //if (LOG.isDebugEnabled()) {
                 LOG.debug("start download with hostAndPort=" + hostAndPort + " and path=" + path);
-            }
+            //}
 
             // prepare URL handling on top of the lowerNetLayer
             final NetlibURLStreamHandlerFactory factory = new NetlibURLStreamHandlerFactory(false);
@@ -150,16 +150,16 @@ public final class SimpleHttpClientCompressed {
 
             final String response = new String(byteBuffer.toArray(), Util.UTF8);
             // result
-            if (LOG.isDebugEnabled()) {
+            //if (LOG.isDebugEnabled()) {
                 LOG.debug("end download with hostAndPort=" + hostAndPort + " and path=" + path + " finished with result of length="
                         + response.length() + " timeReceived : " + (timeReceived - startTime) + " ms");
-            }
+            //}
             return response;
 
         } catch (final IOException e) {
-            if (LOG.isDebugEnabled()) {
+            //if (LOG.isDebugEnabled()) {
                 LOG.debug("end download with hostAndPort=" + hostAndPort + " and path=" + path + " with " + e, e);
-            }
+            //}
             throw e;
         } finally {
             // close stream(s)

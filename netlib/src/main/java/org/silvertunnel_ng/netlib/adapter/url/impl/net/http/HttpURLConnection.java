@@ -484,7 +484,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 
 			setRequests = true;
 		}
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug(requests.toString());
 		}
@@ -1224,7 +1224,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 					writeRequests();
 				}
 				http.parseHTTP(responses, pi, this);
-				if (LOG.isDebugEnabled())
+				//if (LOG.isDebugEnabled())
 				{
 					LOG.debug(responses.toString());
 				}
@@ -2115,21 +2115,21 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 	 * Gets the authentication for an HTTP server, and applies it to the
 	 * connection.
 	 * 
-	 * @param authHdr
+	 * @param authenticationHeader
 	 *            the AuthenticationHeader which tells what auth scheme is
 	 *            prefered.
 	 */
-	private AuthenticationInfo getServerAuthentication(final AuthenticationHeader authhdr)
+	private AuthenticationInfo getServerAuthentication(final AuthenticationHeader authenticationHeader)
 	{
 		/* get authorization from authenticator */
 		AuthenticationInfo ret = null;
-		final String raw = authhdr.raw();
+		final String raw = authenticationHeader.raw();
 		/* When we get an NTLM auth from cache, don't set any special headers */
-		if (authhdr.isPresent())
+		if (authenticationHeader.isPresent())
 		{
-			final HeaderParser p = authhdr.headerParser();
+			final HeaderParser p = authenticationHeader.headerParser();
 			String realm = p.findValue("realm");
-			final String scheme = authhdr.scheme();
+			final String scheme = authenticationHeader.scheme();
 			char schemeID;
 			if ("basic".equalsIgnoreCase(scheme))
 			{

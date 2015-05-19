@@ -124,7 +124,7 @@ class TLSDispatcherThread extends Thread
 			// padding cell?
 			if (cell.isTypePadding())
 			{
-				if (LOG.isDebugEnabled())
+				//if (LOG.isDebugEnabled())
 				{
 					LOG.debug("TLSDispatcher.run: padding cell from {}", tls.getRouter().getNickname());
 				}
@@ -146,7 +146,7 @@ class TLSDispatcherThread extends Thread
 							// found a relay-cell! Try to strip off
 							// symmetric encryption and check the content
 							relay = new CellRelay(circ, cell);
-							if (LOG.isDebugEnabled())
+							//if (LOG.isDebugEnabled())
 							{
 								LOG.debug("relay.getRelayCommandAsString()="
 										+ relay.getRelayCommandAsString());
@@ -157,7 +157,7 @@ class TLSDispatcherThread extends Thread
 							if (streamId != 0)
 							{
 								final Stream stream = circ.getStreams().get(streamId);
-								if (LOG.isDebugEnabled())
+								//if (LOG.isDebugEnabled())
 								{
 									LOG.debug("dispatch to stream with streamId="
 											+ streamId + ", stream=" + stream);
@@ -165,7 +165,7 @@ class TLSDispatcherThread extends Thread
 								if (stream != null)
 								{
 									dispatched = true;
-									if (LOG.isDebugEnabled())
+									//if (LOG.isDebugEnabled())
 									{
 										LOG.debug("TLSDispatcher.run: data from "
 												+ tls.getRouter().getNickname()
@@ -189,7 +189,7 @@ class TLSDispatcherThread extends Thread
 								else
 								{
 									// do nothing
-									if (LOG.isDebugEnabled())
+									//if (LOG.isDebugEnabled())
 									{
 										LOG.debug("else: circ.isUsedByHiddenServiceToConnectToRendezvousPoint()="
 												+ circ.isUsedByHiddenServiceToConnectToRendezvousPoint()
@@ -206,7 +206,7 @@ class TLSDispatcherThread extends Thread
 								{
 									if (circ.isUsedByHiddenServiceToConnectToIntroductionPoint())
 									{
-										if (LOG.isDebugEnabled())
+										//if (LOG.isDebugEnabled())
 										{
 											LOG.debug("TLSDispatcher.run: introduce2 from "
 													+ tls.getRouter()
@@ -228,7 +228,7 @@ class TLSDispatcherThread extends Thread
 									else
 									{
 										// do nothing
-										if (LOG.isDebugEnabled())
+										//if (LOG.isDebugEnabled())
 										{
 											LOG.debug("else isTypeIntroduce2: from "
 													+ tls.getRouter()
@@ -241,7 +241,7 @@ class TLSDispatcherThread extends Thread
 								}
 								else
 								{
-									if (LOG.isDebugEnabled())
+									//if (LOG.isDebugEnabled())
 									{
 										LOG.debug("TLSDispatcher.run: data from "
 												+ tls.getRouter().getNickname()
@@ -273,7 +273,7 @@ class TLSDispatcherThread extends Thread
 						// no relay cell: cell is there to control circuit
 						if (cell.isTypeDestroy())
 						{
-							if (LOG.isDebugEnabled())
+							//if (LOG.isDebugEnabled())
 							{
 								try
 								{
@@ -302,7 +302,7 @@ class TLSDispatcherThread extends Thread
 						}
 						else
 						{
-							if (LOG.isDebugEnabled())
+							//if (LOG.isDebugEnabled())
 							{
 								LOG.debug("TLSDispatcher.run: data from "
 										+ tls.getRouter().getNickname()
@@ -333,14 +333,11 @@ class TLSDispatcherThread extends Thread
 			{
 				// used to be WARNING, but is given too often to be of $REAL
 				// value, like a warning should
-				if (LOG.isDebugEnabled())
+				//if (LOG.isDebugEnabled())
 				{
 					LOG.debug("TLSDispatcher.run: data from "
 							+ tls.getRouter().getNickname()
 							+ " could not get dispatched");
-				}
-				if (LOG.isDebugEnabled())
-				{
 					LOG.debug("TLSDispatcher.run: " + cell.toString());
 				}
 			}

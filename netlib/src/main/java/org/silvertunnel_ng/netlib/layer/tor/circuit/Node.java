@@ -99,7 +99,7 @@ public class Node
 			final byte[] singleDigest = Encryption.getDigest(sha1Input);
 			System.arraycopy(singleDigest, 0, k, i * DIGEST_LEN, DIGEST_LEN);
 		}
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Node.<init>: dhX = \n"
 					+ Encoding.toHexString(dhXBytes, 100) + "\n" + "dhY = \n"
@@ -132,7 +132,7 @@ public class Node
 		System.arraycopy(k, 76, keyBackward, 0, 16);
 		aesEncrypt = new AESCounterMode(keyBackward);
 
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Node.<init>: dhX = \n" + Encoding.toHexString(dhXBytes, 100)
 				+ "\n" + "dhY = \n" + Encoding.toHexString(dhYBytes, 100)
@@ -188,7 +188,7 @@ public class Node
 			secureRandom.nextBytes(symmetricKeyForCreate);
 
 		}
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Node.<init client>: dhX = \n"
 				+ Encoding.toHexString(dhXBytes, 100) + "\n" + "dhY = \n"
@@ -268,7 +268,7 @@ public class Node
 			System.arraycopy(singleDigest, 0, keyData, i * DIGEST_LEN,
 					DIGEST_LEN);
 		}
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Node.finishDh: dhX = \n"
 					+ Encoding.toHexString(dhXBytes, 100) + "\n" + "dhY = \n"
@@ -314,7 +314,7 @@ public class Node
 		System.arraycopy(keyData, 76, keyBackward, 0, 16);
 		aesDecrypt = new AESCounterMode(keyBackward);
 
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Node.finishDh: dhX = \n"
 				+ Encoding.toHexString(dhXBytes, 100) + "\n" + "dhY = \n"
@@ -337,14 +337,14 @@ public class Node
 	 */
 	public byte[] calcForwardDigest(final byte[] data)
 	{
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Node.calcForwardDigest() on:\n"
 					+ Encoding.toHexString(data, 100));
 		}
 		sha1Forward.update(data, 0, data.length);
 		final byte[] digest = Encryption.intermediateDigest(sha1Forward);
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug(" result:\n" + Encoding.toHexString(digest, 100));
 		}
@@ -361,14 +361,14 @@ public class Node
 	 */
 	public byte[] calcBackwardDigest(final byte[] data)
 	{
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Node.calcBackwardDigest() on:\n"
 					+ Encoding.toHexString(data, 100));
 		}
 		sha1Backward.update(data, 0, data.length);
 		final byte[] digest = Encryption.intermediateDigest(sha1Backward);
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug(" result:\n" + Encoding.toHexString(digest, 100));
 		}
@@ -385,13 +385,13 @@ public class Node
 	 */
 	public void symEncrypt(final byte[] data)
 	{
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Node.symEncrypt for node " + router.getNickname());
 		}
 //		if (LOG.isDebugEnabled())
 //		{
-//			LOG.debug("Node.symEncrypt in:\n" + Encoding.toHexString(data, 100));
+			LOG.debug("Node.symEncrypt in:\n" + Encoding.toHexString(data, 100));
 //		}
 
 		// encrypt data
@@ -408,8 +408,7 @@ public class Node
 
 //		if (LOG.isDebugEnabled())
 //		{
-//			LOG.debug("Node.symEncrypt out:\n"
-//					+ Encoding.toHexString(data, 100));
+			LOG.debug("Node.symEncrypt out:\n" + Encoding.toHexString(data, 100));
 //		}
 	}
 
@@ -421,7 +420,7 @@ public class Node
 	 */
 	public void symDecrypt(byte[] data)
 	{
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Node.symDecrypt for node " + router.getNickname());
 		}
@@ -429,14 +428,14 @@ public class Node
 		// decrypt data
 		final byte[] decrypted = aesDecrypt.processStream(data);
 
-/*		if (LOG.isDebugEnabled())
+//		if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Node.symDecrypt in:\n"
 					+ Encoding.toHexString(data, 100));
 			LOG.debug("Node.symDecrypt out:\n"
 					+ Encoding.toHexString(decrypted, 100));
 		}
-*/
+
 		// copy to output
 		if (decrypted.length > data.length)
 		{
@@ -459,7 +458,7 @@ public class Node
 		final byte[] result = new byte[128];
 		if (temp.length > 128)
 		{
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("convertBigIntegerTo128Bytes temp longer than 128!");
 				LOG.debug("Big Integer a = " + a);

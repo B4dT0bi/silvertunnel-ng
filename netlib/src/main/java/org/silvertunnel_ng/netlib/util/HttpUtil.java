@@ -260,7 +260,7 @@ public class HttpUtil
 					timeoutInMs);
 
 			// result
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				try
 				{
@@ -337,7 +337,7 @@ public class HttpUtil
 		// read the HTTP response from the other thread
 		final byte[] response = receiverThread.readCurrentResultAndStopThread();
 		s.close();
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			try
 			{

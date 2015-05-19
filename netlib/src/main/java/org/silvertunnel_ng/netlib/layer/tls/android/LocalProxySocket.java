@@ -1,9 +1,8 @@
-package org.silvertunnel_ng.netlib.layer.tor.android;
+package org.silvertunnel_ng.netlib.layer.tls.android;
 
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
-import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,17 +79,17 @@ public class LocalProxySocket extends Socket {
                         copyStream(inputStream, outputStream);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.debug("got Exception during copy", e);
                     error = true;
                     try {
                         inputStream.close();
                     } catch (IOException e1) {
-                        e1.printStackTrace();
+                        LOG.debug("got exception during close of inputStream", e1);
                     }
                     try {
                         outputStream.close();
                     } catch (IOException e1) {
-                        e1.printStackTrace();
+                        LOG.debug("got exception during close of outputStream", e1);
                     }
                 }
             }
@@ -102,7 +101,6 @@ public class LocalProxySocket extends Socket {
             int bytesRead;
             while ((bytesRead = input.read(buffer)) != -1) {
                 output.write(buffer, 0, bytesRead);
-                LOG.debug("LocalProxySocket", direction + " : " + Encoding.toHexString(buffer));
             }
         }
     }

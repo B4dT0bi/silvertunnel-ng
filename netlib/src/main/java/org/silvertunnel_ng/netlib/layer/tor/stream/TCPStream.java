@@ -157,7 +157,7 @@ public class TCPStream implements Stream, NetSocket
 		queue = new Queue(queueTimeout);
 		closed = false;
 		closedForReason = 0;
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("TCPStream: building new stream " + toString());
 		}
@@ -224,7 +224,7 @@ public class TCPStream implements Stream, NetSocket
 					resolvedAddress = InetAddress.getByAddress(ip);
 					sp.setAddr(resolvedAddress);
 					sp.setAddrResolved(true);
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug("TCPStream: storing resolved IP "
 							+ resolvedAddress.toString());
@@ -252,7 +252,7 @@ public class TCPStream implements Stream, NetSocket
 		this.queue.addHandler(qhT2J);
 		outputStream = new TCPStreamOutputStream(this);
 
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("TCPStream: build stream " + toString() + " within " + setupDuration + " ms");
 		}
@@ -297,7 +297,7 @@ public class TCPStream implements Stream, NetSocket
 		queue = new Queue(QUEUE_TIMEOUNT2);
 		closed = false;
 		closedForReason = 0;
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("TCPStream(2): building new stream " + toString());
 		}
@@ -408,7 +408,7 @@ public class TCPStream implements Stream, NetSocket
 		// gracefully close stream
 		close(false);
 		// remove from circuit
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("TCPStream.close(): removing stream " + toString());
 		}
@@ -425,7 +425,7 @@ public class TCPStream implements Stream, NetSocket
 	@Override
 	public void close(final boolean force)
 	{
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("TCPStream.close(): closing stream " + toString());
 		}

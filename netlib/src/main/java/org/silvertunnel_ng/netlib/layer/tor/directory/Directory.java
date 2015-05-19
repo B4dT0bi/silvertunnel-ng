@@ -434,7 +434,7 @@ public final class Directory
 				{
 					final int index = rnd.nextInt(dirRouters.size());
 					final Router dirRouter = dirRouters.get(index);
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug("Directory.updateNetworkStatusNew: Randomly chosen dirRouter to fetch consensus document: " 
 								+ dirRouter.getFingerprint()
@@ -556,7 +556,7 @@ public final class Directory
 			// TODO : exchange to incremental updating the list (now we have to wait until all routers are parsed)
 			numOfRunningRoutersInDirectoryConsensus = newNumOfRunningRoutersInDirectoryConsensus;
 
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("updated torServers, new size=" + validRoutersByFingerprint.size());
 				LOG.debug("number of exit routers : " + newExitnodeRouters.size());
@@ -693,7 +693,7 @@ public final class Directory
 				}
 				catch (final Exception e)
 				{
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug("getAuthorityKeyCertificates(): error while loading from {}, try next", authServerIpAndPort, e);
 					}
@@ -767,7 +767,7 @@ public final class Directory
 				}
 			}
 		}
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("parseRouterDescriptors took " + (System.currentTimeMillis() - timeStart) + " ms");
 		}
@@ -894,7 +894,7 @@ public final class Directory
 							successes++;
 						}
 					}
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug("loaded " + successes + " of " 
 								+ attempts + " missing routers from directory server \"" 
@@ -1251,7 +1251,7 @@ public final class Directory
 	 */
 	void print()
 	{
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			for (final Router r : validRoutersByFingerprint.values())
 			{

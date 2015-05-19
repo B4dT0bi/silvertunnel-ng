@@ -59,7 +59,7 @@ public class CheckNetConnectivityRemoteTest
 			NameServiceGlobalUtil.activateDefaultIpNetAddressNameService();
 		}			
 	}
-	@Test(timeOut = 5000)
+	@Test(timeOut = 20000)
 	public void testExecuteCheck() throws Exception
 	{
 		final boolean result = CheckNetConnectivity.executeCheck(true);

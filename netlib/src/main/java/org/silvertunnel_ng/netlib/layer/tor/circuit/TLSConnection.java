@@ -353,7 +353,7 @@ public class TLSConnection
 		if (doClose)
 		{
 			// yes
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("close TLSConnection from {} because last Circuit is removed", toString());
 			}
@@ -364,14 +364,14 @@ public class TLSConnection
 			// no
 			synchronized (circuitMap)
 			{
-				if (LOG.isDebugEnabled())
+				//if (LOG.isDebugEnabled())
 				{
 					LOG.debug("cannot close TLSConnection from " + toString()
 						+ " because of additional circuits: " + circuitMap);
 				}
 			}
 		}
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("remove circuit from " + toString() + " done with result="
 				+ result);

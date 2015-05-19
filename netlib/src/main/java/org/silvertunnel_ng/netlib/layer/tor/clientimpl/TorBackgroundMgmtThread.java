@@ -181,7 +181,7 @@ class TorBackgroundMgmtThread extends Thread
 				// check if this circuit needs a keep-alive-packet
 				if (c.isEstablished()	&& currentTimeMillis - c.getLastCell() > CIRCUITS_KEEP_ALIVE_INTERVAL_S * MILLISEC)
 				{
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug("TorBackgroundMgmtThread.sendKeepAlivePackets(): Circuit " + c.toString());
 					}
@@ -197,7 +197,7 @@ class TorBackgroundMgmtThread extends Thread
 									- stream.getLastCellSentDate() > STREAMS_KEEP_ALIVE_INTERVAL_S
 									* MILLISEC)
 					{
-						if (LOG.isDebugEnabled())
+						//if (LOG.isDebugEnabled())
 						{
 							LOG.debug("TorBackgroundMgmt.sendKeepAlivePackets(): Stream "
 									+ stream.toString());
@@ -217,7 +217,7 @@ class TorBackgroundMgmtThread extends Thread
 	{
 		final CircuitsStatus circuitsStatus = tor.getCircuitsStatus();
 
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("TorBackgroundMgmt.manageIdleCircuits(): circuit counts: "
 				+ (circuitsStatus.getCircuitsAlive() - circuitsStatus
@@ -234,7 +234,7 @@ class TorBackgroundMgmtThread extends Thread
 		else if (circuitsStatus.getCircuitsEstablished() > TorConfig.getMinimumIdleCircuits()	+ TorConfig.circuitsMaximumNumber)
 		{
 			// TODO: if for some reason there are too many established circuits. close the oldest ones
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("TorBackgroundMgmtThread.manageIdleCircuits(): kill "
 					+ (TorConfig.getMinimumIdleCircuits() + TorConfig.circuitsMaximumNumber - circuitsStatus

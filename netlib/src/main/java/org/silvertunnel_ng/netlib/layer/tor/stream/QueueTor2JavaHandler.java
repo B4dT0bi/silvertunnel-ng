@@ -109,7 +109,7 @@ class QueueTor2JavaHandler implements QueueHandler
 		}
 		else if (relay.isTypeEnd())
 		{
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("QueueTor2JavaHandler.handleCell(): stream "
 					+ stream.getId() + " is closed: "

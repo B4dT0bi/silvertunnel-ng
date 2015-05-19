@@ -328,7 +328,7 @@ public class CircuitAdmin
 		for (int i = 0; i < returnValues; ++i)
 		{
 			results[i] = allCircs.get(i);
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("TLSConnectionAdmin.provideSuitableCircuits: Choose Circuit ranking "
 						+ results[i].getRanking() + ":" + results[i].toString());
@@ -567,7 +567,7 @@ public class CircuitAdmin
 		}
 		else
 		{
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				final StringBuffer sb = new StringBuffer(50);
 				for (final Router server : result)

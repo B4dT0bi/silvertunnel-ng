@@ -193,13 +193,13 @@ public class TorNetLayer implements NetLayer
 			{
 				// this looks like a .exit host name: extract the parts of this
 				// special host name now
-				if (LOG.isDebugEnabled())
+				//if (LOG.isDebugEnabled())
 				{
 					LOG.debug("hostname with .exit pattern={}", hostname);
 				}
 				final String originalHostname = m.group(1);
 				final String exitNodeNameOrDigest = m.group(2);
-				if (LOG.isDebugEnabled())
+				//if (LOG.isDebugEnabled())
 				{
 					LOG.debug("originalHostname=" + originalHostname);
 					LOG.debug("exitNodeNameOrDigest=" + exitNodeNameOrDigest);

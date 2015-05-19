@@ -23,7 +23,7 @@ import org.silvertunnel_ng.netlib.api.impl.NetSocket2Socket;
 import org.silvertunnel_ng.netlib.api.impl.Socket2NetSocket;
 import org.silvertunnel_ng.netlib.api.util.JavaVersion;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
-import org.silvertunnel_ng.netlib.layer.tor.android.LocalProxySocket;
+import org.silvertunnel_ng.netlib.layer.tls.android.LocalProxySocket;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,16 +101,16 @@ public class TLSNetSocketUtil {
                 lowerLayerSocket, hostname, port, autoClose);
 
         // set properties
-        if (LOG.isDebugEnabled()) {
+        //if (LOG.isDebugEnabled()){
             LOG.debug("default enabledCipherSuites="
                     + Arrays.toString(resultSocket.getEnabledCipherSuites()));
-        }
+        //}
         if (enabledCipherSuites != null) {
             resultSocket.setEnabledCipherSuites(enabledCipherSuites);
-            if (LOG.isDebugEnabled()) {
+            //if (LOG.isDebugEnabled()) {
                 LOG.debug("set enabledCipherSuites="
                         + Arrays.toString(enabledCipherSuites));
-            }
+            //}
         }
 
         if (!resultSocket.isConnected()) {

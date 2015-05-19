@@ -446,7 +446,7 @@ public final class Circuit
 	boolean handleIntroduce2(CellRelay cell) throws TorException, IOException
 	{
 		// parse introduce2-cell
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Circuit.handleIntroduce2: received Intro2-Cell of length=" + cell.getLength());
 		}
@@ -467,7 +467,7 @@ public final class Circuit
 		final byte[] plainIntro2 = Encryption.asymDecrypt(introProps.getPrivateKey(), onionData);
 
 		// TODO: deal with introduce2 version 1 - 3
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("   Intro2-Cell with plainIntro of lenght=" + plainIntro2.length);
 		}
@@ -487,7 +487,7 @@ public final class Circuit
 		int i = 0;
 		System.arraycopy(plainIntro2, i, version, 0, version.length);
 		i += version.length;
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("version=" + version[0]);
 		}
@@ -512,7 +512,7 @@ public final class Circuit
 		final TcpipNetAddress rendezvousPointTcpipNetAddress1 = new TcpipNetAddress(rendezvousPointAddress, rendezvousPointPort);
 		final Router rendezvousServer1 = directory.getValidRouterByIpAddressAndOnionPort(rendezvousPointTcpipNetAddress1.getIpNetAddress(),
 																							 rendezvousPointTcpipNetAddress1.getPort());
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("rendezvousServer1=" + rendezvousServer1);
 		}
@@ -525,25 +525,25 @@ public final class Circuit
 		final TcpipNetAddress rendezvousPointTcpipNetAddress2 = new TcpipNetAddress(rendezvousPointAddress2, rendezvousPointPort);
 		final Router rendezvousServer2 = directory.getValidRouterByIpAddressAndOnionPort(rendezvousPointTcpipNetAddress2.getIpNetAddress(),
 																							 rendezvousPointTcpipNetAddress2.getPort());
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("rendezvousServer2=" + rendezvousServer2);
 		}
 		// result
 		final Router rendezvousServer = (rendezvousServer1 != null) ? rendezvousServer1 : rendezvousServer2;
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("rendezvousServer=" + rendezvousServer);
 		}
 
 		// check version
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("received Introduce2 cell with rendevouz point server=" + rendezvousServer);
 		}
 		if (version[0] != 2)
 		{
-			if (LOG.isWarnEnabled())
+			//if (LOG.isWarnEnabled())
 			{
 				LOG.warn("Intro2-Cell not supported with version=" + version[0]);
 			}
@@ -574,7 +574,7 @@ public final class Circuit
 						// send dhY
 						final Node virtualNode = new Node(rendezvousServer, dhX);
 						c2rendezvous.sendCell(new CellRelayRendezvous1(c2rendezvous, cookie, virtualNode.getDhYBytes(), virtualNode.getKeyHandshake()));
-						if (LOG.isDebugEnabled())
+						//if (LOG.isDebugEnabled())
 						{
 							LOG.debug("Circuit.handleIntroduce2: connected to rendezvous '" + rendezvousServer + "' over " + c2rendezvous.toString());
 						}
@@ -616,7 +616,7 @@ public final class Circuit
 
 		// determine requested port number (is between ':' and [00])
 		final byte[] cellData = cell.getData();
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("handleHiddenServiceStreamBegin with data=" + ByteArrayUtil.showAsStringDetails(cellData));
 		}
@@ -639,7 +639,7 @@ public final class Circuit
 			}
 			port = portNum;
 		}
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("new stream on port=" + port);
 		}
@@ -651,7 +651,7 @@ public final class Circuit
 		{
 			// accept stream
 			hiddenServicePortInstance.createStream(this, streamId);
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("added new TCPStream to NetServerSocket/hiddenServicePortInstance=" + hiddenServicePortInstance);
 			}
@@ -659,7 +659,7 @@ public final class Circuit
 		else
 		{
 			// reject stream because nobody is listen to this port
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("rejected stream because nobody is listen on port=" + port + " of hiddenServiceInstance=" + hiddenServiceInstance);
 			}
@@ -778,7 +778,7 @@ public final class Circuit
 	 */
 	private void extend(final int i, final Router next) throws IOException, TorException
 	{
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Circuit: " + toString() + " extending to " + next.getNickname() + " ("
 				+ next.getCountryCode() + ")" + " [" + next.getPlatform() + "]");
@@ -791,7 +791,7 @@ public final class Circuit
 		final CellRelay relay = queue.receiveRelayCell(CellRelay.RELAY_EXTENDED);
 		// finish DH-exchange
 		routeNodes[i].finishDh(relay.getData());
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Circuit: " + toString() + " successfully extended to " + next.getNickname() + " ("
 				+ next.getCountryCode() + ")" + " [" + next.getPlatform() + "]");
@@ -807,7 +807,7 @@ public final class Circuit
 	 */
 	public void extend(final Fingerprint routerFingerprint) throws TorException, IOException
 	{
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("extending Circuit with id {} to {}", new Object[]{getId(), routerFingerprint});
 		}
@@ -998,7 +998,7 @@ public final class Circuit
 	{
 		if (!closed)
 		{
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("Circuit.close(): closing " + toString());
 			}
@@ -1044,7 +1044,7 @@ public final class Circuit
 						else
 						{
 							// no way...warning
-							if (LOG.isDebugEnabled())
+							//if (LOG.isDebugEnabled())
 							{
 								LOG.debug("Circuit.close(): can't close due to " + stream.toString());
 							}
@@ -1072,7 +1072,7 @@ public final class Circuit
 			if (routeEstablished > 0)
 			{
 				// send a destroy-cell to the first hop in the circuit only
-				if (LOG.isDebugEnabled())
+				//if (LOG.isDebugEnabled())
 				{
 					LOG.debug("Circuit.close(): destroying " + toString());
 				}
@@ -1089,13 +1089,13 @@ public final class Circuit
 		}
 
 		// close circuit (also removes handlers)
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Circuit.close(): close queue? " + toString());
 		}
 		if (queue != null)
 		{
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("Circuit.close(): close queue! " + toString());
 			}
@@ -1104,13 +1104,13 @@ public final class Circuit
 
 		// cleanup and maybe close tls
 		destruct = true;
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Circuit.close(): remove from tls? " + toString());
 		}
 		if (tls != null)
 		{
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("Circuit.close(): remove from tls! " + toString());
 			}
@@ -1118,7 +1118,7 @@ public final class Circuit
 		}
 
 		// closed
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Circuit.close(): done " + toString());
 		}
@@ -1323,7 +1323,7 @@ public final class Circuit
 			// send a RELAY_SENDME cell to the last router in the circuit
 			try
 			{
-				if (LOG.isDebugEnabled())
+				//if (LOG.isDebugEnabled())
 				{
 					LOG.debug("sending RELAY_SENDME cell to router {}", getRoute()[getRouteEstablished() - 1]);
 				}

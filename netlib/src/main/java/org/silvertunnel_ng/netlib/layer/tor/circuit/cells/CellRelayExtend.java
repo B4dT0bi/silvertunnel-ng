@@ -74,7 +74,7 @@ public class CellRelayExtend extends CellRelayEarly
 		System.arraycopy(orPort, 0, data, 4, orPort.length);
 		System.arraycopy(onionSkin, 0, data, 6, onionSkin.length);
 		System.arraycopy(keyHash, 0, data, 192, keyHash.length);
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("CellRelayExtend Router :\n"
 					+ nextNode.getRouter().toLongString());

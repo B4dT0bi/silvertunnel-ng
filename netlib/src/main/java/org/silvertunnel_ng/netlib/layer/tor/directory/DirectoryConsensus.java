@@ -89,7 +89,7 @@ public class DirectoryConsensus
 		setValidAfter(Parsing.parseTimestampLine("valid-after", consensusStr));
 		setFreshUntil(Parsing.parseTimestampLine("fresh-until", consensusStr));
 		setValidUntil(Parsing.parseTimestampLine("valid-until", consensusStr));
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Directory.parseDirV3NetworkStatus: Consensus document validAfter="
 				+ getValidAfter()
@@ -125,7 +125,7 @@ public class DirectoryConsensus
 				sigBase64 += "="; // add missing padding
 			}
 			final byte[] signature = DatatypeConverter.parseBase64Binary(sigBase64);
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("Directory.parseDirV3NetworkStatus: Extracted identityKeyDigest(hex)="
 						+ Encoding.toHexString(identityKeyDigest));
@@ -144,7 +144,7 @@ public class DirectoryConsensus
 				LOG.debug("No authorityKeyCertificate found");
 				continue;
 			}
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("authorityKeyCertificate signingKeyDigest(hex)="
 						+ Encoding.toHexString(authorityKeyCertificate
@@ -157,7 +157,7 @@ public class DirectoryConsensus
 			}
 			if (!Encryption.verifySignature(signature, authorityKeyCertificate.getDirSigningKey(), signedData))
 			{
-				if (LOG.isDebugEnabled())
+				//if (LOG.isDebugEnabled())
 				{
 					LOG.debug("Directory signature verification failed for identityKeyDigest(hex)="
 						+ Encoding.toHexString(identityKeyDigest));
@@ -166,7 +166,7 @@ public class DirectoryConsensus
 			}
 			// verification successful for this signature
 			dirIdentityKeyDigestOfMatchingSignatures.add(authorityKeyCertificate.getDirIdentityKeyDigest());
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("single signature verification ok for identityKeyDigest(hex)="
 					+ Encoding.toHexString(identityKeyDigest));

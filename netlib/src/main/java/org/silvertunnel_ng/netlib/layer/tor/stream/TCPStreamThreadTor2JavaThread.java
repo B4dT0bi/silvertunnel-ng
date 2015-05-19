@@ -101,7 +101,7 @@ class TCPStreamThreadTor2JavaThread extends Thread
 					}
 					else if (relay.isTypeEnd())
 					{
-						if (LOG.isDebugEnabled())
+						//if (LOG.isDebugEnabled())
 						{
 							LOG.debug("TCPStreamThreadTor2Java.run(): stream "
 								+ stream.getId() + " is closed: "

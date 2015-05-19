@@ -77,7 +77,7 @@ public final class DescriptorFetcher
 		}
 		catch (final Exception e)
 		{
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("downloadSingleDescriptor() from "
 					+ directoryServer.getNickname() + " failed: "
@@ -110,7 +110,7 @@ public final class DescriptorFetcher
 		}
 		catch (final Exception e)
 		{
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("downloadAllDescriptors() from "
 					+ directoryServer.getNickname() + " failed: "

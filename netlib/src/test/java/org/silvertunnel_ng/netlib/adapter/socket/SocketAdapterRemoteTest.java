@@ -68,7 +68,7 @@ public class SocketAdapterRemoteTest
 	/** */
 	private static final Logger LOG = LoggerFactory.getLogger(SocketAdapterRemoteTest.class);
 
-	private static final int TIMEOUT_IN_MS = 2000;
+	private static final int TIMEOUT_IN_MS = 20000;
 
 	@BeforeClass
 	public static void setUp() throws Exception

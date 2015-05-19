@@ -18,47 +18,54 @@
 
 package org.silvertunnel_ng.netlib.util;
 
-import static org.testng.AssertJUnit.fail;
+import org.silvertunnel_ng.netlib.adapter.nameservice.NameServiceGlobalUtil;
+import org.silvertunnel_ng.netlib.nameservice.inetaddressimpl.DefaultIpNetAddressNameService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.Test;
+import static org.testng.AssertJUnit.fail;
 
 /**
  * Check the atomic time against system time.
- * 
+ *
  * @author Tobias Boese
  */
-public final class TimeTest
-{
-	/** class logger. */
-	private static final Logger LOG = LoggerFactory.getLogger(TimeTest.class);
-	
-	/** maximum allowed difference in ms. */
-	private static final long DIFFERENCE_OK = 30L * 60L * 1000L; // 30 minutes
-	
-	/**
-	 * Gets the current difference between system time and atomic time.
-	 */
-	@Test(timeOut = 10000)
-	public void testTimeDifference()
-	{
-		try
-		{
-			final long difference = AtomicTime.getTimeDiffinMillis();
-			if (difference > DIFFERENCE_OK)
-			{
-				fail("time difference is " + difference + " ms. (this difference could lead to problems with the hidden services)");
-			}
-		}
-		catch (IOException e)
-		{
-			LOG.warn(e.getMessage());
-			fail("could not get time from atomic time server.");
-		}
-		
-	}
+public final class TimeTest {
+    /**
+     * class logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(TimeTest.class);
+
+    /**
+     * maximum allowed difference in ms.
+     */
+    private static final long DIFFERENCE_OK = 30L * 60L * 1000L; // 30 minutes
+
+    @BeforeClass
+    public void setUp() {
+        NameServiceGlobalUtil.initNameService();
+        NameServiceGlobalUtil.setIpNetAddressNameService(DefaultIpNetAddressNameService.getInstance());
+    }
+
+    /**
+     * Gets the current difference between system time and atomic time.
+     */
+    @Test(timeOut = 10000)
+    public void testTimeDifference() {
+        try {
+            final long difference = AtomicTime.getTimeDiffinMillis();
+            if (difference > DIFFERENCE_OK) {
+                fail("time difference is " + difference + " ms. (this difference could lead to problems with the hidden services)");
+            }
+        } catch (IOException e) {
+            LOG.warn(e.getMessage());
+            fail("could not get time from atomic time server.");
+        }
+
+    }
 
 }

@@ -148,7 +148,7 @@ public class Cell
 		this.command = data[Cell.CELL_COMMAND_POS];
 		System.arraycopy(data, Cell.CELL_PAYLOAD_POS, this.payload, 0, payload.length);
 
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Cell.initFromData: " + toString("Received "));
 		}
@@ -162,7 +162,7 @@ public class Cell
 	{
 		final byte[] buff = new byte[Cell.CELL_TOTAL_SIZE];
 
-		if (LOG.isDebugEnabled())
+		//if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Cell.toByteArray(): " + toString("Sending "));
 		}

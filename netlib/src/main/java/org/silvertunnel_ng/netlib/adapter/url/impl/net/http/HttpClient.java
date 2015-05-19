@@ -596,7 +596,7 @@ public class HttpClient extends NetworkClient
 			if (ret)
 			{ // is valid HTTP - response started w/ "HTTP/1."
 				responses.parseHeader(serverInput);
-				if (LOG.isDebugEnabled())
+				//if (LOG.isDebugEnabled())
 				{
 					LOG.debug("response header : {}", responses.toString());
 				}

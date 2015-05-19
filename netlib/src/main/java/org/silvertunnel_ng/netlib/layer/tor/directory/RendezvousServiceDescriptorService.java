@@ -160,7 +160,7 @@ public class RendezvousServiceDescriptorService
 					}
 
 					// response: OK
-					if (LOG.isDebugEnabled())
+					//if (LOG.isDebugEnabled())
 					{
 						LOG.debug(PRE + "found descriptorIdBase32=" + descriptorIdBase32 + " with result(plain)=" + response);
 					}
@@ -312,7 +312,7 @@ public class RendezvousServiceDescriptorService
 		}
 		catch (final Exception e)
 		{
-			if (LOG.isDebugEnabled())
+			//if (LOG.isDebugEnabled())
 			{
 				LOG.debug("retrieveServiceDescriptor() from {} failed", dirNetAddress, e);
 			}
