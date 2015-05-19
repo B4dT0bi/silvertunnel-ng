@@ -66,7 +66,6 @@ public class LocalSocket implements Closeable {
 
     /**
      * Creates a AF_LOCAL/UNIX domain stream socket with FileDescriptor.
-     * @hide
      */
     public LocalSocket(FileDescriptor fd) throws IOException {
         this(new LocalSocketImpl(fd), SOCKET_UNKNOWN);

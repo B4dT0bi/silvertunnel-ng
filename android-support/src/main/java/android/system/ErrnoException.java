@@ -59,7 +59,6 @@ public final class ErrnoException extends Exception {
     }
 
     /**
-     * @hide - internal use only.
      */
     public IOException rethrowAsIOException() throws IOException {
         IOException newException = new IOException(getMessage());
@@ -68,7 +67,6 @@ public final class ErrnoException extends Exception {
     }
 
     /**
-     * @hide - internal use only.
      */
     public SocketException rethrowAsSocketException() throws SocketException {
         throw new SocketException(getMessage());
