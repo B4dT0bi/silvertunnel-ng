@@ -85,7 +85,7 @@ public class ConditionalNetLayer implements NetLayer
 		{
 			result = defaultLowerNetLayer;
 		}
-		//if (LOG.isDebugEnabled())
+		if (LOG.isDebugEnabled())
 		{
 			LOG.debug("netAddress={} matches with lowerNetLayer={}", netAddress, result);
 		}
@@ -171,7 +171,7 @@ public class ConditionalNetLayer implements NetLayer
 		{
 			result = defaultLowerNetLayer;
 		}
-		//if (LOG.isDebugEnabled())
+		if (LOG.isDebugEnabled())
 		{
 			LOG.debug("addressName={} matches with lowerNetLayer={}", addressName, result);
 		}

@@ -41,25 +41,41 @@ public class Node {
     /** */
     private static final Logger LOG = LoggerFactory.getLogger(Node.class);
 
-    /** length of SHA-1 digest in bytes. */
+    /**
+     * length of SHA-1 digest in bytes.
+     */
     private static final int DIGEST_LEN = 20;
 
     private Router router;
-    /** used to encrypt a part of the diffie-hellman key-exchange. */
+    /**
+     * used to encrypt a part of the diffie-hellman key-exchange.
+     */
     private byte[] symmetricKeyForCreate;
-    /** data for the diffie-hellman key-exchange. */
+    /**
+     * data for the diffie-hellman key-exchange.
+     */
     private TorKeyAgreement dhKeyAgreement;
     private byte[] dhXBytes;
     private byte[] dhYBytes;
-    /** the derived key data. */
+    /**
+     * the derived key data.
+     */
     private byte[] keyHandshake;
-    /** digest for all data send to this node. */
+    /**
+     * digest for all data send to this node.
+     */
     private byte[] forwardDigest;
-    /** digest for all data received from this node. */
+    /**
+     * digest for all data received from this node.
+     */
     private byte[] backwardDigest;
-    /** symmetric key for sending data. */
+    /**
+     * symmetric key for sending data.
+     */
     private byte[] keyForward;
-    /** symmetric key for receiving data. */
+    /**
+     * symmetric key for receiving data.
+     */
     private byte[] keyBackward;
     private AESCounterMode aesEncrypt;
     private AESCounterMode aesDecrypt;
@@ -70,8 +86,11 @@ public class Node {
 
     }
 
-    /** constructor for (hidden service) server-side.
-     * @throws TorException */
+    /**
+     * constructor for (hidden service) server-side.
+     *
+     * @throws TorException
+     */
     Node(final Router init, final byte[] dhXBytes) throws TorException {
         if (init == null) {
             throw new NullPointerException("can't init node on NULL server");
@@ -99,8 +118,7 @@ public class Node {
             final byte[] singleDigest = Encryption.getDigest(sha1Input);
             System.arraycopy(singleDigest, 0, k, i * DIGEST_LEN, DIGEST_LEN);
         }
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Node.<init>: dhX = \n"
                     + Encoding.toHexString(dhXBytes, 100) + "\n" + "dhY = \n"
                     + Encoding.toHexString(dhYBytes, 100) + "\n"
@@ -132,8 +150,7 @@ public class Node {
         System.arraycopy(k, 76, keyBackward, 0, 16);
         aesEncrypt = new AESCounterMode(keyBackward);
 
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Node.<init>: dhX = \n" + Encoding.toHexString(dhXBytes, 100)
                     + "\n" + "dhY = \n" + Encoding.toHexString(dhYBytes, 100)
                     + "\n" + "dhXY = keymaterial:\n"
@@ -144,16 +161,20 @@ public class Node {
         }
     }
 
-    /** constructor for client-side.
-     *    @param init the {@link Router} which should be used as {@link Node}
+    /**
+     * constructor for client-side.
+     *
+     * @param init the {@link Router} which should be used as {@link Node}
      */
     public Node(final Router init) throws TorException {
         this(init, false);
     }
 
-    /** constructor for client-side.
-     *    @param init the {@link Router} which should be used as {@link Node}
-     *  @param createFast skip Diffie-Hellman? (see create_fast cell)
+    /**
+     * constructor for client-side.
+     *
+     * @param init       the {@link Router} which should be used as {@link Node}
+     * @param createFast skip Diffie-Hellman? (see create_fast cell)
      */
     public Node(final Router init, final boolean createFast) throws TorException {
         if (init == null) {
@@ -180,8 +201,7 @@ public class Node {
             secureRandom.nextBytes(symmetricKeyForCreate);
 
         }
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Node.<init client>: dhX = \n"
                     + Encoding.toHexString(dhXBytes, 100) + "\n" + "dhY = \n"
                     + Encoding.toHexString(dhYBytes, 100));
@@ -198,10 +218,9 @@ public class Node {
      * </ul>
      * encrypt and store in result
      *
-     * @param data
-     *            to be encrypted, needs currently to be at least 70 bytes long
+     * @param data to be encrypted, needs currently to be at least 70 bytes long
      * @return the first half of the key exchange, ready to be send to the other
-     *         partner
+     * partner
      */
     public final byte[] asymEncrypt(final byte[] data) throws TorException {
         return Encryption.asymEncrypt(router.getOnionKey(),
@@ -217,8 +236,7 @@ public class Node {
      * <li>20 bytes of derivated key data (KH) (see chapter 4.2 of torspec)
      * </ul>
      *
-     * @param data
-     *            expects the received second half of the DH-key exchange
+     * @param data expects the received second half of the DH-key exchange
      */
     public void finishDh(final byte[] data) throws TorException {
         byte[] dhXYBytes;
@@ -253,8 +271,7 @@ public class Node {
             System.arraycopy(singleDigest, 0, keyData, i * DIGEST_LEN,
                     DIGEST_LEN);
         }
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Node.finishDh: dhX = \n"
                     + Encoding.toHexString(dhXBytes, 100) + "\n" + "dhY = \n"
                     + Encoding.toHexString(dhYBytes, 100) + "\n"
@@ -297,8 +314,7 @@ public class Node {
         System.arraycopy(keyData, 76, keyBackward, 0, 16);
         aesDecrypt = new AESCounterMode(keyBackward);
 
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Node.finishDh: dhX = \n"
                     + Encoding.toHexString(dhXBytes, 100) + "\n" + "dhY = \n"
                     + Encoding.toHexString(dhYBytes, 100) + "\n"
@@ -319,15 +335,13 @@ public class Node {
      * @return a four-byte array containing the digest
      */
     public byte[] calcForwardDigest(final byte[] data) {
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Node.calcForwardDigest() on:\n"
                     + Encoding.toHexString(data, 100));
         }
         sha1Forward.update(data, 0, data.length);
         final byte[] digest = Encryption.intermediateDigest(sha1Forward);
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug(" result:\n" + Encoding.toHexString(digest, 100));
         }
         final byte[] fourBytes = new byte[4];
@@ -342,15 +356,13 @@ public class Node {
      * @return a four-byte array containing the digest
      */
     public byte[] calcBackwardDigest(final byte[] data) {
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Node.calcBackwardDigest() on:\n"
                     + Encoding.toHexString(data, 100));
         }
         sha1Backward.update(data, 0, data.length);
         final byte[] digest = Encryption.intermediateDigest(sha1Backward);
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug(" result:\n" + Encoding.toHexString(digest, 100));
         }
         final byte[] fourBytes = new byte[4];
@@ -361,18 +373,13 @@ public class Node {
     /**
      * encrypt data with symmetric key.
      *
-     * @param data
-     *            is used for input and output.
+     * @param data is used for input and output.
      */
     public void symEncrypt(final byte[] data) {
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Node.symEncrypt for node " + router.getNickname());
+            LOG.debug("Node.symEncrypt in:\n" + Encoding.toHexString(data, 100));
         }
-//		if (LOG.isDebugEnabled())
-//		{
-        LOG.debug("Node.symEncrypt in:\n" + Encoding.toHexString(data, 100));
-//		}
 
         // encrypt data
         final byte[] encrypted = aesEncrypt.processStream(data);
@@ -383,29 +390,26 @@ public class Node {
             System.arraycopy(encrypted, 0, data, 0, encrypted.length);
         }
 
-//		if (LOG.isDebugEnabled())
-//		{
-        LOG.debug("Node.symEncrypt out:\n" + Encoding.toHexString(data, 100));
-//		}
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Node.symEncrypt out:\n" + Encoding.toHexString(data, 100));
+        }
     }
 
     /**
      * decrypt data with symmetric key.
      *
-     * @param data
-     *            is used for input and output.
+     * @param data is used for input and output.
      */
+
     public void symDecrypt(byte[] data) {
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Node.symDecrypt for node " + router.getNickname());
         }
 
         // decrypt data
         final byte[] decrypted = aesDecrypt.processStream(data);
 
-//		if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Node.symDecrypt in:\n"
                     + Encoding.toHexString(data, 100));
             LOG.debug("Node.symDecrypt out:\n"
@@ -429,8 +433,7 @@ public class Node {
         final byte[] temp = a.toByteArray();
         final byte[] result = new byte[128];
         if (temp.length > 128) {
-            //if (LOG.isDebugEnabled())
-            {
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("convertBigIntegerTo128Bytes temp longer than 128!");
                 LOG.debug("Big Integer a = " + a);
                 LOG.debug("temp.length = " + temp.length);

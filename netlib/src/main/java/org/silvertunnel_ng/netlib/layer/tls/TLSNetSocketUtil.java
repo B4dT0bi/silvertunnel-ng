@@ -101,16 +101,16 @@ public class TLSNetSocketUtil {
                 lowerLayerSocket, hostname, port, autoClose);
 
         // set properties
-        //if (LOG.isDebugEnabled()){
+        if (LOG.isDebugEnabled()){
             LOG.debug("default enabledCipherSuites="
                     + Arrays.toString(resultSocket.getEnabledCipherSuites()));
-        //}
+        }
         if (enabledCipherSuites != null) {
             resultSocket.setEnabledCipherSuites(enabledCipherSuites);
-            //if (LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("set enabledCipherSuites="
                         + Arrays.toString(enabledCipherSuites));
-            //}
+            }
         }
 
         if (!resultSocket.isConnected()) {
