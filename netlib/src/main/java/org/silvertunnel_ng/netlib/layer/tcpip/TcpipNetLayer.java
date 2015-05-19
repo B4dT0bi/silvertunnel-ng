@@ -34,7 +34,7 @@ import java.util.Map;
 
 /**
  * Plain TCP/IP network layer - uses the JVM default SocketImpl implementation.
- * <p/>
+ * <br>
  * Property for createNetServerSocket(): TcpipNetLayer.backlog: integer the
  * maximum length of the server queue (int)
  *

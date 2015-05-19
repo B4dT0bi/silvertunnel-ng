@@ -51,7 +51,7 @@ import java.net.SocketImpl;
 
 /**
  * This class allows modification of the JVM global socket handling.
- * <p/>
+ * <br>
  * This class contains Java version specific code and does maybe not always
  * work! Detailed description:
  * http://sourceforge.net/apps/trac/silvertunnel/wiki/NetlibAdapterSocket
@@ -67,13 +67,13 @@ public class SocketGlobalUtil {
 
     /**
      * Initialize the SocketImplFactory of class java.net.Socket.
-     * <p/>
+     * <br>
      * The first lower NetLayer is {@link NopNetLayer} and NOT
      * {@link TcpipNetLayer} i.e. all requests will fail (and do NOT behave,
      * from the user perspective, as before calling this method).
-     * <p/>
+     * <br>
      * This method call influences the complete Java JVM.
-     * <p/>
+     * <br>
      * This method can be called multiple times without any problems, but
      * Socket.setSocketImplFactory() may not be called before the first call of
      * this method to avoid problems.
@@ -96,7 +96,7 @@ public class SocketGlobalUtil {
     /**
      * Set a new NetLayer that will be used as/by the SocketImpl inside
      * java.net.Socket.
-     * <p/>
+     * <br>
      * This method call influences the complete Java JVM.
      *
      * @param netLayer the new NetLayer
@@ -115,7 +115,7 @@ public class SocketGlobalUtil {
 
     /**
      * Create a new Socket with the JDK built-in SocketImpl.
-     * <p/>
+     * <br>
      * The result does not use/depend on a SocketImplFactory set in class
      * Socket.
      *
