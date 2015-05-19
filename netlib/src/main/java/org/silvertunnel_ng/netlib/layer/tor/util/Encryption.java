@@ -111,7 +111,7 @@ public class Encryption {
     /**
      * asymetric algorithm.
      */
-    private static final String PK_ALGORITHM = "RSA";
+    private static final String PK_ALGORITHM = "RSA/ECB/PKCS1Padding";
 
     static {
         try {
@@ -247,7 +247,7 @@ public class Encryption {
         try {
             final Cipher cipher = Cipher.getInstance(PK_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, signingKey);
-            return cipher.doFinal(getDigest(DIGEST_ALGORITHM, data));
+            return cipher.doFinal(getDigest(data));
         } catch (final GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
