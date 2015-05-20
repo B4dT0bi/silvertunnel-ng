@@ -317,37 +317,33 @@ public final class Circuit {
                     // attach circuit to TLS
                     lastTarget = routeServers[0];
                     routeEstablished = 0;
-                    //if (LOG.isDebugEnabled())
-                    //{
-                    LOG.debug("Circuit: connecting to " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")" + " ["
-                            + routeServers[0].getPlatform() + "] over tls");
-                    //}
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Circuit: connecting to " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")" + " ["
+                                + routeServers[0].getPlatform() + "] over tls");
+                    }
                     tls = fnh.getConnection(routeServers[0]);
                     queue = new Queue(TorConfig.queueTimeoutCircuit);
                     // attention: Addition to circuits-list is quite hidden
                     // here.
                     circuitId = tls.assignCircuitId(this);
-                    //if (LOG.isDebugEnabled())
-                    //{
-                    LOG.debug("Circuit: assigned to tls " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")" + " ["
-                            + routeServers[0].getPlatform() + "]");
-                    //}
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Circuit: assigned to tls " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")" + " ["
+                                + routeServers[0].getPlatform() + "]");
+                    }
                     // connect to entry point = routeServers[0]
-                    //if (LOG.isDebugEnabled())
-                    //{
-                    LOG.debug("Circuit: sending create cell to " + routeServers[0].getNickname());
-                    //}
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Circuit: sending create cell to " + routeServers[0].getNickname());
+                    }
                     routeNodes = new Node[routeServers.length];
                     if (TorConfig.useCreateFastCells()) {
                         createFast(routeServers[0]);
                     } else {
                         create(routeServers[0]);
                     }
-                    //if (LOG.isDebugEnabled())
-                    //{
-                    LOG.debug("Circuit: connected to entry point " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")"
-                            + " [" + routeServers[0].getPlatform() + "]");
-                    //}
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Circuit: connected to entry point " + routeServers[0].getNickname() + " (" + routeServers[0].getCountryCode() + ")"
+                                + " [" + routeServers[0].getPlatform() + "]");
+                    }
                     routeEstablished = 1;
                     dir.getGuardList().successful(routeServers[0].getFingerprint());
                     // extend route
@@ -356,10 +352,9 @@ public final class Circuit {
                         extend(i, routeServers[i]);
                         routeEstablished += 1;
                     }
-                    //if (LOG.isDebugEnabled())
-                    //{
-                    LOG.debug("Circuit: " + toString() + " successfully established");
-                    //}
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Circuit: " + toString() + " successfully established");
+                    }
                     // finished - success
                     break;
 
@@ -369,15 +364,13 @@ public final class Circuit {
                         dir.getGuardList().unsuccessful(routeServers[0].getFingerprint());
                     }
                     // some error occurred during the creating of the circuit
-                    //if (LOG.isDebugEnabled())
-                    //{
-                    LOG.debug("Circuit: " + toString() + " Exception " + misses + " :" + e, e);
-                    //}
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Circuit: " + toString() + " Exception " + misses + " :" + e, e);
+                    }
                     if (lastTarget != null) {
-                        //if (LOG.isDebugEnabled())
-                        //{
-                        LOG.debug("Circuit: " + toString() + "\nlastTarget\n" + lastTarget.toLongString());
-                        //}
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Circuit: " + toString() + "\nlastTarget\n" + lastTarget.toLongString());
+                        }
                     }
                     // cleanup now
                     if (circuitId != 0) {
@@ -397,37 +390,33 @@ public final class Circuit {
                     }
                     // build a new route over the hosts that are known to be
                     // working, punish failing host
-                    //if (LOG.isDebugEnabled())
-                    //{
-                    LOG.debug("Circuit: " + toString() + " build a new route over the hosts that are known to be working, punish failing host");
-                    //}
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Circuit: " + toString() + " build a new route over the hosts that are known to be working, punish failing host");
+                    }
                     routeServers = CircuitAdmin.restoreCircuit(dir, sp, routeServers, routeEstablished);
                 }
             }
             setupDurationMs = (int) (System.currentTimeMillis() - startSetupTime);
             if (setupDurationMs < TorConfig.maxAllowedSetupDurationMs) {
                 established = true;
-                //if (LOG.isDebugEnabled())
-                //{
-                LOG.debug("Circuit: " + toString() + " established within " + setupDurationMs + " ms - OK");
-                //}
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Circuit: " + toString() + " established within " + setupDurationMs + " ms - OK");
+                }
                 // fire event
                 torEventService.fireEvent(new TorEvent(TorEvent.CIRCUIT_BUILD, this, "Circuit build " + toString()));
                 successful = true;
             } else {
-                //if (LOG.isInfoEnabled())
-                //{
-                LOG.info("Circuit: close-after-create " + toString() + ", because established within " + setupDurationMs + " ms was too long");
-                //}
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Circuit: close-after-create " + toString() + ", because established within " + setupDurationMs + " ms was too long");
+                }
                 close(true);
             }
         } catch (TorServerNotFoundException exception) {
             throw exception;
         } catch (Exception exception) {
-            //if (LOG.isDebugEnabled())
-            //{
-            LOG.debug("got Exception while constructing circuit : " + exception, exception);
-            //}
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("got Exception while constructing circuit : " + exception, exception);
+            }
         } finally {
             numberOfCircuitsInConstructor--;
             if (!successful) {
@@ -748,8 +737,7 @@ public final class Circuit {
      * Extends the existing circuit one more hop. sends an EXTEND-cell.
      */
     private void extend(final int i, final Router next) throws IOException, TorException {
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Circuit: " + toString() + " extending to " + next.getNickname() + " ("
                     + next.getCountryCode() + ")" + " [" + next.getPlatform() + "]");
         }
@@ -761,8 +749,7 @@ public final class Circuit {
         final CellRelay relay = queue.receiveRelayCell(CellRelay.RELAY_EXTENDED);
         // finish DH-exchange
         routeNodes[i].finishDh(relay.getData());
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Circuit: " + toString() + " successfully extended to " + next.getNickname() + " ("
                     + next.getCountryCode() + ")" + " [" + next.getPlatform() + "]");
         }
@@ -777,8 +764,7 @@ public final class Circuit {
      * @throws IOException  when there is a problem extending the Circuit
      */
     public void extend(final Fingerprint routerFingerprint) throws TorException, IOException {
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("extending Circuit with id {} to {}", new Object[]{getId(), routerFingerprint});
         }
         //check if we didnt have this Fingerprint already in our router list.
@@ -944,8 +930,7 @@ public final class Circuit {
      */
     public boolean close(final boolean force) {
         if (!closed) {
-            //if (LOG.isDebugEnabled())
-            {
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("Circuit.close(): closing " + toString());
             }
             // remove servers from list of currently used nodes
@@ -979,8 +964,7 @@ public final class Circuit {
                             stream.close(true);
                         } else {
                             // no way...warning
-                            //if (LOG.isDebugEnabled())
-                            {
+                            if (LOG.isDebugEnabled()) {
                                 LOG.debug("Circuit.close(): can't close due to " + stream.toString());
                             }
                         }
@@ -1001,8 +985,7 @@ public final class Circuit {
         if (!force) {
             if (routeEstablished > 0) {
                 // send a destroy-cell to the first hop in the circuit only
-                //if (LOG.isDebugEnabled())
-                {
+                if (LOG.isDebugEnabled()) {
                     LOG.debug("Circuit.close(): destroying " + toString());
                 }
                 routeEstablished = 1;
@@ -1015,13 +998,11 @@ public final class Circuit {
         }
 
         // close circuit (also removes handlers)
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Circuit.close(): close queue? " + toString());
         }
         if (queue != null) {
-            //if (LOG.isDebugEnabled())
-            {
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("Circuit.close(): close queue! " + toString());
             }
             queue.close();
@@ -1029,21 +1010,18 @@ public final class Circuit {
 
         // cleanup and maybe close tls
         destruct = true;
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Circuit.close(): remove from tls? " + toString());
         }
         if (tls != null) {
-            //if (LOG.isDebugEnabled())
-            {
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("Circuit.close(): remove from tls! " + toString());
             }
             tls.removeCircuit(getId());
         }
 
         // closed
-        //if (LOG.isDebugEnabled())
-        {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Circuit.close(): done " + toString());
         }
         return true;
@@ -1221,8 +1199,7 @@ public final class Circuit {
         if (circuitFlowRecv <= CIRCUIT_LEVEL_FLOW_RECV - CIRCUIT_LEVEL_FLOW_RECV_INC) {
             // send a RELAY_SENDME cell to the last router in the circuit
             try {
-                //if (LOG.isDebugEnabled())
-                {
+                if (LOG.isDebugEnabled()) {
                     LOG.debug("sending RELAY_SENDME cell to router {}", getRoute()[getRouteEstablished() - 1]);
                 }
                 sendCell(new CellRelaySendme(this, getRouteEstablished() - 1));

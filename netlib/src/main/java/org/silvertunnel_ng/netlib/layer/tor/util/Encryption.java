@@ -85,6 +85,7 @@ import org.spongycastle.crypto.InvalidCipherTextException;
 import org.spongycastle.crypto.encodings.OAEPEncoding;
 import org.spongycastle.crypto.engines.RSAEngine;
 import org.spongycastle.crypto.params.RSAKeyParameters;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.jce.provider.JCERSAPublicKey;
 import org.spongycastle.openssl.PEMKeyPair;
 import org.spongycastle.openssl.PEMParser;
@@ -116,7 +117,7 @@ public class Encryption {
     static {
         try {
             // install BC, if not already done
-            if (Security.getProvider("BC") == null) // TODO : get rid of spongycastle...
+            if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) // TODO : get rid of spongycastle...
             {
                 Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
             }

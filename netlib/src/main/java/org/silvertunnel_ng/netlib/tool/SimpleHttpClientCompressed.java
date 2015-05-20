@@ -55,7 +55,7 @@ import java.util.zip.InflaterInputStream;
 
 /**
  * This class provides methods for easy HTTP GET and HTTP POST requests.
- *
+ * <p/>
  * All methods assume UTF-8 encoding. All methods do internally use
  * java.net.URL.
  *
@@ -85,7 +85,7 @@ public final class SimpleHttpClientCompressed {
 
     /**
      * Execute HTTP GET request.
-     *
+     * <p/>
      * If you want to define timeouts than you should wrap the lowerNetLayer by
      * a ControlNetLayer.
      *
@@ -102,9 +102,9 @@ public final class SimpleHttpClientCompressed {
         final long startTime = System.currentTimeMillis();
         try {
 
-            //if (LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("start download with hostAndPort=" + hostAndPort + " and path=" + path);
-            //}
+            }
 
             // prepare URL handling on top of the lowerNetLayer
             final NetlibURLStreamHandlerFactory factory = new NetlibURLStreamHandlerFactory(false);
@@ -150,16 +150,16 @@ public final class SimpleHttpClientCompressed {
 
             final String response = new String(byteBuffer.toArray(), Util.UTF8);
             // result
-            //if (LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("end download with hostAndPort=" + hostAndPort + " and path=" + path + " finished with result of length="
                         + response.length() + " timeReceived : " + (timeReceived - startTime) + " ms");
-            //}
+            }
             return response;
 
         } catch (final IOException e) {
-            //if (LOG.isDebugEnabled()) {
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("end download with hostAndPort=" + hostAndPort + " and path=" + path + " with " + e, e);
-            //}
+            }
             throw e;
         } finally {
             // close stream(s)
@@ -173,14 +173,14 @@ public final class SimpleHttpClientCompressed {
         }
     }
 
-    private InputStream getInputStream(final InputStream inputStream) throws IOException{
+    private InputStream getInputStream(final InputStream inputStream) throws IOException {
         PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream, 2);
         byte[] signature = new byte[2];
         pushbackInputStream.read(signature);
         pushbackInputStream.unread(signature);
         if (isGzipCompressed(signature)) {
             return new GZIPInputStream(pushbackInputStream);
-        } else if(isZlibCompressed(signature)) {
+        } else if (isZlibCompressed(signature)) {
             return new InflaterInputStream(pushbackInputStream);
         } else {
             return pushbackInputStream;
@@ -203,6 +203,7 @@ public final class SimpleHttpClientCompressed {
             return ((bytes[0] == (byte) (GZIPInputStream.GZIP_MAGIC)) && (bytes[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)));
         }
     }
+
     /**
      * Determines if a byte array is compressed. The java.util.zip GZip
      * implementaiton does not expose the GZip header so it is difficult to determine
@@ -216,7 +217,7 @@ public final class SimpleHttpClientCompressed {
         if ((bytes == null) || (bytes.length < 1)) {
             return false;
         } else {
-            return (bytes[0] == (byte) 0x78 );
+            return (bytes[0] == (byte) 0x78);
         }
     }
 }

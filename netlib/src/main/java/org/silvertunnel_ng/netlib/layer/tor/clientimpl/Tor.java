@@ -87,6 +87,7 @@ import org.silvertunnel_ng.netlib.layer.tor.util.TorNoAnswerException;
 import org.silvertunnel_ng.netlib.util.StringStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * MAIN CLASS. keeps track of circuits, tls-connections and the status of servers. Provides high level access to all
@@ -149,7 +150,7 @@ public class Tor implements NetLayerStatusAdmin {
 
   private void initLocalSystem(final boolean noLocalFileSystemAccess) throws IOException {
     // install BC, if not already done
-    if (Security.getProvider("BC") == null) {
+    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
       Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
       // Security.insertProviderAt(new
       // org.bouncycastle.jce.provider.BouncyCastleProvider(),2);

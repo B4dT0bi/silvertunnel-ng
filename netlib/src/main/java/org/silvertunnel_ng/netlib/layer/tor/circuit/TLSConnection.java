@@ -34,19 +34,6 @@
  */
 package org.silvertunnel_ng.netlib.layer.tor.circuit;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.TrustManager;
-
 import org.silvertunnel_ng.netlib.api.NetAddress;
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.NetSocket;
@@ -59,81 +46,89 @@ import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.TrustManager;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.*;
+
 /**
  * functionality for the TLS connections bridging the gap to the first nodes in
  * the routes.
- * 
+ *
  * @author Lexi Pimenidis
  * @author Vinh Pham
  * @author hapke
  * @author Tobias Boese
  */
-public class TLSConnection
-{
-	/** */
-	private static final Logger LOG = LoggerFactory.getLogger(TLSConnection.class);
+public class TLSConnection {
+    /** */
+    private static final Logger LOG = LoggerFactory.getLogger(TLSConnection.class);
 
-	private static final String enabledSuitesStr = "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA,TLS_DHE_RSA_WITH_AES_128_CBC_SHA";
+    private static final String enabledSuitesStr = "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA,TLS_DHE_RSA_WITH_AES_128_CBC_SHA";
 
-	/** pointer to the server/router. */
-	private Router router;
-	/** the physical connection (if any) to the node. */
-	private final NetSocket tls;
-	private boolean closed = false;
-	private final TLSDispatcherThread dispatcher;
-	private final DataOutputStream sout;
-	/** key=circuit ID, value=circuit. */
-	private final Map<Integer, Circuit> circuitMap = Collections.synchronizedMap(new HashMap<Integer, Circuit>());
+    /**
+     * pointer to the server/router.
+     */
+    private Router router;
+    /**
+     * the physical connection (if any) to the node.
+     */
+    private final NetSocket tls;
+    private boolean closed = false;
+    private final TLSDispatcherThread dispatcher;
+    private final DataOutputStream sout;
+    /**
+     * key=circuit ID, value=circuit.
+     */
+    private final Map<Integer, Circuit> circuitMap = Collections.synchronizedMap(new HashMap<Integer, Circuit>());
 
-	/**
-	 * creates the TLS connection and installs a dispatcher for incoming data.
-	 * 
-	 * @param server
-	 *            the server to connect to (e.g. a Tor Onion Router)
-	 * @param lowerNetLayer
-	 *            build TLS connection on this lower net layer
-	 * 
-	 * @see TLSDispatcherThread
-	 * @exception IOException
-	 * @exception SSLPeerUnverifiedException
-	 */
-	TLSConnection(final Router server,
-				  final NetLayer lowerNetLayer) throws IOException,
-				  									   SSLPeerUnverifiedException, 
-				  									   SSLException
-	{
-		if (server == null)
-		{
-			throw new IOException("TLSConnection: server variable is NULL");
-		}
-		this.router = server;
+    /**
+     * creates the TLS connection and installs a dispatcher for incoming data.
+     *
+     * @param server        the server to connect to (e.g. a Tor Onion Router)
+     * @param lowerNetLayer build TLS connection on this lower net layer
+     * @throws IOException
+     * @throws SSLPeerUnverifiedException
+     * @see TLSDispatcherThread
+     */
+    TLSConnection(final Router server,
+                  final NetLayer lowerNetLayer) throws IOException,
+            SSLPeerUnverifiedException,
+            SSLException {
+        if (server == null) {
+            throw new IOException("TLSConnection: server variable is NULL");
+        }
+        this.router = server;
 
-		// create new certificates and use them ad-hoc
+        // create new certificates and use them ad-hoc
 //		final KeyManager[] kms = new KeyManager[1];
 
-		// TODO: Leave out the PrivateKeyHandler, should be needed for
-		// server operation and hidden services only
-		// kms[0] = pkh;
+        // TODO: Leave out the PrivateKeyHandler, should be needed for
+        // server operation and hidden services only
+        // kms[0] = pkh;
 
-		// use the keys and certs from above to connect to Tor-network
-		// try {
-		final TrustManager[] tms = { new TorX509TrustManager() };
+        // use the keys and certs from above to connect to Tor-network
+        // try {
+        final TrustManager[] tms = {new TorX509TrustManager()};
 
-		// new code:
-		final Map<String, Object> props = new HashMap<String, Object>();
-		props.put(TLSNetLayer.ENABLES_CIPHER_SUITES, enabledSuitesStr);
-		props.put(TLSNetLayer.TRUST_MANAGERS, tms);
-		final NetAddress remoteAddress = new TcpipNetAddress(server.getHostname(), server.getOrPort());
-		final NetAddress localAddress = null;
-		tls = lowerNetLayer.createNetSocket(props, localAddress, remoteAddress);
+        // new code:
+        final Map<String, Object> props = new HashMap<String, Object>();
+        props.put(TLSNetLayer.ENABLES_CIPHER_SUITES, enabledSuitesStr);
+        props.put(TLSNetLayer.TRUST_MANAGERS, tms);
+        final NetAddress remoteAddress = new TcpipNetAddress(server.getHostname(), server.getOrPort());
+        final NetAddress localAddress = null;
+        tls = lowerNetLayer.createNetSocket(props, localAddress, remoteAddress);
 
-		// FIXME: check certificates received in TLS
-		// (note: not an important security bug, since it only affects
-		// hop2hop-encryption, real
-		// data is encrypted anyway on top of TLS)
+        // FIXME: check certificates received in TLS
+        // (note: not an important security bug, since it only affects
+        // hop2hop-encryption, real
+        // data is encrypted anyway on top of TLS)
 
 		/*
-		 * // for debugging purposes javax.net.ssl.HandshakeCompletedListener
+         * // for debugging purposes javax.net.ssl.HandshakeCompletedListener
 		 * hscl = new javax.net.ssl.HandshakeCompletedListener() { public void
 		 * handshakeCompleted(HandshakeCompletedEvent e) { try {
 		 * LOG.info("Cipher: "+e.getCipherSuite());
@@ -147,240 +142,201 @@ public class TLSConnection
 		 * {} } }; tls.addHandshakeCompletedListener(hscl);
 		 */
 
-		// create object to write data to stream
-		sout = new DataOutputStream(tls.getOutputStream());
-		// start listening for incoming data
-		this.dispatcher = new TLSDispatcherThread(this, new DataInputStream(tls.getInputStream()));
-	}
+        // create object to write data to stream
+        sout = new DataOutputStream(tls.getOutputStream());
+        // start listening for incoming data
+        this.dispatcher = new TLSDispatcherThread(this, new DataInputStream(tls.getInputStream()));
+    }
 
-	/**
-	 * converts a cell to bytes and transmits it over the line. received data is
-	 * dispatched by the class TLSDispatcher
-	 * 
-	 * @param cell
-	 *            the cell to send
-	 * @exception IOException
-	 * @see TLSDispatcherThread
-	 */
-	synchronized void sendCell(final Cell cell) throws IOException
-	{
-		try
-		{
-			sout.write(cell.toByteArray());
-		}
-		catch (final IOException exception)
-		{
-			LOG.debug("error while sending data Exception : {}", exception, exception);
-			// force to close the connection
-			close(true);
-			// rethrow error
-			throw exception;
-		}
-	}
+    /**
+     * converts a cell to bytes and transmits it over the line. received data is
+     * dispatched by the class TLSDispatcher
+     *
+     * @param cell the cell to send
+     * @throws IOException
+     * @see TLSDispatcherThread
+     */
+    synchronized void sendCell(final Cell cell) throws IOException {
+        try {
+            sout.write(cell.toByteArray());
+        } catch (final IOException exception) {
+            LOG.debug("error while sending data Exception : {}", exception, exception);
+            // force to close the connection
+            close(true);
+            // rethrow error
+            throw exception;
+        }
+    }
 
-	/**
-	 * returns a free circID and save that it points to "c", save it to "c",
-	 * too. Throws an exception, if no more free IDs are available, or the TLS
-	 * connection is marked as closed.<br>
-	 * FIXME: replace this code with something more beautiful
-	 * 
-	 * @param circuit
-	 *            the circuit that is going to be build through this
-	 *            TLS-Connection
-	 * @return an identifier for this new circuit - this must be set by the
-	 *         caller as id in the Circuit
-	 * @exception TorException
-	 */
-	synchronized int assignCircuitId(final Circuit circuit) throws TorException
-	{
-		if (closed)
-		{
-			throw new TorException(
-					"TLSConnection.assignCircuitId(): Connection to "
-							+ router.getNickname()
-							+ " is closed for new circuits");
-		}
-		// find a free number (other than zero)
-		int newId = 0;
-		int j = 0;
-		while (newId == 0)
-		{
-			if (++j > 1000)
-			{
-				throw new TorException(
-						"TLSConnection.assignCircuitId(): no more free IDs");
-			}
+    /**
+     * returns a free circID and save that it points to "c", save it to "c",
+     * too. Throws an exception, if no more free IDs are available, or the TLS
+     * connection is marked as closed.<br>
+     * FIXME: replace this code with something more beautiful
+     *
+     * @param circuit the circuit that is going to be build through this
+     *                TLS-Connection
+     * @return an identifier for this new circuit - this must be set by the
+     * caller as id in the Circuit
+     * @throws TorException
+     */
+    synchronized int assignCircuitId(final Circuit circuit) throws TorException {
+        if (closed) {
+            throw new TorException(
+                    "TLSConnection.assignCircuitId(): Connection to "
+                            + router.getNickname()
+                            + " is closed for new circuits");
+        }
+        // find a free number (other than zero)
+        int newId = 0;
+        int j = 0;
+        while (newId == 0) {
+            if (++j > 1000) {
+                throw new TorException(
+                        "TLSConnection.assignCircuitId(): no more free IDs");
+            }
 
-			// Deprecated: 16 bit unsigned Integers with MSB set
-			// ID = FirstNodeHandler.rnd.nextInt() & 0xffff | 0x8000;
+            // Deprecated: 16 bit unsigned Integers with MSB set
+            // ID = FirstNodeHandler.rnd.nextInt() & 0xffff | 0x8000;
 
-			// XXX: Since the PrivateKeyHandler is gone, we don't need to
-			// consider
-			// the MSB as long as we are in client mode (see main-tor-spec.txt,
-			// Section 5.1)
-			newId = TLSConnectionAdmin.RANDOM.nextInt() & 0xffff; // & 0x7fff;
+            // XXX: Since the PrivateKeyHandler is gone, we don't need to
+            // consider
+            // the MSB as long as we are in client mode (see main-tor-spec.txt,
+            // Section 5.1)
+            newId = TLSConnectionAdmin.RANDOM.nextInt() & 0xffff; // & 0x7fff;
 
-			if (circuitMap.containsKey(Integer.valueOf(newId)))
-			{
-				newId = 0;
-			}
-		}
-		
-		// memorize circuit
-		circuitMap.put(Integer.valueOf(newId), circuit);
-		return newId;
-	}
+            if (circuitMap.containsKey(Integer.valueOf(newId))) {
+                newId = 0;
+            }
+        }
 
-	/**
-	 * marks as closed. closes if no more data or forced closed on real close:
-	 * kill dispatcher
-	 * 
-	 * @param force
-	 *            set to TRUE if established circuits shall be cut and
-	 *            terminated.
-	 */
-	void close(final boolean force)
-	{
-		LOG.debug("Closing TLS to {}", router.getNickname());
+        // memorize circuit
+        circuitMap.put(Integer.valueOf(newId), circuit);
+        return newId;
+    }
 
-		closed = true;
-		// FIXME: a problem with (!force) is, that circuits, that are currently
-		// still build up
-		// are not killed. their build-up should be stopped
-		// close circuits, if forced
-		Collection<Circuit> circuits;
-		synchronized (circuitMap)
-		{
-			circuits = new ArrayList<Circuit>(circuitMap.values());
-		}
-		for (final Circuit circuit : circuits)
-		{
-			if (circuit.close(force))
-			{
-				removeCircuit(circuit.getId());
-			}
-		}
+    /**
+     * marks as closed. closes if no more data or forced closed on real close:
+     * kill dispatcher
+     *
+     * @param force set to TRUE if established circuits shall be cut and
+     *              terminated.
+     */
+    void close(final boolean force) {
+        LOG.debug("Closing TLS to {}", router.getNickname());
 
-		LOG.debug("Fast exit while closing TLS to {}?", router.getNickname());
-		if (!(force || circuitMap.isEmpty()))
-		{
-			LOG.debug("Fast exit while closing TLS to {}!", router.getNickname());
-			return;
-		}
+        closed = true;
+        // FIXME: a problem with (!force) is, that circuits, that are currently
+        // still build up
+        // are not killed. their build-up should be stopped
+        // close circuits, if forced
+        Collection<Circuit> circuits;
+        synchronized (circuitMap) {
+            circuits = new ArrayList<Circuit>(circuitMap.values());
+        }
+        for (final Circuit circuit : circuits) {
+            if (circuit.close(force)) {
+                removeCircuit(circuit.getId());
+            }
+        }
 
-		// kill dispatcher
-		LOG.debug("Closing dispatcher of TLS to {}", router.getNickname());
-		dispatcher.close();
+        LOG.debug("Fast exit while closing TLS to {}?", router.getNickname());
+        if (!(force || circuitMap.isEmpty())) {
+            LOG.debug("Fast exit while closing TLS to {}!", router.getNickname());
+            return;
+        }
 
-		// close TLS connection
-		LOG.debug("Closing TLS connection to {}", router.getNickname());
-		try
-		{
-			sout.close();
-			tls.close();
-		}
-		catch (final IOException e)
-		{
-			LOG.debug("got IOException : {}", e.getMessage(), e);
-		}
-		LOG.debug("Closing TLS to {} done", router.getNickname());
-	}
+        // kill dispatcher
+        LOG.debug("Closing dispatcher of TLS to {}", router.getNickname());
+        dispatcher.close();
 
-	@Override
-	public String toString()
-	{
-		return "TLS to " + router.getNickname();
-	}
+        // close TLS connection
+        LOG.debug("Closing TLS connection to {}", router.getNickname());
+        try {
+            sout.close();
+            tls.close();
+        } catch (final IOException e) {
+            LOG.debug("got IOException : {}", e.getMessage(), e);
+        }
+        LOG.debug("Closing TLS to {} done", router.getNickname());
+    }
 
-	// /////////////////////////////////////////////////////
-	// getters and setters
-	// /////////////////////////////////////////////////////
+    @Override
+    public String toString() {
+        return "TLS to " + router.getNickname();
+    }
 
-	public Router getRouter()
-	{
-		return router;
-	}
+    // /////////////////////////////////////////////////////
+    // getters and setters
+    // /////////////////////////////////////////////////////
 
-	public void setRouter(final Router router)
-	{
-		this.router = router;
-	}
+    public Router getRouter() {
+        return router;
+    }
 
-	public Collection<Circuit> getCircuits()
-	{
-		synchronized (circuitMap)
-		{
-			return new ArrayList<Circuit>(circuitMap.values());
-		}
-	}
+    public void setRouter(final Router router) {
+        this.router = router;
+    }
 
-	public Map<Integer, Circuit> getCircuitMap()
-	{
-		synchronized (circuitMap)
-		{
-			return new HashMap<Integer, Circuit>(circuitMap);
-		}
-	}
+    public Collection<Circuit> getCircuits() {
+        synchronized (circuitMap) {
+            return new ArrayList<Circuit>(circuitMap.values());
+        }
+    }
 
-	public Circuit getCircuit(final Integer circuitId)
-	{
-		synchronized (circuitMap)
-		{
-			return circuitMap.get(circuitId);
-		}
-	}
+    public Map<Integer, Circuit> getCircuitMap() {
+        synchronized (circuitMap) {
+            return new HashMap<Integer, Circuit>(circuitMap);
+        }
+    }
 
-	/**
-	 * Remove
-	 * 
-	 * @param circuitId
-	 * @return true=removed; false=not remove/did not exist
-	 */
-	public boolean removeCircuit(final Integer circuitId)
-	{
-		LOG.debug("remove circuit with circuitId={} from {}", circuitId, toString());
+    public Circuit getCircuit(final Integer circuitId) {
+        synchronized (circuitMap) {
+            return circuitMap.get(circuitId);
+        }
+    }
 
-		// remove Circuit
-		boolean result;
-		boolean doClose;
-		synchronized (circuitMap)
-		{
-			result = circuitMap.remove(circuitId) != null;
-			doClose = circuitMap.size() == 0;
-		}
+    /**
+     * Remove
+     *
+     * @param circuitId
+     * @return true=removed; false=not remove/did not exist
+     */
+    public boolean removeCircuit(final Integer circuitId) {
+        LOG.debug("remove circuit with circuitId={} from {}", circuitId, toString());
 
-		// last circuit of this TLSConnection removed: connection can be closed?
-		if (doClose)
-		{
-			// yes
-			//if (LOG.isDebugEnabled())
-			{
-				LOG.debug("close TLSConnection from {} because last Circuit is removed", toString());
-			}
-			close(true);
-		}
-		else
-		{
-			// no
-			synchronized (circuitMap)
-			{
-				//if (LOG.isDebugEnabled())
-				{
-					LOG.debug("cannot close TLSConnection from " + toString()
-						+ " because of additional circuits: " + circuitMap);
-				}
-			}
-		}
-		//if (LOG.isDebugEnabled())
-		{
-			LOG.debug("remove circuit from " + toString() + " done with result="
-				+ result);
-		}
-		return result;
-	}
+        // remove Circuit
+        boolean result;
+        boolean doClose;
+        synchronized (circuitMap) {
+            result = circuitMap.remove(circuitId) != null;
+            doClose = circuitMap.size() == 0;
+        }
 
-	public boolean isClosed()
-	{
-		return closed;
-	}
+        // last circuit of this TLSConnection removed: connection can be closed?
+        if (doClose) {
+            // yes
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("close TLSConnection from {} because last Circuit is removed", toString());
+            }
+            close(true);
+        } else {
+            // no
+            synchronized (circuitMap) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("cannot close TLSConnection from " + toString()
+                            + " because of additional circuits: " + circuitMap);
+                }
+            }
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("remove circuit from " + toString() + " done with result="
+                    + result);
+        }
+        return result;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
 }

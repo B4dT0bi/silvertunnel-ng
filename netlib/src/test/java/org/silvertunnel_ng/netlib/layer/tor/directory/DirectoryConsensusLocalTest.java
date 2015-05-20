@@ -51,6 +51,7 @@ import org.silvertunnel_ng.netlib.layer.tor.util.Util;
 import org.silvertunnel_ng.netlib.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -80,7 +81,7 @@ public final class DirectoryConsensusLocalTest
 	public static void setUpClass() throws Exception
 	{
 		// install BC, if not already done
-		if (Security.getProvider("BC") == null)
+		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
 		{
 			Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
 		}
