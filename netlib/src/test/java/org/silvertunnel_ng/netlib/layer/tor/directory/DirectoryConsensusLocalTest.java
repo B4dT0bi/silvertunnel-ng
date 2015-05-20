@@ -70,9 +70,7 @@ public final class DirectoryConsensusLocalTest
 	private static final String EXAMPLE_CONSENSUS_WITHOUT_SIGNATURES_PATH = "/org/silvertunnel_ng/netlib/layer/tor/example-consensus-without-signatures.txt";
 	private static final String EXAMPLE_CONSENSUS_WITH_INVALID_SIGNATURES_PATH = "/org/silvertunnel_ng/netlib/layer/tor/example-consensus-with-invalid-signatures.txt";
 
-	// private static final Date EXAMPLE_CONSENSUS_VALID_AND_FRESH_DATE =
-	// Util.parseUtcTimestamp("2010-01-25 21:30:00");
-	private static final Date EXAMPLE_CONSENSUS_VALID_BUT_UNFRESH_DATE = Util.parseUtcTimestamp("2010-01-25 22:30:00");
+	private static final Date EXAMPLE_CONSENSUS_VALID_BUT_UNFRESH_DATE = Util.parseUtcTimestamp("2015-05-20 23:30:00");
 	private static final Date EXAMPLE_CONSENSUS_INVALID_DATE = Util.parseUtcTimestamp("2010-01-26 00:30:00");
 
 	private static final String EXAMPLE_AUTHORITY_KEYS_PATH = "/org/silvertunnel_ng/netlib/layer/tor/example-authority-keys.txt";
@@ -103,7 +101,7 @@ public final class DirectoryConsensusLocalTest
 				EXAMPLE_CONSENSUS_VALID_BUT_UNFRESH_DATE);
 
 		// check result
-		assertEquals("invalid number of parsed entries", 1448, consensus
+		assertEquals("invalid number of parsed entries", 6289, consensus
 				.getFingerprintsNetworkStatusDescriptors().size());
 
 		// check that a specific entry was parsed, with fingerprint
@@ -118,7 +116,7 @@ public final class DirectoryConsensusLocalTest
 		assertEquals("one specific result router entry: wrong nick name",
 				"dannenberg", desc.getNickname());
 		assertEquals("one specific result router entry: wrong IP address",
-				"213.73.91.31", desc.getIp());
+				"193.23.244.244", desc.getIp());
 
 		// check the validity checks
 		assertTrue(
