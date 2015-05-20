@@ -56,7 +56,7 @@ import java.util.regex.Pattern;
 
 /**
  * class that represents the Service Descriptor of a hidden service.
- * <p/>
+ * <br>
  * see https
  * ://www.torproject.org/doc/design-paper/tor-design.html#sec:rendezvous
  * see http

@@ -60,7 +60,7 @@ public class CellRelayIntroduce1 extends CellRelay {
     /**
      * CellRelayIntroduce1: from Alice's OP to Introduction Point (section 1.8
      * of Tor Rendezvous Specification)
-     * <p/>
+     * <br>
      * We only support version 2 here.
      *
      * @param circuit                        the {@link Circuit} to be used for sending the {@link Cell}

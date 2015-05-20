@@ -51,11 +51,11 @@ import java.util.Random;
 /**
  * This class provides simple methods to access HTTP - they can be used for
  * testing.
- * <p/>
+ * <br>
  * The class should not be used in productive environments (because these
  * methods do not handle all edge cases). Consider to use class HttpClient in
  * productive environments.
- * <p/>
+ * <br>
  * This method does NOT internally use java.net.URL.
  *
  * @author hapke
@@ -80,7 +80,7 @@ public class HttpUtil {
     /**
      * Try to execute the /httptest/smalltest.php over the provided net socket
      * with a random id.
-     * <p/>
+     * <br>
      * Closes the socket after the test.
      *
      * @param lowerLayerNetSocket this net socket will be closed inside the method
@@ -189,7 +189,7 @@ public class HttpUtil {
 
     /**
      * Get a clean hostname.
-     * <p/>
+     * <br>
      * removes the exit-node fingerprint and the .exit from hostname
      *
      * @param hostname the hostname which needs to be cleaned

@@ -92,14 +92,14 @@ public final class Circuit {
     private static final int CIRCUIT_LEVEL_FLOW_RECV = 1000; // TODO : extract circwindow from directory and use it here if it is set.
     /**
      * current circuit receive window.
-     * <p/>
+     * <br>
      * How many RELAY_DATA cells did we received? If this drops below a specific
      * threshold we should send a RELAY_SENDME cell.
      */
     private int circuitFlowRecv = CIRCUIT_LEVEL_FLOW_RECV;
     /**
      * current circuit send window.
-     * <p/>
+     * <br>
      * How many RELAY_DATA cells did we send? If this drops below a specific
      * threshold we should wait for a RELAY_SENDME cell before sending new
      * RELAY_DATA cells.
@@ -138,7 +138,7 @@ public final class Circuit {
     private int relayEarlyCellsRemaining = 8;
     /**
      * list of all TCP-streams relayed through this circuit.
-     * <p/>
+     * <br>
      * key=stream ID, value=stream
      */
     private final transient Map<Integer, Stream> streams = Collections.synchronizedMap(new HashMap<Integer, Stream>());
@@ -429,9 +429,9 @@ public final class Circuit {
     /**
      * CellRelayIntroduce2: From the Introduction Point to Bob's OP (section 1.9
      * of Tor Rendezvous Specification)
-     * <p/>
+     * <br>
      * We only support version 2 here.
-     * <p/>
+     * <br>
      * does exactly that: - check introduce2 for validity and connect to
      * rendezvous-point
      */

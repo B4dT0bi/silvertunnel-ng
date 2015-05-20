@@ -203,7 +203,7 @@ public class DirectoryConsensus {
 
     /**
      * Check the timestamps.
-     * <p/>
+     * <br>
      * Final because called from inside the constructor.
      *
      * @param now the current time

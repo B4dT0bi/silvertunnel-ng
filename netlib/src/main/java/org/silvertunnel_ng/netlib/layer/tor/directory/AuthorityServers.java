@@ -42,15 +42,15 @@ public class AuthorityServers {
     /**
      * it follows the list of official authorized authorityKeyCertificate
      * identity keys/fingerprints
-     * <p/>
+     * <br>
      * This list is derived from the list of the original C implementation under
      * https://gitweb.torproject.org/tor.git/blob/HEAD:/src/or/config.c
      * http://gitweb.torproject.org/tor.git?a=blob;f=src/or/config.c;hb=HEAD
      * https://git.torproject.org/checkout/tor/master/src/or/config.c (former
      * URL) and based of the following code fragment.
-     * <p/>
+     * <br>
      * Only the identity keys/fingerprints are used here. The rest is ignored.
-     * <p/>
+     * <br>
      * Add the default directory authorities directly into the trusted dir list,
      * but only add them insofar as they share bits with <b>type</b>. static
      * void add_default_trusted_dir_authorities(authority_type_t type) { int i;

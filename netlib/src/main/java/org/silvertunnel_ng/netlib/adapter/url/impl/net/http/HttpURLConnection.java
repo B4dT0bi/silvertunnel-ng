@@ -2404,7 +2404,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
 
     /**
      * Returns setting for connect timeout.
-     * <p/>
+     * <br>
      * 0 return implies that the option is disabled (i.e., timeout of infinity).
      *
      * @return an <code>int</code> that indicates the connect timeout value in
@@ -2424,8 +2424,8 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
      * connection is established to a resource. If the timeout expires before
      * there is data available for read, a java.net.SocketTimeoutException is
      * raised. A timeout of zero is interpreted as an infinite timeout.
-     * <p/>
-     * <p/>
+     * <br>
+     * <br>
      * Some non-standard implementation of this method ignores the specified
      * timeout. To see the read timeout set, please call getReadTimeout().
      *
@@ -2520,10 +2520,10 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
          * Marks the current position in this input stream. A subsequent call to
          * the <code>reset</code> method repositions this stream at the last
          * marked position so that subsequent reads re-read the same bytes.
-         * <p/>
+         * <br>
          * The <code>readlimit</code> argument tells this input stream to allow
          * that many bytes to be read before the mark position gets invalidated.
-         * <p/>
+         * <br>
          * This method simply performs <code>in.mark(readlimit)</code>.
          *
          * @param readlimit the maximum limit of bytes that can be read before the
@@ -2543,9 +2543,9 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
         /**
          * Repositions this stream to the position at the time the
          * <code>mark</code> method was last called on this input stream.
-         * <p/>
+         * <br>
          * This method simply performs <code>in.reset()</code>.
-         * <p/>
+         * <br>
          * Stream marks are intended to be used in situations where you need to
          * read ahead a little to see what's in the stream. Often this is most
          * easily done by invoking some general parser. If the stream is of the

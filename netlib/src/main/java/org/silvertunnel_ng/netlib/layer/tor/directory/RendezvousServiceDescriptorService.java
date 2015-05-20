@@ -73,7 +73,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Logic to handle Service Descriptors of hidden services.
- * <p/>
+ * <br>
  * see https
  * ://www.torproject.org/doc/design-paper/tor-design.html#sec:rendezvous
  * see http

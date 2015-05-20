@@ -152,7 +152,7 @@ public final class Directory {
     /**
      * cache of a combination of fingerprintsRouters+directoryConsensus: valid
      * routers + status.
-     * <p/>
+     * <br>
      * key=identity key
      */
     private Map<Fingerprint, Router> validRoutersByFingerprint = new HashMap<Fingerprint, Router>();

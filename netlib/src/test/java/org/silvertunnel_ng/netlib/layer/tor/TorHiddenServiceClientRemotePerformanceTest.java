@@ -38,7 +38,7 @@ import static org.testng.AssertJUnit.fail;
  * Open's and closes man connections for profiling.
  *
  * @author Tobias Boese
- *         <p/>
+ *         <br>
  *         TestNG arguments : -agentpath:"C:\Program Files (x86)\YourKit Java Profiler 2013 build 13062\bin\win64\yjpagent.dll=tracing"
  */
 public final class TorHiddenServiceClientRemotePerformanceTest extends TorRemoteAbstractTest {

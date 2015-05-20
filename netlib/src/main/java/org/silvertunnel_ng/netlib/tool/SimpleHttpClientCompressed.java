@@ -55,7 +55,7 @@ import java.util.zip.InflaterInputStream;
 
 /**
  * This class provides methods for easy HTTP GET and HTTP POST requests.
- * <p/>
+ * <br>
  * All methods assume UTF-8 encoding. All methods do internally use
  * java.net.URL.
  *
@@ -85,7 +85,7 @@ public final class SimpleHttpClientCompressed {
 
     /**
      * Execute HTTP GET request.
-     * <p/>
+     * <br>
      * If you want to define timeouts than you should wrap the lowerNetLayer by
      * a ControlNetLayer.
      *

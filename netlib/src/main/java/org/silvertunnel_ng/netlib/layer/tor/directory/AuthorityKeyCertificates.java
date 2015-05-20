@@ -76,7 +76,7 @@ public class AuthorityKeyCertificates {
     /**
      * Extracts all relevant information from the authority key certificate and
      * saves it in the member variables.
-     * <p/>
+     * <br>
      * Only official Tor authorities will be considered.
      *
      * @param authorityKeyCertificatesStr string encoded authority dir key certificate version 3
