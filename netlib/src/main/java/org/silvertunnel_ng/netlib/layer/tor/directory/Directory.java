@@ -207,8 +207,8 @@ public final class Directory {
 
         // configure special timeout parameters for download of directory information
         final ControlParameters cp = ControlParameters.createTypicalFileTransferParameters();
-        cp.setConnectTimeoutMillis(TorConfig.DIR_CONNECT_TIMEOUT_MILLIS);
-        cp.setOverallTimeoutMillis(TorConfig.DIR_OVERALL_TIMEOUT_MILLIS);
+        cp.setConnectTimeoutMillis(TorConfig.getDirConnectTimeout());
+        cp.setOverallTimeoutMillis(TorConfig.getDirOverallTimeout());
         cp.setInputMaxBytes(TorConfig.DIR_MAX_FILETRANSFER_BYTES);
         cp.setThroughputTimeframeMinBytes(TorConfig.DIR_THROUGPUT_TIMEFRAME_MIN_BYTES);
         cp.setThroughputTimeframeMillis(TorConfig.DIR_THROUGPUT_TIMEFRAME_MILLIS);
