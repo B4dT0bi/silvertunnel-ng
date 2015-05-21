@@ -1401,7 +1401,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
                     .doPrivileged(new java.security.PrivilegedExceptionAction<IOException>() {
                         @Override
                         public IOException run() throws Exception {
-                            return rememberedException
+                            return (IOException) rememberedException
                                     .getClass()
                                     .getConstructor(
                                             new Class[]{String.class})
