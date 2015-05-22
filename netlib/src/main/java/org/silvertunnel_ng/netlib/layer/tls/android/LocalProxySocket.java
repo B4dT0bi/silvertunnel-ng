@@ -89,7 +89,6 @@ public class LocalProxySocket extends Socket {
             this.direction = direction;
         }
 
-        // TODO : cleanup exception handling
         @Override
         public void run() {
             boolean error = false;
@@ -99,17 +98,21 @@ public class LocalProxySocket extends Socket {
                         copyStream(inputStream, outputStream);
                     }
                 } catch (IOException e) {
-                    LOG.debug("got Exception during copy", e);
+                    LOG.debug("got Exception during copy direction : {}", direction, e);
                     error = true;
                     try {
                         inputStream.close();
                     } catch (IOException e1) {
-                        LOG.debug("got exception during close of inputStream", e1);
+                        if (!(e1 instanceof SocketException && e1.getMessage().contains("closed"))) {
+                            LOG.debug("got exception during close of inputStream direction : {}", direction, e1);
+                        }
                     }
                     try {
                         outputStream.close();
                     } catch (IOException e1) {
-                        LOG.debug("got exception during close of outputStream", e1);
+                        if (!(e1 instanceof SocketException && e1.getMessage().contains("closed"))) {
+                            LOG.debug("got exception during close of outputStream direction : {}", direction, e1);
+                        }
                     }
                 }
             }
