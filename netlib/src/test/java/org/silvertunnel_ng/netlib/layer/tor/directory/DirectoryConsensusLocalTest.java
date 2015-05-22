@@ -191,8 +191,8 @@ public final class DirectoryConsensusLocalTest
 		// read and manipulate
 		final String validDirectoryConsensusStr = FileUtil.readFileFromClasspath(EXAMPLE_CONSENSUS_PATH);
 		final String manipulatedDirectoryConsensusStr = validDirectoryConsensusStr
-				.replace("valid-until 2010-01-26 00:00:00",
-						 "valid-until 2010-01-26 00:00:01");
+				.replace("valid-until 2015-05-21 00:00:00",
+						 "valid-until 2015-05-21 00:00:01");
 
 		try
 		{

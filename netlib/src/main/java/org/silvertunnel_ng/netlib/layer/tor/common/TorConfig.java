@@ -195,8 +195,7 @@ public final class TorConfig {
     /**
      * How many circuit should be idling ? <br>
      * <br>
-     * recommended value : 3 maximum value : 20 // TODO : verify or set a good
-     * max value <br>
+     * recommended value : 3 maximum value : 20 // TODO : verify or set a good max value
      * <br>
      * if this value is 0 then tor will only open circuits when a connection is
      * needed, but in this case the connection will take longer as the circuit

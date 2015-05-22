@@ -89,10 +89,10 @@ public class AuthorityKeyCertificatesLocalTest {
                 allCertsStr);
 
         // check result
-        final String expectedFingerprint = "ED03BB616EB2F60BEC80151114BB25CEF515B226";
+        final String expectedFingerprint = "27B6B5996C426270A5C95488AA5BCEB6BCC86956";
         assertEquals("wrong fingerprint", expectedFingerprint, firstCert.getDirIdentityKeyDigest().getHex());
-        assertEquals("wrong dirKeyPublished", "2010-01-19 13:48:46", Util.formatUtcTimestamp(firstCert.getDirKeyPublished()));
-        assertEquals("wrong dirKeyExpires", "2011-01-19 13:48:46", Util.formatUtcTimestamp(firstCert.getDirKeyExpires()));
+        assertEquals("wrong dirKeyPublished", "2014-07-09 16:01:34", Util.formatUtcTimestamp(firstCert.getDirKeyPublished()));
+        assertEquals("wrong dirKeyExpires", "2014-10-09 16:01:34", Util.formatUtcTimestamp(firstCert.getDirKeyExpires()));
         LOG.debug("dirSigningKey=" + Encryption.getPEMStringFromRSAPublicKey(firstCert.getDirSigningKey()));
     }
 
