@@ -143,7 +143,6 @@ public class LocalProxySocket extends Socket {
      * originalSocket is not yet connected.
      */
     public InetAddress getInetAddress() {
-        LOG.debug("getInetAddress() called", new Throwable());
         return originalSocket.getInetAddress();
     }
 
@@ -157,7 +156,6 @@ public class LocalProxySocket extends Socket {
      *                     originalSocket is in an invalid state.
      */
     public InputStream getInputStream() throws IOException {
-        LOG.debug("getInputStream() called", new Throwable());
         return super.getInputStream();
     }
 
@@ -165,7 +163,6 @@ public class LocalProxySocket extends Socket {
      * Returns this originalSocket's {@link SocketOptions#SO_KEEPALIVE} setting.
      */
     public boolean getKeepAlive() throws SocketException {
-        LOG.debug("getKeepAlive() called", new Throwable());
         return originalSocket.getKeepAlive();
     }
 
@@ -174,7 +171,6 @@ public class LocalProxySocket extends Socket {
      * {@link InetAddress#isAnyLocalAddress()} returns true if the originalSocket is closed or unbound.
      */
     public InetAddress getLocalAddress() {
-        LOG.debug("getLocalAddress() called", new Throwable());
         return originalSocket.getLocalAddress();
     }
 
@@ -183,7 +179,6 @@ public class LocalProxySocket extends Socket {
      * has been closed this method will still return the local port the originalSocket was bound to.
      */
     public int getLocalPort() {
-        LOG.debug("getLocalPort() called", new Throwable());
         return originalSocket.getLocalPort();
     }
 
@@ -197,7 +192,6 @@ public class LocalProxySocket extends Socket {
      *                     originalSocket is in an invalid state.
      */
     public OutputStream getOutputStream() throws IOException {
-        LOG.debug("getOutputStream() called", new Throwable());
         return super.getOutputStream();
     }
 
@@ -206,7 +200,6 @@ public class LocalProxySocket extends Socket {
      * is not yet connected.
      */
     public int getPort() {
-        LOG.debug("getPort() called", new Throwable());
         return originalSocket.getPort();
     }
 
@@ -215,7 +208,6 @@ public class LocalProxySocket extends Socket {
      * for no linger (i.e. {@code close} will return immediately).
      */
     public int getSoLinger() throws SocketException {
-        LOG.debug("getSoLinger() called", new Throwable());
         return originalSocket.getSoLinger();
     }
 
@@ -223,7 +215,6 @@ public class LocalProxySocket extends Socket {
      * Returns this originalSocket's {@link SocketOptions#SO_RCVBUF receive buffer size}.
      */
     public synchronized int getReceiveBufferSize() throws SocketException {
-        LOG.debug("getReceiveBufferSize() called", new Throwable());
         return originalSocket.getReceiveBufferSize();
     }
 
@@ -231,7 +222,6 @@ public class LocalProxySocket extends Socket {
      * Returns this originalSocket's {@link SocketOptions#SO_SNDBUF send buffer size}.
      */
     public synchronized int getSendBufferSize() throws SocketException {
-        LOG.debug("getSendBufferSize() called", new Throwable());
         return originalSocket.getSendBufferSize();
     }
 
@@ -239,7 +229,6 @@ public class LocalProxySocket extends Socket {
      * Returns this originalSocket's {@link SocketOptions#SO_TIMEOUT receive timeout}.
      */
     public synchronized int getSoTimeout() throws SocketException {
-        LOG.debug("getSoTimeout() called", new Throwable());
         return originalSocket.getSoTimeout();
     }
 
@@ -247,7 +236,6 @@ public class LocalProxySocket extends Socket {
      * Returns this originalSocket's {@code SocketOptions#TCP_NODELAY} setting.
      */
     public boolean getTcpNoDelay() throws SocketException {
-        LOG.debug("getTcpNoDelay() called", new Throwable());
         return originalSocket.getTcpNoDelay();
     }
 
@@ -255,7 +243,6 @@ public class LocalProxySocket extends Socket {
      * Sets this originalSocket's {@link SocketOptions#SO_KEEPALIVE} option.
      */
     public void setKeepAlive(boolean keepAlive) throws SocketException {
-        LOG.debug("setKeepAlive() called", new Throwable());
         originalSocket.setKeepAlive(keepAlive);
     }
 
@@ -263,7 +250,6 @@ public class LocalProxySocket extends Socket {
      * Sets this originalSocket's {@link SocketOptions#SO_SNDBUF send buffer size}.
      */
     public synchronized void setSendBufferSize(int size) throws SocketException {
-        LOG.debug("setSendBufferSize() called", new Throwable());
         originalSocket.setSendBufferSize(size);
     }
 
@@ -271,7 +257,6 @@ public class LocalProxySocket extends Socket {
      * Sets this originalSocket's {@link SocketOptions#SO_RCVBUF receive buffer size}.
      */
     public synchronized void setReceiveBufferSize(int size) throws SocketException {
-        LOG.debug("setReceiveBufferSize() called", new Throwable());
         originalSocket.setReceiveBufferSize(size);
     }
 
@@ -280,7 +265,6 @@ public class LocalProxySocket extends Socket {
      * If {@code on} is false, {@code timeout} is irrelevant.
      */
     public void setSoLinger(boolean on, int timeout) throws SocketException {
-        LOG.debug("setSoLinger() called", new Throwable());
         originalSocket.setSoLinger(on, timeout);
     }
 
@@ -290,7 +274,6 @@ public class LocalProxySocket extends Socket {
      * To take effect, this option must be set before the blocking method was called.
      */
     public synchronized void setSoTimeout(int timeout) throws SocketException {
-        LOG.debug("setSoTimeout() called", new Throwable());
         originalSocket.setSoTimeout(timeout);
     }
 
@@ -298,7 +281,6 @@ public class LocalProxySocket extends Socket {
      * Sets this originalSocket's {@link SocketOptions#TCP_NODELAY} option.
      */
     public void setTcpNoDelay(boolean on) throws SocketException {
-        LOG.debug("setTcpNoDelay() called", new Throwable());
         originalSocket.setTcpNoDelay(on);
     }
 
@@ -311,7 +293,6 @@ public class LocalProxySocket extends Socket {
      */
     @Override
     public String toString() {
-        LOG.debug("toString() called", new Throwable());
         return "LocalProxySocket : " + super.toString() + " - " + originalSocket.toString() + " - " + localSocketSend.toString();
     }
 
@@ -324,7 +305,6 @@ public class LocalProxySocket extends Socket {
      * @throws SocketException if the input stream is already closed.
      */
     public void shutdownInput() throws IOException {
-        LOG.debug("shutdownInput() called", new Throwable());
         originalSocket.shutdownInput();
         localSocketRecv.shutdownInput();
     }
@@ -338,7 +318,6 @@ public class LocalProxySocket extends Socket {
      * @throws SocketException if the output stream is already closed.
      */
     public void shutdownOutput() throws IOException {
-        LOG.debug("shutdownOutput() called", new Throwable());
         originalSocket.shutdownOutput();
         localSocketRecv.shutdownOutput();
     }
@@ -350,7 +329,6 @@ public class LocalProxySocket extends Socket {
      * previously-bound port. This is useful on multihomed hosts.
      */
     public SocketAddress getLocalSocketAddress() {
-        LOG.debug("getLocalSocketAddress() called", new Throwable());
         return originalSocket.getLocalSocketAddress();
     }
 
@@ -361,7 +339,6 @@ public class LocalProxySocket extends Socket {
      * @return the remote originalSocket address and port.
      */
     public SocketAddress getRemoteSocketAddress() {
-        LOG.debug("getRemoteSocketAddress() called", new Throwable());
         return originalSocket.getRemoteSocketAddress();
     }
 
@@ -372,7 +349,6 @@ public class LocalProxySocket extends Socket {
      * false} otherwise.
      */
     public boolean isBound() {
-        LOG.debug("isBound() called", new Throwable());
         return originalSocket.isBound();
     }
 
@@ -382,7 +358,6 @@ public class LocalProxySocket extends Socket {
      * @return {@code true} if the originalSocket is connected, {@code false} otherwise.
      */
     public boolean isConnected() {
-        LOG.debug("isConnected() called", new Throwable());
         return originalSocket.isConnected();
         //return true;
     }
@@ -393,7 +368,6 @@ public class LocalProxySocket extends Socket {
      * @return {@code true} if the originalSocket is closed, {@code false} otherwise.
      */
     public boolean isClosed() {
-        LOG.debug("isClosed() called", new Throwable());
         return originalSocket.isClosed();
     }
 
@@ -409,7 +383,6 @@ public class LocalProxySocket extends Socket {
      *                                  binding.
      */
     public void bind(SocketAddress localAddr) throws IOException {
-        LOG.debug("bind(localAddr) called", new Throwable());
         originalSocket.bind(localAddr);
     }
 
@@ -423,7 +396,6 @@ public class LocalProxySocket extends Socket {
      *                                  connecting.
      */
     public void connect(SocketAddress remoteAddr) throws IOException {
-        LOG.debug("connect(remoteAddr) called", new Throwable());
         originalSocket.connect(remoteAddr);
     }
 
@@ -442,7 +414,6 @@ public class LocalProxySocket extends Socket {
      *                                  connecting.
      */
     public void connect(SocketAddress remoteAddr, int timeout) throws IOException {
-        LOG.debug("connect(remoteAddr, timeout) called", new Throwable());
         originalSocket.connect(remoteAddr, timeout);
     }
 
@@ -454,7 +425,6 @@ public class LocalProxySocket extends Socket {
      * {@code false} otherwise.
      */
     public boolean isInputShutdown() {
-        LOG.debug("isInputShutdown() called", new Throwable());
         return originalSocket.isInputShutdown() || localSocketRecv.isInputShutdown();
     }
 
@@ -466,7 +436,6 @@ public class LocalProxySocket extends Socket {
      * {@code false} otherwise.
      */
     public boolean isOutputShutdown() {
-        LOG.debug("isOutputShutdown() called", new Throwable());
         return originalSocket.isOutputShutdown() || localSocketRecv.isOutputShutdown();
     }
 }

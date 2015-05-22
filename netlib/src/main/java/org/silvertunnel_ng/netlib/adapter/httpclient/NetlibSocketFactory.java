@@ -26,7 +26,6 @@ package org.silvertunnel_ng.netlib.adapter.httpclient;
  * <http://www.apache.org/>.
  *
  */
-//TODO : disclaimer and rename to silvertunnelng
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;

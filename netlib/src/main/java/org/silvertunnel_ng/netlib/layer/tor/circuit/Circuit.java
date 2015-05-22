@@ -637,8 +637,7 @@ public final class Circuit {
             {
                 LOG.debug("rejected stream because nobody is listen on port=" + port + " of hiddenServiceInstance=" + hiddenServiceInstance);
             }
-            // TODO: send cell to signal the rejection instead of letting stream
-            // time out
+            // TODO: send cell to signal the rejection instead of letting stream time out
         }
     }
 

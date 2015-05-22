@@ -18,31 +18,30 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.api;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Set;
-
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterFlags;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterStatusDescription;
 import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Set;
+
 /**
  * a compound data structure that keeps track of the static informations we have
  * about a single Tor server.
- * 
+ *
  * @author hapke
  */
-public interface Router
-{
-	String getNickname();
+public interface Router {
+    String getNickname();
 
-	String getHostname();
+    String getHostname();
 
-	InetAddress getAddress();
+    InetAddress getAddress();
 
-	String getCountryCode();
+    String getCountryCode();
 
     String toLongString();
 
@@ -50,61 +49,64 @@ public interface Router
 
     void updateServerStatus(final RouterStatusDescription statusDescription);
 
-	int getOrPort();
+    int getOrPort();
 
-	int getSocksPort();
+    int getSocksPort();
 
-	int getDirPort();
+    int getDirPort();
 
-	int getBandwidthAvg();
+    int getBandwidthAvg();
 
-	int getBandwidthBurst();
+    int getBandwidthBurst();
 
-	int getBandwidthObserved();
+    int getBandwidthObserved();
 
-	String getPlatform();
+    String getPlatform();
 
-	long getPublished();
+    long getPublished();
 
-	Fingerprint getFingerprint();
+    Fingerprint getFingerprint();
 
-	int getUptime();
+    int getUptime();
 
-	RSAPublicKey getOnionKey();
+    RSAPublicKey getOnionKey();
 
-	RSAPublicKey getSigningKey();
+    RSAPublicKey getSigningKey();
 
-	String getContact();
+    String getContact();
 
-	Set<Fingerprint> getFamily();
+    Set<Fingerprint> getFamily();
 
-	long getValidUntil();
+    // TODO : implement check for FamilyNames (or convert Family names to fingerprints and add them to the old list)
+    Set<String> getFamilyNames();
 
-	long getLastUpdate();
+    long getValidUntil();
 
-	boolean isDirv2Authority();
+    long getLastUpdate();
 
-	boolean isDirv2Exit();
+    boolean isDirv2Authority();
 
-	boolean isDirv2Fast();
+    boolean isDirv2Exit();
 
-	boolean isDirv2Guard();
+    boolean isDirv2Fast();
 
-	boolean isDirv2Named();
+    boolean isDirv2Guard();
 
-	boolean isDirv2Stable();
+    boolean isDirv2Named();
 
-	boolean isDirv2Running();
+    boolean isDirv2Stable();
 
-	boolean isDirv2Valid();
+    boolean isDirv2Running();
+
+    boolean isDirv2Valid();
 
     boolean isValid();
 
-	boolean isDirv2V2dir();
+    boolean isDirv2V2dir();
 
     boolean isDirv2HSDir();
-	
-	boolean isExitNode();
+
+    boolean isExitNode();
 
     Fingerprint getV3Ident();
 
@@ -119,11 +121,13 @@ public interface Router
     float getRefinedRankingIndex(final float p);
 
     TcpipNetAddress getOrAddress();
-	/**
-	 * Get the routerflags of a router (stable, valid, fast, etc).
-	 * @return a {@link RouterFlags} object
-	 */
-	RouterFlags getRouterFlags();
 
-	float getRankingIndex();
+    /**
+     * Get the routerflags of a router (stable, valid, fast, etc).
+     *
+     * @return a {@link RouterFlags} object
+     */
+    RouterFlags getRouterFlags();
+
+    float getRankingIndex();
 }

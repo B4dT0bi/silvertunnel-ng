@@ -27,127 +27,87 @@ import java.net.SocketException;
 import java.net.SocketImpl;
 
 /**
- * 
  * See class SocketUtil.
- * 
+ *
  * @author hapke
  */
-class InvalidSocketImpl extends SocketImpl
-{
+class InvalidSocketImpl extends SocketImpl {
 
-	private void notImplemented()
-	{
-		throw new UnsupportedOperationException();
-	}
+    private void notImplemented() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	protected void accept(final SocketImpl s) throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
-	}
+    @Override
+    protected void accept(final SocketImpl s) throws IOException {
+        notImplemented();
+    }
 
-	@Override
-	protected int available() throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
-		return 0;
-	}
+    @Override
+    protected int available() throws IOException {
+        notImplemented();
+        return 0;
+    }
 
-	@Override
-	protected void bind(final InetAddress host, final int port) throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
+    @Override
+    protected void bind(final InetAddress host, final int port) throws IOException {
+        notImplemented();
+    }
 
-	}
+    @Override
+    protected void close() throws IOException {
+        notImplemented();
+    }
 
-	@Override
-	protected void close() throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
+    @Override
+    protected void connect(final String host, final int port) throws IOException {
+        notImplemented();
+    }
 
-	}
+    @Override
+    protected void connect(final InetAddress address, final int port) throws IOException {
+        notImplemented();
+    }
 
-	@Override
-	protected void connect(final String host, final int port) throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
+    @Override
+    protected void connect(final SocketAddress address, final int timeout) throws IOException {
+        notImplemented();
+    }
 
-	}
+    @Override
+    protected void create(final boolean stream) throws IOException {
+        notImplemented();
+    }
 
-	@Override
-	protected void connect(final InetAddress address, final int port) throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
+    @Override
+    protected InputStream getInputStream() throws IOException {
+        notImplemented();
+        return null;
+    }
 
-	}
+    @Override
+    protected OutputStream getOutputStream() throws IOException {
+        notImplemented();
+        return null;
+    }
 
-	@Override
-	protected void connect(final SocketAddress address, final int timeout) throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
+    @Override
+    protected void listen(final int backlog) throws IOException {
+        notImplemented();
+    }
 
-	}
+    @Override
+    protected void sendUrgentData(final int data) throws IOException {
+        notImplemented();
+    }
 
-	@Override
-	protected void create(final boolean stream) throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
+    @Override
+    public Object getOption(final int arg0) throws SocketException {
+        notImplemented();
+        return null;
+    }
 
-	}
-
-	@Override
-	protected InputStream getInputStream() throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
-		return null;
-	}
-
-	@Override
-	protected OutputStream getOutputStream() throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
-		return null;
-	}
-
-	@Override
-	protected void listen(final int backlog) throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
-
-	}
-
-	@Override
-	protected void sendUrgentData(final int data) throws IOException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
-
-	}
-
-	@Override
-	public Object getOption(final int arg0) throws SocketException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
-		return null;
-	}
-
-	@Override
-	public void setOption(final int arg0, final Object arg1) throws SocketException
-	{
-		// TODO Auto-generated method stub
-		notImplemented();
-
-	}
+    @Override
+    public void setOption(final int arg0, final Object arg1) throws SocketException {
+        notImplemented();
+    }
 }

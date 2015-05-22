@@ -40,7 +40,6 @@ public class NetSocket2Socket extends Socket {
     public NetSocket2Socket(final NetSocket netSocket) throws IOException {
         this(new NetSocket2SocketImpl(netSocket));
         if (JavaVersion.getJavaVersion() != JavaVersion.ANDROID) {
-            // TODO: connect with dummy address
             final int IP4SIZE = 4;
             final InetAddress dummyInetAddress = InetAddress.getByAddress(
                     "NetSocket-dummy-host", new byte[IP4SIZE]);

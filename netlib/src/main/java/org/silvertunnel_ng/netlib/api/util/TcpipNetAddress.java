@@ -384,7 +384,7 @@ public class TcpipNetAddress implements NetAddress, Serializable
 		{
 			// IPv6
 			final StringBuffer result = new StringBuffer();
-			// TODO:
+			// TODO: implement IPv6 toString
 			return ":IPv6:" + ipaddress;
 		}
 	}

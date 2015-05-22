@@ -20,19 +20,16 @@ package org.silvertunnel_ng.netlib.adapter.socket;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+
 /**
  * An object of this class is just not an instance of InetSocketAddress.
- * 
+ *
  * @author hapke
  */
-class PatchedInetSocketAddress extends InetSocketAddress
-{
-	private static final long serialVersionUID = 1L;
+class PatchedInetSocketAddress extends InetSocketAddress {
+    private static final long serialVersionUID = 1L;
 
-	public PatchedInetSocketAddress(final InetAddress addr, final int port)
-	{
-		super(addr, port);
-		// TODO Auto-generated constructor stub
-	}
-
+    public PatchedInetSocketAddress(final InetAddress addr, final int port) {
+        super(addr, port);
+    }
 }

@@ -190,8 +190,7 @@ public final class TorConfig {
     /**
      * How many circuits should be allowed for idling as max?
      */
-    private static final int MAXIMUM_IDLE_CIRCUITS = 20; // TODO : verify this
-    // value
+    private static final int MAXIMUM_IDLE_CIRCUITS = 20; // TODO : verify this value
     /**
      * How many circuit should be idling ? <br>
      * <br>
@@ -327,7 +326,7 @@ public final class TorConfig {
 
     public static int queueTimeoutCircuit = 10; // was 20
     public static int queueTimeoutResolve = 5; // was 10
-    /* TODO was: 11 */
+
     public static int queueTimeoutStreamBuildup = 5;
 
     /**
@@ -465,8 +464,7 @@ public final class TorConfig {
      * to access directory servers: minimum throughput: 15 KBytes / 15 seconds.
      */
     public static final long DIR_THROUGPUT_TIMEFRAME_MILLIS = 15L * 1000L;
-    // public static long DIR_THROUGPUT_TIMEFRAME_MILLIS = 1L*1000L; // TODO:
-    // "very fast" parameter
+    // public static long DIR_THROUGPUT_TIMEFRAME_MILLIS = 1L*1000L; // TODO: "very fast" parameter
 
     /**
      * QoS-parameter, see updateRanking in Circuit.java.

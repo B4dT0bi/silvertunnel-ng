@@ -388,14 +388,7 @@ public final class HiddenServiceClient
 														       IOException
 	{
 		// wait for answer from the hidden service (RENDEZVOUS2)
-		// TODO : check if it still works!!! (tobi)
-//		final int oldTimeout = myRendezvousCircuit.getQueue().getTimeoutMs();
-//		if (oldTimeout < 120 * 1000) // TODO : 2 minutes timeout ? really?
-//		{
-//			myRendezvousCircuit.getQueue().setTimeoutMs(120 * 1000);
-//		}
 		final CellRelay r2Relay = myRendezvousCircuit.receiveRelayCell(CellRelay.RELAY_RENDEZVOUS2);
-//		myRendezvousCircuit.getQueue().setTimeoutMs(oldTimeout);
 		// finish Diffie-Hellman
 		final byte[] dhGy = new byte[148];
 		System.arraycopy(r2Relay.getData(), 0, dhGy, 0, 148);

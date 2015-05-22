@@ -492,8 +492,6 @@ class LocalSocketImpl
     public LocalSocketAddress getSockAddress() throws IOException
     {
         return null;
-        //TODO implement this
-        //return getSockName_native(fd);
     }
 
     @Override

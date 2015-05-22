@@ -75,27 +75,43 @@ public final class RouterImpl implements Router, Cloneable {
     /** */
     private static final Logger LOG = LoggerFactory.getLogger(RouterImpl.class);
 
-    /** Information extracted from the Router descriptor. */
+    /**
+     * Information extracted from the Router descriptor.
+     */
     private String nickname;
-    /** ip or hostname. */
+    /**
+     * ip or hostname.
+     */
     private String hostname;
-    /** the resolved hostname. */
+    /**
+     * the resolved hostname.
+     */
     private InetAddress address; // TODO : can we remove this?
-    /** country code where it is located. */
+    /**
+     * country code where it is located.
+     */
     private String countryCode;
 
-    /** Onion relay port. */
+    /**
+     * Onion relay port.
+     */
     private int orPort;
-    /** Socks port. */
+    /**
+     * Socks port.
+     */
     private int socksPort;
-    /** Directory port. */
+    /**
+     * Directory port.
+     */
     private int dirPort;
 
     private int bandwidthAvg;
     private int bandwidthBurst;
     private int bandwidthObserved;
 
-    /** Platform of the relay. (tor version + os)*/
+    /**
+     * Platform of the relay. (tor version + os)
+     */
     private String platform;
     private long published;
 
@@ -113,26 +129,44 @@ public final class RouterImpl implements Router, Cloneable {
     private byte[] routerSignature;
     private String contact;
 
-    /** Fingerprints of the routers of the family. */
+    /**
+     * Fingerprints of the routers of the family.
+     */
     private Set<Fingerprint> family = new HashSet<Fingerprint>();
+    /**
+     * Names of the familyNames.
+     */
+    private Set<String> familyNames = new HashSet<String>();
 
-    /** based on the time of loading this data. */
+    /**
+     * based on the time of loading this data.
+     */
     private long validUntil;
 
-    /** How many exit policy items do we parse? */
+    /**
+     * How many exit policy items do we parse?
+     */
     private static final int MAX_EXITPOLICY_ITEMS = 300;
 
     // Additional information for V2-Directories
     private long lastUpdate;
 
-    /** Router flags. */
+    /**
+     * Router flags.
+     */
     private RouterFlags routerFlags = new RouterFlags();
 
-    /** internal Server-Ranking data. */
+    /**
+     * internal Server-Ranking data.
+     */
     private float rankingIndex;
-    /** see updateServerRanking(). */
+    /**
+     * see updateServerRanking().
+     */
     private static final int HIGH_BANDWIDTH = 2097152;
-    /** see updateServerRanking(). */
+    /**
+     * see updateServerRanking().
+     */
     private static final float ALPHA = 0.6f;
     /**
      * coefficient to decrease server ranking if the server fails to respond in
@@ -145,8 +179,7 @@ public final class RouterImpl implements Router, Cloneable {
     /**
      * takes a router descriptor as string.
      *
-     * @param routerDescriptor
-     *            a router descriptor to initialize the object from
+     * @param routerDescriptor a router descriptor to initialize the object from
      */
     public RouterImpl(final String routerDescriptor) throws TorException {
         if (routerDescriptor.length() > MAX_ROUTERDESCRIPTOR_LENGTH) {
@@ -179,10 +212,9 @@ public final class RouterImpl implements Router, Cloneable {
      * descriptor and a signature will be automatically generated.
      *
      * @param nickname Nickname of the Router
-     * @param address the IP address of this router
-     * @param orPort the OR port of this router
-     * @param dirPort the directory port of this router (if none then set it to 0)
-     *
+     * @param address  the IP address of this router
+     * @param orPort   the OR port of this router
+     * @param dirPort  the directory port of this router (if none then set it to 0)
      */
     RouterImpl(final String nickname,
                final InetAddress address,
@@ -201,7 +233,9 @@ public final class RouterImpl implements Router, Cloneable {
         this.v3ident = (v3ident == null) ? null : v3ident.cloneReliable();
     }
 
-    /** Constructor-indepentent initialization. */
+    /**
+     * Constructor-indepentent initialization.
+     */
     private void init() {
         // unknown/new
         rankingIndex = -1;
@@ -210,18 +244,20 @@ public final class RouterImpl implements Router, Cloneable {
     /**
      * Update this server's status.
      *
-     * @param statusDescription
-     *            containing the routers status description
+     * @param statusDescription containing the routers status description
      */
     public void updateServerStatus(final RouterStatusDescription statusDescription) {
         routerFlags = statusDescription.getRouterFlags();
     }
 
-    /** this is used for binary de-/serialization. */
+    /**
+     * this is used for binary de-/serialization.
+     */
     private static final byte CURRENT_BINARY_VERSION = 1;
 
     /**
      * Parse a byte array containing information for a Router and creating a RouterImpl object.
+     *
      * @param convenientStreamReader the {@link org.silvertunnel_ng.netlib.tool.ConvenientStreamReader} which contains the data
      * @throws TorException if something went wrong during parsing
      */
@@ -287,6 +323,13 @@ public final class RouterImpl implements Router, Cloneable {
         lastUpdate = convenientStreamReader.readLong();
         routerFlags = new RouterFlags(convenientStreamReader);
         rankingIndex = convenientStreamReader.readFloat();
+        count = convenientStreamReader.readInt();
+        familyNames.clear();
+        if (count > 0) {
+            for (int i = 0; i < count; i++) {
+                familyNames.add(new String(convenientStreamReader.readByteArray()));
+            }
+        }
         // TODO : add signature check
     }
 
@@ -330,6 +373,10 @@ public final class RouterImpl implements Router, Cloneable {
         convenientStreamWriter.writeLong(lastUpdate);
         routerFlags.save(convenientStreamWriter);
         convenientStreamWriter.writeFloat(rankingIndex);
+        convenientStreamWriter.writeInt(familyNames.size());
+        for (String member : familyNames) {
+            convenientStreamWriter.writeByteArray(member.getBytes(), true);
+        }
     }
 
     /**
@@ -349,8 +396,7 @@ public final class RouterImpl implements Router, Cloneable {
     /**
      * This function parses the exit policy items from the router descriptor.
      *
-     * @param routerDescriptor
-     *            a router descriptor with exit policy items.
+     * @param routerDescriptor a router descriptor with exit policy items.
      * @return the complete exit policy
      */
     private RouterExitPolicy[] parseExitPolicy(final String routerDescriptor) {
@@ -414,8 +460,7 @@ public final class RouterImpl implements Router, Cloneable {
      * extracts all relevant information from the router descriptor and saves it
      * in the member variables.
      *
-     * @param routerDescriptor
-     *            string encoded router descriptor
+     * @param routerDescriptor string encoded router descriptor
      */
     private void parseRouterDescriptor(final String routerDescriptor) throws TorException {
         final long timeStart = System.currentTimeMillis();
@@ -493,8 +538,7 @@ public final class RouterImpl implements Router, Cloneable {
                                 if (tmpElements[n].startsWith("$")) {
                                     family.add(new FingerprintImpl(DatatypeConverter.parseHexBinary(tmpElements[n].substring(1, 41))));
                                 } else {
-                                    LOG.debug("skipping family member {}", tmpElements[n]);
-                                    //TODO : implement family members without fingerprint
+                                    familyNames.add(tmpElements[n]);
                                 }
                             }
                         case HIBERNATING:
@@ -610,7 +654,7 @@ public final class RouterImpl implements Router, Cloneable {
 
     /**
      * updates the server ranking index
-     *
+     * <p/>
      * Is supposed to be between 0 (undesirable) and 1 (very desirable). Two
      * variables are taken as input:
      * <ul>
@@ -634,13 +678,12 @@ public final class RouterImpl implements Router, Cloneable {
     /**
      * returns ranking index taking into account user preference.
      *
-     * @param p
-     *            user preference (importance) of considering ranking index
-     *            <ul>
-     *            <li>0 select hosts completely randomly
-     *            <li>1 select hosts with good uptime/bandwidth with higher
-     *            prob.
-     *            </ul>
+     * @param p user preference (importance) of considering ranking index
+     *          <ul>
+     *          <li>0 select hosts completely randomly
+     *          <li>1 select hosts with good uptime/bandwidth with higher
+     *          prob.
+     *          </ul>
      */
     public float getRefinedRankingIndex(final float p) {
         // align all ranking values to 0.5, if the user wants to choose his
@@ -665,10 +708,8 @@ public final class RouterImpl implements Router, Cloneable {
      * <b>IMPORTANT:</b> this routing must be able to work, even if <i>addr</i>
      * is not given!
      *
-     * @param addr
-     *            the host that someone wants to connect to
-     * @param port
-     *            the port that is to be connected to
+     * @param addr the host that someone wants to connect to
+     * @param port the port that is to be connected to
      * @return a boolean value whether the connection would be allowed
      */
     public boolean exitPolicyAccepts(final InetAddress addr, final int port) {
@@ -896,6 +937,11 @@ public final class RouterImpl implements Router, Cloneable {
     }
 
     @Override
+    public Set<String> getFamilyNames() {
+        return familyNames;
+    }
+
+    @Override
     public long getValidUntil() {
         return validUntil;
     }
@@ -981,6 +1027,7 @@ public final class RouterImpl implements Router, Cloneable {
         result = prime * result + routerFlags.hashCode();
         result = prime * result + Arrays.hashCode(exitpolicy);
         result = prime * result + ((family == null) ? 0 : family.hashCode());
+        result = prime * result + ((familyNames == null) ? 0 : familyNames.hashCode());
         result = prime * result + ((fingerprint == null) ? 0 : fingerprint.hashCode());
         result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
         result = prime * result + (int) lastUpdate;
@@ -1060,6 +1107,13 @@ public final class RouterImpl implements Router, Cloneable {
                 return false;
             }
         } else if (!family.equals(other.family)) {
+            return false;
+        }
+        if (familyNames == null) {
+            if (other.familyNames != null) {
+                return false;
+            }
+        } else if (!familyNames.equals(other.familyNames)) {
             return false;
         }
         if (fingerprint == null) {
