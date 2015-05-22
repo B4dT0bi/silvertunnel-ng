@@ -115,7 +115,7 @@ public class AuthorityKeyCertificatesLocalTest {
      * Test that parsing of the all certificates of
      * /org/silvertunnel/org.silvertunnel_ng.netlib/layer/tor/example-authority-keys.txt is
      * successful.
-     * <p/>
+     * <br>
      * Inclusive test of skipping outdated certificates.
      *
      * @throws Exception

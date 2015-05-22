@@ -106,7 +106,7 @@ public final class TorConfig {
 
     /**
      * Startup delay in seconds.
-     * <p/>
+     * <br>
      * How long should we wait before trying the first connects?
      */
     private int startupDelaySeconds = 20;
@@ -653,7 +653,7 @@ public final class TorConfig {
 
     /**
      * Set the minimum Descriptors percent value.
-     * <p/>
+     * <br>
      * This value is used for determining if it is save to build a circuit with
      * the known amount of routers.
      *
@@ -862,7 +862,7 @@ public final class TorConfig {
 
     /**
      * Shall we cache the fetched Hidden service Descriptors?
-     * <p/>
+     * <br>
      * Default : true
      */
     private boolean cacheHiddenServiceDescriptor = true;
