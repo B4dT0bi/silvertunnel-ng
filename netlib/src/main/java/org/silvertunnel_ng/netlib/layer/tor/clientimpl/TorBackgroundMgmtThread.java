@@ -240,7 +240,6 @@ class TorBackgroundMgmtThread extends Thread {
      */
     private void tearDownClosedCircuits() {
         for (final TLSConnection tls : tor.getTlsConnectionAdmin().getConnections()) {
-            LOG.debug("check tls={}", tls);
             if (tls.isClosed()) {
                 LOG.debug("remove tls={}", tls);
                 tor.getTlsConnectionAdmin().removeConnection(tls);

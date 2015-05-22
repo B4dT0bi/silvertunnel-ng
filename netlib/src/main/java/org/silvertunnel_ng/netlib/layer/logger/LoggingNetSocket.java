@@ -63,7 +63,6 @@ public class LoggingNetSocket implements NetSocket
 	@Override
 	public void close() throws IOException
 	{
-		summaryLog.debug("LoggingNetSocket has been closed", new Throwable("only for Stacktrace"));
 		lowerLayerSocket.close();
 	}
 

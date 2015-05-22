@@ -98,7 +98,6 @@ public class CircuitAdmin {
                                              final Directory dir,
                                              final TCPStreamProperties sp,
                                              final TorEventService torEventService) throws Throwable {
-        LOG.debug("provideSuitableNewCircuit called");
         final ExecutorService executor = Executors.newCachedThreadPool();
         final Collection<Callable<Circuit>> allTasks = new ArrayList<Callable<Circuit>>();
         for (int i = 0; i < TorConfig.getParallelCircuitBuilds(); i++) {
@@ -107,7 +106,6 @@ public class CircuitAdmin {
                 @Override
                 public Circuit call() throws TorServerNotFoundException, ExecutionException {
                     Circuit result = null;
-                    LOG.debug("Callable Started..");
                     for (int retries = 0; retries < TorConfig.getRetriesConnect(); ++retries) {
                         try {
                             result = new Circuit(tlsConnectionAdmin, dir, sp, torEventService, circuitHistory);
@@ -124,19 +122,17 @@ public class CircuitAdmin {
                             /* do nothing, continue trying */
                             LOG.debug("got TorException : {}", e.getMessage(), e);
                         } catch (final IOException e) {
-							/* do nothing, continue trying */
+                            /* do nothing, continue trying */
                             LOG.debug("got IOException : {}", e.getMessage(), e);
                         }
                         LOG.debug("provideSuitableNewCircuit retry {} from {}", new Object[]{retries + 1, TorConfig.getRetriesConnect()});
                     }
-                    LOG.debug("Callable Finished!");
                     return result;
                 }
             };
             allTasks.add(callable);
         }
         try {
-            LOG.debug("executing {} tasks", allTasks.size());
             return executor.invokeAny(allTasks);
         } catch (InterruptedException exception) {
             LOG.debug("got Exception while executing tasks", exception);
@@ -167,14 +163,18 @@ public class CircuitAdmin {
                     if (circuit.isUnused()) {
                         if (sp.getCustomExitpoint() == null) {
                             circuit.setUnused(false);
-                            LOG.debug("we successfully used an unused Circuit! Id : {}", circuit.getId());
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("we successfully used an unused Circuit! Id : {}", circuit.getId());
+                            }
                             return circuit;
                         }
                         if (circuit.getRelayEarlyCellsRemaining() > 0) // is extendable?
                         {
                             circuit.extend(sp.getCustomExitpoint());
                             circuit.setUnused(false);
-                            LOG.debug("we successfully extended and used an unused Circuit! Id : {}", circuit.getId());
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("we successfully extended and used an unused Circuit! Id : {}", circuit.getId());
+                            }
                             return circuit;
                         }
                     }
