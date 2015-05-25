@@ -375,6 +375,11 @@ public class CircuitAdmin {
                         sp.isFastRoute(),
                         sp.isStableRoute());
 
+            } else if ((i == 0) && (!TorConfig.getBridges().isEmpty())) {
+                // entry node must be bridge
+                LOG.debug("Using bridge for connecting to Tor");
+                // TODO : when bridge is used, use Guard node as second hop
+                route[i] = directory.getGuardList().getGuard(excludedServerFingerprints, sp);
             } else if ((i == 0) && (!sp.isNonGuardEntryAllowed())) {
                 // entry node must be guard
                 route[i] = directory.getGuardList().getGuard(excludedServerFingerprints, sp);

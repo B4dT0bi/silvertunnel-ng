@@ -68,8 +68,6 @@ import org.silvertunnel_ng.netlib.layer.tor.util.Parsing;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
 import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
-import org.silvertunnel_ng.netlib.tool.SimpleHttpClient;
-import org.silvertunnel_ng.netlib.tool.SimpleHttpClientCompressed;
 import org.silvertunnel_ng.netlib.util.StringStorage;
 import org.silvertunnel_ng.netlib.util.TempfileStringStorage;
 import org.slf4j.Logger;
@@ -87,7 +85,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipException;
 
 /**
  * This class maintains a list of the currently known Tor routers. It has the
@@ -111,14 +108,6 @@ public final class Directory {
      */
     public static final int RETRIES_ON_RECURSIVE_ROUTE_BUILD = 10;
 
-    /**
-     * key to locally cache the authority key certificates.
-     */
-    private static final String STORAGEKEY_AUTHORITY_KEY_CERTIFICATES_TXT = "authority-key-certificates.txt";
-    /**
-     * key to locally cache the consensus.
-     */
-    private static final String STORAGEKEY_DIRECTORY_CACHED_CONSENSUS_TXT = "directory-cached-consensus.txt";
     /**
      * key to locally cache the router descriptors.
      */
@@ -181,7 +170,7 @@ public final class Directory {
 
     private final NetLayerStatusAdmin statusAdmin;
 
-    private static final long ONE_DAY_IN_MS = 1L * 24L * 60L * 60L * 1000L;
+    private static final long ONE_DAY_IN_MS = 24L * 60L * 60L * 1000L;
 
     private static final Pattern IPCLASSC_PATTERN = Parsing.compileRegexPattern("(.*)\\.");
 
@@ -312,9 +301,6 @@ public final class Directory {
     /**
      * Poll some known servers, is triggered by TorBackgroundMgmt and directly
      * after starting.<br>
-     * TODO : Test if things do not break if suddenly servers disappear from the
-     * directory that are currently being used<br>
-     * TODO : Test if servers DO disappear from the directory
      *
      * @return 0 = no update, 1 = v1 update, 2 = v2 update, 3 = v3 update
      */
@@ -345,105 +331,32 @@ public final class Directory {
         }
     }
 
-    private final int MIN_LENGTH_OF_CONSENSUS_STR = 100;
-
     /**
      * Update the DirectoryConsensus.
      */
     private void updateDirectoryConsensus() {
-        //
-        // handle consensus
-        //
-        statusAdmin.updateStatus(TorNetLayerStatus.CONSENSUS_LOADING);
-
         // pre-check
         final Date now = new Date();
         if (directoryConsensus != null && !directoryConsensus.needsToBeRefreshed(now)) {
             LOG.debug("no consensus update necessary ...");
         } else {
+            statusAdmin.updateStatus(TorNetLayerStatus.CONSENSUS_LOADING);
+
             final AuthorityKeyCertificates authorityKeyCertificates = getAuthorityKeyCertificates();
 
-            //
-            // first initialization attempt: use cached consensus
-            //
-            LOG.debug("consensus first initialization attempt: try to use document from local cache ...");
             DirectoryConsensus newDirectoryConsensus = null;
             if (directoryConsensus == null || directoryConsensus.getFingerprintsNetworkStatusDescriptors().size() == 0) {
-                // first initialization: try to load consensus from cache
-                final String newDirectoryConsensusStr = stringStorage.get(STORAGEKEY_DIRECTORY_CACHED_CONSENSUS_TXT);
-                if (newDirectoryConsensusStr != null && newDirectoryConsensusStr.length() > MIN_LENGTH_OF_CONSENSUS_STR) {
-                    try {
-                        newDirectoryConsensus = new DirectoryConsensus(newDirectoryConsensusStr, authorityKeyCertificates, now);
-                        if (newDirectoryConsensus == null || !newDirectoryConsensus.isValid(now)) {
-                            // cache result was not acceptable
-                            newDirectoryConsensus = null;
-                            LOG.debug("consensus from local cache (is too small and) could not be used");
-                        } else {
-                            LOG.debug("use consensus from local cache");
-                        }
-                    } catch (final TorException e) {
-                        newDirectoryConsensus = null;
-                        LOG.debug("consensus from local cache is not valid (e.g. too old) and could not be used");
-                    } catch (final Exception e) {
-                        newDirectoryConsensus = null;
-                        LOG.debug("error while loading consensus from local cache: {}", e, e);
-                    }
-                } else {
-                    newDirectoryConsensus = null;
-                    LOG.debug("consensus from local cache (is null or invalid and) could not be used");
-                }
+                // first initialization attempt: use cached consensus
+                newDirectoryConsensus = DirectoryConsensusFetcher.getFromCache(now, stringStorage, authorityKeyCertificates);
             }
 
-            //
-            // ordinary update: load consensus from Tor network
-            //
-            LOG.debug("load consensus from Tor network");
             if (newDirectoryConsensus == null) {
-                // all v3 directory servers
-                final List<Router> dirRouters = new ArrayList<Router>(getDirRouters());
-
-                // Choose one randomly
-                while (dirRouters.size() > 0) {
-                    final int index = rnd.nextInt(dirRouters.size());
-                    final Router dirRouter = dirRouters.get(index);
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Directory.updateNetworkStatusNew: Randomly chosen dirRouter to fetch consensus document: "
-                                + dirRouter.getFingerprint()
-                                + " (" + dirRouter.getNickname() + ")");
-                    }
-                    try {
-                        // TODO : implement https://gitweb.torproject.org/torspec.git/blob/HEAD:/proposals/139-conditional-consensus-download.txt download network status from server
-                        final String path = "/tor/status-vote/current/consensus";
-
-                        String newDirectoryConsensusStr;
-                        try {
-                            newDirectoryConsensusStr = SimpleHttpClientCompressed.getInstance().get(lowerDirConnectionNetLayer, dirRouter.getDirAddress(), path);
-                        } catch (ZipException e) {
-                            LOG.debug("got ZipException while downloading DirectoryConsensus trying to fetch it uncompressed.");
-                            newDirectoryConsensusStr = SimpleHttpClient.getInstance().get(lowerDirConnectionNetLayer, dirRouter.getDirAddress(), path);
-                        }
-
-                        // Parse the document
-                        newDirectoryConsensus = new DirectoryConsensus(newDirectoryConsensusStr, authorityKeyCertificates, now);
-                        if (!newDirectoryConsensus.needsToBeRefreshed(now)) {
-                            // result is acceptable
-                            LOG.debug("use new consensus");
-                            // save the directoryConsensus for later
-                            // Tor-startups
-                            stringStorage.put(STORAGEKEY_DIRECTORY_CACHED_CONSENSUS_TXT, newDirectoryConsensusStr);
-                            break;
-                        }
-                        newDirectoryConsensus = null;
-                    } catch (final Exception e) {
-                        LOG.warn("Directory.updateNetworkStatusNew Exception", e);
-                        dirRouters.remove(index);
-                        newDirectoryConsensus = null;
-                    }
-                }
+                // ordinary update: load consensus from Tor network
+                newDirectoryConsensus = DirectoryConsensusFetcher.getFromTorNetwork(now, stringStorage, authorityKeyCertificates, getDirRouters(), lowerDirConnectionNetLayer);
             }
 
-            // finalize consensus update
             if (newDirectoryConsensus != null) {
+                // finalize consensus update
                 directoryConsensus = newDirectoryConsensus;
             }
         }
@@ -547,85 +460,22 @@ public final class Directory {
         updateRouterList();
     }
 
-    private final int MIN_LENGTH_OF_AUTHORITY_KEY_CERTS_STR = 100;
-
     private AuthorityKeyCertificates getAuthorityKeyCertificates() {
         // get now+1 day
         final Date now = new Date();
         final Date minValidUntil = new Date(now.getTime() + ONE_DAY_IN_MS);
 
         if (authorityKeyCertificates == null) {
-            // loading is needed - try to load authority key certificates from
-            // cache first
-            LOG.debug("getAuthorityKeyCertificates(): try to load from local cache ...");
-            final String authorityKeyCertificatesStr = stringStorage.get(STORAGEKEY_AUTHORITY_KEY_CERTIFICATES_TXT);
-            if (authorityKeyCertificatesStr != null && authorityKeyCertificatesStr.length() > MIN_LENGTH_OF_AUTHORITY_KEY_CERTS_STR) {
-                // parse loaded result
-                try {
-                    final AuthorityKeyCertificates newAuthorityKeyCertificates = new AuthorityKeyCertificates(authorityKeyCertificatesStr,
-                            minValidUntil);
-
-                    // no exception thrown: certificates are OK
-                    if (newAuthorityKeyCertificates.isValid(minValidUntil)) {
-                        LOG.debug("getAuthorityKeyCertificates(): successfully loaded from local cache");
-                        authorityKeyCertificates = newAuthorityKeyCertificates;
-                        return authorityKeyCertificates;
-                    } else {
-                        // do not use outdated or invalid certificates from
-                        // local cache
-                        LOG.debug("getAuthorityKeyCertificates(): loaded from local cache - but not valid: try (re)load from remote site now");
-                    }
-
-                } catch (final TorException e) {
-                    LOG.warn("getAuthorityKeyCertificates(): could not parse from local cache: try (re)load from remote site now", e);
-                }
-            } else {
-                LOG.debug("getAuthorityKeyCertificates(): no data in cache: try (re)load from remote site now");
-            }
+            // first call so check if we have a cached one
+            authorityKeyCertificates = AuthorityKeyCertificatesFetcher.getFromCache(minValidUntil, stringStorage);
         }
 
         if (authorityKeyCertificates == null || !authorityKeyCertificates.isValid(minValidUntil)) {
-            // (re)load is needed
-            LOG.debug("getAuthorityKeyCertificates(): load and parse authorityKeyCertificates...");
-            final List<String> authServerIpAndPorts = new ArrayList<String>(AuthorityServers.getAuthorityIpAndPorts());
-            Collections.shuffle(authServerIpAndPorts);
-            String httpResponse = null;
-            for (final String authServerIpAndPort : authServerIpAndPorts) {
-                // download authority key certificates
-                try {
-                    final TcpipNetAddress hostAndPort = new TcpipNetAddress(authServerIpAndPort);
-                    final String path = "/tor/keys/all";
-                    try {
-                        httpResponse = SimpleHttpClientCompressed.getInstance().get(lowerDirConnectionNetLayer, hostAndPort, path);
-                    } catch (ZipException e) {
-                        LOG.debug("got ZipException trying to get data uncompressed");
-                        httpResponse = SimpleHttpClient.getInstance().get(lowerDirConnectionNetLayer, hostAndPort, path);
-                    }
-                    // parse loaded result
-                    final AuthorityKeyCertificates newAuthorityKeyCertificates = new AuthorityKeyCertificates(httpResponse, minValidUntil);
-
-                    // no exception thrown: certificates are OK
-                    if (newAuthorityKeyCertificates.isValid(minValidUntil)) {
-                        LOG.debug("getAuthorityKeyCertificates(): successfully loaded from {}", authServerIpAndPort);
-                        // save in cache
-                        stringStorage.put(STORAGEKEY_AUTHORITY_KEY_CERTIFICATES_TXT, httpResponse);
-                        // use as result
-                        authorityKeyCertificates = newAuthorityKeyCertificates;
-                        return authorityKeyCertificates;
-                    } else {
-                        LOG.debug("getAuthorityKeyCertificates(): loaded from {} - but not valid: try next", authServerIpAndPort);
-                    }
-                } catch (final TorException e) {
-                    LOG.warn("getAuthorityKeyCertificates(): could not parse from " + authServerIpAndPort + " result=" + httpResponse
-                            + ", try next", e);
-                } catch (final Exception e) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("getAuthorityKeyCertificates(): error while loading from {}, try next", authServerIpAndPort, e);
-                    }
-                }
+            // we do not have a valid AuthorityKeyCertificates so try to get a new one
+            AuthorityKeyCertificates newAuthorityKeyCertificates = AuthorityKeyCertificatesFetcher.getFromTorNetwork(minValidUntil, stringStorage, lowerDirConnectionNetLayer);
+            if (newAuthorityKeyCertificates != null) {
+                authorityKeyCertificates = newAuthorityKeyCertificates;
             }
-            LOG.error("getAuthorityKeyCertificates(): could NOT load and parse authorityKeyCertificates");
-            // use outdated certificates if no newer could be retrieved
         }
 
         return authorityKeyCertificates;
@@ -694,7 +544,7 @@ public final class Directory {
     /**
      * How many routers are allowed to be fetched separately?
      */
-    private static final int THRESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPTORS = DescriptorFetcher.MAXIMUM_ALLOWED_DIGESTS;
+    private static final int THRESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPTORS = DescriptorFetcher.MAXIMUM_ALLOWED_DIGESTS; // TODO : this should be set to a higher value loading some chunks of 96 routers should be faster then loading all at once
 
     /**
      * Trigger download of missing descriptors from directory caches.
@@ -705,14 +555,14 @@ public final class Directory {
     private void fetchDescriptors(final Map<Fingerprint, Router> fingerprintsRouters,
                                   final DirectoryConsensus directoryConsensus)
             throws TorException {
-        final Set<Fingerprint> fingerprintsOfRoutersToLoad = new HashSet<Fingerprint>();
+        final Map<Fingerprint, String> digestsOfRoutersToLoad = new HashMap<Fingerprint, String>();
 
         for (final RouterStatusDescription networkStatusDescription : directoryConsensus.getFingerprintsNetworkStatusDescriptors().values()) {
             // check one router of the consensus
             final Router r = fingerprintsRouters.get(networkStatusDescription.getFingerprint());
             if (r == null || !r.isValid()) {
                 // router description not yet contained or too old -> load it
-                fingerprintsOfRoutersToLoad.add(networkStatusDescription.getFingerprint());
+                digestsOfRoutersToLoad.put(networkStatusDescription.getFingerprint(), networkStatusDescription.getDigestDescriptorAsHex());
             }
         }
 
@@ -726,8 +576,7 @@ public final class Directory {
             // try to load from local cache
             try {
                 long startLoadCached = System.currentTimeMillis();
-                FileInputStream fileInputStream = new FileInputStream(
-                        TempfileStringStorage.getTempfileFile(DIRECTORY_CACHED_ROUTER_DESCRIPTORS));
+                FileInputStream fileInputStream = new FileInputStream(TempfileStringStorage.getTempfileFile(DIRECTORY_CACHED_ROUTER_DESCRIPTORS));
                 ConvenientStreamReader convenientStreamReader = new ConvenientStreamReader(fileInputStream);
                 int count = convenientStreamReader.readInt();
                 final Map<Fingerprint, Router> parsedServers = new HashMap<Fingerprint, Router>(count);
@@ -736,14 +585,13 @@ public final class Directory {
                     parsedServers.put(router.getFingerprint(), router);
                 }
                 fileInputStream.close();
-                final Set<Fingerprint> fingerprintsOfRoutersToLoadCopy = new HashSet<Fingerprint>(fingerprintsOfRoutersToLoad);
-                for (final Fingerprint fingerprint : fingerprintsOfRoutersToLoadCopy) {
+                for (final Fingerprint fingerprint : digestsOfRoutersToLoad.keySet()) {
                     // one searched fingerprint
                     final Router r = parsedServers.get(fingerprint);
                     if (r != null && r.isValid()) {
                         // found valid descriptor
                         fingerprintsRouters.put(fingerprint, r);
-                        fingerprintsOfRoutersToLoad.remove(fingerprint);
+                        digestsOfRoutersToLoad.remove(fingerprint);
                     }
                 }
                 LOG.debug("loaded {} routers from local cache in {} ms",
@@ -756,48 +604,45 @@ public final class Directory {
         }
 
         // load from directory server
-        LOG.debug("load {} routers from dir server(s) - start", fingerprintsOfRoutersToLoad.size());
+        LOG.debug("load {} routers from dir server(s) - start", digestsOfRoutersToLoad.size());
         int successes = 0;
-        if (fingerprintsOfRoutersToLoad.size() <= THRESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPTORS) {
-            // load the descriptors separately
-            // TODO: implement it
-            final int attempts = fingerprintsOfRoutersToLoad.size();
-            LOG.debug("loaded {} of {} missing routers from directory server(s) with multiple requests", successes, attempts);
-        } else {
-            // load all description with one request (usually done during startup)
-            final List<Router> dirRouters = new ArrayList<Router>(getDirRouters());
-            while (dirRouters.size() > 0) {
-                final int i = rnd.nextInt(dirRouters.size());
-                final Router directoryServer = dirRouters.get(i);
-                dirRouters.remove(i);
-                if (directoryServer.getDirPort() < 1) {
-                    // cannot be used as directory server
-                    continue;
-                }
+        // load all description with one request (usually done during startup)
+        final List<Router> dirRouters = new ArrayList<Router>(getDirRouters());
+        while (dirRouters.size() > 0) {
+            final int i = rnd.nextInt(dirRouters.size());
+            final Router directoryServer = dirRouters.get(i);
+            dirRouters.remove(i);
+            if (directoryServer.getDirPort() < 1) {
+                // cannot be used as directory server
+                continue;
+            }
+            if (digestsOfRoutersToLoad.size() <= THRESHOLD_TO_LOAD_SINGE_ROUTER_DESCRITPTORS) {
+                allDescriptors = DescriptorFetcher.downloadDescriptorsByDigest(digestsOfRoutersToLoad.values(), directoryServer, lowerDirConnectionNetLayer);
+            } else {
                 allDescriptors = DescriptorFetcher.downloadAllDescriptors(directoryServer, lowerDirConnectionNetLayer);
+            }
 
-                // split into single server descriptors
-                if (allDescriptors != null && allDescriptors.length() >= ALL_DESCRIPTORS_STR_MIN_LEN) {
-                    final Map<Fingerprint, Router> parsedServers = parseRouterDescriptors(allDescriptors);
-                    int attempts = 0;
-                    for (final Fingerprint fingerprint : fingerprintsOfRoutersToLoad) {
-                        // one searched fingerprint
-                        final Router r = parsedServers.get(fingerprint);
-                        attempts++;
-                        if (r != null) {
-                            // found searched descriptor
-                            fingerprintsRouters.put(fingerprint, r);
-                            successes++;
-                        }
+            // split into single server descriptors
+            if (allDescriptors != null && allDescriptors.length() >= ALL_DESCRIPTORS_STR_MIN_LEN) {
+                final Map<Fingerprint, Router> parsedServers = parseRouterDescriptors(allDescriptors);
+                int attempts = 0;
+                for (final Fingerprint fingerprint : digestsOfRoutersToLoad.keySet()) {
+                    // one searched fingerprint
+                    final Router r = parsedServers.get(fingerprint);
+                    attempts++;
+                    if (r != null) {
+                        // found searched descriptor
+                        fingerprintsRouters.put(fingerprint, r);
+                        successes++;
                     }
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("loaded " + successes + " of "
-                                + attempts + " missing routers from directory server \""
-                                + directoryServer.getNickname()
-                                + "\" with single request");
-                    }
-                    break;
                 }
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("loaded " + successes + " of "
+                            + attempts + " missing routers from directory server \""
+                            + directoryServer.getNickname()
+                            + "\" with single request");
+                }
+                break;
             }
         }
         LOG.debug("load routers from dir server(s), loaded {} routers - finished", successes);

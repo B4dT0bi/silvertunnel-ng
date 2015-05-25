@@ -18,81 +18,85 @@
 
 package org.silvertunnel_ng.netlib.layer.modification;
 
+import org.silvertunnel_ng.netlib.api.*;
+
 import java.io.IOException;
 import java.util.Map;
 
-import org.silvertunnel_ng.netlib.api.NetAddress;
-import org.silvertunnel_ng.netlib.api.NetAddressNameService;
-import org.silvertunnel_ng.netlib.api.NetLayer;
-import org.silvertunnel_ng.netlib.api.NetLayerStatus;
-import org.silvertunnel_ng.netlib.api.NetServerSocket;
-import org.silvertunnel_ng.netlib.api.NetSocket;
-
 /**
  * Bytewise modification of the input and output stream.
- * 
+ *
  * @author hapke
  */
-public class ModificatorNetLayer implements NetLayer
-{
-	private final NetLayer lowerNetLayer;
-	private final ByteModificator inByteModificator;
-	private final ByteModificator outByteModificator;
+public class ModificatorNetLayer implements NetLayer {
+    private final NetLayer lowerNetLayer;
+    private final ByteModificator inByteModificator;
+    private final ByteModificator outByteModificator;
 
-	public ModificatorNetLayer(NetLayer lowerNetLayer,
-			ByteModificator inByteModificator,
-			ByteModificator outByteModificator)
-	{
-		this.lowerNetLayer = lowerNetLayer;
-		this.inByteModificator = inByteModificator;
-		this.outByteModificator = outByteModificator;
-	}
+    public ModificatorNetLayer(NetLayer lowerNetLayer,
+                               ByteModificator inByteModificator,
+                               ByteModificator outByteModificator) {
+        this.lowerNetLayer = lowerNetLayer;
+        this.inByteModificator = inByteModificator;
+        this.outByteModificator = outByteModificator;
+    }
 
-	/** @see NetLayer#createNetSocket(Map, NetAddress, NetAddress) */
-	@Override
-	public NetSocket createNetSocket(Map<String, Object> localProperties,
-			NetAddress localAddress, NetAddress remoteAddress)
-			throws IOException
-	{
-		final NetSocket lowerLayerSocket = lowerNetLayer.createNetSocket(
-				localProperties, localAddress, remoteAddress);
-		return new ModificatorNetSocket(lowerLayerSocket, inByteModificator,
-				outByteModificator);
-	}
+    /**
+     * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
+     */
+    @Override
+    public NetSocket createNetSocket(Map<String, Object> localProperties,
+                                     NetAddress localAddress, NetAddress remoteAddress)
+            throws IOException {
+        final NetSocket lowerLayerSocket = lowerNetLayer.createNetSocket(
+                localProperties, localAddress, remoteAddress);
+        return new ModificatorNetSocket(lowerLayerSocket, inByteModificator,
+                outByteModificator);
+    }
 
-	/** @see NetLayer#createNetServerSocket(Map, NetAddress) */
-	@Override
-	public NetServerSocket createNetServerSocket(
-			Map<String, Object> properties, NetAddress localListenAddress)
-	{
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * @see NetLayer#createNetServerSocket(Map, NetAddress)
+     */
+    @Override
+    public NetServerSocket createNetServerSocket(
+            Map<String, Object> properties, NetAddress localListenAddress) {
+        throw new UnsupportedOperationException();
+    }
 
-	/** @see NetLayer#getStatus() */
-	@Override
-	public NetLayerStatus getStatus()
-	{
-		return lowerNetLayer.getStatus();
-	}
+    /**
+     * @see NetLayer#getStatus()
+     */
+    @Override
+    public NetLayerStatus getStatus() {
+        return lowerNetLayer.getStatus();
+    }
 
-	/** @see NetLayer#waitUntilReady() */
-	@Override
-	public void waitUntilReady()
-	{
-		lowerNetLayer.waitUntilReady();
-	}
+    /**
+     * @see NetLayer#waitUntilReady()
+     */
+    @Override
+    public void waitUntilReady() {
+        lowerNetLayer.waitUntilReady();
+    }
 
-	/** @see NetLayer#clear() */
-	@Override
-	public void clear() throws IOException
-	{
-		lowerNetLayer.clear();
-	}
+    /**
+     * @see NetLayer#clear()
+     */
+    @Override
+    public void clear() throws IOException {
+        lowerNetLayer.clear();
+    }
 
-	/** @see NetLayer#getNetAddressNameService() */
-	@Override
-	public NetAddressNameService getNetAddressNameService()
-	{
-		return lowerNetLayer.getNetAddressNameService();
-	}
+    /**
+     * @see NetLayer#getNetAddressNameService()
+     */
+    @Override
+    public NetAddressNameService getNetAddressNameService() {
+        return lowerNetLayer.getNetAddressNameService();
+    }
+
+    @Override
+    public void close() {
+        // nothing to do
+    }
 }

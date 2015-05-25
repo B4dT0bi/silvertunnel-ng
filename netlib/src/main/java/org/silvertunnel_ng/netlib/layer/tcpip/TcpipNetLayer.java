@@ -178,4 +178,9 @@ public class TcpipNetLayer implements NetLayer {
 
         return netAddressNameService;
     }
+
+    @Override
+    public void close() {
+        // nothing to do
+    }
 }

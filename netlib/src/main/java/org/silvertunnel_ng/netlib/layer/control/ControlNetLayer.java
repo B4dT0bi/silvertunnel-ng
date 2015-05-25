@@ -18,87 +18,82 @@
 
 package org.silvertunnel_ng.netlib.layer.control;
 
-import java.io.IOException;
-import java.util.Map;
-
-import org.silvertunnel_ng.netlib.api.NetAddress;
-import org.silvertunnel_ng.netlib.api.NetAddressNameService;
-import org.silvertunnel_ng.netlib.api.NetLayer;
-import org.silvertunnel_ng.netlib.api.NetLayerStatus;
-import org.silvertunnel_ng.netlib.api.NetServerSocket;
-import org.silvertunnel_ng.netlib.api.NetSocket;
+import org.silvertunnel_ng.netlib.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Transparent NetLayer that enforces time(out) and throughput limits of a
  * wrapped NetLayer. It aborts connections that hits the configured limits.
- * 
+ *
  * @author hapke
  */
-public class ControlNetLayer implements NetLayer
-{
-	/** */
-	private static final Logger LOG = LoggerFactory.getLogger(ControlNetLayer.class);
+public class ControlNetLayer implements NetLayer {
+    /** */
+    private static final Logger LOG = LoggerFactory.getLogger(ControlNetLayer.class);
 
-	private final NetLayer lowerNetLayer;
-	private final ControlParameters controlParameters;
+    private final NetLayer lowerNetLayer;
+    private final ControlParameters controlParameters;
 
-	/**
-	 * Initialize a new layer.
-	 * 
-	 * @param lowerNetLayer
-	 * @param controlParameters
-	 *            definition when to terminate a connection
-	 */
-	public ControlNetLayer(final NetLayer lowerNetLayer,
-			final ControlParameters controlParameters)
-	{
-		this.lowerNetLayer = lowerNetLayer;
-		this.controlParameters = controlParameters;
-	}
+    /**
+     * Initialize a new layer.
+     *
+     * @param lowerNetLayer
+     * @param controlParameters definition when to terminate a connection
+     */
+    public ControlNetLayer(final NetLayer lowerNetLayer,
+                           final ControlParameters controlParameters) {
+        this.lowerNetLayer = lowerNetLayer;
+        this.controlParameters = controlParameters;
+    }
 
-	/** @see NetLayer#createNetSocket(Map, NetAddress, NetAddress) */
-	@Override
-	public NetSocket createNetSocket(final Map<String, Object> localProperties,
-			final NetAddress localAddress, final NetAddress remoteAddress)
-			throws IOException
-	{
-		return new ControlNetSocket(lowerNetLayer.createNetSocket(
-				localProperties, localAddress, remoteAddress),
-				controlParameters);
-	}
+    /**
+     * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
+     */
+    @Override
+    public NetSocket createNetSocket(final Map<String, Object> localProperties,
+                                     final NetAddress localAddress, final NetAddress remoteAddress)
+            throws IOException {
+        return new ControlNetSocket(lowerNetLayer.createNetSocket(
+                localProperties, localAddress, remoteAddress),
+                controlParameters);
+    }
 
-	/** @see NetLayer#createNetServerSocket(Map, NetAddress) */
-	@Override
-	public NetServerSocket createNetServerSocket(
-			final Map<String, Object> properties,
-			final NetAddress localListenAddress) throws IOException
-	{
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * @see NetLayer#createNetServerSocket(Map, NetAddress)
+     */
+    @Override
+    public NetServerSocket createNetServerSocket(
+            final Map<String, Object> properties,
+            final NetAddress localListenAddress) throws IOException {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void clear() throws IOException
-	{
-		lowerNetLayer.clear();
-	}
+    @Override
+    public void clear() throws IOException {
+        lowerNetLayer.clear();
+    }
 
-	@Override
-	public NetAddressNameService getNetAddressNameService()
-	{
-		return lowerNetLayer.getNetAddressNameService();
-	}
+    @Override
+    public NetAddressNameService getNetAddressNameService() {
+        return lowerNetLayer.getNetAddressNameService();
+    }
 
-	@Override
-	public NetLayerStatus getStatus()
-	{
-		return lowerNetLayer.getStatus();
-	}
+    @Override
+    public void close() {
+        // nothing to do
+    }
 
-	@Override
-	public void waitUntilReady()
-	{
-		lowerNetLayer.waitUntilReady();
-	}
+    @Override
+    public NetLayerStatus getStatus() {
+        return lowerNetLayer.getStatus();
+    }
+
+    @Override
+    public void waitUntilReady() {
+        lowerNetLayer.waitUntilReady();
+    }
 }

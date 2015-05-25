@@ -18,72 +18,76 @@
 
 package org.silvertunnel_ng.netlib.layer.echo;
 
+import org.silvertunnel_ng.netlib.api.*;
+
 import java.io.IOException;
 import java.util.Map;
 
-import org.silvertunnel_ng.netlib.api.NetAddress;
-import org.silvertunnel_ng.netlib.api.NetAddressNameService;
-import org.silvertunnel_ng.netlib.api.NetLayer;
-import org.silvertunnel_ng.netlib.api.NetLayerStatus;
-import org.silvertunnel_ng.netlib.api.NetServerSocket;
-import org.silvertunnel_ng.netlib.api.NetSocket;
-
 /**
  * Echo output to input.
- * 
+ * <br>
  * Used for educational purposes to demonstrate the NetSocket/NetLayer concept.
- * 
+ *
  * @author hapke
  */
-public class EchoNetLayer implements NetLayer
-{
-	public EchoNetLayer()
-	{
-	}
+public class EchoNetLayer implements NetLayer {
+    public EchoNetLayer() {
+    }
 
-	/** @see NetLayer#createNetSocket(Map, NetAddress, NetAddress) */
-	@Override
-	public NetSocket createNetSocket(final Map<String, Object> localProperties,
-			final NetAddress localAddress, final NetAddress remoteAddress)
-			throws IOException
-	{
-		return new EchoNetSocket();
-	}
+    /**
+     * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
+     */
+    @Override
+    public NetSocket createNetSocket(final Map<String, Object> localProperties,
+                                     final NetAddress localAddress, final NetAddress remoteAddress)
+            throws IOException {
+        return new EchoNetSocket();
+    }
 
-	/** @see NetLayer#createNetServerSocket(Map, NetAddress) */
-	@Override
-	public NetServerSocket createNetServerSocket(
-			final Map<String, Object> properties,
-			final NetAddress localListenAddress)
-	{
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * @see NetLayer#createNetServerSocket(Map, NetAddress)
+     */
+    @Override
+    public NetServerSocket createNetServerSocket(
+            final Map<String, Object> properties,
+            final NetAddress localListenAddress) {
+        throw new UnsupportedOperationException();
+    }
 
-	/** @see NetLayer#getStatus() */
-	@Override
-	public NetLayerStatus getStatus()
-	{
-		return NetLayerStatus.READY;
-	}
+    /**
+     * @see NetLayer#getStatus()
+     */
+    @Override
+    public NetLayerStatus getStatus() {
+        return NetLayerStatus.READY;
+    }
 
-	/** @see NetLayer#waitUntilReady() */
-	@Override
-	public void waitUntilReady()
-	{
-		// nothing to do
-	}
+    /**
+     * @see NetLayer#waitUntilReady()
+     */
+    @Override
+    public void waitUntilReady() {
+        // nothing to do
+    }
 
-	/** @see NetLayer#clear() */
-	@Override
-	public void clear() throws IOException
-	{
-		// nothing to do
-	}
+    /**
+     * @see NetLayer#clear()
+     */
+    @Override
+    public void clear() throws IOException {
+        // nothing to do
+    }
 
-	/** @see NetLayer#getNetAddressNameService() */
-	@Override
-	public NetAddressNameService getNetAddressNameService()
-	{
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * @see NetLayer#getNetAddressNameService()
+     */
+    @Override
+    public NetAddressNameService getNetAddressNameService() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void close() {
+        // nothing to do
+    }
 }

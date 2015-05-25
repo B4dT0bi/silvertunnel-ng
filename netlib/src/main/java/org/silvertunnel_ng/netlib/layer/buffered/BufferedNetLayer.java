@@ -18,78 +18,82 @@
 
 package org.silvertunnel_ng.netlib.layer.buffered;
 
+import org.silvertunnel_ng.netlib.api.*;
+
 import java.io.IOException;
 import java.util.Map;
 
-import org.silvertunnel_ng.netlib.api.NetAddress;
-import org.silvertunnel_ng.netlib.api.NetAddressNameService;
-import org.silvertunnel_ng.netlib.api.NetLayer;
-import org.silvertunnel_ng.netlib.api.NetLayerStatus;
-import org.silvertunnel_ng.netlib.api.NetServerSocket;
-import org.silvertunnel_ng.netlib.api.NetSocket;
-
 /**
  * NetLayer that buffers data.
- * 
+ * <br>
  * This layer is used for educational purposes to demonstrate the NetLayer
  * concept.
- * 
+ *
  * @author hapke
  */
-public class BufferedNetLayer implements NetLayer
-{
-	private final NetLayer lowerNetLayer;
+public class BufferedNetLayer implements NetLayer {
+    private final NetLayer lowerNetLayer;
 
-	public BufferedNetLayer(final NetLayer lowerNetLayer)
-	{
-		this.lowerNetLayer = lowerNetLayer;
-	}
+    public BufferedNetLayer(final NetLayer lowerNetLayer) {
+        this.lowerNetLayer = lowerNetLayer;
+    }
 
-	/** @see NetLayer#createNetSocket(Map, NetAddress, NetAddress) */
-	@Override
-	public NetSocket createNetSocket(final Map<String, Object> localProperties,
-			NetAddress localAddress, NetAddress remoteAddress)
-			throws IOException
-	{
-		final NetSocket lowerLayerSocket = lowerNetLayer.createNetSocket(
-				localProperties, localAddress, remoteAddress);
-		return new BufferedNetSocket(lowerLayerSocket);
-	}
+    /**
+     * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
+     */
+    @Override
+    public NetSocket createNetSocket(final Map<String, Object> localProperties,
+                                     NetAddress localAddress, NetAddress remoteAddress)
+            throws IOException {
+        final NetSocket lowerLayerSocket = lowerNetLayer.createNetSocket(
+                localProperties, localAddress, remoteAddress);
+        return new BufferedNetSocket(lowerLayerSocket);
+    }
 
-	/** @see NetLayer#createNetServerSocket(Map, NetAddress) */
-	@Override
-	public NetServerSocket createNetServerSocket(
-			final Map<String, Object> properties,
-			final NetAddress localListenAddress)
-	{
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * @see NetLayer#createNetServerSocket(Map, NetAddress)
+     */
+    @Override
+    public NetServerSocket createNetServerSocket(
+            final Map<String, Object> properties,
+            final NetAddress localListenAddress) {
+        throw new UnsupportedOperationException();
+    }
 
-	/** @see NetLayer#getStatus() */
-	@Override
-	public NetLayerStatus getStatus()
-	{
-		return lowerNetLayer.getStatus();
-	}
+    /**
+     * @see NetLayer#getStatus()
+     */
+    @Override
+    public NetLayerStatus getStatus() {
+        return lowerNetLayer.getStatus();
+    }
 
-	/** @see NetLayer#waitUntilReady() */
-	@Override
-	public void waitUntilReady()
-	{
-		lowerNetLayer.waitUntilReady();
-	}
+    /**
+     * @see NetLayer#waitUntilReady()
+     */
+    @Override
+    public void waitUntilReady() {
+        lowerNetLayer.waitUntilReady();
+    }
 
-	/** @see NetLayer#clear() */
-	@Override
-	public void clear() throws IOException
-	{
-		lowerNetLayer.clear();
-	}
+    /**
+     * @see NetLayer#clear()
+     */
+    @Override
+    public void clear() throws IOException {
+        lowerNetLayer.clear();
+    }
 
-	/** @see NetLayer#getNetAddressNameService() */
-	@Override
-	public NetAddressNameService getNetAddressNameService()
-	{
-		return lowerNetLayer.getNetAddressNameService();
-	}
+    /**
+     * @see NetLayer#getNetAddressNameService()
+     */
+    @Override
+    public NetAddressNameService getNetAddressNameService() {
+        return lowerNetLayer.getNetAddressNameService();
+    }
+
+    @Override
+    public void close() {
+        // nothing to do
+    }
 }

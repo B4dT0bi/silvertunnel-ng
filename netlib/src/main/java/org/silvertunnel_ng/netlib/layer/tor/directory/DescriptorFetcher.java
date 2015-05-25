@@ -23,6 +23,9 @@ import org.silvertunnel_ng.netlib.tool.SimpleHttpClientCompressed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 //TODO : modify DescriptorFetcher to download the and split (and process) the descriptors during download
@@ -50,7 +53,7 @@ public final class DescriptorFetcher {
      * @param dirConnectionNetLayer which {@link NetLayer} should be used for communication
      * @return the descriptors as single String; null in the case of an error
      */
-    public static String downloadDescriptorsByDigest(final List<String> nodesDigestsToLoad,
+    public static String downloadDescriptorsByDigest(final Collection<String> nodesDigestsToLoad,
                                                      final Router directoryServer,
                                                      final NetLayer dirConnectionNetLayer) {
         if (nodesDigestsToLoad == null || nodesDigestsToLoad.isEmpty()) {
@@ -61,8 +64,10 @@ public final class DescriptorFetcher {
             LOG.error("only {} digests can be downloaded at once", MAXIMUM_ALLOWED_DIGESTS);
             return null;
         }
+        List<String> digests = new ArrayList<String>(nodesDigestsToLoad);
+        Collections.sort(digests);
         StringBuilder builder = new StringBuilder();
-        for (String digest : nodesDigestsToLoad) {
+        for (String digest : digests) {
             builder.append(digest).append('+');
         }
 
@@ -73,7 +78,7 @@ public final class DescriptorFetcher {
             return SimpleHttpClientCompressed.getInstance().get(dirConnectionNetLayer, directoryServer.getDirAddress(), path);
         } catch (final Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("downloadSingleDescriptor() from "
+                LOG.debug("downloadDescriptorsByDigest() from "
                         + directoryServer.getNickname() + " failed: "
                         + e.getMessage(), e);
             }

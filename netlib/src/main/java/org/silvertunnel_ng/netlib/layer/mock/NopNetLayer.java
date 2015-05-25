@@ -18,69 +18,74 @@
 
 package org.silvertunnel_ng.netlib.layer.mock;
 
+import org.silvertunnel_ng.netlib.api.*;
+import org.silvertunnel_ng.netlib.nameservice.mock.NopNetAddressNameService;
+
 import java.io.IOException;
 import java.util.Map;
 
-import org.silvertunnel_ng.netlib.api.NetAddress;
-import org.silvertunnel_ng.netlib.api.NetAddressNameService;
-import org.silvertunnel_ng.netlib.api.NetLayer;
-import org.silvertunnel_ng.netlib.api.NetLayerStatus;
-import org.silvertunnel_ng.netlib.api.NetServerSocket;
-import org.silvertunnel_ng.netlib.api.NetSocket;
-import org.silvertunnel_ng.netlib.nameservice.mock.NopNetAddressNameService;
-
 /**
  * Simple NetLayer that always fails to create a Net(Server)Socket.
- * 
+ *
  * @author hapke
  */
-public class NopNetLayer implements NetLayer
-{
-	/** @see NetLayer#createNetSocket(Map, NetAddress, NetAddress) */
-	@Override
-	public synchronized NetSocket createNetSocket(
-			Map<String, Object> localProperties, NetAddress localAddress,
-			NetAddress remoteAddress) throws IOException
-	{
-		throw new IOException(
-				"NopNetLayer.createNetSocket() always throws this IOException");
-	}
+public class NopNetLayer implements NetLayer {
+    /**
+     * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
+     */
+    @Override
+    public synchronized NetSocket createNetSocket(
+            Map<String, Object> localProperties, NetAddress localAddress,
+            NetAddress remoteAddress) throws IOException {
+        throw new IOException(
+                "NopNetLayer.createNetSocket() always throws this IOException");
+    }
 
-	/** @see NetLayer#createNetServerSocket(Map, NetAddress) */
-	@Override
-	public NetServerSocket createNetServerSocket(
-			Map<String, Object> properties, NetAddress localListenAddress)
-			throws IOException
-	{
-		throw new IOException(
-				"NopNetLayer.createNetServerSocket() always throws this IOException");
-	}
+    /**
+     * @see NetLayer#createNetServerSocket(Map, NetAddress)
+     */
+    @Override
+    public NetServerSocket createNetServerSocket(
+            Map<String, Object> properties, NetAddress localListenAddress)
+            throws IOException {
+        throw new IOException(
+                "NopNetLayer.createNetServerSocket() always throws this IOException");
+    }
 
-	/** @see NetLayer#getStatus() */
-	@Override
-	public NetLayerStatus getStatus()
-	{
-		return NetLayerStatus.READY;
-	}
+    /**
+     * @see NetLayer#getStatus()
+     */
+    @Override
+    public NetLayerStatus getStatus() {
+        return NetLayerStatus.READY;
+    }
 
-	/** @see NetLayer#waitUntilReady() */
-	@Override
-	public void waitUntilReady()
-	{
-		// nothing to do
-	}
+    /**
+     * @see NetLayer#waitUntilReady()
+     */
+    @Override
+    public void waitUntilReady() {
+        // nothing to do
+    }
 
-	/** @see NetLayer#clear() */
-	@Override
-	public void clear() throws IOException
-	{
-		// nothing to do
-	}
+    /**
+     * @see NetLayer#clear()
+     */
+    @Override
+    public void clear() throws IOException {
+        // nothing to do
+    }
 
-	/** @see NetLayer#getNetAddressNameService */
-	@Override
-	public NetAddressNameService getNetAddressNameService()
-	{
-		return NopNetAddressNameService.getInstance();
-	}
+    /**
+     * @see NetLayer#getNetAddressNameService
+     */
+    @Override
+    public NetAddressNameService getNetAddressNameService() {
+        return NopNetAddressNameService.getInstance();
+    }
+
+    @Override
+    public void close() {
+        // nothing to do
+    }
 }

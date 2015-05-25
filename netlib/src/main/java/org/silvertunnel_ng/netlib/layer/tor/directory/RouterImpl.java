@@ -71,7 +71,7 @@ import java.util.regex.Pattern;
  * @author hapke
  * @author Tobias Boese
  */
-public final class RouterImpl implements Router, Cloneable {
+public class RouterImpl implements Router, Cloneable {
     /** */
     private static final Logger LOG = LoggerFactory.getLogger(RouterImpl.class);
 
@@ -654,7 +654,7 @@ public final class RouterImpl implements Router, Cloneable {
 
     /**
      * updates the server ranking index
-     * <p/>
+     * <br>
      * Is supposed to be between 0 (undesirable) and 1 (very desirable). Two
      * variables are taken as input:
      * <ul>

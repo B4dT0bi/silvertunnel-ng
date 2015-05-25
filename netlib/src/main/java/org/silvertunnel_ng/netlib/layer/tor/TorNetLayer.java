@@ -267,6 +267,11 @@ public class TorNetLayer implements NetLayer {
         return netAddressNameService;
     }
 
+    @Override
+    public void close() {
+        tor.close();
+    }
+
     // /////////////////////////////////////////////////////
     // layer specific methods
     // /////////////////////////////////////////////////////

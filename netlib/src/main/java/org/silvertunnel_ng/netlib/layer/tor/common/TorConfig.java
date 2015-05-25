@@ -53,15 +53,17 @@ package org.silvertunnel_ng.netlib.layer.tor.common;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.CircuitHistory;
+import org.silvertunnel_ng.netlib.layer.tor.directory.Bridge;
 import org.silvertunnel_ng.netlib.layer.tor.directory.FingerprintImpl;
 import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 import org.silvertunnel_ng.netlib.util.SystemPropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-// TODO : implement bridge connect
 // TODO : implement ExcludeSingleHopRelays (torrc)
 
 /**
@@ -987,6 +989,7 @@ public final class TorConfig {
         config.saveCircuitHistory = true;
         config.veryAggressiveStreamBuilding = false;
         config.longLivedPorts.clear();
+        config.bridges.clear();
         for (int tmp : DEFAULT_LONG_LIVED_PORTS) {
             config.longLivedPorts.add(tmp);
         }
@@ -1021,4 +1024,35 @@ public final class TorConfig {
      * prefix used for tempfiles.
      */
     public static final String FILENAME_PREFIX = "st-";
+
+    private List<Bridge> bridges = new ArrayList<Bridge>();
+
+    /**
+     * @return the configured List of Bridges.
+     */
+    public static List<Bridge> getBridges() {
+        return getInstance().bridges;
+    }
+
+    /**
+     * Add a Bridge which will be used for Connecting to the Tor-Network.
+     * (https://www.torproject.org/docs/bridges.html.en)
+     *
+     * If there is at least one Bridge in the list Netlib will always use this to connect to the tor network.
+     * To use the normal behaviour you need to make sure that this List is empty.
+     * @param bridge a Bridge @see Bridge
+     */
+    public static void addBridge(final Bridge bridge) {
+        getInstance().bridges.add(bridge); // TODO : bridges should also be added with properties
+    }
+
+    /**
+     * Remove all Bridges from the config.
+     *
+     * If there is at least one Bridge in the list Netlib will always use this to connect to the tor network.
+     * To use the normal behaviour you need to make sure that this List is empty.
+     */
+    public static void deleteBridges() {
+        getInstance().bridges.clear();
+    }
 }
