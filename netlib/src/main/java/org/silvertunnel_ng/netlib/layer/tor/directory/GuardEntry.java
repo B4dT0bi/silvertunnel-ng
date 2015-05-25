@@ -18,8 +18,8 @@
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.Fingerprint;
-import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
-import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
+import org.silvertunnel_ng.netlib.util.ConvenientStreamReader;
+import org.silvertunnel_ng.netlib.util.DynByteBuffer;
 
 import java.io.IOException;
 

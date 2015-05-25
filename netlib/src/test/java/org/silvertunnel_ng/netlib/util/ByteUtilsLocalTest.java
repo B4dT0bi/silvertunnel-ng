@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-package org.silvertunnel_ng.netlib.tool;
+package org.silvertunnel_ng.netlib.util;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
@@ -23,6 +23,7 @@ import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
 import java.util.Arrays;
 import java.util.Random;
 
+import org.silvertunnel_ng.netlib.util.ByteUtils;
 import org.testng.annotations.Test;
 
 /**
@@ -34,7 +35,7 @@ public final class ByteUtilsLocalTest
 {
 
 	/**
-	 * Test method for {@link org.silvertunnel_ng.netlib.tool.ByteUtils#longToBytes(long)}.
+	 * Test method for {@link ByteUtils#longToBytes(long)}.
 	 */
 	@Test
 	public void testLongToBytes() 
@@ -51,7 +52,7 @@ public final class ByteUtilsLocalTest
 	}
 
 	/**
-	 * Test method for {@link org.silvertunnel_ng.netlib.tool.ByteUtils#bytesToLong(byte[])}.
+	 * Test method for {@link ByteUtils#bytesToLong(byte[])}.
 	 */
 	@Test
 	public void testBytesToLongByteArray() 
@@ -66,7 +67,7 @@ public final class ByteUtilsLocalTest
 	}
 
 	/**
-	 * Test method for {@link org.silvertunnel_ng.netlib.tool.ByteUtils#bytesToLong(byte[], int)}.
+	 * Test method for {@link ByteUtils#bytesToLong(byte[], int)}.
 	 */
 	@Test
 	public void testBytesToLongByteArrayInt() 
@@ -116,7 +117,7 @@ public final class ByteUtilsLocalTest
 		}
 	}
 	/**
-	 * Test method for {@link org.silvertunnel_ng.netlib.tool.ByteUtils#intToBytes(int)}.
+	 * Test method for {@link ByteUtils#intToBytes(int)}.
 	 */
 	@Test
 	public void testIntToBytes() 
@@ -130,7 +131,7 @@ public final class ByteUtilsLocalTest
 	}
 
 	/**
-	 * Test method for {@link org.silvertunnel_ng.netlib.tool.ByteUtils#bytesToInt(byte[], int)}.
+	 * Test method for {@link ByteUtils#bytesToInt(byte[], int)}.
 	 */
 	@Test
 	public void testBytesToInt() 
@@ -151,7 +152,7 @@ public final class ByteUtilsLocalTest
 	}
 
 	/**
-	 * Test method for {@link org.silvertunnel_ng.netlib.tool.ByteUtils#getBooleansFromByte(byte)}.
+	 * Test method for {@link ByteUtils#getBooleansFromByte(byte)}.
 	 */
 	@Test
 	public void testGetBooleansFromByte() 
@@ -240,7 +241,7 @@ public final class ByteUtilsLocalTest
 	}
 
 	/**
-	 * Test method for {@link org.silvertunnel_ng.netlib.tool.ByteUtils#getByteFromBooleans(java.lang.Boolean, java.lang.Boolean[])}.
+	 * Test method for {@link ByteUtils#getByteFromBooleans(java.lang.Boolean, java.lang.Boolean[])}.
 	 */
 	@Test
 	public void testGetByteFromBooleans() 

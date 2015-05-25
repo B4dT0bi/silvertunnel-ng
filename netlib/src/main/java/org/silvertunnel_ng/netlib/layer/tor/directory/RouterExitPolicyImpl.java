@@ -37,8 +37,8 @@ package org.silvertunnel_ng.netlib.layer.tor.directory;
 
 import org.silvertunnel_ng.netlib.layer.tor.api.RouterExitPolicy;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
-import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
-import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
+import org.silvertunnel_ng.netlib.util.ConvenientStreamReader;
+import org.silvertunnel_ng.netlib.util.ConvenientStreamWriter;
 
 import java.io.IOException;
 

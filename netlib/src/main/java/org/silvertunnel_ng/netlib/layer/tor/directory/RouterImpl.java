@@ -45,8 +45,8 @@ import org.silvertunnel_ng.netlib.layer.tor.util.Encoding;
 import org.silvertunnel_ng.netlib.layer.tor.util.Encryption;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
 import org.silvertunnel_ng.netlib.layer.tor.util.Util;
-import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
-import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
+import org.silvertunnel_ng.netlib.util.ConvenientStreamReader;
+import org.silvertunnel_ng.netlib.util.ConvenientStreamWriter;
 import org.silvertunnel_ng.netlib.util.DatatypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,7 +258,7 @@ public class RouterImpl implements Router, Cloneable {
     /**
      * Parse a byte array containing information for a Router and creating a RouterImpl object.
      *
-     * @param convenientStreamReader the {@link org.silvertunnel_ng.netlib.tool.ConvenientStreamReader} which contains the data
+     * @param convenientStreamReader the {@link ConvenientStreamReader} which contains the data
      * @throws TorException if something went wrong during parsing
      */
     protected RouterImpl(final ConvenientStreamReader convenientStreamReader) throws IOException, TorException {

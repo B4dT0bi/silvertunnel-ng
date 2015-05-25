@@ -26,7 +26,7 @@ import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelay;
 import org.silvertunnel_ng.netlib.layer.tor.circuit.cells.CellRelayResolve;
 import org.silvertunnel_ng.netlib.layer.tor.common.TorConfig;
 import org.silvertunnel_ng.netlib.layer.tor.util.TorException;
-import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
+import org.silvertunnel_ng.netlib.util.DynByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

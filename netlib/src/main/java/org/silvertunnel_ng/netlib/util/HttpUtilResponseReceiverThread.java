@@ -20,7 +20,6 @@ package org.silvertunnel_ng.netlib.util;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

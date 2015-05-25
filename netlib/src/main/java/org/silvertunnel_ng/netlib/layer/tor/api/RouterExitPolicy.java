@@ -18,7 +18,7 @@
 
 package org.silvertunnel_ng.netlib.layer.tor.api;
 
-import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
+import org.silvertunnel_ng.netlib.util.ConvenientStreamWriter;
 
 import java.io.IOException;
 

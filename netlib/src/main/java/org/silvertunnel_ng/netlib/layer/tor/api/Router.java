@@ -21,7 +21,7 @@ package org.silvertunnel_ng.netlib.layer.tor.api;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterFlags;
 import org.silvertunnel_ng.netlib.layer.tor.directory.RouterStatusDescription;
-import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
+import org.silvertunnel_ng.netlib.util.ConvenientStreamWriter;
 
 import java.io.IOException;
 import java.net.InetAddress;

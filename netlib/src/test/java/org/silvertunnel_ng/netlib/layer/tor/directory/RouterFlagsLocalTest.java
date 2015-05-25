@@ -22,8 +22,8 @@ import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 
-import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
-import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
+import org.silvertunnel_ng.netlib.util.ConvenientStreamReader;
+import org.silvertunnel_ng.netlib.util.ConvenientStreamWriter;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;

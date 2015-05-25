@@ -17,9 +17,9 @@
  */
 package org.silvertunnel_ng.netlib.layer.tor.directory;
 
-import org.silvertunnel_ng.netlib.tool.ByteUtils;
-import org.silvertunnel_ng.netlib.tool.ConvenientStreamReader;
-import org.silvertunnel_ng.netlib.tool.ConvenientStreamWriter;
+import org.silvertunnel_ng.netlib.util.ByteUtils;
+import org.silvertunnel_ng.netlib.util.ConvenientStreamReader;
+import org.silvertunnel_ng.netlib.util.ConvenientStreamWriter;
 
 import java.io.IOException;
 import java.util.BitSet;

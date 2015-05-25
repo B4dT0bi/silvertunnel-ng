@@ -25,7 +25,6 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.Random;
 
-import org.silvertunnel_ng.netlib.tool.DynByteBuffer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

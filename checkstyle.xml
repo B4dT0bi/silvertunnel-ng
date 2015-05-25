@@ -54,7 +54,6 @@ Slightly modified version of Sun Checks that better matches the default code for
     <module name="AvoidNestedBlocks"/>
     <module name="EmptyBlock"/>
     <module name="LeftCurly">
-      <property name="option" value="nl"/>
       <property name="maxLineLength" value="150"/>
     </module>
     <module name="NeedBraces"/>

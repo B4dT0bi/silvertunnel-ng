@@ -39,6 +39,7 @@ import org.silvertunnel_ng.netlib.adapter.url.NetlibURLStreamHandlerFactory;
 import org.silvertunnel_ng.netlib.api.NetLayer;
 import org.silvertunnel_ng.netlib.api.util.TcpipNetAddress;
 import org.silvertunnel_ng.netlib.layer.tor.util.Util;
+import org.silvertunnel_ng.netlib.util.DynByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
