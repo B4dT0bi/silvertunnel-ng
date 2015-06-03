@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.silvertunnel-ng</groupId>
             <artifactId>android-support</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
+            <version>0.0.5-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
