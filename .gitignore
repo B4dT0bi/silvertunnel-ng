@@ -5,3 +5,5 @@
 /silvertunnel.log
 /silvertunnel-ng.log*
 */silvertunnel-ng.log*
+*.class
+*.jar
