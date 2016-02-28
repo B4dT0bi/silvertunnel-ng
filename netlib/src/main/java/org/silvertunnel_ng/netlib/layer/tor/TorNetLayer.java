@@ -126,6 +126,14 @@ public class TorNetLayer implements NetLayer {
     // /////////////////////////////////////////////////////
 
     /**
+     * @see NetLayer#createNetSocket(NetAddress)
+     */
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        return createNetSocket(null, null, remoteAddress);
+    }
+
+    /**
      * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
      */
     @Override
@@ -168,7 +176,7 @@ public class TorNetLayer implements NetLayer {
 
         // check whether a specific exit node is requested
         /*
-		 * SYNTAX: [hostname].[name-or-digest].exit [name-or-digest].exit
+         * SYNTAX: [hostname].[name-or-digest].exit [name-or-digest].exit
 		 * Hostname is a valid hostname; [name-or-digest] is either the nickname
 		 * of a Tor node or the hex-encoded digest of that node's public key.
 		 */

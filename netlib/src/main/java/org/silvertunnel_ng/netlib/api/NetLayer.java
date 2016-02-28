@@ -32,6 +32,18 @@ public interface NetLayer {
     /**
      * Create a client connection. Similar to SocketFactory.createSocket()
      *
+     * @param remoteAddress usually one NetAddress, but can be null for layers without
+     *                      address
+     * @return a new NetSocket, not null
+     * @throws UnsupportedOperationException if not available or not allowed for
+     *                                       this NetLayer instance
+     * @throws IOException                   in the case of any other error
+     */
+    NetSocket createNetSocket(NetAddress remoteAddress) throws IOException;
+
+    /**
+     * Create a client connection. Similar to SocketFactory.createSocket()
+     *
      * @param localProperties e.g. property "timeoutInMs"; can also be used to handle a
      *                        "security profile"; is optional and can be null
      * @param localAddress    is optional and can be null

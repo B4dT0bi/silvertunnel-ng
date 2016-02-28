@@ -1,6 +1,7 @@
+.idea
+*/target
 /target
 /test-output
 /silvertunnel.log
-/silvertunnel-ng.log
-/silvertunnel-ng.log.1
-/silvertunnel-ng.log.2
+/silvertunnel-ng.log*
+*/silvertunnel-ng.log*
