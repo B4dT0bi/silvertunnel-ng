@@ -106,6 +106,15 @@ public class SwitchingNetLayer implements NetLayer {
         this.lowerNetLayer = lowerNetLayer;
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        final SwitchingNetSocket result = new SwitchingNetSocket(this,
+                lowerNetLayer.createNetSocket(remoteAddress));
+        addToLayer(result);
+
+        return result;
+    }
+
     /**
      * Create a connection using the lower layer with its predefined address.
      *

@@ -71,8 +71,14 @@ public class SocksServerNetSession implements Runnable
 	private static long id;
 
 	public SocksServerNetSession(final NetLayer lowerNetLayer,
-								 final Map<String, Object> localProperties, 
+								 final Map<String, Object> localProperties,
 								 final NetAddress localAddress,
+								 final NetAddress remoteAddress)
+	{
+		this.lowerNetLayer = lowerNetLayer;
+	}
+
+	public SocksServerNetSession(final NetLayer lowerNetLayer,
 								 final NetAddress remoteAddress)
 	{
 		this.lowerNetLayer = lowerNetLayer;

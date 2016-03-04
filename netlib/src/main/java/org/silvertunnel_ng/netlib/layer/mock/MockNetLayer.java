@@ -135,6 +135,52 @@ public class MockNetLayer implements NetLayer {
         }
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        MockNetSocket preparedHigherLayerSocket;
+        if (response != null) {
+            // variant 1
+            preparedHigherLayerSocket = new MockNetSocket(response,
+                    waitAtEndOfResponseBeforeClosingMs);
+            if (!allowMultipleSessions) {
+                // cleanup: avoid multiple calls of this method
+                response = null;
+            }
+
+        } else if (responses != null && responses.size() >= 1) {
+            // variant 2
+            preparedHigherLayerSocket = new MockNetSocket(responses.get(0),
+                    waitAtEndOfResponseBeforeClosingMs);
+            // cleanup
+            responses.remove(0);
+
+        } else if (responsePerDestinationAddress != null
+                && responsePerDestinationAddress.size() >= 1) {
+            // variant 3
+            final byte[] response = responsePerDestinationAddress
+                    .get(remoteAddress);
+            if (response == null) {
+                throw new IOException(
+                        "connection could not be established to remoteAddress="
+                                + remoteAddress);
+            }
+            if (!allowMultipleSessionsForOneAddress) {
+                // cleanup
+                responsePerDestinationAddress.remove(remoteAddress);
+            }
+            preparedHigherLayerSocket = new MockNetSocket(response,
+                    waitAtEndOfResponseBeforeClosingMs);
+
+        } else {
+            throw new IOException("no more Sockets allowed");
+        }
+
+        // create session and socket
+        final MockNetSession session = new MockNetSession(remoteAddress, preparedHigherLayerSocket);
+        sessionHistory.add(session);
+        return session.createHigherLayerNetSocket();
+    }
+
     /**
      * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
      */

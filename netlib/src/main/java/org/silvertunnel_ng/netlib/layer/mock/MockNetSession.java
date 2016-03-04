@@ -19,6 +19,7 @@
 package org.silvertunnel_ng.netlib.layer.mock;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.silvertunnel_ng.netlib.api.NetAddress;
@@ -38,10 +39,18 @@ public class MockNetSession
 	private boolean isHigherLayerSocketCreated = false;
 
 	public MockNetSession(Map<String, Object> localProperties,
-			NetAddress localAddress, NetAddress remoteAddress,
-			MockNetSocket preparedHigherLayerSocket)
+						  NetAddress localAddress, NetAddress remoteAddress,
+						  MockNetSocket preparedHigherLayerSocket)
 	{
 		this.providedLocalProperties = localProperties;
+		this.providedRemoteAddress = remoteAddress;
+		this.preparedHigherLayerSocket = preparedHigherLayerSocket;
+	}
+
+	public MockNetSession(NetAddress remoteAddress,
+						  MockNetSocket preparedHigherLayerSocket)
+	{
+		this.providedLocalProperties = new HashMap<String, Object>();
 		this.providedRemoteAddress = remoteAddress;
 		this.preparedHigherLayerSocket = preparedHigherLayerSocket;
 	}

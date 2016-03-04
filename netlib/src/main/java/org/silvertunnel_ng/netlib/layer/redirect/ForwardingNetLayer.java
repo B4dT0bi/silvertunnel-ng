@@ -51,6 +51,12 @@ public class ForwardingNetLayer implements NetLayer {
         this.lowerNetLayerRemoteAddress = lowerNetLayerRemoteAddress;
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        // forward the request
+        return lowerNetLayer.createNetSocket(lowerNetLayerRemoteAddress);
+    }
+
     /**
      * Create a connection using the lower layer with its predefined address.
      *

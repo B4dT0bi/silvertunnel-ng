@@ -30,6 +30,7 @@ import org.silvertunnel_ng.netlib.util.PropertiesUtil;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -62,6 +63,11 @@ public class TcpipNetLayer implements NetLayer {
     private NetAddressNameService netAddressNameService;
 
     public TcpipNetLayer() {
+    }
+
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        return createNetSocket(new HashMap<String, Object>(), null, remoteAddress);
     }
 
     /**

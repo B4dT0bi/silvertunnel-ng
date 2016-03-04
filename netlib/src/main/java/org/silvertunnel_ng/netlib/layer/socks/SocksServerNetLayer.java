@@ -42,6 +42,11 @@ public class SocksServerNetLayer implements NetLayer {
         this.lowerNetLayer = lowerNetLayer;
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        return new SocksServerNetSession(lowerNetLayer, remoteAddress).createHigherLayerNetSocket();
+    }
+
     /**
      * Create a Socks4/Socks5 server that receives the socks commands on the
      * returned NetSocket an executes these commands on the lowerNetLayer.

@@ -50,6 +50,11 @@ public class SocksClientNetLayer implements NetLayer {
         this.lowerNetLayer = lowerNetLayer;
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        return createNetSocket(null, null, remoteAddress);
+    }
+
     /**
      * Create a connection using the Socks5 client protocol over the
      * lowerNetLayer, i.e. the lowerNetLayer should be or should forward to a

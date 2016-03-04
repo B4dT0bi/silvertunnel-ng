@@ -30,6 +30,12 @@ import java.util.Map;
  * @author hapke
  */
 public class NopNetLayer implements NetLayer {
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        throw new IOException(
+                "NopNetLayer.createNetSocket() always throws this IOException");
+    }
+
     /**
      * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
      */

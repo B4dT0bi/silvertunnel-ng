@@ -34,6 +34,11 @@ public class EchoNetLayer implements NetLayer {
     public EchoNetLayer() {
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        return new EchoNetSocket();
+    }
+
     /**
      * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
      */

@@ -48,6 +48,11 @@ public class TLSNetLayer implements NetLayer {
         this.lowerNetLayer = lowerNetLayer;
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        throw new IOException("not implemented");
+    }
+
     /**
      * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
      */

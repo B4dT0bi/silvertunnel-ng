@@ -38,6 +38,12 @@ public class BufferedNetLayer implements NetLayer {
         this.lowerNetLayer = lowerNetLayer;
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        final NetSocket lowerLayerSocket = lowerNetLayer.createNetSocket(remoteAddress);
+        return new BufferedNetSocket(lowerLayerSocket);
+    }
+
     /**
      * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
      */

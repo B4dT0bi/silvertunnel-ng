@@ -50,6 +50,12 @@ public class ControlNetLayer implements NetLayer {
         this.controlParameters = controlParameters;
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        return new ControlNetSocket(lowerNetLayer.createNetSocket(remoteAddress),
+                controlParameters);
+    }
+
     /**
      * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
      */

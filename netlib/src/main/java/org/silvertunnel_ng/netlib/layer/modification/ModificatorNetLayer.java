@@ -41,6 +41,13 @@ public class ModificatorNetLayer implements NetLayer {
         this.outByteModificator = outByteModificator;
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        final NetSocket lowerLayerSocket = lowerNetLayer.createNetSocket(remoteAddress);
+        return new ModificatorNetSocket(lowerLayerSocket, inByteModificator,
+                outByteModificator);
+    }
+
     /**
      * @see NetLayer#createNetSocket(Map, NetAddress, NetAddress)
      */

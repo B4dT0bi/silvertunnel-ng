@@ -184,6 +184,12 @@ public class ConditionalNetLayer implements NetLayer {
         return result;
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        final NetLayer lowerNetLayer = getMatchingNetLayer(remoteAddress);
+        return lowerNetLayer.createNetSocket(remoteAddress);
+    }
+
     /**
      * Create a connection using the lower layer with its predefined address.
      *

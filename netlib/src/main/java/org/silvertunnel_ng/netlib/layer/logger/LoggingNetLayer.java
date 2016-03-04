@@ -100,6 +100,36 @@ public class LoggingNetLayer implements NetLayer {
         this.bottomUpLoggingPrefix = bottomUpLoggingPrefix;
     }
 
+    @Override
+    public NetSocket createNetSocket(NetAddress remoteAddress) throws IOException {
+        // log this method call
+        final String connectionIdStr = "<conn="
+                + getNextConnectionAttemptGlobalCounter() + "> ";
+        synchronized (this) {
+            connectionAttemptsCounter++;
+        }
+        final BufferedLogger tmpLog = new BufferedLogger(summaryLog,
+                summaryLogLevel, detailLog, detailLogLevel, logContent,
+                connectionIdStr + topDownLoggingPrefix);
+        tmpLog.logSummaryLine("createNetSocket with remoteAddress=" + remoteAddress);
+
+        // action
+        final NetSocket lowerLayerSocket = lowerNetLayer.createNetSocket(remoteAddress);
+        final NetSocket result = new LoggingNetSocket(lowerLayerSocket,
+                summaryLog, summaryLogLevel, detailLog, detailLogLevel,
+                logContent, connectionIdStr + topDownLoggingPrefix,
+                connectionIdStr + bottomUpLoggingPrefix);
+        tmpLog.logSummaryLine("createNetSocket was successful for lowerLayerSocket="
+                + lowerLayerSocket);
+
+        // update 2nd counter
+        synchronized (this) {
+            connectionEstablisedCounter++;
+        }
+
+        return result;
+    }
+
     /**
      * @see NetLayer#createNetSocket
      */
