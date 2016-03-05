@@ -5,7 +5,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.silvertunnel-ng</groupId>
-        <version>0.0.5</version>
+        <version>0.0.6-SNAPSHOT</version>
     </parent>
     <artifactId>android-support</artifactId>
     <name>SilverTunnel-NG Android Support library</name>
