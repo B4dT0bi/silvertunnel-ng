@@ -207,7 +207,7 @@ public final class HiddenServiceClient
 		String msg;
 		if (!establishedRendezvousPoint)
 		{
-			msg = "connectToHiddenService(): coudn't establishing rendezvous point for " + z;
+			msg = "connectToHiddenService(): couldn't establishing rendezvous point for " + z;
 		}
 		else if (!connectedToIntroPoint)
 		{
@@ -215,7 +215,7 @@ public final class HiddenServiceClient
 		}
 		else if (!didRendezvous)
 		{
-			msg = "connectToHiddenService(): coudn't make a rendezvous for " + z;
+			msg = "connectToHiddenService(): couldn't make a rendezvous for " + z;
 		}
 		else
 		{
